@@ -1,4 +1,5 @@
 export const DEFAULT_MAX_BYTES = 8192;
+export const DEFAULT_FIELD_MAX_BYTES = 512;
 
 export function capText(text, maxBytes = DEFAULT_MAX_BYTES) {
   if (!text) return { text: '', truncated: false, bytes: 0 };
@@ -10,6 +11,12 @@ export function capText(text, maxBytes = DEFAULT_MAX_BYTES) {
   while (end > 0 && (buf[end] & 0xc0) === 0x80) end -= 1;
   const slice = buf.subarray(0, end).toString('utf8');
   return { text: slice, truncated: true, bytes: end };
+}
+
+export function sanitizeField(value, maxBytes = DEFAULT_FIELD_MAX_BYTES) {
+  if (value == null) return null;
+  const singleLine = String(value).replace(/\r?\n/g, ' ').trim();
+  return capText(singleLine, maxBytes).text;
 }
 
 export async function readStreamCapped(stream, maxBytes = DEFAULT_MAX_BYTES) {

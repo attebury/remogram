@@ -7,13 +7,20 @@ const providerSchema = z.enum([
   'github-gh',
 ]);
 
+const repoSegmentSchema = z
+  .string()
+  .min(1)
+  .refine((s) => !/[/%]/.test(s) && !s.includes('..') && !s.includes('/'), {
+    message: 'owner/repo must not contain /, .., or %',
+  });
+
 export const configSchema = z
   .object({
     version: z.literal('1'),
     provider: providerSchema,
     remote: z.string().min(1).default('origin'),
-    owner: z.string().min(1),
-    repo: z.string().min(1),
+    owner: repoSegmentSchema,
+    repo: repoSegmentSchema,
     baseUrl: z.string().url().optional(),
     trustedHosts: z.array(z.string().min(1)).optional(),
   })

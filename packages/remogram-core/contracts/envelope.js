@@ -17,12 +17,22 @@ export const FORBIDDEN_PACKET_KEYS = new Set([
   'queue_selectable',
 ]);
 
-export function forgePacket(type, context, body = {}, error = null) {
-  for (const key of Object.keys(body)) {
+function assertNoForbiddenKeys(value) {
+  if (value == null || typeof value !== 'object') return;
+  if (Array.isArray(value)) {
+    for (const item of value) assertNoForbiddenKeys(item);
+    return;
+  }
+  for (const [key, nested] of Object.entries(value)) {
     if (FORBIDDEN_PACKET_KEYS.has(key)) {
       throw new Error(`Forbidden Topogram concept in remogram output: ${key}`);
     }
+    assertNoForbiddenKeys(nested);
   }
+}
+
+export function forgePacket(type, context, body = {}, error = null) {
+  assertNoForbiddenKeys(body);
 
   const packet = {
     type,
@@ -46,4 +56,12 @@ export function forgePacket(type, context, body = {}, error = null) {
 
 export function forgeErrorPacket(context, error, type = PACKET_TYPES.FORGE_ERROR) {
   return forgePacket(type, context, {}, error);
+}
+
+export function unknownForgeContext() {
+  return {
+    providerId: 'unknown',
+    remoteName: 'origin',
+    repoId: 'unknown/unknown',
+  };
 }

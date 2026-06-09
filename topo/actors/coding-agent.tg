@@ -1,0 +1,5 @@
+actor actor_coding_agent {
+  name "Coding Agent"
+  description "Implementation agent for remogram forge boundary work."
+  status active
+}

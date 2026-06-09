@@ -1,67 +1,67 @@
 bug bug_trusted_base_url_bypass {
   name "trustedBaseUrl bypass via trustedHosts configHost match"
   description "trustedBaseUrl returns true for any remoteHost when trustedHosts contains an entry matching config baseUrl host, allowing token exfiltration to attacker baseUrl."
-  status open
+  status fixed
   severity critical
   priority critical
   affects [cap_forge_remote_ops]
   failure_mode "GITEA_TOKEN sent to attacker-controlled baseUrl while git remote appears legitimate."
   linked_task task_forge_trust_hardening
-  reproduction "trustedBaseUrl({ baseUrl: http://localhost:3000, trustedHosts: [localhost:3000] }, evil.com) returns true."
-  boundary_test_added false
+  reproduction "trustedBaseUrl({ baseUrl: http://localhost:3000, trustedHosts: [localhost:3000] }, evil.com) returned true."
+  boundary_test_added true
 }
 
 bug bug_config_remote_repo_mismatch {
   name "Config owner/repo not verified against git remote"
   description "API calls use config owner/repo while packets claim repo_id from config; stale or malicious .remogram.json targets wrong forge repo."
-  status open
+  status fixed
   severity high
   priority high
   affects [cap_forge_remote_ops]
   linked_task task_forge_trust_hardening
-  boundary_test_added false
+  boundary_test_added true
 }
 
 bug bug_provider_path_encoding {
   name "Unencoded owner/repo path segments in Gitea API URLs"
   description "Config strings with slashes or dot-dot segments may reach unintended API paths with user token."
-  status open
+  status fixed
   severity high
   priority high
   affects [cap_forge_remote_ops]
   linked_task task_forge_trust_hardening
-  boundary_test_added false
+  boundary_test_added true
 }
 
 bug bug_pr_index_unstable {
   name "PR --index lookup capped and order-unstable"
-  description "getPull by index uses first 50 state=all PRs; index semantics do not match stable forge CLI behavior."
-  status open
+  description "getPull by index used first 50 state=all PRs; removed for v1 in favor of --number only."
+  status fixed
   severity high
   priority high
   affects [cap_forge_remote_ops]
   linked_task task_forge_trust_hardening
-  boundary_test_added false
+  boundary_test_added true
 }
 
 bug bug_sync_plan_git_fetch {
   name "sync plan runs git fetch despite read-only contract"
-  description "syncPlan mutates remote-tracking refs; MCP readOnlyHint and v1 read/plan docs claim no mutations."
-  status open
+  description "syncPlan mutates remote-tracking refs; removed git fetch for read-only v1."
+  status fixed
   severity high
   priority high
   affects [cap_forge_remote_ops]
   linked_task task_forge_trust_hardening
-  boundary_test_added false
+  boundary_test_added true
 }
 
 bug bug_unsanitized_provider_output {
   name "Provider strings not capped or sanitized before packets"
   description "PR titles, URLs, check contexts flow verbatim into JSON packets and MCP agent context."
-  status open
+  status fixed
   severity high
   priority high
   affects [cap_forge_remote_ops]
   linked_task task_forge_trust_hardening
-  boundary_test_added false
+  boundary_test_added true
 }

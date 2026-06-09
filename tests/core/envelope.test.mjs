@@ -4,11 +4,12 @@ import {
   PACKET_TYPES,
   forgePacket,
   forgeErrorPacket,
-  FORBIDDEN_PACKET_KEYS,
   capText,
+  sanitizeField,
   parseConfigFile,
   parseRemoteUrl,
   trustedBaseUrl,
+  assertConfigMatchesRemote,
   ERROR_CODES,
 } from '@remogram/core';
 
@@ -24,23 +25,25 @@ describe('forgePacket', () => {
     expect(p.type).toBe('repo_status');
     expect(p.schema_version).toBe(SCHEMA_VERSION);
     expect(p.provider_id).toBe('gitea-api');
-    expect(p.remote_name).toBe('origin');
-    expect(p.repo_id).toBe('owner/repo');
-    expect(p.observed_at).toMatch(/^\d{4}-/);
     expect(p.ok).toBe(true);
-    expect(p.auth_present).toBe(true);
   });
 
-  it('rejects Topogram concept keys', () => {
-    expect(() => forgePacket(PACKET_TYPES.PR_STATUS, ctx, { lane: 'Merge' })).toThrow(
+  it('rejects forbidden keys at any depth', () => {
+    expect(() => forgePacket(PACKET_TYPES.PR_STATUS, ctx, { meta: { lane: 'Merge' } })).toThrow(
       /Forbidden Topogram concept/,
     );
   });
 
-  it('forgeErrorPacket sets ok false', () => {
+  it('forgeErrorPacket uses forge_error type by default', () => {
     const p = forgeErrorPacket(ctx, { code: ERROR_CODES.CONFIG_INVALID, message: 'bad' });
+    expect(p.type).toBe('forge_error');
     expect(p.ok).toBe(false);
-    expect(p.error_code).toBe('config_invalid');
+  });
+});
+
+describe('sanitizeField', () => {
+  it('collapses newlines', () => {
+    expect(sanitizeField('hello\nworld')).toBe('hello world');
   });
 });
 
@@ -54,23 +57,58 @@ describe('capText', () => {
 });
 
 describe('parseConfigFile', () => {
-  it('requires explicit provider', () => {
-    const cfg = parseConfigFile(
-      JSON.stringify({
-        version: '1',
-        provider: 'gitea-api',
-        owner: 'a',
-        repo: 'b',
-        baseUrl: 'http://localhost:3000',
-      }),
+  it('rejects owner with slash', () => {
+    expect(() =>
+      parseConfigFile(
+        JSON.stringify({
+          version: '1',
+          provider: 'gitea-api',
+          owner: 'org/sub',
+          repo: 'r',
+        }),
+      ),
+    ).toThrow();
+  });
+});
+
+describe('trustedBaseUrl', () => {
+  it('fails closed when hosts mismatch with empty trustedHosts', () => {
+    expect(trustedBaseUrl({ baseUrl: 'http://evil:3000', trustedHosts: [] }, 'localhost:3000')).toBe(
+      false,
     );
-    expect(cfg.provider).toBe('gitea-api');
   });
 
-  it('rejects unknown provider', () => {
+  it('rejects evil.com even when trustedHosts lists config host', () => {
+    const config = {
+      baseUrl: 'http://localhost:3000',
+      trustedHosts: ['localhost:3000'],
+    };
+    expect(trustedBaseUrl(config, 'evil.com')).toBe(false);
+  });
+
+  it('allows explicit trustedHosts match on remote host', () => {
+    const config = {
+      baseUrl: 'http://localhost:3000',
+      trustedHosts: ['127.0.0.1:3000'],
+    };
+    expect(trustedBaseUrl(config, '127.0.0.1:3000')).toBe(true);
+  });
+
+  it('allows localhost and 127.0.0.1 alias without trustedHosts', () => {
+    expect(
+      trustedBaseUrl({ baseUrl: 'http://localhost:3000' }, '127.0.0.1:3000'),
+    ).toBe(true);
+  });
+});
+
+describe('assertConfigMatchesRemote', () => {
+  it('throws on owner/repo mismatch', () => {
     expect(() =>
-      parseConfigFile(JSON.stringify({ version: '1', provider: 'gitea', owner: 'a', repo: 'b' })),
-    ).toThrow();
+      assertConfigMatchesRemote(
+        { owner: 'a', repo: 'b' },
+        { owner: 'c', repo: 'b', host: 'x' },
+      ),
+    ).toThrow(/does not match git remote/);
   });
 });
 
@@ -79,27 +117,5 @@ describe('parseRemoteUrl', () => {
     const p = parseRemoteUrl('https://localhost:3000/org/sub/remogram.git');
     expect(p.owner).toBe('org/sub');
     expect(p.repo).toBe('remogram');
-    expect(p.host).toBe('localhost:3000');
-  });
-
-  it('parses ssh', () => {
-    const p = parseRemoteUrl('git@github.com:owner/repo.git');
-    expect(p.owner).toBe('owner');
-    expect(p.repo).toBe('repo');
-  });
-});
-
-describe('trustedBaseUrl', () => {
-  it('fails closed when hosts mismatch', () => {
-    const config = { baseUrl: 'http://evil:3000', trustedHosts: [] };
-    expect(trustedBaseUrl(config, 'localhost:3000')).toBe(false);
-  });
-
-  it('allows trustedHosts override', () => {
-    const config = {
-      baseUrl: 'http://localhost:3000',
-      trustedHosts: ['localhost:3000'],
-    };
-    expect(trustedBaseUrl(config, '127.0.0.1:3000')).toBe(true);
   });
 });

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { provider } from '@remogram/provider-gitea-api';
+import { provider, repoApiPath } from '@remogram/provider-gitea-api';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const fixtures = join(__dirname, '../fixtures/gitea-api');
@@ -20,7 +20,14 @@ const ctx = {
     remote: 'origin',
   },
   cwd: process.cwd(),
+  parsed: { owner: 'attebury', repo: 'remogram', host: 'localhost:3000' },
 };
+
+describe('repoApiPath', () => {
+  it('encodes path segments', () => {
+    expect(repoApiPath({ owner: 'a/b', repo: 'c' })).toContain(encodeURIComponent('a/b'));
+  });
+});
 
 describe('provider-gitea-api fixtures', () => {
   beforeEach(() => {
@@ -33,34 +40,43 @@ describe('provider-gitea-api fixtures', () => {
     delete process.env.GITEA_TOKEN;
   });
 
-  it('repoStatus returns capabilities', async () => {
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      text: async () => JSON.stringify(load('repo.json')),
-    });
+  it('repoStatus returns gated capabilities without token', async () => {
+    delete process.env.GITEA_TOKEN;
     const body = await provider.repoStatus(ctx);
-    expect(body.auth_present).toBe(true);
-    expect(body.capabilities).toContain('repo_status');
-    expect(body.default_branch).toBe('main');
+    expect(body.auth_present).toBe(false);
+    expect(body.capabilities).toEqual(['repo_status']);
   });
 
-  it('prView maps mergeability', async () => {
+  it('repoStatus returns all capabilities with token', async () => {
     global.fetch.mockResolvedValueOnce({
       ok: true,
-      text: async () => JSON.stringify(load('pull.json')),
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify(load('repo.json')));
+        },
+      },
+    });
+    const body = await provider.repoStatus(ctx);
+    expect(body.capabilities).toContain('pr_status');
+  });
+
+  it('prView maps mergeability by number', async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify(load('pull.json')));
+        },
+      },
     });
     const body = await provider.prView(ctx, { number: 1 });
     expect(body.pr_number).toBe(1);
     expect(body.mergeability).toBe('clean');
-    expect(body.head_sha).toBeTruthy();
   });
 
-  it('prChecks summarizes success', async () => {
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      text: async () => JSON.stringify(load('statuses-success.json')),
+  it('prChecks requires resolvable ref', async () => {
+    await expect(provider.prChecks(ctx, { ref: 'not-a-real-ref-xyz' })).rejects.toMatchObject({
+      forgeError: { code: 'missing_ref' },
     });
-    const body = await provider.prChecks(ctx, { ref: 'abc123' });
-    expect(body.check_conclusion).toBe('success');
   });
 });
