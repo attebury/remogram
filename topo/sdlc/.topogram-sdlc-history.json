@@ -14,5 +14,21 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "goal_branch_test_strategy_hardening": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-09T23:25:11.904Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-09T23:25:14.886Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
   ]
 }
