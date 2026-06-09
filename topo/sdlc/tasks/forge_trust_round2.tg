@@ -1,0 +1,21 @@
+task task_forge_trust_round2 {
+  name "Implement forge trust round 2"
+  description "Fix C1 trustedHosts/baseUrl regression, H1 redirect SSRF, H2/H3 git argv injection, M1 envelope override, M3/M4 error and URL sanitization; regression test per bug record."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Mutation commands" "MCP auth layer" "Full forge prose firewall"]
+  entrypoints ["packages/remogram-core/**" "packages/provider-gitea-api/**" "packages/remogram-cli/**" "packages/remogram-mcp/**" "tests/**"]
+  satisfies [req_forge_trust_round2]
+  acceptance_refs [ac_round2_base_url_host_binding ac_round2_redirect_policy ac_round2_git_argv_hardening ac_round2_envelope_immutability ac_round2_outbound_sanitization]
+  verification_refs [verification_forge_trust_round2]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate, command_owned_mutation]
+  bug_discovery bug_linked
+  bug_discovery_rationale "Second-pass adversarial security review 2026-06-09 after round 1 merge."
+  disposition active
+  priority critical
+  work_type bugfix
+  status unclaimed
+}

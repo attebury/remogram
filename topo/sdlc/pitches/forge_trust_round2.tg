@@ -1,0 +1,12 @@
+pitch pitch_forge_trust_round2 {
+  name "Forge Trust Round 2"
+  description "Close second-pass adversarial review gaps: trustedHosts/baseUrl token exfil regression, HTTP redirect SSRF, git ref option injection, envelope field override, and unsanitized error/URL strings."
+  appetite "small"
+  problem "Round 1 hardening fixed the original trustedBaseUrl bypass but left a new C1 via trustedHosts matching remote host while baseUrl points elsewhere; fetch follows redirects with auth; git refs/remotes accept option injection; forgePacket body can override envelope trust fields; API errors and syncPlan.remote reach agents unsanitized."
+  solution_sketch "Five targeted fixes in remogram-core, provider-gitea-api, remogram-mcp with regression tests per finding; no new commands or providers."
+  rabbit_holes "Full prompt-injection firewall for all forge prose; MCP auth layer; custom HTTP client."
+  no_go_areas "Mutation commands; live stub providers; rewriting round 1 records; hand-editing command-owned sidecars."
+  affects [cap_forge_remote_ops]
+  priority critical
+  status submitted
+}

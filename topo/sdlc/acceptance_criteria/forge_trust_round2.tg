@@ -1,0 +1,34 @@
+acceptance_criterion ac_round2_base_url_host_binding {
+  name "baseUrl host must match remote host"
+  description "Given baseUrl host differs from git remote host and is not an explicit alias pair, when trustedBaseUrl or assertForgeReady runs, then false or UNTRUSTED_BASE_URL with ok false. Given evil baseUrl with trustedHosts matching remote only, then rejected."
+  requirement req_forge_trust_round2
+  status approved
+}
+
+acceptance_criterion ac_round2_redirect_policy {
+  name "Forge HTTP redirect policy"
+  description "Given forge responds with redirect to untrusted host, when fetchJson runs, then redirect rejected or not followed and no token sent to redirect target."
+  requirement req_forge_trust_round2
+  status approved
+}
+
+acceptance_criterion ac_round2_git_argv_hardening {
+  name "Git ref and remote validation"
+  description "Given ref or remote starting with - or containing invalid charset, when CLI or MCP invokes git-backed command, then INVALID_ARGS before git spawn. Given valid refs, when rev-parse runs, then -- separator used."
+  requirement req_forge_trust_round2
+  status approved
+}
+
+acceptance_criterion ac_round2_envelope_immutability {
+  name "Envelope trust fields immutable"
+  description "Given provider body includes ok, type, provider_id, or repo_id overrides, when forgePacket emitted, then envelope fields from context win and cannot be overridden by body."
+  requirement req_forge_trust_round2
+  status approved
+}
+
+acceptance_criterion ac_round2_outbound_sanitization {
+  name "Errors URLs and remote names sanitized"
+  description "Given API error message with control chars, when packet built, then error_message sanitized. Given syncPlan remote input, when packet built, then remote field sanitized. Given url field, when only http or https schemes allowed."
+  requirement req_forge_trust_round2
+  status approved
+}
