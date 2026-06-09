@@ -52,6 +52,13 @@
       "at": "2026-06-09T23:52:24.677Z",
       "by": "actor_coding_agent",
       "note": null
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-09T23:56:59.178Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ],
   "task_test_strategy_followup": [
@@ -68,6 +75,67 @@
       "at": "2026-06-09T23:50:13.161Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-09T23:56:55.123Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_test_strategy_followup#test_default_providers_wiring": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-09T23:56:51.060Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_test_strategy_followup#test_fetch_text_capped_sanitize": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-09T23:56:51.332Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_test_strategy_followup#tighten_coverage_report": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-09T23:56:51.603Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_test_strategy_followup#doc_providers_seam": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-09T23:56:51.870Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_test_strategy_followup#ci_host_docs": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-09T23:56:52.139Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_test_strategy_followup#verify": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-09T23:56:52.411Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ]
 }
