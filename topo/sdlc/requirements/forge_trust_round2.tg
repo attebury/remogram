@@ -1,0 +1,9 @@
+requirement req_forge_trust_round2 {
+  name "Remogram forge trust fail-closed round 2"
+  description "Remogram must bind API traffic host to verified git remote host (trustedHosts as alias only), reject or validate HTTP redirects on forge fetches, harden git argv for refs and remotes, prevent envelope trust-field override from provider body, and sanitize all outbound strings including errors with http/https URL scheme allowlist."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority critical
+  status approved
+}

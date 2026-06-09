@@ -10,7 +10,7 @@ task task_remogram_core {
   acceptance_refs [ac_remogram]
   verification_refs [verification_remogram_test]
   affects [cap_forge_remote_ops]
-  blocked_by []
+  blocked_by [task_forge_trust_round2]
   architecture_patterns [contract_boundary, fail_closed_gate, command_owned_mutation]
   bug_discovery no_bug_observed
   bug_discovery_rationale "Greenfield scaffold branch."
