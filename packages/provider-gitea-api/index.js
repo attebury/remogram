@@ -2,6 +2,9 @@ import { execFileSync } from 'node:child_process';
 import {
   fetchJson,
   sanitizeField,
+  sanitizeUrl,
+  assertGitRef,
+  assertGitRemote,
   ERROR_CODES,
   forgeError,
 } from '@remogram/core';
@@ -65,6 +68,7 @@ function gitExec(cwd, args) {
 }
 
 export function gitRevParse(cwd, ref) {
+  assertGitRef(ref);
   try {
     return gitExec(cwd, ['rev-parse', ref]);
   } catch {
@@ -107,6 +111,8 @@ export async function repoStatus(ctx) {
 
 export async function refsCompare(ctx, baseRef, headRef) {
   requireToken();
+  assertGitRef(baseRef, 'base');
+  assertGitRef(headRef, 'head');
   const baseSha = gitRevParse(ctx.cwd, baseRef);
   const headSha = gitRevParse(ctx.cwd, headRef);
   if (!baseSha || !headSha) {
@@ -143,7 +149,7 @@ export async function prView(ctx, opts) {
   const pr = await getPull(ctx, opts);
   return {
     pr_number: pr.number,
-    url: sanitizeField(pr.html_url ?? pr.url),
+    url: sanitizeUrl(pr.html_url ?? pr.url),
     title: sanitizeField(pr.title),
     state: sanitizeField(pr.state),
     base_ref: sanitizeField(pr.base?.ref),
@@ -158,6 +164,7 @@ export async function prChecks(ctx, opts) {
   requireToken();
   let sha;
   if (opts.ref) {
+    assertGitRef(opts.ref, 'ref');
     sha = gitRevParse(ctx.cwd, opts.ref);
     if (!sha) {
       throw Object.assign(new Error('Missing ref'), {
@@ -212,6 +219,7 @@ export async function mergePlan(ctx, opts) {
 }
 
 export async function syncPlan(ctx, remoteName = 'origin') {
+  assertGitRemote(remoteName, 'remote');
   const localSha = gitRevParse(ctx.cwd, 'HEAD');
   const branch = gitCurrentBranch(ctx.cwd);
   let remoteSha = null;
@@ -229,7 +237,7 @@ export async function syncPlan(ctx, remoteName = 'origin') {
   }
   if (!remoteSha) blockers.push('missing_remote_ref');
   return {
-    remote: remoteName,
+    remote: sanitizeField(remoteName),
     local_sha: localSha,
     remote_sha: remoteSha,
     diverged,

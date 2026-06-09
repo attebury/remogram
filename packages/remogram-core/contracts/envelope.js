@@ -1,3 +1,5 @@
+import { sanitizeField } from '../caps.js';
+
 export const SCHEMA_VERSION = 1;
 
 export const PACKET_TYPES = {
@@ -35,6 +37,7 @@ export function forgePacket(type, context, body = {}, error = null) {
   assertNoForbiddenKeys(body);
 
   const packet = {
+    ...body,
     type,
     schema_version: SCHEMA_VERSION,
     provider_id: context.providerId,
@@ -42,12 +45,11 @@ export function forgePacket(type, context, body = {}, error = null) {
     repo_id: context.repoId,
     observed_at: new Date().toISOString(),
     ok: error == null,
-    ...body,
   };
 
   if (error) {
     packet.error_code = error.code;
-    packet.error_message = error.message;
+    packet.error_message = sanitizeField(error.message);
     if (error.status != null) packet.error_status = error.status;
   }
 

@@ -7,6 +7,7 @@ import {
   unknownForgeContext,
   ERROR_CODES,
   forgeError,
+  capText,
 } from '@remogram/core';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -27,10 +28,8 @@ export function resolveCliBin() {
 
 function appendCapped(current, chunk, maxBytes) {
   const next = current + chunk;
-  if (Buffer.byteLength(next, 'utf8') > maxBytes) {
-    return { text: next.slice(0, maxBytes), truncated: true };
-  }
-  return { text: next, truncated: false };
+  const capped = capText(next, maxBytes);
+  return { text: capped.text, truncated: capped.truncated };
 }
 
 export function runRemogramCli(args) {

@@ -6,6 +6,7 @@ import {
   forgeErrorPacket,
   capText,
   sanitizeField,
+  sanitizeUrl,
   parseConfigFile,
   parseRemoteUrl,
   trustedBaseUrl,
@@ -39,11 +40,46 @@ describe('forgePacket', () => {
     expect(p.type).toBe('forge_error');
     expect(p.ok).toBe(false);
   });
+
+  it('body cannot override envelope trust fields', () => {
+    const p = forgePacket(PACKET_TYPES.REPO_STATUS, ctx, {
+      ok: true,
+      type: 'forged',
+      provider_id: 'evil',
+      repo_id: 'attacker/evil',
+    });
+    expect(p.ok).toBe(true);
+    expect(p.type).toBe('repo_status');
+    expect(p.provider_id).toBe('gitea-api');
+    expect(p.repo_id).toBe('owner/repo');
+  });
+
+  it('sanitizes error_message in error packets', () => {
+    const p = forgeErrorPacket(ctx, {
+      code: ERROR_CODES.API_ERROR,
+      message: 'bad\ninject',
+    });
+    expect(p.error_message).toBe('bad inject');
+  });
 });
 
 describe('sanitizeField', () => {
   it('collapses newlines', () => {
     expect(sanitizeField('hello\nworld')).toBe('hello world');
+  });
+
+  it('strips control characters', () => {
+    expect(sanitizeField('a\x00b\x1fc')).toBe('a b c');
+  });
+});
+
+describe('sanitizeUrl', () => {
+  it('allows http and https', () => {
+    expect(sanitizeUrl('http://localhost:3000/x')).toBe('http://localhost:3000/x');
+  });
+
+  it('rejects javascript scheme', () => {
+    expect(sanitizeUrl('javascript:alert(1)')).toBeNull();
   });
 });
 
@@ -86,12 +122,13 @@ describe('trustedBaseUrl', () => {
     expect(trustedBaseUrl(config, 'evil.com')).toBe(false);
   });
 
-  it('allows explicit trustedHosts match on remote host', () => {
-    const config = {
-      baseUrl: 'http://localhost:3000',
-      trustedHosts: ['127.0.0.1:3000'],
-    };
-    expect(trustedBaseUrl(config, '127.0.0.1:3000')).toBe(true);
+  it('rejects evil baseUrl when trustedHosts matches remote only', () => {
+    expect(
+      trustedBaseUrl(
+        { baseUrl: 'https://attacker.example', trustedHosts: ['localhost:3000'] },
+        'localhost:3000',
+      ),
+    ).toBe(false);
   });
 
   it('allows localhost and 127.0.0.1 alias without trustedHosts', () => {

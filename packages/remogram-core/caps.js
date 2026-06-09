@@ -15,8 +15,22 @@ export function capText(text, maxBytes = DEFAULT_MAX_BYTES) {
 
 export function sanitizeField(value, maxBytes = DEFAULT_FIELD_MAX_BYTES) {
   if (value == null) return null;
-  const singleLine = String(value).replace(/\r?\n/g, ' ').trim();
+  const singleLine = String(value)
+    .replace(/[\x00-\x1f\x7f]/g, ' ')
+    .replace(/\r?\n/g, ' ')
+    .trim();
   return capText(singleLine, maxBytes).text;
+}
+
+export function sanitizeUrl(value, maxBytes = DEFAULT_FIELD_MAX_BYTES) {
+  if (value == null) return null;
+  try {
+    const u = new URL(String(value));
+    if (u.protocol !== 'http:' && u.protocol !== 'https:') return null;
+    return sanitizeField(u.href, maxBytes);
+  } catch {
+    return null;
+  }
 }
 
 export async function readStreamCapped(stream, maxBytes = DEFAULT_MAX_BYTES) {

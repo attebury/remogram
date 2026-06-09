@@ -1,64 +1,64 @@
 bug bug_trusted_hosts_base_url_bypass {
   name "trustedHosts approves mismatched baseUrl host"
   description "trustedBaseUrl returns true when trustedHosts entry matches git remote host even when config baseUrl host differs, sending GITEA_TOKEN to attacker-controlled baseUrl."
-  status open
+  status fixed
   severity critical
   priority critical
   affects [cap_forge_remote_ops]
   failure_mode "Token exfiltration via committed .remogram.json with evil baseUrl and trustedHosts listing legitimate remote host."
   linked_task task_forge_trust_round2
-  reproduction "trustedBaseUrl({ baseUrl: https://attacker.example, trustedHosts: [localhost:3000] }, localhost:3000) returns true."
-  boundary_test_added false
+  reproduction "trustedBaseUrl({ baseUrl: https://attacker.example, trustedHosts: [localhost:3000] }, localhost:3000) returned true."
+  boundary_test_added true
 }
 
 bug bug_http_redirect_ssrf {
   name "HTTP redirect follows with Authorization header"
   description "fetchWithTimeout uses default fetch redirect behavior; compromised forge can 302 to metadata or exfil endpoints with token."
-  status open
+  status fixed
   severity high
   priority high
   affects [cap_forge_remote_ops]
   failure_mode "Credential relay or SSRF via redirect chain from trusted forge host."
   linked_task task_forge_trust_round2
   reproduction "Trusted Gitea responds 302 Location http://169.254.169.254/; fetchJson follows with Authorization token header."
-  boundary_test_added false
+  boundary_test_added true
 }
 
 bug bug_git_ref_option_injection {
   name "Git ref and remote strings allow option injection"
-  description "git rev-parse, rev-list, and remote get-url pass user/MCP strings without -- separator or allowlist; values starting with - are interpreted as git flags."
-  status open
+  description "git rev-parse, rev-list, and remote get-url pass user/MCP strings without validation; values starting with - are interpreted as git flags."
+  status fixed
   severity high
   priority high
   affects [cap_forge_remote_ops]
   failure_mode "Path disclosure or unexpected git behavior via MCP ref_compare, pr_checks --ref, sync_plan --remote, or config.remote."
   linked_task task_forge_trust_round2
-  reproduction "ref_compare with head --show-toplevel passed to git rev-parse without -- separator."
-  boundary_test_added false
+  reproduction "ref_compare with head --show-toplevel passed to git rev-parse without validation."
+  boundary_test_added true
 }
 
 bug bug_envelope_field_override {
   name "forgePacket body can override envelope trust fields"
   description "forgePacket spreads body after setting provider_id, repo_id, ok; malicious or buggy provider can set ok true or override type and repo_id."
-  status open
+  status fixed
   severity medium
   priority medium
   affects [cap_forge_remote_ops]
   failure_mode "Agent receives forged ok:true or wrong repo_id from provider body spread."
   linked_task task_forge_trust_round2
-  reproduction "forgePacket(type, ctx, { ok: true, repo_id: attacker/evil }) preserves attacker values."
-  boundary_test_added false
+  reproduction "forgePacket(type, ctx, { ok: true, repo_id: attacker/evil }) preserved attacker values."
+  boundary_test_added true
 }
 
 bug bug_unsanitized_errors_and_urls {
   name "API errors and syncPlan.remote unsanitized"
   description "fetchJson error messages flow verbatim into error_message; syncPlan returns remote name without sanitizeField; URL fields lack scheme allowlist."
-  status open
+  status fixed
   severity medium
   priority medium
   affects [cap_forge_remote_ops]
   failure_mode "Forge-controlled injection text or javascript: URLs reach LLM via error_message or url fields."
   linked_task task_forge_trust_round2
-  reproduction "Provider 500 body message with newlines/control chars becomes error_message without sanitizeField."
-  boundary_test_added false
+  reproduction "Provider 500 body message with newlines/control chars became error_message without sanitizeField."
+  boundary_test_added true
 }

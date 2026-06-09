@@ -1,12 +1,12 @@
 import { ERROR_CODES, forgeError } from './contracts/errors.js';
-import { readStreamCapped, DEFAULT_MAX_BYTES } from './caps.js';
+import { readStreamCapped, DEFAULT_MAX_BYTES, sanitizeField } from './caps.js';
 
 const DEFAULT_TIMEOUT_MS = 30_000;
 const DEFAULT_JSON_MAX_BYTES = DEFAULT_MAX_BYTES;
 
 export async function fetchWithTimeout(url, options = {}, timeoutMs = DEFAULT_TIMEOUT_MS) {
   const signal = AbortSignal.timeout(timeoutMs);
-  return fetch(url, { ...options, signal });
+  return fetch(url, { ...options, signal, redirect: 'manual' });
 }
 
 async function readResponseTextCapped(res, maxBytes) {
@@ -28,6 +28,13 @@ export async function fetchJson(
   maxBytes = DEFAULT_JSON_MAX_BYTES,
 ) {
   const res = await fetchWithTimeout(url, options, timeoutMs);
+  if (res.status >= 300 && res.status < 400) {
+    const message = 'HTTP redirect rejected';
+    throw Object.assign(new Error(message), {
+      forgeError: forgeError(ERROR_CODES.API_ERROR, message, res.status),
+      status: res.status,
+    });
+  }
   const text = await readResponseTextCapped(res, maxBytes);
   let body;
   try {
@@ -39,7 +46,8 @@ export async function fetchJson(
     });
   }
   if (!res.ok) {
-    const message = body?.message || body?.error || res.statusText || 'API error';
+    const raw = body?.message || body?.error || res.statusText || 'API error';
+    const message = sanitizeField(raw) || 'API error';
     throw Object.assign(new Error(message), {
       forgeError: forgeError(ERROR_CODES.API_ERROR, message, res.status),
       status: res.status,
@@ -50,6 +58,13 @@ export async function fetchJson(
 
 export async function fetchTextCapped(url, options = {}, maxBytes = DEFAULT_MAX_BYTES) {
   const res = await fetchWithTimeout(url, options);
+  if (res.status >= 300 && res.status < 400) {
+    const message = 'HTTP redirect rejected';
+    throw Object.assign(new Error(message), {
+      forgeError: forgeError(ERROR_CODES.API_ERROR, message, res.status),
+      status: res.status,
+    });
+  }
   if (!res.ok) {
     const text = await readResponseTextCapped(res, maxBytes).catch(() => res.statusText);
     throw Object.assign(new Error(text), {
