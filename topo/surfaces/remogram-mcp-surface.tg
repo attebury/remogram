@@ -8,9 +8,9 @@ surface remogram_mcp {
   commands {
     command repo_status capability cap_forge_remote_ops usage "repo_status" mode read_only
     command ref_compare capability cap_forge_remote_ops usage "ref_compare --base --head" mode read_only
-    command pr_status capability cap_forge_remote_ops usage "pr_status --index|--number" mode read_only
-    command pr_checks capability cap_forge_remote_ops usage "pr_checks --index|--ref" mode read_only
-    command merge_plan capability cap_forge_remote_ops usage "merge_plan --index" mode read_only
+    command pr_status capability cap_forge_remote_ops usage "pr_status --number" mode read_only
+    command pr_checks capability cap_forge_remote_ops usage "pr_checks --number|--ref" mode read_only
+    command merge_plan capability cap_forge_remote_ops usage "merge_plan --number" mode read_only
     command sync_plan capability cap_forge_remote_ops usage "sync_plan --remote" mode read_only
   }
 

@@ -8,9 +8,9 @@ surface remogram_cli {
   commands {
     command repo_status capability cap_forge_remote_ops usage "remogram repo status [--json]" mode read_only
     command refs_compare capability cap_forge_remote_ops usage "remogram refs compare --base <ref> --head <ref> [--json]" mode read_only
-    command pr_view capability cap_forge_remote_ops usage "remogram pr view --index <n>|--number <n> [--json]" mode read_only
-    command pr_checks capability cap_forge_remote_ops usage "remogram pr checks --index <n>|--ref <ref> [--json]" mode read_only
-    command merge_plan capability cap_forge_remote_ops usage "remogram merge plan --index <n> [--json]" mode read_only
+    command pr_view capability cap_forge_remote_ops usage "remogram pr view --number <n> [--json]" mode read_only
+    command pr_checks capability cap_forge_remote_ops usage "remogram pr checks --number <n>|--ref <ref> [--json]" mode read_only
+    command merge_plan capability cap_forge_remote_ops usage "remogram merge plan --number <n> [--json]" mode read_only
     command sync_plan capability cap_forge_remote_ops usage "remogram sync plan [--remote <name>] [--json]" mode read_only
   }
 
@@ -20,13 +20,12 @@ surface remogram_cli {
     command refs_compare option base type string flag --base
     command refs_compare option head type string flag --head
     command pr_view option json type boolean flag --json
-    command pr_view option index type integer flag --index
     command pr_view option number type integer flag --number
     command pr_checks option json type boolean flag --json
-    command pr_checks option index type integer flag --index
+    command pr_checks option number type integer flag --number
     command pr_checks option ref type string flag --ref
     command merge_plan option json type boolean flag --json
-    command merge_plan option index type integer flag --index
+    command merge_plan option number type integer flag --number
     command sync_plan option json type boolean flag --json
     command sync_plan option remote type string flag --remote
   }
@@ -52,9 +51,9 @@ surface remogram_cli {
   command_examples {
     command repo_status example "remogram repo status --json"
     command refs_compare example "remogram refs compare --base main --head feature/x --json"
-    command pr_view example "remogram pr view --index 1 --json"
-    command pr_checks example "remogram pr checks --index 1 --json"
-    command merge_plan example "remogram merge plan --index 1 --json"
+    command pr_view example "remogram pr view --number 1 --json"
+    command pr_checks example "remogram pr checks --number 1 --json"
+    command merge_plan example "remogram merge plan --number 1 --json"
     command sync_plan example "remogram sync plan --remote origin --json"
   }
 

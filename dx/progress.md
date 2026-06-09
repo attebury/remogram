@@ -1,17 +1,17 @@
-# Progress: Plan Lane — forge trust hardening
+# Progress: Forge trust hardening — complete
 
 ## Approach
-Plan Lane planning-only branch from origin/dev/scaffold. SDLC records map adversarial review findings to phased fix plan. No implementation code.
+Full lane workflow: Plan Lane SDLC records → Implement Lane on `goal/forge-trust-hardening` → Gitea PR #2 → merge to `dev/scaffold`. Remediation from adversarial code review (trustedBaseUrl, config binding, sanitization, read-only sync, MCP hardening, `--number` CLI).
 
 ## Steps So Far
-1. Branch plan/forge-trust-hardening from origin/dev/scaffold.
-2. Created pitch, requirement, 6 bugs, 4 acceptance criteria, task, plan (8 steps), draft goal_branch, verification.
-3. Blocked task_remogram_core on task_forge_trust_hardening until trust fixes land.
-4. Restored topogram.sdlc-policy.json packages/** protected paths.
-5. topogram check + sdlc prep commit green.
+1. Plan Lane: pitch, requirement, 6 bugs, acceptance criteria, task, 8-step plan on `plan/forge-trust-hardening`; merged to `dev/scaffold`.
+2. Implement Lane: all review fixes in `32dc7ef` on `goal/forge-trust-hardening`.
+3. PR #2 opened and merged to `dev/scaffold` (`5cf55b6`).
+4. Local `dev/scaffold` fast-forwarded; `npm test` — 22 passing.
+5. Surface contracts updated: `remogram-cli-surface.tg`, `remogram-mcp-surface.tg` — `--index` removed, `--number` only.
 
 ## Current Status
-Planning records ready for planning PR → Review Lane → Merge Lane. Intent Packet draft (not approved/selectable).
+**Done.** `dev/scaffold` is the active line with forge trust hardening landed. `task_forge_trust_hardening` done; `task_remogram_core` unblocked.
 
 ## Current Failure / Open Item
-origin/main (ce75135) is behind dev/scaffold; planning targets dev/scaffold line.
+None blocking. Optional later: command-owned SDLC transition for `goal_branch_forge_trust_hardening` approval (hand-editing status fails topogram lifecycle validation).
