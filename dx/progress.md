@@ -12,7 +12,7 @@ Contract-first greenfield: topo/ models, npm workspaces (core/cli/mcp/providers)
 6. Phase 5: stub providers (github-api, gitea-tea, github-gh), npm-link script.
 
 ## Current Status
-All in-repo phases complete. 18 tests pass; topogram check green.
+Committed and pushed `94dc321` on `dev/scaffold` → `origin/dev/scaffold`. 18 tests pass; topogram check green.
 
 ## Current Failure / Open Item
 Phase 6 (Topogram SCM adapter) is external — topogram repo, not remogram.
