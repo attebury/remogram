@@ -6,6 +6,8 @@ export default defineConfig({
     exclude: ['dx/**'],
   },
   coverage: {
-    exclude: ['dx/**'],
+    provider: 'v8',
+    include: ['packages/remogram-core/**/*.js'],
+    exclude: ['dx/**', '**/*.test.mjs', '**/node_modules/**'],
   },
 });

@@ -8,7 +8,8 @@
     "remogram-mcp": "bin/remogram-mcp.js"
   },
   "exports": {
-    ".": "./server.mjs"
+    ".": "./server.mjs",
+    "./run-cli": "./run-cli.mjs"
   },
   "engines": {
     "node": ">=20"

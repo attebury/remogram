@@ -52,8 +52,9 @@ function handleError(err, ctx, asJson) {
   process.exitCode = 1;
 }
 
-export async function runCli(argv) {
-  const cwd = process.env.REMOGRAM_CWD || process.cwd();
+export async function runCli(argv, options = {}) {
+  const cwd = options.cwd ?? process.env.REMOGRAM_CWD ?? process.cwd();
+  const providers = options.providers ?? PROVIDERS;
   const positional = [];
   let asJson = false;
   const flags = {};
@@ -86,7 +87,7 @@ export async function runCli(argv) {
     return;
   }
 
-  const provider = PROVIDERS[ctx.config.provider];
+  const provider = providers[ctx.config.provider];
   if (!provider) {
     handleError(
       {
