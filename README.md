@@ -34,7 +34,14 @@ remogram sync plan --remote origin --json
 
 ## MCP
 
-Copy `.cursor/mcp.json.example` to `.cursor/mcp.json`. Tools mirror CLI 1:1 with the same JSON schemas.
+```bash
+./scripts/npm-link.sh              # remogram-mcp on PATH
+./scripts/install-project-mcp.sh     # copies .cursor/mcp.json.example → .cursor/mcp.json
+```
+
+Reload MCP in Cursor (Settings → MCP). Tools: `repo_status`, `ref_compare`, `pr_status`, `pr_checks`, `merge_plan`, `sync_plan`.
+
+Each tool returns the same JSON as `remogram ... --json`. Set `GITEA_TOKEN` in your environment.
 
 ## SDLC (development)
 

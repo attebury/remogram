@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.0",
+    "@remogram/cli": "0.1.0",
     "zod": "^3.25.76"
   }
 }

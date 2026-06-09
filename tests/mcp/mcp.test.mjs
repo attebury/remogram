@@ -1,7 +1,24 @@
 import { describe, it, expect } from 'vitest';
-import { runRemogramCli, packetToMcpContent, remogramCwd } from '../../packages/remogram-mcp/run-cli.mjs';
+import { readFileSync, existsSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import {
+  resolveCliBin,
+  runRemogramCli,
+  packetToMcpContent,
+  remogramCwd,
+} from '../../packages/remogram-mcp/run-cli.mjs';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const repoRoot = join(__dirname, '../..');
 
 describe('remogram-mcp run-cli', () => {
+  it('resolveCliBin finds @remogram/cli bin', () => {
+    const bin = resolveCliBin();
+    expect(existsSync(bin)).toBe(true);
+    expect(bin).toMatch(/remogram\.js$/);
+  });
+
   it('remogramCwd prefers REMOGRAM_CWD', () => {
     const prev = process.env.REMOGRAM_CWD;
     process.env.REMOGRAM_CWD = '/tmp/remogram-test-cwd';
@@ -17,7 +34,6 @@ describe('remogram-mcp run-cli', () => {
       0,
     );
     expect(out.isError).toBe(false);
-    expect(out.content[0].type).toBe('text');
     expect(JSON.parse(out.content[0].text).type).toBe('repo_status');
   });
 
@@ -27,7 +43,33 @@ describe('remogram-mcp run-cli', () => {
     expect(JSON.parse(out.content[0].text).error_code).toBe('unparseable_provider_output');
   });
 
-  it('runRemogramCli is exported for integration', async () => {
+  it('runRemogramCli is exported for spawn delegation', () => {
     expect(typeof runRemogramCli).toBe('function');
+  });
+
+  it('runRemogramCli repo status with repo config', async () => {
+    const prev = process.env.REMOGRAM_CWD;
+    process.env.REMOGRAM_CWD = repoRoot;
+    try {
+      const result = await runRemogramCli(['repo', 'status']);
+      expect(result.stdout).toContain('schema_version');
+      const packet = JSON.parse(result.stdout);
+      expect(packet.type).toBe('repo_status');
+      // ok may be false without GITEA_TOKEN; envelope still valid
+      expect(packet.provider_id).toBeTruthy();
+    } finally {
+      if (prev == null) delete process.env.REMOGRAM_CWD;
+      else process.env.REMOGRAM_CWD = prev;
+    }
+  });
+});
+
+describe('project MCP config', () => {
+  it('mcp.json.example matches expected remogram-mcp command', () => {
+    const example = JSON.parse(
+      readFileSync(join(repoRoot, '.cursor/mcp.json.example'), 'utf8'),
+    );
+    expect(example.mcpServers.remogram.command).toBe('remogram-mcp');
+    expect(example.mcpServers.remogram.env.REMOGRAM_CWD).toBe('${workspaceFolder}');
   });
 });

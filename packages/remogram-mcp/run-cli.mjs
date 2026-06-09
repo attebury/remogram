@@ -1,17 +1,28 @@
 import { spawn } from 'node:child_process';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const CLI_BIN = join(__dirname, '../../remogram-cli/bin/remogram.js');
+const require = createRequire(import.meta.url);
 
 export function remogramCwd() {
   return process.env.REMOGRAM_CWD || process.cwd();
 }
 
+export function resolveCliBin() {
+  if (process.env.REMOGRAM_CLI) return process.env.REMOGRAM_CLI;
+  try {
+    return require.resolve('@remogram/cli/bin/remogram.js');
+  } catch {
+    return join(__dirname, '../remogram-cli/bin/remogram.js');
+  }
+}
+
 export function runRemogramCli(args) {
+  const cliBin = resolveCliBin();
   return new Promise((resolve, reject) => {
-    const child = spawn(process.execPath, [CLI_BIN, ...args, '--json'], {
+    const child = spawn(process.execPath, [cliBin, ...args, '--json'], {
       cwd: remogramCwd(),
       env: { ...process.env, REMOGRAM_CWD: remogramCwd() },
       stdio: ['ignore', 'pipe', 'pipe'],
