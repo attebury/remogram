@@ -79,4 +79,10 @@ describe('provider-gitea-api fixtures', () => {
       forgeError: { code: 'missing_ref' },
     });
   });
+
+  it('prChecks rejects option injection ref', async () => {
+    await expect(provider.prChecks(ctx, { ref: '--show-toplevel' })).rejects.toMatchObject({
+      forgeError: { code: 'invalid_args' },
+    });
+  });
 });

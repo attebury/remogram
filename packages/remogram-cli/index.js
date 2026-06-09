@@ -7,6 +7,8 @@ import {
   PACKET_TYPES,
   ERROR_CODES,
   forgeError,
+  assertGitRef,
+  assertGitRemote,
 } from '@remogram/core';
 import { provider as giteaApi } from '@remogram/provider-gitea-api';
 import { provider as githubApi } from '@remogram/provider-github-api';
@@ -110,6 +112,8 @@ export async function runCli(argv) {
           forgeError: forgeError(ERROR_CODES.INVALID_ARGS, '--base and --head required'),
         });
       }
+      assertGitRef(flags.base, '--base');
+      assertGitRef(flags.head, '--head');
       packet = forgePacket(
         PACKET_TYPES.REF_COMPARE,
         ctx,
@@ -130,6 +134,7 @@ export async function runCli(argv) {
           forgeError: forgeError(ERROR_CODES.INVALID_ARGS, '--number or --ref required for pr checks'),
         });
       }
+      if (flags.ref) assertGitRef(flags.ref, '--ref');
       packet = forgePacket(
         PACKET_TYPES.PR_CHECKS,
         ctx,
@@ -144,10 +149,12 @@ export async function runCli(argv) {
       }
       packet = forgePacket(PACKET_TYPES.MERGE_PLAN, ctx, await provider.mergePlan(ctx, { number }));
     } else if (group === 'sync' && sub === 'plan') {
+      const remote = flags.remote || ctx.config.remote;
+      assertGitRemote(remote, '--remote');
       packet = forgePacket(
         PACKET_TYPES.SYNC_PLAN,
         ctx,
-        await provider.syncPlan(ctx, flags.remote || ctx.config.remote),
+        await provider.syncPlan(ctx, remote),
       );
     } else {
       throw Object.assign(new Error(`Unknown command: ${positional.join(' ')}`), {

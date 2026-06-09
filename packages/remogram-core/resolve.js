@@ -3,6 +3,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { parseConfigFile } from './config-schema.js';
 import { ERROR_CODES, forgeError } from './contracts/errors.js';
+import { assertGitRemote } from './git-args.js';
 
 const HOST_ALIASES = new Map([
   ['localhost:3000', '127.0.0.1:3000'],
@@ -39,6 +40,7 @@ export function loadConfig(cwd = process.cwd()) {
 }
 
 export function gitRemoteUrl(cwd, remote = 'origin') {
+  assertGitRemote(remote);
   try {
     return execFileSync('git', ['remote', 'get-url', remote], {
       cwd,
@@ -73,14 +75,6 @@ export function parseRemoteUrl(url) {
   }
 }
 
-function normalizeTrustedHost(entry) {
-  try {
-    return entry.includes('://') ? new URL(entry).host : entry;
-  } catch {
-    return entry;
-  }
-}
-
 function hostsEquivalent(a, b) {
   if (a === b) return true;
   return HOST_ALIASES.get(a) === b || HOST_ALIASES.get(b) === a;
@@ -94,10 +88,7 @@ export function trustedBaseUrl(config, remoteHost) {
   } catch {
     return false;
   }
-  if (configHost === remoteHost || hostsEquivalent(configHost, remoteHost)) return true;
-  return (config.trustedHosts ?? []).some(
-    (entry) => normalizeTrustedHost(entry) === remoteHost,
-  );
+  return configHost === remoteHost || hostsEquivalent(configHost, remoteHost);
 }
 
 export function assertConfigMatchesRemote(config, parsed) {
@@ -113,6 +104,7 @@ export function assertConfigMatchesRemote(config, parsed) {
 
 export function assertForgeReady(loaded) {
   const { config, cwd } = loaded;
+  assertGitRemote(config.remote, 'config.remote');
   const remoteUrl = gitRemoteUrl(cwd, config.remote);
   const parsed = parseRemoteUrl(remoteUrl);
   if (!parsed) {
