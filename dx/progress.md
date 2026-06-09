@@ -1,18 +1,18 @@
-# Progress: Plan Lane — approve test strategy Intent Packet
+# Progress: Implement Lane — test strategy hardening
 
 ## Approach
-Command-owned lifecycle transitions on `plan/test-strategy-hardening-approve` from `origin/dev/scaffold`: draft → ready → approved for `goal_branch_test_strategy_hardening`.
+Implement nine-step plan on `goal/test-strategy-hardening` from `dev/scaffold`. CI, resolve/CLI/HTTP/packet tests, coverage, MCP export, README, fixture wired.
 
 ## Steps So Far
-1. Preflight: branch from `origin/dev/scaffold` @ `6703c41`.
-2. `topogram sdlc transition` draft→ready→approved with `actor_coding_agent`.
-3. `topogram check` pending before commit.
+1. Branch `goal/test-strategy-hardening` from `origin/dev/scaffold`.
+2. R1–R9 implemented; 58 tests passing; `npm run test:coverage` green.
+3. `topogram check` green.
 
 ## Current Status
-Approval branch ready to commit and open planning PR.
+Ready for implementation PR → Review → Merge.
 
 ## Current Failure / Open Item
 None.
 
 ## Next safe lane
-Review Lane → Merge Lane; then Implement Lane on `goal/test-strategy-hardening`.
+Review Lane on implementation PR.

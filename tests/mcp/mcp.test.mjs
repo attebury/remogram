@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { forgeErrorPacket, unknownForgeContext, ERROR_CODES, forgeError } from '@remogram/core';
-import { packetToMcpContent } from '../../packages/remogram-mcp/run-cli.mjs';
+import { packetToMcpContent } from '@remogram/mcp/run-cli';
 
 describe('remogram-mcp run-cli', () => {
   it('packetToMcpContent parse failure includes full envelope', () => {

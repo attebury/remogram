@@ -52,6 +52,24 @@ topogram sdlc prep commit . --json
 
 See [AGENTS.md](AGENTS.md).
 
+## Testing
+
+```bash
+npm test              # full suite
+npm run test:coverage # remogram-core coverage report
+```
+
+| Layer | Location | What runs | Git required |
+|-------|----------|-----------|--------------|
+| Core unit | `tests/core/` | Envelope, caps, `assertForgeReady`, HTTP, packet contracts | Temp repos in `resolve.test.mjs` only |
+| Provider | `tests/provider/` | Gitea adapter with mocked `fetch` + JSON fixtures | One test resolves refs via local git |
+| CLI integration | `tests/cli/` | All six commands via `runCli` with temp `.remogram.json` and injected mock provider | Temp git repo per test |
+| MCP | `tests/mcp/` | `packetToMcpContent` unit tests + stdio server smoke | Smoke uses repo cwd |
+
+- Tests live under `tests/**/*.test.mjs` only.
+- `dx/` agent progress logs are **excluded** from test and coverage scope.
+- CI (`.github/workflows/test.yml`) runs `npm test` and `npm run test:coverage` on Node 20+.
+
 ## Packages
 
 | Package | Role |

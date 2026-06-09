@@ -85,4 +85,30 @@ describe('provider-gitea-api fixtures', () => {
       forgeError: { code: 'invalid_args' },
     });
   });
+
+  it('prChecks maps statuses-success fixture to success conclusion', async () => {
+    global.fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify(load('pull.json')));
+          },
+        },
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify(load('statuses-success.json')));
+          },
+        },
+      });
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.check_conclusion).toBe('success');
+    expect(body.statuses).toHaveLength(1);
+    expect(body.statuses[0].context).toBe('ci/gate');
+  });
 });

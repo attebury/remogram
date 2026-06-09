@@ -1,0 +1,26 @@
+name: test
+
+on:
+  push:
+    branches: [main, dev/scaffold, 'goal/**', 'plan/**']
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stub Topogram engine devDependency
+        run: |
+          mkdir -p ../topogram/engine
+          printf '%s\n' '{"name":"@topogram/cli","version":"0.0.0","private":true}' > ../topogram/engine/package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+      - run: npm test
+      - run: npm run test:coverage
