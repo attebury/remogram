@@ -26,9 +26,9 @@ Copy `.remogram.json.example` to your repo root. Auth via `GITEA_TOKEN` (gitea-a
 ```bash
 remogram repo status --json
 remogram refs compare --base main --head feature/x --json
-remogram pr view --index 1 --json
-remogram pr checks --index 1 --json
-remogram merge plan --index 1 --json
+remogram pr view --number 1 --json
+remogram pr checks --number 1 --json
+remogram merge plan --number 1 --json
 remogram sync plan --remote origin --json
 ```
 

@@ -22,26 +22,20 @@ export function registerTools(server) {
       name: 'pr_status',
       description: 'PR metadata and mergeability facts.',
       inputSchema: z.object({
-        index: z.number().int().positive().optional(),
-        number: z.number().int().positive().optional(),
+        number: z.number().int().positive(),
       }),
-      args: (input) => {
-        const a = ['pr', 'view'];
-        if (input.index != null) a.push('--index', String(input.index));
-        if (input.number != null) a.push('--number', String(input.number));
-        return a;
-      },
+      args: (input) => ['pr', 'view', '--number', String(input.number)],
     },
     {
       name: 'pr_checks',
-      description: 'CI/check conclusions for a PR index or git ref.',
+      description: 'CI/check conclusions for a PR number or git ref.',
       inputSchema: z.object({
-        index: z.number().int().positive().optional(),
+        number: z.number().int().positive().optional(),
         ref: z.string().optional(),
       }),
       args: (input) => {
         const a = ['pr', 'checks'];
-        if (input.index != null) a.push('--index', String(input.index));
+        if (input.number != null) a.push('--number', String(input.number));
         if (input.ref) a.push('--ref', input.ref);
         return a;
       },
@@ -50,9 +44,9 @@ export function registerTools(server) {
       name: 'merge_plan',
       description: 'Merge readiness facts: mergeability, checks, blockers.',
       inputSchema: z.object({
-        index: z.number().int().positive(),
+        number: z.number().int().positive(),
       }),
-      args: (input) => ['merge', 'plan', '--index', String(input.index)],
+      args: (input) => ['merge', 'plan', '--number', String(input.number)],
     },
     {
       name: 'sync_plan',
@@ -79,7 +73,8 @@ export function registerTools(server) {
       async (input) => {
         const args = typeof tool.args === 'function' ? tool.args(input) : tool.args;
         const result = await runRemogramCli(args);
-        return packetToMcpContent(result.stdout, result.stderr, result.code);
+        const truncated = result.stdoutTruncated || result.stderrTruncated;
+        return packetToMcpContent(result.stdout, result.stderr, result.code, truncated);
       },
     );
   }

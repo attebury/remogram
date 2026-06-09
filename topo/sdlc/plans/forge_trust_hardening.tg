@@ -1,18 +1,18 @@
 plan plan_forge_trust_hardening {
   name "Forge Trust Hardening Implementation Plan"
-  description "Phased fix plan from adversarial review; Implement Lane executes on goal/forge-trust-hardening after planning PR merge."
+  description "Phased fix plan from adversarial review; implemented on goal/forge-trust-hardening."
   task task_forge_trust_hardening
   architecture_patterns [contract_boundary, fail_closed_gate, command_owned_mutation]
   priority critical
   steps {
-    step fix_trusted_base_url status pending description "C1: Remove configHost shortcut in trustedBaseUrl; only remoteHost or explicit alias pairs. Fix tests/core/envelope.test.mjs regression that blesses bypass."
-    step bind_config_to_remote status pending description "H1/M1: After parseRemoteUrl, require config owner/repo match parsed remote or derive from remote. Set repo_id from verified parse."
-    step encode_forge_paths status pending description "H2: encodeURIComponent on owner repo sha number; reject segments with slash dot-dot or percent."
-    step cap_and_sanitize_provider status pending description "H5/H6: Route fetchJson through capped read; capText all provider string fields; strip unbounded newlines in titles."
-    step fix_pr_index_and_sync status pending description "H3/H7: Remove or paginate --index; prefer --number only for v1. Remove git fetch from syncPlan; compare existing remote-tracking refs only."
-    step harden_mcp_and_cli status pending description "H4/M2/M6/M7/M9/M10: Remove or lock REMOGRAM_CLI; MCP fallback uses forgeErrorPacket; validate numeric flags; cap MCP stdout; align error type policy; trim config schema to wired providers or register stubs in CLI."
-    step add_regression_tests status pending description "Tests for C1 evil.com rejection, config mismatch, path encoding, oversize JSON, sync no-fetch, MCP envelope, forbidden nested keys deep scan optional."
-    step verify status pending description "npm test, topogram check, topogram sdlc prep commit; close bug records when verified."
+    step fix_trusted_base_url status done description "C1: Remove configHost shortcut in trustedBaseUrl; only remoteHost or explicit alias pairs."
+    step bind_config_to_remote status done description "H1/M1: Require config owner/repo match parsed remote; repo_id from verified parse."
+    step encode_forge_paths status done description "H2: encodeURIComponent on API path segments; Zod rejects invalid owner/repo."
+    step cap_and_sanitize_provider status done description "H5/H6: Capped fetchJson; sanitizeField on provider strings."
+    step fix_pr_index_and_sync status done description "H3/H7: --number only for PR lookup; syncPlan without git fetch."
+    step harden_mcp_and_cli status done description "H4/M2/M6/M7/M9/M10: REMOGRAM_CLI removed; forge_error envelope; flag validation; MCP stdout cap; stub providers wired."
+    step add_regression_tests status done description "Regression tests for trust, sanitization, MCP envelope."
+    step verify status done description "npm test and topogram check green; bugs marked fixed."
   }
-  status draft
+  status complete
 }

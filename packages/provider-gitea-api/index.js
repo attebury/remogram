@@ -1,5 +1,20 @@
 import { execFileSync } from 'node:child_process';
-import { fetchJson, ERROR_CODES, forgeError } from '@remogram/core';
+import {
+  fetchJson,
+  sanitizeField,
+  ERROR_CODES,
+  forgeError,
+} from '@remogram/core';
+
+const GIT_TIMEOUT_MS = 10_000;
+const AUTH_CAPABILITIES = [
+  'repo_status',
+  'ref_compare',
+  'pr_status',
+  'pr_checks',
+  'merge_plan',
+  'sync_plan',
+];
 
 export function giteaToken() {
   return process.env.GITEA_TOKEN || null;
@@ -28,6 +43,14 @@ export function authHeaders(token) {
   return { Authorization: `token ${token}`, Accept: 'application/json' };
 }
 
+export function repoApiPath(config, ...segments) {
+  const owner = encodeURIComponent(config.owner);
+  const repo = encodeURIComponent(config.repo);
+  const base = `/repos/${owner}/${repo}`;
+  if (!segments.length) return base;
+  return `${base}/${segments.map((s) => encodeURIComponent(String(s))).join('/')}`;
+}
+
 export async function giteaFetch(config, path, options = {}) {
   const token = requireToken();
   const url = `${apiBase(config)}${path}`;
@@ -37,9 +60,21 @@ export async function giteaFetch(config, path, options = {}) {
   });
 }
 
+function gitExec(cwd, args) {
+  return execFileSync('git', args, { cwd, encoding: 'utf8', timeout: GIT_TIMEOUT_MS }).trim();
+}
+
 export function gitRevParse(cwd, ref) {
   try {
-    return execFileSync('git', ['rev-parse', ref], { cwd, encoding: 'utf8' }).trim();
+    return gitExec(cwd, ['rev-parse', ref]);
+  } catch {
+    return null;
+  }
+}
+
+export function gitCurrentBranch(cwd) {
+  try {
+    return gitExec(cwd, ['rev-parse', '--abbrev-ref', 'HEAD']);
   } catch {
     return null;
   }
@@ -47,10 +82,7 @@ export function gitRevParse(cwd, ref) {
 
 export function gitAheadBehind(cwd, base, head) {
   try {
-    const out = execFileSync('git', ['rev-list', '--left-right', '--count', `${base}...${head}`], {
-      cwd,
-      encoding: 'utf8',
-    }).trim();
+    const out = gitExec(cwd, ['rev-list', '--left-right', '--count', `${base}...${head}`]);
     const [behind, ahead] = out.split(/\s+/).map(Number);
     return { ahead_by: ahead, behind_by: behind };
   } catch {
@@ -62,25 +94,19 @@ export async function repoStatus(ctx) {
   const token = giteaToken();
   let defaultBranch = null;
   if (token) {
-    const repo = await giteaFetch(ctx.config, `/repos/${ctx.config.owner}/${ctx.config.repo}`);
-    defaultBranch = repo.default_branch ?? null;
+    const repo = await giteaFetch(ctx.config, repoApiPath(ctx.config));
+    defaultBranch = sanitizeField(repo.default_branch);
   }
   return {
     auth_present: Boolean(token),
     auth_env: token ? 'GITEA_TOKEN' : null,
-    capabilities: [
-      'repo_status',
-      'ref_compare',
-      'pr_status',
-      'pr_checks',
-      'merge_plan',
-      'sync_plan',
-    ],
+    capabilities: token ? AUTH_CAPABILITIES : ['repo_status'],
     default_branch: defaultBranch,
   };
 }
 
 export async function refsCompare(ctx, baseRef, headRef) {
+  requireToken();
   const baseSha = gitRevParse(ctx.cwd, baseRef);
   const headSha = gitRevParse(ctx.cwd, headRef);
   if (!baseSha || !headSha) {
@@ -90,34 +116,21 @@ export async function refsCompare(ctx, baseRef, headRef) {
   }
   const counts = gitAheadBehind(ctx.cwd, baseSha, headSha);
   return {
-    base_ref: baseRef,
+    base_ref: sanitizeField(baseRef),
     base_sha: baseSha,
-    head_ref: headRef,
+    head_ref: sanitizeField(headRef),
     head_sha: headSha,
     ...counts,
   };
 }
 
-export async function getPull(ctx, { index, number }) {
-  if (number != null) {
-    return giteaFetch(ctx.config, `/repos/${ctx.config.owner}/${ctx.config.repo}/pulls/${number}`);
+export async function getPull(ctx, { number }) {
+  if (number == null) {
+    throw Object.assign(new Error('--number required'), {
+      forgeError: forgeError(ERROR_CODES.INVALID_ARGS, 'Provide --number for PR lookup'),
+    });
   }
-  if (index != null) {
-    const list = await giteaFetch(
-      ctx.config,
-      `/repos/${ctx.config.owner}/${ctx.config.repo}/pulls?state=all&limit=50`,
-    );
-    const pr = list[index - 1];
-    if (!pr) {
-      throw Object.assign(new Error('PR not found'), {
-        forgeError: forgeError(ERROR_CODES.MISSING_REF, `No PR at index ${index}`),
-      });
-    }
-    return pr;
-  }
-  throw Object.assign(new Error('index or number required'), {
-    forgeError: forgeError(ERROR_CODES.INVALID_ARGS, 'Provide --index or --number'),
-  });
+  return giteaFetch(ctx.config, repoApiPath(ctx.config, 'pulls', number));
 }
 
 function mergeability(pr) {
@@ -130,22 +143,27 @@ export async function prView(ctx, opts) {
   const pr = await getPull(ctx, opts);
   return {
     pr_number: pr.number,
-    pr_index: opts.index ?? null,
-    url: pr.html_url ?? pr.url,
-    title: pr.title,
-    state: pr.state,
-    base_ref: pr.base?.ref,
-    base_sha: pr.base?.sha,
-    head_ref: pr.head?.ref,
-    head_sha: pr.head?.sha,
+    url: sanitizeField(pr.html_url ?? pr.url),
+    title: sanitizeField(pr.title),
+    state: sanitizeField(pr.state),
+    base_ref: sanitizeField(pr.base?.ref),
+    base_sha: sanitizeField(pr.base?.sha),
+    head_ref: sanitizeField(pr.head?.ref),
+    head_sha: sanitizeField(pr.head?.sha),
     mergeability: mergeability(pr),
   };
 }
 
 export async function prChecks(ctx, opts) {
+  requireToken();
   let sha;
   if (opts.ref) {
-    sha = gitRevParse(ctx.cwd, opts.ref) || opts.ref;
+    sha = gitRevParse(ctx.cwd, opts.ref);
+    if (!sha) {
+      throw Object.assign(new Error('Missing ref'), {
+        forgeError: forgeError(ERROR_CODES.MISSING_REF, `Could not resolve ref ${opts.ref}`),
+      });
+    }
   } else {
     const pr = await getPull(ctx, opts);
     sha = pr.head?.sha;
@@ -157,12 +175,12 @@ export async function prChecks(ctx, opts) {
   }
   const statuses = await giteaFetch(
     ctx.config,
-    `/repos/${ctx.config.owner}/${ctx.config.repo}/commits/${sha}/statuses`,
+    repoApiPath(ctx.config, 'commits', sha, 'statuses'),
   );
   const mapped = (statuses || []).map((s) => ({
-    context: s.context,
-    state: s.state,
-    description: s.description,
+    context: sanitizeField(s.context),
+    state: sanitizeField(s.state),
+    description: sanitizeField(s.description),
   }));
   const conclusion = summarizeChecks(mapped);
   return { head_sha: sha, check_conclusion: conclusion, statuses: mapped };
@@ -178,7 +196,7 @@ function summarizeChecks(statuses) {
 
 export async function mergePlan(ctx, opts) {
   const view = await prView(ctx, opts);
-  const checks = await prChecks(ctx, { index: opts.index, number: view.pr_number });
+  const checks = await prChecks(ctx, { number: view.pr_number });
   const blockers = [];
   if (view.mergeability === 'conflicted') blockers.push('merge_conflict');
   if (view.state !== 'open') blockers.push('pr_not_open');
@@ -195,12 +213,10 @@ export async function mergePlan(ctx, opts) {
 
 export async function syncPlan(ctx, remoteName = 'origin') {
   const localSha = gitRevParse(ctx.cwd, 'HEAD');
+  const branch = gitCurrentBranch(ctx.cwd);
   let remoteSha = null;
-  try {
-    execFileSync('git', ['fetch', remoteName, '--quiet'], { cwd: ctx.cwd, stdio: 'ignore' });
-    remoteSha = gitRevParse(ctx.cwd, `${remoteName}/HEAD`) || gitRevParse(ctx.cwd, remoteName);
-  } catch {
-    /* fetch may fail offline in tests */
+  if (branch && branch !== 'HEAD') {
+    remoteSha = gitRevParse(ctx.cwd, `${remoteName}/${branch}`);
   }
   const blockers = [];
   let diverged = false;

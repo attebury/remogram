@@ -4,6 +4,11 @@ import { dirname, join } from 'node:path';
 import { parseConfigFile } from './config-schema.js';
 import { ERROR_CODES, forgeError } from './contracts/errors.js';
 
+const HOST_ALIASES = new Map([
+  ['localhost:3000', '127.0.0.1:3000'],
+  ['127.0.0.1:3000', 'localhost:3000'],
+]);
+
 export function findConfigPath(startDir = process.cwd()) {
   let dir = startDir;
   while (true) {
@@ -38,6 +43,7 @@ export function gitRemoteUrl(cwd, remote = 'origin') {
     return execFileSync('git', ['remote', 'get-url', remote], {
       cwd,
       encoding: 'utf8',
+      timeout: 10_000,
     }).trim();
   } catch {
     return null;
@@ -67,6 +73,19 @@ export function parseRemoteUrl(url) {
   }
 }
 
+function normalizeTrustedHost(entry) {
+  try {
+    return entry.includes('://') ? new URL(entry).host : entry;
+  } catch {
+    return entry;
+  }
+}
+
+function hostsEquivalent(a, b) {
+  if (a === b) return true;
+  return HOST_ALIASES.get(a) === b || HOST_ALIASES.get(b) === a;
+}
+
 export function trustedBaseUrl(config, remoteHost) {
   if (!config.baseUrl) return true;
   let configHost;
@@ -75,11 +94,21 @@ export function trustedBaseUrl(config, remoteHost) {
   } catch {
     return false;
   }
-  if (configHost === remoteHost) return true;
-  return (config.trustedHosts ?? []).some((entry) => {
-    const normalized = entry.includes('://') ? new URL(entry).host : entry;
-    return normalized === remoteHost || normalized === configHost;
-  });
+  if (configHost === remoteHost || hostsEquivalent(configHost, remoteHost)) return true;
+  return (config.trustedHosts ?? []).some(
+    (entry) => normalizeTrustedHost(entry) === remoteHost,
+  );
+}
+
+export function assertConfigMatchesRemote(config, parsed) {
+  if (config.owner !== parsed.owner || config.repo !== parsed.repo) {
+    throw Object.assign(new Error('Config owner/repo does not match git remote'), {
+      forgeError: forgeError(
+        ERROR_CODES.CONFIG_INVALID,
+        `Config repo ${config.owner}/${config.repo} does not match remote ${parsed.owner}/${parsed.repo}`,
+      ),
+    });
+  }
 }
 
 export function assertForgeReady(loaded) {
@@ -91,6 +120,7 @@ export function assertForgeReady(loaded) {
       forgeError: forgeError(ERROR_CODES.REMOTE_INFER_FAILED, 'Could not parse git remote URL'),
     });
   }
+  assertConfigMatchesRemote(config, parsed);
   if (config.baseUrl && !trustedBaseUrl(config, parsed.host)) {
     throw Object.assign(new Error('baseUrl host not trusted'), {
       forgeError: forgeError(
@@ -107,7 +137,7 @@ export function forgeContext(loaded) {
   return {
     providerId: config.provider,
     remoteName: config.remote,
-    repoId: `${config.owner}/${config.repo}`,
+    repoId: `${parsed.owner}/${parsed.repo}`,
     config,
     cwd: loaded.cwd,
     parsed,

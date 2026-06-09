@@ -1,16 +1,34 @@
 import { ERROR_CODES, forgeError } from './contracts/errors.js';
-import { readStreamCapped } from './caps.js';
+import { readStreamCapped, DEFAULT_MAX_BYTES } from './caps.js';
 
 const DEFAULT_TIMEOUT_MS = 30_000;
+const DEFAULT_JSON_MAX_BYTES = DEFAULT_MAX_BYTES;
 
 export async function fetchWithTimeout(url, options = {}, timeoutMs = DEFAULT_TIMEOUT_MS) {
   const signal = AbortSignal.timeout(timeoutMs);
   return fetch(url, { ...options, signal });
 }
 
-export async function fetchJson(url, options = {}, timeoutMs = DEFAULT_TIMEOUT_MS) {
+async function readResponseTextCapped(res, maxBytes) {
+  if (!res.body) return '';
+  const capped = await readStreamCapped(res.body, maxBytes);
+  if (capped.truncated) {
+    throw Object.assign(new Error('Provider output exceeded cap'), {
+      forgeError: forgeError(ERROR_CODES.OVERSIZED_RAW_OUTPUT, 'Provider response exceeded byte cap'),
+      status: res.status,
+    });
+  }
+  return capped.text;
+}
+
+export async function fetchJson(
+  url,
+  options = {},
+  timeoutMs = DEFAULT_TIMEOUT_MS,
+  maxBytes = DEFAULT_JSON_MAX_BYTES,
+) {
   const res = await fetchWithTimeout(url, options, timeoutMs);
-  const text = await res.text();
+  const text = await readResponseTextCapped(res, maxBytes);
   let body;
   try {
     body = text ? JSON.parse(text) : null;
@@ -30,10 +48,10 @@ export async function fetchJson(url, options = {}, timeoutMs = DEFAULT_TIMEOUT_M
   return body;
 }
 
-export async function fetchTextCapped(url, options = {}, maxBytes) {
+export async function fetchTextCapped(url, options = {}, maxBytes = DEFAULT_MAX_BYTES) {
   const res = await fetchWithTimeout(url, options);
   if (!res.ok) {
-    const text = await res.text().catch(() => res.statusText);
+    const text = await readResponseTextCapped(res, maxBytes).catch(() => res.statusText);
     throw Object.assign(new Error(text), {
       forgeError: forgeError(ERROR_CODES.API_ERROR, text, res.status),
       status: res.status,
