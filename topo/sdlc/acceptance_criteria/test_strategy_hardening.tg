@@ -49,7 +49,7 @@ acceptance_criterion ac_test_mcp_exports {
 
 acceptance_criterion ac_test_readme_testing {
   name "README testing documentation"
-  description "Given README Testing section, when maintainer reads it, then layers (unit, provider mock, CLI integration, MCP smoke), mock vs git requirements, and npm test command are documented."
+  description "Given README Testing section, when maintainer reads it, then layers (unit, provider mock, CLI integration, MCP smoke), mock vs git requirements, npm test command, and explicit dx/ exclusion from tests and coverage are documented."
   requirement req_test_strategy_hardening
   status approved
 }

@@ -12,7 +12,7 @@ plan plan_test_strategy_hardening {
     step test_http_expansion status pending description "R5: Tests for oversized body, invalid JSON, sanitized API errors, redirect in fetchJson/fetchTextCapped."
     step test_coverage_core status pending description "R6: Vitest coverage scoped to packages/remogram-core with npm script; optional threshold."
     step test_mcp_package_exports status pending description "R7: Export MCP adapter helpers from package; update tests to import via @remogram/mcp."
-    step doc_testing_readme status pending description "R8: README Testing section — pyramid, mocks, git requirements, commands."
+    step doc_testing_readme status pending description "R8: README Testing section — pyramid, mocks, git requirements, commands; dx/ excluded from test and coverage scope."
     step test_fixture_hygiene status pending description "R9: Wire statuses-success.json into prChecks success test or delete orphaned fixture."
     step verify status pending description "npm test, coverage run, topogram check green; all nine ACs satisfied."
   }

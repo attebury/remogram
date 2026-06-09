@@ -4,7 +4,7 @@ task task_test_strategy_hardening {
   feature feature_remogram
   phase implementation
   scope current_feature
-  non_goals ["Live Gitea integration" "100% monorepo coverage" "New CLI commands"]
+  non_goals ["Live Gitea integration" "100% monorepo coverage" "New CLI commands" "Tests or coverage under dx/"]
   entrypoints ["tests/**" ".github/**" "packages/remogram-mcp/**" "packages/remogram-core/**" "vitest.config.js" "package.json" "README.md"]
   satisfies [req_test_strategy_hardening]
   acceptance_refs [ac_test_ci_gate ac_test_assert_forge_ready ac_test_cli_integration ac_test_packet_contracts ac_test_http_layer ac_test_coverage_core ac_test_mcp_exports ac_test_readme_testing ac_test_fixture_hygiene]

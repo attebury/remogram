@@ -1,18 +1,18 @@
-# Progress: Plan Lane — test strategy hardening Intent Packet
+# Progress: Plan constraint — exclude dx/ from tests
 
 ## Approach
-Plan Lane draft Intent Packet for nine code-review test recommendations. Branch from `origin/dev/scaffold` (active line; `origin/main` stale at ce75135).
+User constraint: do not test anything under `dx/`. Encoded in vitest config and test-strategy SDLC records on `plan/test-strategy-hardening`.
 
 ## Steps So Far
-1. Preflight: fetched origin; stashed local `dx/progress.md` edits; created `plan/test-strategy-hardening` from `origin/dev/scaffold`.
-2. Created SDLC records: pitch, requirement, 9 acceptance criteria, task, 10-step plan, draft goal_branch, verification.
-3. `topogram check` green.
+1. Added `test.exclude` and `coverage.exclude` for `dx/**` in `vitest.config.js`.
+2. Updated pitch no_go_areas, task non_goals, plan R8 step, and README AC.
+3. `npm test` still 34 passing.
 
 ## Current Status
-**Planning PR pending push.** Intent Packet `goal_branch_test_strategy_hardening` is **draft**. Task `task_test_strategy_hardening` **unclaimed**. All plan steps **pending**.
+Local edits on `plan/test-strategy-hardening`; not pushed. PR #6 may need refresh if merged before push.
 
 ## Current Failure / Open Item
-Push planning branch and open PR for Review Lane.
+None.
 
 ## Next safe lane
-Review Lane on planning PR; then user may approve Intent Packet before Implement Lane.
+Push amend to PR #6 or new commit before Merge Lane.
