@@ -1,22 +1,18 @@
-# Progress: Plan Lane — forge trust round 2
+# Progress: Plan Lane — approve goal branch for round 2 bugs
 
 ## Approach
-Plan Lane planning-only branch from `origin/dev/scaffold` (active implementation line; `origin/main` stale). SDLC records map second-pass security review (5 priority fixes) to phased plan. No implementation code.
+User requested approving all 5 open bugs. Bugs have no `approved` status in Topogram (lifecycle: open → in-progress → fixed → verified). Command-owned approval applied to **goal_branch_forge_trust_round2** (draft → ready → approved) to authorize Implement Lane for all linked bugs.
 
 ## Steps So Far
-1. Branch `plan/forge-trust-round2` from `origin/dev/scaffold`.
-2. Created pitch, requirement, 5 bugs, 5 acceptance criteria, task, 7-step plan, draft goal_branch, verification.
-3. Blocked `task_remogram_core` on `task_forge_trust_round2` until round 2 trust fixes land.
+1. Ran `topogram sdlc transition goal_branch_forge_trust_round2 ready|approved` with actor_coding_agent.
+2. `topogram check` green; `sdlc prep commit` green (receipt-backed mutations).
+3. Planning branch `plan/forge-trust-round2-approve` for lifecycle PR.
 
 ## Current Status
-Planning records ready for planning PR → Review Lane → Merge Lane. Intent Packet **draft** (not approved/selectable).
+Intent Packet **approved** (selectable after lifecycle PR merge). Five bugs remain **open** until Implement Lane fixes land.
 
 ## Current Failure / Open Item
-`origin/main` (ce75135) is behind `dev/scaffold`; planning targets dev/scaffold line per repo convention.
+Bug records cannot be "approved" — only fixed/verified after implementation.
 
-## Five planned fixes
-1. **C1** — baseUrl host must match remote; narrow trustedHosts to alias-only
-2. **H1** — HTTP redirect policy (no credential relay)
-3. **H2/H3** — git ref/remote argv hardening
-4. **M1** — envelope trust fields immutable
-5. **M3/M4** — sanitize errors, remote, URL schemes
+## Next safe lane
+Review → Merge lifecycle PR → Implement Lane on `goal/forge-trust-round2`.

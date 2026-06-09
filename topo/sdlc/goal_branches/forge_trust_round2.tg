@@ -4,5 +4,5 @@ goal_branch goal_branch_forge_trust_round2 {
   branch_ref "goal/forge-trust-round2"
   task task_forge_trust_round2
   evidence_refs [local:topo/sdlc/pitches/forge_trust_round2.tg, local:topo/sdlc/requirements/forge_trust_round2.tg, local:topo/sdlc/tasks/forge_trust_round2.tg, local:topo/sdlc/plans/forge_trust_round2.tg, local:topo/sdlc/bugs/forge-trust-round2.tg]
-  status draft
+  status approved
 }
