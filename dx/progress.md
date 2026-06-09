@@ -1,18 +1,14 @@
-# Progress: Implement Lane — test strategy hardening
+# Progress: Plan Lane — test strategy follow-up (rebased for merge)
 
 ## Approach
-Implement nine-step plan on `goal/test-strategy-hardening` from `dev/scaffold`. CI, resolve/CLI/HTTP/packet tests, coverage, MCP export, README, fixture wired.
+Draft Intent Packet for PR #8 Review Lane low findings. Rebased `plan/test-strategy-followup` onto post–PR #8 `dev/scaffold` @ b8b3419.
 
 ## Steps So Far
-1. Branch `goal/test-strategy-hardening` from `origin/dev/scaffold`.
-2. R1–R9 implemented; 58 tests passing; `npm run test:coverage` green.
-3. `topogram check` green.
+1. Created SDLC records (pitch, requirement, 5 ACs, task, plan, draft goal_branch).
+2. Rebased onto `origin/dev/scaffold` after PR #8 merge.
 
 ## Current Status
-Ready for implementation PR → Review → Merge.
-
-## Current Failure / Open Item
-None.
+Rebase conflict resolved; pushing for PR #9 merge.
 
 ## Next safe lane
-Review Lane on implementation PR.
+Merge PR #9 → Review/approve follow-up Intent Packet.

@@ -1,0 +1,8 @@
+goal_branch goal_branch_test_strategy_followup {
+  name "Test Strategy Follow-up Intent Packet"
+  description "Draft Intent Packet for PR #8 Review Lane low findings on dev/scaffold. Planning-only until explicit approval."
+  branch_ref "goal/test-strategy-followup"
+  task task_test_strategy_followup
+  evidence_refs [local:topo/sdlc/pitches/test_strategy_followup.tg, local:topo/sdlc/requirements/test_strategy_followup.tg, local:topo/sdlc/tasks/test_strategy_followup.tg, local:topo/sdlc/plans/test_strategy_followup.tg, local:topo/sdlc/acceptance_criteria/test_strategy_followup.tg]
+  status draft
+}

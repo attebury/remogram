@@ -1,0 +1,16 @@
+plan plan_test_strategy_followup {
+  name "Test Strategy Follow-up Plan"
+  description "Five-step plan from PR #8 Review Lane lows; implement on goal/test-strategy-followup after PR #8 merges to dev/scaffold."
+  task task_test_strategy_followup
+  architecture_patterns [contract_boundary, command_owned_mutation]
+  priority medium
+  steps {
+    step test_default_providers_wiring status pending description "L2: CLI test without options.providers — github-api stub via default PROVIDERS returns provider_unsupported envelope."
+    step test_fetch_text_capped_sanitize status pending description "L3: Test fetchTextCapped non-OK path; sanitize error message in http.js if still raw."
+    step tighten_coverage_report status pending description "L4: Vitest coverage config so report excludes MCP/provider packages from included targets."
+    step doc_providers_seam status pending description "L1: README — options.providers is test-only; MCP spawn uses default map."
+    step ci_host_docs status pending description "L5: Document GitHub Actions vs Gitea in README and/or add .gitea/workflows/test.yml mirror."
+    step verify status pending description "npm test, test:coverage, topogram check green; refresh from dev/scaffold if PR #8 landed after branch cut."
+  }
+  status draft
+}

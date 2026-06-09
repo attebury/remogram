@@ -1,0 +1,34 @@
+acceptance_criterion ac_test_default_providers_wiring {
+  name "CLI default PROVIDERS map wiring"
+  description "Given temp dir with .remogram.json using github-api and no options.providers injection, when runCli repo status runs, then default PROVIDERS map resolves stub and returns forge_error with provider_unsupported."
+  requirement req_test_strategy_followup
+  status approved
+}
+
+acceptance_criterion ac_test_fetch_text_capped_sanitize {
+  name "fetchTextCapped non-OK error sanitization"
+  description "Given non-OK response body with control characters, when fetchTextCapped runs, then ERROR_CODES.API_ERROR message is sanitized via sanitizeField."
+  requirement req_test_strategy_followup
+  status approved
+}
+
+acceptance_criterion ac_test_coverage_report_scope {
+  name "Coverage report scoped to remogram-core"
+  description "Given npm run test:coverage, when report emits, then summary focuses on packages/remogram-core and does not list remogram-mcp or provider packages as included targets."
+  requirement req_test_strategy_followup
+  status approved
+}
+
+acceptance_criterion ac_test_readme_providers_seam {
+  name "README documents providers test seam"
+  description "Given README Testing section, when maintainer reads it, then options.providers is documented as test-only and production MCP/CLI must use default PROVIDERS."
+  requirement req_test_strategy_followup
+  status approved
+}
+
+acceptance_criterion ac_test_ci_host_documentation {
+  name "CI host documentation or Gitea mirror"
+  description "Given README or .gitea/workflows, when maintainer reads CI setup, then GitHub Actions vs local Gitea expectations are documented or a Gitea workflow mirror exists."
+  requirement req_test_strategy_followup
+  status approved
+}
