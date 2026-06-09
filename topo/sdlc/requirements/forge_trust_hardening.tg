@@ -1,0 +1,9 @@
+requirement req_forge_trust_hardening {
+  name "Remogram forge trust boundary enforcement"
+  description "Remogram must fail closed on host trust, bind API targets to verified git remote owner/repo, encode forge path segments, cap and sanitize provider strings, use capped JSON fetch, keep v1 read/plan side-effect free, and emit consistent error envelopes."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority critical
+  status approved
+}

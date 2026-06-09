@@ -1,0 +1,12 @@
+pitch pitch_forge_trust_hardening {
+  name "Forge Trust Hardening"
+  description "Close adversarial review gaps so remogram enforces the stated forge boundary: host trust, config-remote binding, sanitized capped provider output, and honest read-only semantics."
+  appetite "medium"
+  problem "Greenfield v1 scaffold passes tests but trustedBaseUrl is bypassable, config can lie about repo_id, provider output is unsanitized, sync plan mutates git, and tests bless a security bug."
+  solution_sketch "Phased fixes in remogram-core, provider-gitea-api, remogram-cli, remogram-mcp with regression tests per finding; no Topogram runtime dependency."
+  rabbit_holes "Re-architecting all four providers; mutation commands; porting archive branch wholesale."
+  no_go_areas "Topogram SCM adapter; live github-api gh tea providers; hand-editing command-owned sidecars."
+  affects [cap_forge_remote_ops]
+  priority critical
+  status submitted
+}

@@ -1,0 +1,8 @@
+goal_branch goal_branch_forge_trust_hardening {
+  name "Forge Trust Hardening Intent Packet"
+  description "Draft Intent Packet for adversarial-review remediation on dev/scaffold. Planning-only until explicit approval; not selectable for implementation."
+  branch_ref "goal/forge-trust-hardening"
+  task task_forge_trust_hardening
+  evidence_refs [local:topo/sdlc/pitches/forge_trust_hardening.tg, local:topo/sdlc/requirements/forge_trust_hardening.tg, local:topo/sdlc/tasks/forge_trust_hardening.tg, local:topo/sdlc/plans/forge_trust_hardening.tg, local:topo/sdlc/bugs/forge-trust-review.tg]
+  status draft
+}

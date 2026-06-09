@@ -1,0 +1,12 @@
+verification verification_forge_trust_hardening {
+  name "Forge trust hardening test suite"
+  description "Regression tests for host trust, config binding, caps, read-only sync plan, MCP envelope."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_regression]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_trusted_base_url_bypass, bug_config_remote_repo_mismatch, bug_provider_path_encoding, bug_pr_index_unstable, bug_sync_plan_git_fetch, bug_unsanitized_provider_output]
+  status active
+}

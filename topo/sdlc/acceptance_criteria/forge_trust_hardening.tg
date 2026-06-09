@@ -1,0 +1,27 @@
+acceptance_criterion ac_forge_trust_host_and_config {
+  name "Host trust and config-remote binding"
+  description "Given trustedHosts and baseUrl, when remote host is evil.com, then trustedBaseUrl is false. Given config owner/repo mismatch vs git remote, when any command runs, then CONFIG_INVALID or REMOTE_INFER_FAILED with ok false."
+  requirement req_forge_trust_hardening
+  status approved
+}
+
+acceptance_criterion ac_forge_trust_provider_safety {
+  name "Provider output caps and path encoding"
+  description "Given provider returns oversized title or JSON body, when pr view or repo status runs, then oversized_raw_output or truncated sanitized fields. Given owner with slash or dot-dot, when API path built, then request rejected before fetch."
+  requirement req_forge_trust_hardening
+  status approved
+}
+
+acceptance_criterion ac_forge_trust_read_only_semantics {
+  name "Read/plan semantics and PR lookup"
+  description "Given sync plan invoked, when comparing local and remote, then no git fetch side effect. Given pr view, when --number provided, then stable PR facts; --index removed or paginated with documented sort."
+  requirement req_forge_trust_hardening
+  status approved
+}
+
+acceptance_criterion ac_forge_trust_mcp_envelope {
+  name "MCP and error envelope consistency"
+  description "Given MCP CLI parse failure, when tool returns, then packet includes full forge envelope fields. Given REMOGRAM_CLI unset, when MCP runs, then only resolved @remogram/cli bin is spawned."
+  requirement req_forge_trust_hardening
+  status approved
+}

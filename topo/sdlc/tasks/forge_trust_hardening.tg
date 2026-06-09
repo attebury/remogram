@@ -1,0 +1,21 @@
+task task_forge_trust_hardening {
+  name "Implement forge trust hardening"
+  description "Fix C1 trustedBaseUrl, config-remote binding, path encoding, provider sanitization, capped fetchJson, sync plan read-only, PR index semantics, MCP envelope and REMOGRAM_CLI lockdown; add regression tests for each bug record."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Mutation commands" "Live stub providers" "Topogram SCM adapter"]
+  entrypoints ["packages/remogram-core/**" "packages/provider-gitea-api/**" "packages/remogram-cli/**" "packages/remogram-mcp/**" "tests/**" "topo/shapes/**"]
+  satisfies [req_forge_trust_hardening]
+  acceptance_refs [ac_forge_trust_host_and_config, ac_forge_trust_provider_safety, ac_forge_trust_read_only_semantics, ac_forge_trust_mcp_envelope]
+  verification_refs [verification_forge_trust_hardening]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate, command_owned_mutation]
+  bug_discovery bug_linked
+  bug_discovery_rationale "Adversarial code review 2026-06-09 identified six open bugs in forge-trust-review.tg."
+  disposition active
+  priority critical
+  work_type bugfix
+  status unclaimed
+}
