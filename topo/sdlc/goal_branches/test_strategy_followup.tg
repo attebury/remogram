@@ -4,5 +4,5 @@ goal_branch goal_branch_test_strategy_followup {
   branch_ref "goal/test-strategy-followup"
   task task_test_strategy_followup
   evidence_refs [local:topo/sdlc/pitches/test_strategy_followup.tg, local:topo/sdlc/requirements/test_strategy_followup.tg, local:topo/sdlc/tasks/test_strategy_followup.tg, local:topo/sdlc/plans/test_strategy_followup.tg, local:topo/sdlc/acceptance_criteria/test_strategy_followup.tg]
-  status approved
+  status active
 }

@@ -17,5 +17,6 @@ task task_test_strategy_followup {
   disposition active
   priority medium
   work_type testing
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  status in-progress
 }

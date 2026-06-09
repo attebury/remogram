@@ -45,6 +45,29 @@
       "at": "2026-06-09T23:45:29.258Z",
       "by": "actor_coding_agent",
       "note": null
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-09T23:52:24.677Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "task_test_strategy_followup": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-09T23:50:13.149Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-09T23:50:13.161Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ]
 }

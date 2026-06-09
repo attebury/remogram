@@ -66,9 +66,10 @@ export async function fetchTextCapped(url, options = {}, maxBytes = DEFAULT_MAX_
     });
   }
   if (!res.ok) {
-    const text = await readResponseTextCapped(res, maxBytes).catch(() => res.statusText);
-    throw Object.assign(new Error(text), {
-      forgeError: forgeError(ERROR_CODES.API_ERROR, text, res.status),
+    const raw = await readResponseTextCapped(res, maxBytes).catch(() => res.statusText);
+    const message = sanitizeField(raw) || 'API error';
+    throw Object.assign(new Error(message), {
+      forgeError: forgeError(ERROR_CODES.API_ERROR, message, res.status),
       status: res.status,
     });
   }
