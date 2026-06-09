@@ -1,14 +1,15 @@
-# Progress: Plan Lane — test strategy follow-up (rebased for merge)
+# Progress: Plan Lane — approve follow-up Intent Packet
 
 ## Approach
-Draft Intent Packet for PR #8 Review Lane low findings. Rebased `plan/test-strategy-followup` onto post–PR #8 `dev/scaffold` @ b8b3419.
+Command-owned lifecycle draft → ready → approved for `goal_branch_test_strategy_followup` on `plan/test-strategy-followup-approve`.
 
 ## Steps So Far
-1. Created SDLC records (pitch, requirement, 5 ACs, task, plan, draft goal_branch).
-2. Rebased onto `origin/dev/scaffold` after PR #8 merge.
+1. Branch from `origin/dev/scaffold` @ `4a979ac`.
+2. `topogram sdlc transition` with `actor_coding_agent`.
+3. `topogram check` green; approval PR pending push.
 
 ## Current Status
-Rebase conflict resolved; pushing for PR #9 merge.
+**Approved on branch** — merge approval PR to make selectable on `dev/scaffold`.
 
 ## Next safe lane
-Merge PR #9 → Review/approve follow-up Intent Packet.
+Review Lane → Merge approval PR → Implement on `goal/test-strategy-followup`.
