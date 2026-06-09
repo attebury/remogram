@@ -63,12 +63,14 @@ npm run test:coverage # remogram-core coverage report
 |-------|----------|-----------|--------------|
 | Core unit | `tests/core/` | Envelope, caps, `assertForgeReady`, HTTP, packet contracts | Temp repos in `resolve.test.mjs` only |
 | Provider | `tests/provider/` | Gitea adapter with mocked `fetch` + JSON fixtures | One test resolves refs via local git |
-| CLI integration | `tests/cli/` | All six commands via `runCli` with temp `.remogram.json` and injected mock provider | Temp git repo per test |
+| CLI integration | `tests/cli/` | All six commands via `runCli` with temp `.remogram.json` and injected mock provider; default `PROVIDERS` wiring in `default-providers.test.mjs` | Temp git repo per test |
 | MCP | `tests/mcp/` | `packetToMcpContent` unit tests + stdio server smoke | Smoke uses repo cwd |
 
 - Tests live under `tests/**/*.test.mjs` only.
 - `dx/` agent progress logs are **excluded** from test and coverage scope.
-- CI (`.github/workflows/test.yml`) runs `npm test` and `npm run test:coverage` on Node 20+.
+- `runCli(argv, { cwd, providers })` accepts `options.providers` **for tests only** — production CLI and MCP spawn use the built-in `PROVIDERS` map; do not inject providers in app code.
+- Coverage (`npm run test:coverage`) reports **`packages/remogram-core`** only — not MCP or provider packages.
+- **CI:** GitHub Actions (`.github/workflows/test.yml`) runs on push/PR when hosted on GitHub. For local **Gitea**, mirror workflow lives at `.gitea/workflows/test.yml` (same steps: Node 20, stub Topogram sibling, `npm ci`, `npm test`, `npm run test:coverage`). Gitea Actions may require enabling workflows in server settings.
 
 ## Packages
 

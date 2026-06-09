@@ -55,6 +55,23 @@ describe('fetchJson edge cases', () => {
     });
   });
 
+  it('sanitizes non-OK fetchTextCapped error body', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        mockResponse({
+          status: 502,
+          ok: false,
+          body: 'bad\ncontrol\x01chars',
+        }),
+      ),
+    );
+
+    await expect(fetchTextCapped('http://localhost:3000/raw')).rejects.toMatchObject({
+      forgeError: { code: ERROR_CODES.API_ERROR, message: 'bad control chars' },
+    });
+  });
+
   it('rejects redirects in fetchTextCapped', async () => {
     vi.stubGlobal(
       'fetch',

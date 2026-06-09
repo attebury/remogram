@@ -1,15 +1,15 @@
-# Progress: Plan Lane — approve follow-up Intent Packet
+# Progress: Implement Lane — test strategy follow-up
 
 ## Approach
-Command-owned lifecycle draft → ready → approved for `goal_branch_test_strategy_followup` on `plan/test-strategy-followup-approve`.
+Branch `goal/test-strategy-followup` from `dev/scaffold` @ `a20eb23`. Command-owned `work start` + goal_branch `approved → active`.
 
 ## Steps So Far
-1. Branch from `origin/dev/scaffold` @ `4a979ac`.
-2. `topogram sdlc transition` with `actor_coding_agent`.
-3. `topogram check` green; approval PR pending push.
+1. Preflight: fresh `origin/dev/scaffold`, claimed `task_test_strategy_followup`.
+2. Implemented five plan steps + verify (61 tests, coverage scoped to remogram-core).
+3. `topogram check` green after goal_branch → active transition.
 
 ## Current Status
-**Approved on branch** — merge approval PR to make selectable on `dev/scaffold`.
+Implementation complete on branch; PR pending push.
 
 ## Next safe lane
-Review Lane → Merge approval PR → Implement on `goal/test-strategy-followup`.
+Review Lane → Merge Lane.
