@@ -1,0 +1,12 @@
+pitch pitch_test_strategy_followup {
+  name "Test Strategy Follow-up (Review Lows)"
+  description "Close PR #8 Review Lane low findings: default PROVIDERS wiring test without mock injection, fetchTextCapped error-path tests, tighter coverage reporting, README providers seam docs, and CI host documentation."
+  appetite "small"
+  problem "PR #8 test strategy hardening left residual gaps: CLI tests inject mock providers and never exercise the default PROVIDERS map; fetchTextCapped non-OK sanitization untested; coverage report lists non-core packages; runCli options.providers seam undocumented for production callers; GitHub Actions workflow may not run on local Gitea."
+  solution_sketch "Small follow-up on dev/scaffold after PR #8 merge: one wiring test via stub github-api, HTTP test + optional sanitize fix, vitest coverage reporter tightening, README additions, CI docs or Gitea workflow mirror."
+  rabbit_holes "Full E2E against live Gitea; rewiring entire test pyramid; mandatory coverage thresholds on all packages."
+  no_go_areas "New CLI commands; live stub provider implementations; hand-editing command-owned sidecars; approving Intent Packet without explicit user request."
+  affects [cap_forge_remote_ops cap_validate_workspace]
+  priority medium
+  status submitted
+}

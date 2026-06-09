@@ -1,0 +1,21 @@
+task task_test_strategy_followup {
+  name "Implement test strategy review follow-up"
+  description "Address PR #8 Review Lane low findings: default PROVIDERS wiring test, fetchTextCapped sanitize test/fix, coverage report scope, README providers seam, CI host docs."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Live Gitea integration" "New CLI commands" "Implement github-gh or gitea-tea providers"]
+  entrypoints ["tests/**" "packages/remogram-core/http.js" "vitest.config.js" "README.md" ".github/**" ".gitea/**"]
+  satisfies [req_test_strategy_followup]
+  acceptance_refs [ac_test_default_providers_wiring ac_test_fetch_text_capped_sanitize ac_test_coverage_report_scope ac_test_readme_providers_seam ac_test_ci_host_documentation]
+  verification_refs [verification_test_strategy_followup]
+  affects [cap_forge_remote_ops cap_validate_workspace]
+  blocked_by []
+  architecture_patterns [contract_boundary, command_owned_mutation]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "PR #8 Review Lane residual low findings; not security regressions."
+  disposition active
+  priority medium
+  work_type testing
+  status unclaimed
+}
