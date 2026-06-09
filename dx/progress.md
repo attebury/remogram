@@ -1,18 +1,18 @@
-# Progress: Plan constraint — exclude dx/ from tests
+# Progress: Plan Lane — approve test strategy Intent Packet
 
 ## Approach
-User constraint: do not test anything under `dx/`. Encoded in vitest config and test-strategy SDLC records on `plan/test-strategy-hardening`.
+Command-owned lifecycle transitions on `plan/test-strategy-hardening-approve` from `origin/dev/scaffold`: draft → ready → approved for `goal_branch_test_strategy_hardening`.
 
 ## Steps So Far
-1. Added `test.exclude` and `coverage.exclude` for `dx/**` in `vitest.config.js`.
-2. Updated pitch no_go_areas, task non_goals, plan R8 step, and README AC.
-3. `npm test` still 34 passing.
+1. Preflight: branch from `origin/dev/scaffold` @ `6703c41`.
+2. `topogram sdlc transition` draft→ready→approved with `actor_coding_agent`.
+3. `topogram check` pending before commit.
 
 ## Current Status
-Local edits on `plan/test-strategy-hardening`; not pushed. PR #6 may need refresh if merged before push.
+Approval branch ready to commit and open planning PR.
 
 ## Current Failure / Open Item
 None.
 
 ## Next safe lane
-Push amend to PR #6 or new commit before Merge Lane.
+Review Lane → Merge Lane; then Implement Lane on `goal/test-strategy-hardening`.
