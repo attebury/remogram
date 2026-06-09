@@ -1,0 +1,62 @@
+acceptance_criterion ac_test_ci_gate {
+  name "CI runs npm test on Node 20+"
+  description "Given push or PR to active branch, when CI workflow runs, then npm test executes on Node 20 or later and failure blocks merge."
+  requirement req_test_strategy_hardening
+  status approved
+}
+
+acceptance_criterion ac_test_assert_forge_ready {
+  name "assertForgeReady composition tests"
+  description "Given temp config and injected remote parse outcomes, when assertForgeReady runs, then owner/repo mismatch, untrusted baseUrl, SSH and HTTPS remotes, and success paths produce expected forgeError codes without requiring live git in unit tests."
+  requirement req_test_strategy_hardening
+  status approved
+}
+
+acceptance_criterion ac_test_cli_integration {
+  name "CLI integration per command"
+  description "Given temp dir with .remogram.json and stub provider, when each of six CLI commands runs via runCli, then ok packet or expected error envelope with schema_version 1 and correct type."
+  requirement req_test_strategy_hardening
+  status approved
+}
+
+acceptance_criterion ac_test_packet_contracts {
+  name "Golden packet contracts"
+  description "Given fixture provider bodies per PACKET_TYPES, when forgePacket wraps them, then output matches golden snapshots for required envelope fields and packet-specific body keys."
+  requirement req_test_strategy_hardening
+  status approved
+}
+
+acceptance_criterion ac_test_http_layer {
+  name "HTTP layer edge cases"
+  description "Given oversized body, invalid JSON, non-OK API message with control chars, and redirect response, when fetchJson or fetchTextCapped runs, then expected ERROR_CODES and sanitized messages."
+  requirement req_test_strategy_hardening
+  status approved
+}
+
+acceptance_criterion ac_test_coverage_core {
+  name "Vitest coverage on remogram-core"
+  description "Given npm test with coverage enabled for remogram-core, when suite runs, then coverage report emits and critical modules resolve.js http.js envelope.js are included."
+  requirement req_test_strategy_hardening
+  status approved
+}
+
+acceptance_criterion ac_test_mcp_exports {
+  name "MCP package test surface"
+  description "Given remogram-mcp exports test helpers or public adapter entry, when MCP tests import via package name, then no deep relative imports to packages/remogram-mcp/run-cli.mjs."
+  requirement req_test_strategy_hardening
+  status approved
+}
+
+acceptance_criterion ac_test_readme_testing {
+  name "README testing documentation"
+  description "Given README Testing section, when maintainer reads it, then layers (unit, provider mock, CLI integration, MCP smoke), mock vs git requirements, and npm test command are documented."
+  requirement req_test_strategy_hardening
+  status approved
+}
+
+acceptance_criterion ac_test_fixture_hygiene {
+  name "Fixture hygiene"
+  description "Given tests/fixtures/gitea-api/statuses-success.json, when test suite runs, then fixture is referenced by prChecks success test or file is removed."
+  requirement req_test_strategy_hardening
+  status approved
+}

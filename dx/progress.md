@@ -1,18 +1,18 @@
-# Progress: Implement Lane — forge trust round 2
+# Progress: Plan Lane — test strategy hardening Intent Packet
 
 ## Approach
-Implement Lane on `goal/forge-trust-round2` from `dev/scaffold`. Five security fixes + regression tests per plan.
+Plan Lane draft Intent Packet for nine code-review test recommendations. Branch from `origin/dev/scaffold` (active line; `origin/main` stale at ce75135).
 
 ## Steps So Far
-1. C1: `trustedBaseUrl` — only configHost === remoteHost or HOST_ALIASES; removed trustedHosts remote bypass.
-2. H1: `fetchWithTimeout` redirect manual; 3xx rejected.
-3. H2/H3: `assertGitRef` / `assertGitRemote` in core, CLI, provider.
-4. M1: `forgePacket` envelope fields win over body spread.
-5. M3/M4: `sanitizeField` on errors; `sanitizeUrl`; syncPlan.remote sanitized; MCP capText fix.
-6. 34 tests passing; topogram check green.
+1. Preflight: fetched origin; stashed local `dx/progress.md` edits; created `plan/test-strategy-hardening` from `origin/dev/scaffold`.
+2. Created SDLC records: pitch, requirement, 9 acceptance criteria, task, 10-step plan, draft goal_branch, verification.
+3. `topogram check` green.
 
 ## Current Status
-Implementation complete on `goal/forge-trust-round2`. Ready for implementation PR → Review → Merge.
+**Planning PR pending push.** Intent Packet `goal_branch_test_strategy_hardening` is **draft**. Task `task_test_strategy_hardening` **unclaimed**. All plan steps **pending**.
 
 ## Current Failure / Open Item
-None. Awaiting PR review/merge.
+Push planning branch and open PR for Review Lane.
+
+## Next safe lane
+Review Lane on planning PR; then user may approve Intent Packet before Implement Lane.

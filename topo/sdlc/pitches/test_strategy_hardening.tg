@@ -1,0 +1,12 @@
+pitch pitch_test_strategy_hardening {
+  name "Test Strategy Hardening"
+  description "Close maintainer code-review gaps: CI gate, assertForgeReady composition, CLI/MCP integration coverage, packet contract tests, HTTP edge cases, core coverage reporting, MCP package exports, README testing docs, and fixture hygiene."
+  appetite "small"
+  problem "After forge trust round 2, npm test passes 34 unit/smoke tests but CLI/MCP paths are barely exercised, assertForgeReady is untested as a unit, no CI runs tests, no packet contract snapshots, HTTP cap/sanitize paths lack tests, MCP tests use deep relative imports, README omits testing strategy, and statuses-success.json is dead."
+  solution_sketch "Nine targeted test/docs/CI changes on dev/scaffold; extend verification to npm test plus optional coverage; no new commands or providers."
+  rabbit_holes "Live Gitea nightly integration; 100% coverage on all packages; E2E browser tests."
+  no_go_areas "Rewriting forge trust fixes; mutation commands; hand-editing command-owned sidecars; approving Intent Packet without explicit user request."
+  affects [cap_forge_remote_ops cap_validate_workspace]
+  priority high
+  status submitted
+}

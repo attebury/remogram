@@ -1,0 +1,9 @@
+requirement req_test_strategy_hardening {
+  name "Remogram test strategy for long-term maintenance"
+  description "Remogram must run npm test in CI on Node 20+, test assertForgeReady composition and all six CLI commands with stub or mocked providers, golden packet contracts per PACKET_TYPES, expanded HTTP layer tests, optional vitest coverage on remogram-core, stable MCP test imports via package exports, README testing documentation, and no orphaned fixtures."
+  affects [cap_forge_remote_ops cap_validate_workspace]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority high
+  status approved
+}

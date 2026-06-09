@@ -1,0 +1,8 @@
+goal_branch goal_branch_test_strategy_hardening {
+  name "Test Strategy Hardening Intent Packet"
+  description "Draft Intent Packet for nine code-review test strategy recommendations on dev/scaffold. Planning-only until explicit approval; not selectable for implementation."
+  branch_ref "goal/test-strategy-hardening"
+  task task_test_strategy_hardening
+  evidence_refs [local:topo/sdlc/pitches/test_strategy_hardening.tg, local:topo/sdlc/requirements/test_strategy_hardening.tg, local:topo/sdlc/tasks/test_strategy_hardening.tg, local:topo/sdlc/plans/test_strategy_hardening.tg, local:topo/sdlc/acceptance_criteria/test_strategy_hardening.tg]
+  status draft
+}
