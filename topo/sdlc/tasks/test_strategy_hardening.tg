@@ -1,0 +1,21 @@
+task task_test_strategy_hardening {
+  name "Implement test strategy hardening"
+  description "Address nine code-review recommendations: CI, assertForgeReady tests, CLI integration, packet contracts, HTTP tests, core coverage, MCP exports, README testing docs, fixture hygiene."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Live Gitea integration" "100% monorepo coverage" "New CLI commands" "Tests or coverage under dx/"]
+  entrypoints ["tests/**" ".github/**" "packages/remogram-mcp/**" "packages/remogram-core/**" "vitest.config.js" "package.json" "README.md"]
+  satisfies [req_test_strategy_hardening]
+  acceptance_refs [ac_test_ci_gate ac_test_assert_forge_ready ac_test_cli_integration ac_test_packet_contracts ac_test_http_layer ac_test_coverage_core ac_test_mcp_exports ac_test_readme_testing ac_test_fixture_hygiene]
+  verification_refs [verification_test_strategy_hardening]
+  affects [cap_forge_remote_ops cap_validate_workspace]
+  blocked_by []
+  architecture_patterns [contract_boundary, command_owned_mutation]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Maintainer code review 2026-06-09; testing strategy gaps not security bugs."
+  disposition active
+  priority high
+  work_type testing
+  status unclaimed
+}

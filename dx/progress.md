@@ -1,18 +1,18 @@
-# Progress: Implement Lane — forge trust round 2
+# Progress: Plan constraint — exclude dx/ from tests
 
 ## Approach
-Implement Lane on `goal/forge-trust-round2` from `dev/scaffold`. Five security fixes + regression tests per plan.
+User constraint: do not test anything under `dx/`. Encoded in vitest config and test-strategy SDLC records on `plan/test-strategy-hardening`.
 
 ## Steps So Far
-1. C1: `trustedBaseUrl` — only configHost === remoteHost or HOST_ALIASES; removed trustedHosts remote bypass.
-2. H1: `fetchWithTimeout` redirect manual; 3xx rejected.
-3. H2/H3: `assertGitRef` / `assertGitRemote` in core, CLI, provider.
-4. M1: `forgePacket` envelope fields win over body spread.
-5. M3/M4: `sanitizeField` on errors; `sanitizeUrl`; syncPlan.remote sanitized; MCP capText fix.
-6. 34 tests passing; topogram check green.
+1. Added `test.exclude` and `coverage.exclude` for `dx/**` in `vitest.config.js`.
+2. Updated pitch no_go_areas, task non_goals, plan R8 step, and README AC.
+3. `npm test` still 34 passing.
 
 ## Current Status
-Implementation complete on `goal/forge-trust-round2`. Ready for implementation PR → Review → Merge.
+Local edits on `plan/test-strategy-hardening`; not pushed. PR #6 may need refresh if merged before push.
 
 ## Current Failure / Open Item
-None. Awaiting PR review/merge.
+None.
+
+## Next safe lane
+Push amend to PR #6 or new commit before Merge Lane.
