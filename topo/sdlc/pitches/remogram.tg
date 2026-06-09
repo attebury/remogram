@@ -1,0 +1,12 @@
+pitch pitch_remogram {
+  name "Remogram Forge Boundary"
+  description "Greenfield generic SCM/forge boundary CLI and MCP with contract-first Topogram models."
+  appetite "medium"
+  problem "Agents need bounded, provider-attributed forge facts without SDLC concepts leaking into SCM tooling."
+  solution_sketch "Six read/plan commands, typed JSON envelope schema_version 1, gitea-api provider first, Topogram models contracts only at dev time."
+  rabbit_holes "Mutations in v1; Topogram runtime in remogram core; dogfood-only log readers in core."
+  no_go_areas "SDLC fields in remogram output; cherry-picking legacy remogram code."
+  affects [cap_forge_remote_ops]
+  priority high
+  status submitted
+}

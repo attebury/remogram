@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "provider": "gitea-api",
+  "remote": "origin",
+  "owner": "attebury",
+  "repo": "remogram",
+  "baseUrl": "http://localhost:3000",
+  "trustedHosts": ["localhost:3000"]
+}

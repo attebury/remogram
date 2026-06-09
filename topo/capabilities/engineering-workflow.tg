@@ -1,0 +1,23 @@
+capability cap_maintain_project {
+  name "Maintain Project"
+  description "Maintain this project over time with organized, testable, security-focused changes."
+  status active
+}
+
+capability cap_validate_workspace {
+  name "Validate Workspace"
+  description "Run the project validation gates before committing or releasing changes."
+  status active
+}
+
+capability cap_query_context {
+  name "Query Focused Context"
+  description "Use focused Topogram query packets before broad source edits."
+  status active
+}
+
+capability cap_manage_sdlc_records {
+  name "Manage SDLC Records"
+  description "Use Topogram commands to manage SDLC status, history, and proof links."
+  status active
+}

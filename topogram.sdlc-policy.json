@@ -1,0 +1,26 @@
+{
+  "version": "1",
+  "status": "adopted",
+  "mode": "enforced",
+  "profile": "standard",
+  "protectedPaths": [
+    "packages/**",
+    "tests/**",
+    "topo/**",
+    "scripts/**",
+    "docs/**",
+    "AGENTS.md",
+    "CONTRIBUTING.md",
+    "README.md",
+    "package.json",
+    "package-lock.json"
+  ],
+  "requiredItemKinds": [
+    "task",
+    "bug",
+    "requirement",
+    "pitch"
+  ],
+  "allowExemptions": true,
+  "releaseNotes": true
+}

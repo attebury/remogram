@@ -1,0 +1,13 @@
+{
+  "version": "0.1",
+  "workspace": "./topo",
+  "outputs": {
+    "app": {
+      "path": ".",
+      "ownership": "maintained"
+    }
+  },
+  "topology": {
+    "runtimes": []
+  }
+}

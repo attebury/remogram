@@ -1,0 +1,7 @@
+decision decision_repo_local_laws_are_enforceable {
+  name "Repo Local Laws Are Enforceable"
+  description "Graph-native engineering laws are part of the maintained Topogram source and should guide humans and agents."
+  context ["AGENTS.md carries local orientation and trust-boundary guidance", "graph-native rules make durable laws queryable after SDLC adoption", "reusable Topogram laws live in the Topogram agent skill set when available"]
+  consequences ["agents can load laws through focused slices", "new laws should be added as rule records when they become durable"]
+  status accepted
+}

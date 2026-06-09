@@ -1,0 +1,27 @@
+{
+  "name": "remogram",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Generic SCM/forge boundary CLI and MCP — provider facts only, no SDLC concepts",
+  "type": "module",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "topogram": "topogram",
+    "topo:brief": "topogram agent brief . --json",
+    "topo:check": "topogram check . --json",
+    "topo:onboard": "topogram onboard . --json",
+    "topo:init": "topogram init . --adopt-sdlc --json"
+  },
+  "devDependencies": {
+    "@topogram/cli": "file:../topogram/engine",
+    "vitest": "^3.2.4"
+  }
+}

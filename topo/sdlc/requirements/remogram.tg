@@ -1,0 +1,9 @@
+requirement req_remogram {
+  name "Remogram forge boundary v1"
+  description "Remogram exposes six read/plan commands and MCP tools with schema_version 1 packets, gitea-api provider, and fail-closed config trust."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority high
+  status approved
+}

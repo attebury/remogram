@@ -1,0 +1,27 @@
+term term_provider_gitea_api {
+  name "Gitea API Provider"
+  description "Transport api. Auth env GITEA_TOKEN. Gitea REST /api/v1. Implements all six read/plan commands."
+  category provider
+  status active
+}
+
+term term_provider_github_api {
+  name "GitHub API Provider"
+  description "Transport api. Auth env GITHUB_TOKEN or GH_TOKEN. Proposed for future implementation."
+  category provider
+  status proposed
+}
+
+term term_provider_gitea_tea {
+  name "Gitea Tea Wrapper Provider"
+  description "Transport wrapper_cli via tea binary. Proposed for future implementation."
+  category provider
+  status proposed
+}
+
+term term_provider_github_gh {
+  name "GitHub GH Wrapper Provider"
+  description "Transport wrapper_cli via gh binary. Proposed for future implementation."
+  category provider
+  status proposed
+}

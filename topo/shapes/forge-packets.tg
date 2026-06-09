@@ -1,0 +1,159 @@
+shape shape_forge_envelope {
+  name "Forge Packet Envelope"
+  description "Shared header on every remogram JSON packet."
+  fields {
+    type string required
+    schema_version integer required
+    provider_id string required
+    remote_name string required
+    repo_id string required
+    observed_at string required
+    ok boolean required
+  }
+  status active
+}
+
+shape shape_forge_error_body {
+  name "Forge Error Body"
+  description "Nested error facts when ok is false."
+  fields {
+    code string required
+    message string required
+    status integer optional
+  }
+  status active
+}
+
+shape shape_repo_status {
+  name "Repo Status Packet"
+  description "Output of remogram repo status."
+  fields {
+    type string required
+    schema_version integer required
+    provider_id string required
+    remote_name string required
+    repo_id string required
+    observed_at string required
+    ok boolean required
+    auth_present boolean optional
+    auth_env string optional
+    capabilities string optional
+    default_branch string optional
+    error_code string optional
+    error_message string optional
+  }
+  status active
+}
+
+shape shape_ref_compare {
+  name "Ref Compare Packet"
+  description "Output of remogram refs compare."
+  fields {
+    type string required
+    schema_version integer required
+    provider_id string required
+    remote_name string required
+    repo_id string required
+    observed_at string required
+    ok boolean required
+    base_ref string optional
+    base_sha string optional
+    head_ref string optional
+    head_sha string optional
+    ahead_by integer optional
+    behind_by integer optional
+    error_code string optional
+    error_message string optional
+  }
+  status active
+}
+
+shape shape_pr_status {
+  name "PR Status Packet"
+  description "Output of remogram pr view."
+  fields {
+    type string required
+    schema_version integer required
+    provider_id string required
+    remote_name string required
+    repo_id string required
+    observed_at string required
+    ok boolean required
+    pr_number integer optional
+    pr_index integer optional
+    url string optional
+    title string optional
+    state string optional
+    base_ref string optional
+    base_sha string optional
+    head_ref string optional
+    head_sha string optional
+    mergeability string optional
+    error_code string optional
+    error_message string optional
+  }
+  status active
+}
+
+shape shape_pr_checks {
+  name "PR Checks Packet"
+  description "Output of remogram pr checks."
+  fields {
+    type string required
+    schema_version integer required
+    provider_id string required
+    remote_name string required
+    repo_id string required
+    observed_at string required
+    ok boolean required
+    head_sha string optional
+    check_conclusion string optional
+    statuses string optional
+    error_code string optional
+    error_message string optional
+  }
+  status active
+}
+
+shape shape_merge_plan {
+  name "Merge Plan Packet"
+  description "Output of remogram merge plan."
+  fields {
+    type string required
+    schema_version integer required
+    provider_id string required
+    remote_name string required
+    repo_id string required
+    observed_at string required
+    ok boolean required
+    pr_number integer optional
+    mergeability string optional
+    checks_conclusion string optional
+    blockers string optional
+    error_code string optional
+    error_message string optional
+  }
+  status active
+}
+
+shape shape_sync_plan {
+  name "Sync Plan Packet"
+  description "Output of remogram sync plan."
+  fields {
+    type string required
+    schema_version integer required
+    provider_id string required
+    remote_name string required
+    repo_id string required
+    observed_at string required
+    ok boolean required
+    remote string optional
+    local_sha string optional
+    remote_sha string optional
+    diverged boolean optional
+    blockers string optional
+    error_code string optional
+    error_message string optional
+  }
+  status active
+}

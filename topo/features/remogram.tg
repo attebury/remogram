@@ -1,0 +1,11 @@
+feature feature_remogram {
+  name "Remogram"
+  description "Generic SCM/forge boundary CLI and MCP with typed JSON facts."
+  intent "Deliver read/plan forge operations with provider-attributed, SHA-bound packets and no Topogram concepts in output."
+  entities []
+  capabilities [cap_forge_remote_ops]
+  endpoints []
+  seed_data []
+  verification_refs [verification_remogram_test]
+  status active
+}

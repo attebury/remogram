@@ -1,0 +1,20 @@
+{
+  "name": "@remogram/mcp",
+  "version": "0.1.0",
+  "description": "Remogram MCP server delegating to CLI",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "remogram-mcp": "bin/remogram-mcp.js"
+  },
+  "exports": {
+    ".": "./server.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.0",
+    "zod": "^3.25.76"
+  }
+}

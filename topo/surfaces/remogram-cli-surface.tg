@@ -1,0 +1,62 @@
+surface remogram_cli {
+  name "Remogram CLI Surface"
+  description "Read/plan forge CLI commands emitting versioned JSON facts only."
+  type cli
+  realizes [cap_forge_remote_ops]
+  outputs [app]
+
+  commands {
+    command repo_status capability cap_forge_remote_ops usage "remogram repo status [--json]" mode read_only
+    command refs_compare capability cap_forge_remote_ops usage "remogram refs compare --base <ref> --head <ref> [--json]" mode read_only
+    command pr_view capability cap_forge_remote_ops usage "remogram pr view --index <n>|--number <n> [--json]" mode read_only
+    command pr_checks capability cap_forge_remote_ops usage "remogram pr checks --index <n>|--ref <ref> [--json]" mode read_only
+    command merge_plan capability cap_forge_remote_ops usage "remogram merge plan --index <n> [--json]" mode read_only
+    command sync_plan capability cap_forge_remote_ops usage "remogram sync plan [--remote <name>] [--json]" mode read_only
+  }
+
+  command_options {
+    command repo_status option json type boolean flag --json
+    command refs_compare option json type boolean flag --json
+    command refs_compare option base type string flag --base
+    command refs_compare option head type string flag --head
+    command pr_view option json type boolean flag --json
+    command pr_view option index type integer flag --index
+    command pr_view option number type integer flag --number
+    command pr_checks option json type boolean flag --json
+    command pr_checks option index type integer flag --index
+    command pr_checks option ref type string flag --ref
+    command merge_plan option json type boolean flag --json
+    command merge_plan option index type integer flag --index
+    command sync_plan option json type boolean flag --json
+    command sync_plan option remote type string flag --remote
+  }
+
+  command_outputs {
+    command repo_status format json schema shape_repo_status
+    command refs_compare format json schema shape_ref_compare
+    command pr_view format json schema shape_pr_status
+    command pr_checks format json schema shape_pr_checks
+    command merge_plan format json schema shape_merge_plan
+    command sync_plan format json schema shape_sync_plan
+  }
+
+  command_effects {
+    command repo_status effect read_only target forge
+    command refs_compare effect read_only target forge
+    command pr_view effect read_only target forge
+    command pr_checks effect read_only target forge
+    command merge_plan effect read_only target forge
+    command sync_plan effect read_only target forge
+  }
+
+  command_examples {
+    command repo_status example "remogram repo status --json"
+    command refs_compare example "remogram refs compare --base main --head feature/x --json"
+    command pr_view example "remogram pr view --index 1 --json"
+    command pr_checks example "remogram pr checks --index 1 --json"
+    command merge_plan example "remogram merge plan --index 1 --json"
+    command sync_plan example "remogram sync plan --remote origin --json"
+  }
+
+  status active
+}

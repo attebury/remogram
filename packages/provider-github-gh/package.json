@@ -1,0 +1,9 @@
+{
+  "name": "@remogram/provider-github-gh",
+  "version": "0.1.0",
+  "description": "GitHub gh wrapper provider stub for remogram",
+  "type": "module",
+  "license": "MIT",
+  "exports": { ".": "./index.js" },
+  "dependencies": { "@remogram/core": "0.1.0" }
+}

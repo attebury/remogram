@@ -1,0 +1,16 @@
+{
+  "name": "@remogram/provider-gitea-api",
+  "version": "0.1.0",
+  "description": "Gitea REST API forge provider for remogram",
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": "./index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@remogram/core": "0.1.0"
+  }
+}

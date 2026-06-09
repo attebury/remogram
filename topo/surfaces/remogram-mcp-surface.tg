@@ -1,0 +1,27 @@
+surface remogram_mcp {
+  name "Remogram MCP Surface"
+  description "MCP tools mirroring CLI with identical JSON schemas. All readOnlyHint true in v1."
+  type cli
+  realizes [cap_forge_remote_ops]
+  outputs [app]
+
+  commands {
+    command repo_status capability cap_forge_remote_ops usage "repo_status" mode read_only
+    command ref_compare capability cap_forge_remote_ops usage "ref_compare --base --head" mode read_only
+    command pr_status capability cap_forge_remote_ops usage "pr_status --index|--number" mode read_only
+    command pr_checks capability cap_forge_remote_ops usage "pr_checks --index|--ref" mode read_only
+    command merge_plan capability cap_forge_remote_ops usage "merge_plan --index" mode read_only
+    command sync_plan capability cap_forge_remote_ops usage "sync_plan --remote" mode read_only
+  }
+
+  command_outputs {
+    command repo_status format json schema shape_repo_status
+    command ref_compare format json schema shape_ref_compare
+    command pr_status format json schema shape_pr_status
+    command pr_checks format json schema shape_pr_checks
+    command merge_plan format json schema shape_merge_plan
+    command sync_plan format json schema shape_sync_plan
+  }
+
+  status active
+}

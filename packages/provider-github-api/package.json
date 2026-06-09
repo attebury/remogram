@@ -1,0 +1,9 @@
+{
+  "name": "@remogram/provider-github-api",
+  "version": "0.1.0",
+  "description": "GitHub API provider stub for remogram",
+  "type": "module",
+  "license": "MIT",
+  "exports": { ".": "./index.js" },
+  "dependencies": { "@remogram/core": "0.1.0" }
+}

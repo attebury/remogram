@@ -1,0 +1,9 @@
+{
+  "name": "@remogram/provider-gitea-tea",
+  "version": "0.1.0",
+  "description": "Gitea tea wrapper provider stub for remogram",
+  "type": "module",
+  "license": "MIT",
+  "exports": { ".": "./index.js" },
+  "dependencies": { "@remogram/core": "0.1.0" }
+}

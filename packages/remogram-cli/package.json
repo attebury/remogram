@@ -1,0 +1,20 @@
+{
+  "name": "@remogram/cli",
+  "version": "0.1.0",
+  "description": "Remogram forge boundary CLI",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "remogram": "bin/remogram.js"
+  },
+  "exports": {
+    ".": "./index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@remogram/core": "0.1.0",
+    "@remogram/provider-gitea-api": "0.1.0"
+  }
+}

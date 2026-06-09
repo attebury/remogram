@@ -1,0 +1,5 @@
+capability cap_forge_remote_ops {
+  name "Forge Remote Operations"
+  description "Read/plan SCM facts from configured forge providers: repo status, ref compare, PR view, checks, merge plan, sync plan."
+  status active
+}

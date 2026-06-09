@@ -1,0 +1,35 @@
+rule rule_maintainable_security_focused_code {
+  name "Maintainable Security Focused Code"
+  description "Code must be organized, maintainable, security-focused, tested, and testable for long-lived intermittent maintenance."
+  applies_to [cap_maintain_project]
+  severity error
+  source_of_truth [decision_repo_local_laws_are_enforceable]
+  status enforced
+}
+
+rule rule_tests_prove_consumer_value {
+  name "Tests Prove Consumer Value"
+  description "Tests should prove behavior that consumers, maintainers, or agents rely on; compile, run, validate, or inspect real outputs where practical."
+  applies_to [cap_validate_workspace]
+  severity error
+  source_of_truth [decision_repo_local_laws_are_enforceable]
+  status enforced
+}
+
+rule rule_agents_start_with_focused_context {
+  name "Agents Start With Focused Context"
+  description "Agents should start with agent brief and focused query packets before editing broad source surfaces."
+  applies_to [cap_query_context]
+  severity warning
+  source_of_truth [decision_repo_local_laws_are_enforceable]
+  status enforced
+}
+
+rule rule_stateful_workflow_mutations_use_cli {
+  name "Stateful Workflow Mutations Use CLI"
+  description "Status, history, trust, provenance, generated sentinels, archives, release state, and rollout state should be changed through canonical commands."
+  applies_to [cap_manage_sdlc_records]
+  severity error
+  source_of_truth [decision_repo_local_laws_are_enforceable]
+  status enforced
+}
