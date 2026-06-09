@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "remogram": {
+      "type": "stdio",
+      "command": "remogram-mcp",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "REMOGRAM_CWD": "${workspaceFolder}",
+        "GITEA_TOKEN": "${env:GITEA_TOKEN}"
+      }
+    }
+  }
+}
