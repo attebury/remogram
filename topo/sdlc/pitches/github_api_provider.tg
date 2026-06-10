@@ -8,5 +8,5 @@ pitch pitch_github_api_provider {
   no_go_areas "Topogram concepts in output; importing Topogram into provider packages; new schema_version; provider-specific fields leaking into shared shapes; live-network tests in default suite."
   affects [cap_forge_remote_ops]
   priority high
-  status submitted
+  status approved
 }
