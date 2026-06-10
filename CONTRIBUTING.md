@@ -9,14 +9,12 @@ Thanks for your interest in Remogram.
 3. Install dependencies: `npm ci`
 4. Link local packages (optional): `./scripts/npm-link.sh`
 
-Topogram is **not** required to build or test Remogram.
-
 ## Pull requests
 
 - Open PRs against **`main`**.
 - Run `npm test` before submitting.
 - Keep changes focused; match existing style in the touched package.
-- Remogram CLI/MCP output must stay free of SDLC or workflow concepts — see [AGENTS.md](AGENTS.md).
+- Remogram CLI/MCP output must stay free of workflow or planning-tool metadata — see [AGENTS.md](AGENTS.md).
 
 ## Agent skills
 

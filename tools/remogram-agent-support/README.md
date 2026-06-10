@@ -5,8 +5,7 @@ Agent-agnostic skill pack for Remogram CLI and MCP. Canonical source:
 ```
 tools/remogram-agent-support/skills/
 ├── remogram-consumer/   # any repo with .remogram.json
-├── remogram-core/       # Remogram product development
-└── remogram-dogfood/    # Remogram repo + Topogram SDLC on remo
+└── remogram-core/       # Remogram product development (packages, providers, tests)
 ```
 
 ## Install
@@ -19,11 +18,11 @@ From the Remogram repository root:
 
 | Flag | Target |
 |------|--------|
-| `--cursor` | `.cursor/skills/` in this repo (dogfood + core) |
-| `--codex` | `~/.codex/skills/` (consumer + core; optional dogfood) |
+| `--cursor` | `.cursor/skills/` in this repo (`remogram-core`) |
+| `--codex` | `~/.codex/skills/` (`remogram-consumer` + `remogram-core`) |
 | `--claude ~/.claude/plugins/...` | copy Claude Code plugin adapter |
-| `--consumer-only` | install only `remogram-consumer` (+ core) |
-| `--all` | cursor + codex consumer/core |
+| `--consumer-only` | With `--codex`, install only `remogram-consumer` |
+| `--all` | `--cursor` and `--codex` (default when no flags) |
 
 **Cursor (this repo):** project skills under `.cursor/skills/` are synced from canonical sources.
 
@@ -36,8 +35,9 @@ From the Remogram repository root:
 | Context | Skill |
 |---------|--------|
 | Any consumer repo with `.remogram.json` | `remogram-consumer` |
-| Editing `packages/remogram-*` or providers | `remogram-core` |
-| Remogram repo lanes, SDLC, merge to `remo` | `remogram-dogfood` + Topogram lane skills |
+| Editing `packages/remogram-*`, providers, or tests in this repo | `remogram-core` |
+
+Contributing to Remogram in this repo? Load **`remogram-core`**. Using Remogram in your own project? Load **`remogram-consumer`** (and install it globally with `--codex` if you use Codex).
 
 ## Adapters
 

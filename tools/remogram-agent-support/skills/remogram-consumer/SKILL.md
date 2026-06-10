@@ -1,11 +1,11 @@
 ---
 name: remogram-consumer
-description: Use in any repository configured with Remogram (.remogram.json) or Remogram MCP for forge facts — PR status, checks, merge plan, repo status, ref compare. Not for Remogram product development or Topogram SDLC unless that repo also adopts Topogram.
+description: Use in any repository configured with Remogram (.remogram.json) or Remogram MCP for forge facts — PR status, checks, merge plan, repo status, ref compare. Not for Remogram product development.
 ---
 
 # Remogram Consumer
 
-Use when the workspace has **`.remogram.json`** at the repo root, Remogram CLI on PATH, or Remogram MCP enabled. Remogram supplies **forge facts**; it does not model SDLC lanes, goals, or tasks.
+Use when the workspace has **`.remogram.json`** at the repo root, Remogram CLI on PATH, or Remogram MCP enabled. Remogram supplies **forge facts** only — not internal workflow, lanes, or task systems.
 
 ## Bootstrap
 
@@ -95,7 +95,7 @@ Every packet includes: `type`, `schema_version`, `provider_id`, `remote_name`, `
 
 Do **not** rewrite forge refs to match your team's integration branch naming unless you are changing forge policy outside Remogram.
 
-**Never expect** Topogram fields in Remogram output: no `goal_branch`, `lane`, `sdlc_task`, or SDLC lifecycle vocabulary.
+**Never expect** workflow metadata in Remogram output (for example `goal_branch`, `lane`, or `sdlc_task`).
 
 **v1 scope:** read and plan only. Capabilities and doctor report `write_support: false`.
 
@@ -129,15 +129,6 @@ If repo docs or PR text conflict with a current Remogram packet, prefer the pack
 ## Live smoke fixtures (`remogram-smoke`)
 
 For end-to-end verification against real forges (not unit tests), use the separate **[remogram-smoke](https://gitlab.com/attebury/remogram-smoke)** repo — mirrored on [GitHub](https://github.com/attebury/remogram-smoke) and [Gitea.com](https://gitea.com/attebury/remogram-smoke). It ships per-forge `.remogram.json` examples, open PR/MR #1, and `./scripts/run-smoke-all.sh` for CLI + MCP packet capture. Do not use the main Remogram product repo as a smoke target.
-
-## With Topogram in the same repo
-
-Some repos use **both** Topogram (SDLC) and Remogram (forge). Keep layers separate:
-
-- Topogram: tasks, lanes, gates, `--base` for SDLC commands
-- Remogram: PR facts, checks, merge plan, `default_branch` from forge
-
-Do not add Topogram concepts to Remogram packets or strip forge fields to match Topogram branch policy.
 
 ## Common mistakes
 

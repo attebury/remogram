@@ -9,6 +9,7 @@ CLAUDE_DEST=""
 DO_CURSOR=0
 DO_CODEX=0
 DO_CLAUDE=0
+DO_DOGFOOD=0
 CONSUMER_ONLY=0
 
 usage() {
@@ -18,9 +19,10 @@ Install remogram agent skills from canonical tools/remogram-agent-support/skills
 Usage: install-agent-skills.sh [options]
 
 Options:
-  --cursor          Sync remogram-core + remogram-dogfood to .cursor/skills/
+  --cursor          Sync remogram-core to .cursor/skills/
   --codex           Copy remogram-consumer (+ core) to ~/.codex/skills/
   --claude PATH     Copy Claude Code plugin adapter to PATH
+  --dogfood         Also install remogram-dogfood (private maintainer checkout only)
   --consumer-only   With --codex, install only remogram-consumer
   --all             --cursor and --codex (default when no flags)
   -h, --help        Show this help
@@ -30,6 +32,10 @@ EOF
 copy_skill() {
   local name="$1"
   local dest="$2"
+  if [[ ! -d "${CANONICAL}/${name}" ]]; then
+    echo "skip ${name} (not in ${CANONICAL})" >&2
+    return 0
+  fi
   rm -rf "${dest}/${name}"
   cp -R "${CANONICAL}/${name}" "${dest}/${name}"
   echo "installed ${name} -> ${dest}/${name}"
@@ -40,6 +46,7 @@ while [[ $# -gt 0 ]]; do
     --cursor) DO_CURSOR=1; shift ;;
     --codex) DO_CODEX=1; shift ;;
     --claude) DO_CLAUDE=1; CLAUDE_DEST="$2"; shift 2 ;;
+    --dogfood) DO_DOGFOOD=1; shift ;;
     --consumer-only) CONSUMER_ONLY=1; shift ;;
     --all) DO_CURSOR=1; DO_CODEX=1; shift ;;
     -h|--help) usage; exit 0 ;;
@@ -55,7 +62,9 @@ fi
 if [[ "$DO_CURSOR" -eq 1 ]]; then
   mkdir -p "$CURSOR_DEST"
   copy_skill remogram-core "$CURSOR_DEST"
-  copy_skill remogram-dogfood "$CURSOR_DEST"
+  if [[ "$DO_DOGFOOD" -eq 1 ]]; then
+    copy_skill remogram-dogfood "$CURSOR_DEST"
+  fi
 fi
 
 if [[ "$DO_CODEX" -eq 1 ]]; then
@@ -63,6 +72,8 @@ if [[ "$DO_CODEX" -eq 1 ]]; then
   copy_skill remogram-consumer "$CODEX_DEST"
   if [[ "$CONSUMER_ONLY" -eq 0 ]]; then
     copy_skill remogram-core "$CODEX_DEST"
+  fi
+  if [[ "$DO_DOGFOOD" -eq 1 ]]; then
     copy_skill remogram-dogfood "$CODEX_DEST"
   fi
 fi
@@ -77,9 +88,12 @@ if [[ "$DO_CLAUDE" -eq 1 ]]; then
   mkdir -p "$CLAUDE_DEST"
   cp -R "${PLUGIN_SRC}/." "$CLAUDE_DEST/"
   mkdir -p "${CLAUDE_DEST}/skills"
-  for skill in remogram-consumer remogram-core remogram-dogfood; do
+  for skill in remogram-consumer remogram-core; do
     copy_skill "$skill" "${CLAUDE_DEST}/skills"
   done
+  if [[ "$DO_DOGFOOD" -eq 1 ]]; then
+    copy_skill remogram-dogfood "${CLAUDE_DEST}/skills"
+  fi
   echo "Claude plugin installed at ${CLAUDE_DEST}"
 fi
 

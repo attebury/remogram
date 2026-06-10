@@ -19,10 +19,10 @@ remogram provider capabilities --json
 
 ## Boundary rules
 
-1. Remogram output must never include `goal_branch`, `lane`, `sdlc_task`, or other Topogram workflow concepts.
+1. Remogram output must never include `goal_branch`, `lane`, `sdlc_task`, or other workflow/planning-tool metadata.
 2. Every packet includes `type`, `schema_version`, `provider_id`, `remote_name`, `repo_id`, `observed_at`, `ok`.
 3. v1 commands are read/plan only — no `pr create` or merge execute.
-4. No `import` from Topogram in `packages/remogram-*` or provider packages.
+4. No imports from external planning or workflow tooling in `packages/remogram-*` or provider packages.
 
 ## Trust
 

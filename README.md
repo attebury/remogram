@@ -1,6 +1,6 @@
 # Remogram
 
-Generic SCM/forge boundary CLI and MCP server. Emits provider-attributed, SHA-bound JSON facts only — no SDLC or workflow concepts in output.
+Generic SCM/forge boundary CLI and MCP server. Emits provider-attributed, SHA-bound JSON facts only — no workflow or planning-tool concepts in output.
 
 Remogram was developed by and for [Topogram](https://topogram.dev). Topogram is not required to install or use Remogram.
 
