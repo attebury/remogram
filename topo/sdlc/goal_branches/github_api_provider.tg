@@ -4,5 +4,5 @@ goal_branch goal_branch_github_api_provider {
   branch_ref "goal/github-api-provider"
   task task_github_api_provider
   evidence_refs [local:topo/sdlc/pitches/github_api_provider.tg, local:topo/sdlc/requirements/github_api_provider.tg, local:topo/sdlc/tasks/github_api_provider.tg, local:topo/sdlc/plans/github_api_provider.tg, local:topo/sdlc/acceptance_criteria/github_api_provider.tg]
-  status draft
+  status approved
 }

@@ -264,5 +264,109 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "pitch_github_api_provider": [
+    {
+      "from": "submitted",
+      "to": "approved",
+      "at": "2026-06-10T01:51:04.744Z",
+      "by": "gpt-5.5",
+      "note": null
+    }
+  ],
+  "req_github_api_provider": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-10T01:51:04.926Z",
+      "by": "gpt-5.5",
+      "note": null
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-10T01:51:05.109Z",
+      "by": "gpt-5.5",
+      "note": null
+    }
+  ],
+  "ac_github_envelope_parity": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T01:51:05.292Z",
+      "by": "gpt-5.5",
+      "note": null
+    }
+  ],
+  "ac_github_checks_normalization": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T01:51:05.474Z",
+      "by": "gpt-5.5",
+      "note": null
+    }
+  ],
+  "ac_github_mergeability_normalization": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T01:51:05.657Z",
+      "by": "gpt-5.5",
+      "note": null
+    }
+  ],
+  "ac_github_trust_reuse": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T01:51:05.842Z",
+      "by": "gpt-5.5",
+      "note": null
+    }
+  ],
+  "ac_github_auth_and_capabilities": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T01:51:06.025Z",
+      "by": "gpt-5.5",
+      "note": null
+    }
+  ],
+  "ac_github_abstraction_findings": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T01:51:06.206Z",
+      "by": "gpt-5.5",
+      "note": null
+    }
+  ],
+  "plan_github_api_provider": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-10T01:51:06.386Z",
+      "by": "gpt-5.5",
+      "note": null
+    }
+  ],
+  "goal_branch_github_api_provider": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-10T01:51:06.567Z",
+      "by": "gpt-5.5",
+      "note": null
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-10T01:51:06.745Z",
+      "by": "gpt-5.5",
+      "note": null
+    }
   ]
 }

@@ -7,5 +7,5 @@ verification verification_github_api_provider {
   proof_commands {
     command npm_test argv ["npm" "test"]
   }
-  status draft
+  status active
 }
