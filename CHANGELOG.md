@@ -16,7 +16,7 @@ All notable changes to this project will be documented in this file.
 ### Known limits (beta)
 
 - Read/plan only — no PR create, merge execute, or push
-- `github-gh` and `gitea-tea` provider IDs are reserved placeholders (not implemented); use `github-api`, `gitea-api`, or `gitlab-api` — see README [Providers](README.md#providers)
+- `github-gh` and `gitea-tea` provider IDs are reserved CLI-wrapper placeholders (not implemented); use `*-api` providers — GitLab's CLI is `glab` but has no wrapper ID yet (see README)
 - Payload-size smoke compare is not packaged in npm beta (monorepo dev tooling only)
 - Topogram SDLC workflow is not required for consumers
 

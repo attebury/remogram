@@ -38,7 +38,7 @@ Copy from remogram's `.remogram.json.example`. Typical shape:
 | `github-api` | `GITHUB_TOKEN`, then `GH_TOKEN` |
 | `gitlab-api` | `GITLAB_TOKEN` |
 
-Do **not** use `github-gh` or `gitea-tea` in beta — those IDs are reserved for unimplemented CLI-wrapper backends. Use `github-api` or `gitea-api` instead.
+Do **not** use `github-gh` or `gitea-tea` in beta — those IDs are reserved for unimplemented CLI-wrapper backends. GitLab's official CLI is [`glab`](https://docs.gitlab.com/cli/); there is no `gitlab-glab` wrapper yet — use `gitlab-api`. See README [CLI wrapper providers](https://github.com/attebury/remogram#cli-wrapper-providers-not-supported-in-beta).
 
 `provider capabilities --json` is authoritative for command support, check sources, mergeability confidence, and `write_support: false` in v1.
 

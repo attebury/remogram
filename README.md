@@ -28,13 +28,13 @@ Default branch: **`main`**.
 
 ## Providers
 
-Set `"provider"` in [`.remogram.json`](.remogram.json.example). **Beta supports three forge backends** — all use forge HTTP APIs (GitHub also uses GraphQL for PR view). You do **not** need the `gh` or `tea` CLIs installed.
+Set `"provider"` in [`.remogram.json`](.remogram.json.example). **Beta supports three forge backends** — all use forge HTTP APIs (GitHub also uses GraphQL for PR view). You do **not** need official forge CLIs (`gh`, `tea`, or `glab`) installed.
 
-| Your forge | `"provider"` value | Token env |
-|------------|-------------------|-----------|
-| Gitea (incl. self-hosted) | `gitea-api` | `GITEA_TOKEN` |
-| GitHub (incl. Enterprise) | `github-api` | `GITHUB_TOKEN` or `GH_TOKEN` |
-| GitLab (incl. self-managed) | `gitlab-api` | `GITLAB_TOKEN` |
+| Your forge | `"provider"` value | Token env | Official CLI (not required) |
+|------------|-------------------|-----------|----------------------------|
+| Gitea (incl. self-hosted) | `gitea-api` | `GITEA_TOKEN` | [`tea`](https://gitea.com/gitea/tea) |
+| GitHub (incl. Enterprise) | `github-api` | `GITHUB_TOKEN` or `GH_TOKEN` | [`gh`](https://cli.github.com/) |
+| GitLab (incl. self-managed) | `gitlab-api` | `GITLAB_TOKEN` | [`glab`](https://docs.gitlab.com/cli/) |
 
 Self-hosted Gitea/GitLab: add `"baseUrl"` to your forge root (see example patterns in provider notes below).
 
@@ -45,22 +45,52 @@ remogram provider capabilities --json
 remogram doctor --json
 ```
 
-### Not supported yet: `github-gh` and `gitea-tea`
+### CLI wrapper providers (not supported in beta)
 
-`github-gh` and `gitea-tea` are **reserved provider IDs** for a possible future mode: delegate to the official [`gh`](https://cli.github.com/) and [`tea`](https://gitea.com/gitea/tea) command-line tools instead of remogram's REST/GraphQL adapters.
+Each forge also has an official command-line tool. remogram may eventually support **optional wrapper providers** that shell out to those binaries and normalize their JSON into the same typed packets as the API providers:
 
-**They are not implemented in beta.** Do not put them in `.remogram.json`. If you do, commands fail with a typed packet:
+| Forge | Supported today | Reserved wrapper ID | Would wrap |
+|-------|-----------------|---------------------|------------|
+| GitHub | `github-api` | `github-gh` | `gh` |
+| Gitea | `gitea-api` | `gitea-tea` | `tea` |
+| GitLab | `gitlab-api` | *(none yet — likely `gitlab-glab` if added)* | `glab` |
+
+**Do not use wrapper IDs in `.remogram.json` today.** Only `github-gh` and `gitea-tea` exist as reserved placeholders; both return:
 
 - `ok: false`
 - `error_code: "provider_unsupported"`
 - `error_message: "Provider not implemented in v1"`
 
+There is no `gitlab-glab` provider ID in config yet — use `gitlab-api`.
+
 | If you use… | Set `"provider"` to… | Not… |
 |-------------|---------------------|------|
 | GitHub | `github-api` | `github-gh` |
 | Gitea | `gitea-api` | `gitea-tea` |
+| GitLab | `gitlab-api` | *(no CLI wrapper exists yet)* |
 
-The npm packages `@remogram/provider-github-gh` and `@remogram/provider-gitea-tea` exist only so the CLI can list these IDs honestly in `provider capabilities` (`implemented: false`). You never install or configure them separately.
+The npm packages `@remogram/provider-github-gh` and `@remogram/provider-gitea-tea` exist only so the CLI can list those IDs honestly in `provider capabilities` (`implemented: false`). You never install or configure them separately.
+
+#### Why wrappers are not supported yet
+
+Beta focused on **direct forge HTTP** because it is the best fit for remogram's constraints:
+
+1. **Agent-safe packets** — remogram caps forge ingest at **8192 bytes** and selects fields explicitly (e.g. GitHub PR view uses GraphQL instead of full REST). Wrapper CLIs often emit large, version-dependent JSON that is harder to cap and normalize reliably.
+2. **Headless and CI-friendly** — API providers need only a token env var. Wrappers require `gh` / `tea` / `glab` on PATH, their own login flows, and subprocess handling with the same trust rules as git.
+3. **One backend per forge for v1** — `github-api`, `gitea-api`, and `gitlab-api` already implement all six read/plan commands with shared packet shapes. Wrappers would duplicate that surface without adding new commands in beta.
+4. **Maintenance surface** — CLI output changes between tool versions; each wrapper is an ongoing compatibility contract on top of the API adapters.
+
+#### When or if wrappers will ship
+
+**Not in beta.** There is no committed release date.
+
+Wrapper providers are **post-beta, demand-driven**:
+
+- **If** users need remogram to reuse an existing `gh` / `tea` / `glab` login instead of managing API tokens, or policy blocks direct API access but allows official CLIs, we would implement wrappers behind the reserved IDs (and add `gitlab-glab` for parity with `glab`).
+- **Likely order if built:** shared subprocess + JSON ingest helper in `@remogram/core`, then `github-gh` first (`gh --json` is the most stable), then `gitea-tea` and `gitlab-glab`.
+- **Until then:** use the `*-api` providers above. They are the supported path for CLI, MCP, and agents.
+
+If wrapper support matters for your setup, open a GitHub issue describing forge, CLI version, and whether API tokens are unavailable — that helps prioritize.
 
 ## Consumer config
 
@@ -164,13 +194,13 @@ Optional local pre-push gate: `./scripts/install-pre-push-hook.sh`.
 | `@remogram/provider-gitea-api` | Gitea REST — **use with `"provider": "gitea-api"`** |
 | `@remogram/provider-github-api` | GitHub REST/GraphQL — **use with `"provider": "github-api"`** |
 | `@remogram/provider-gitlab-api` | GitLab REST — **use with `"provider": "gitlab-api"`** |
-| `@remogram/provider-gitea-tea`, `@remogram/provider-github-gh` | Reserved placeholders (not implemented; see [Providers](#not-supported-yet-github-gh-and-gitea-tea)) |
+| `@remogram/provider-gitea-tea`, `@remogram/provider-github-gh` | Reserved CLI-wrapper placeholders (not implemented; see [CLI wrapper providers](#cli-wrapper-providers-not-supported-in-beta)) |
 
 ## Provider capabilities
 
 `remogram provider capabilities --json` returns structured provider facts: which commands are implemented, auth env names, check source support, mergeability confidence, host-binding mode, and `write_support: false` for v1.
 
-For stub providers (`github-gh`, `gitea-tea`), every command shows `"implemented": false`.
+For stub providers (`github-gh`, `gitea-tea`), every command shows `"implemented": false`. GitLab has no wrapper stub yet — use `gitlab-api`.
 
 ## Doctor
 
