@@ -1675,6 +1675,13 @@
       "at": "2026-06-10T14:17:18.181Z",
       "by": "actor_coding_agent",
       "note": null
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-10T14:37:03.428Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ],
   "task_smoke_payload_compare_v2": [
@@ -1691,6 +1698,85 @@
       "at": "2026-06-10T14:21:33.649Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-10T14:37:03.196Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_smoke_payload_compare_v2#generalize_metrics": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T14:36:58.390Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_smoke_payload_compare_v2#pr_checks_sidecar": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T14:36:58.580Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_smoke_payload_compare_v2#ref_compare_report": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T14:36:58.771Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_smoke_payload_compare_v2#capture_tools_and_scripts": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T14:36:58.966Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_smoke_payload_compare_v2#fixture_tests": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T14:36:59.160Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_smoke_payload_compare_v2#docs": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T14:36:59.369Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_smoke_payload_compare_v2#verify": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T14:36:59.565Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_smoke_payload_compare_v2": [
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-10T14:37:02.932Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ]
 }
