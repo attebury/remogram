@@ -607,6 +607,13 @@
       "at": "2026-06-10T08:09:01.973Z",
       "by": "actor_coding_agent",
       "note": null
+    },
+    {
+      "from": "fixed",
+      "to": "verified",
+      "at": "2026-06-10T08:15:10.546Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ],
   "bug_trusted_hosts_schema_drift": [
@@ -623,6 +630,13 @@
       "at": "2026-06-10T08:09:02.718Z",
       "by": "actor_coding_agent",
       "note": null
+    },
+    {
+      "from": "fixed",
+      "to": "verified",
+      "at": "2026-06-10T08:15:11.185Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ],
   "bug_mcp_stderr_leak": [
@@ -637,6 +651,13 @@
       "from": "in-progress",
       "to": "fixed",
       "at": "2026-06-10T08:09:02.948Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "fixed",
+      "to": "verified",
+      "at": "2026-06-10T08:15:11.810Z",
       "by": "actor_coding_agent",
       "note": null
     }
@@ -834,6 +855,105 @@
       "from": "in-progress",
       "to": "done",
       "at": "2026-06-10T08:13:41.087Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_trusted_base_url_bypass": [
+    {
+      "from": "fixed",
+      "to": "verified",
+      "at": "2026-06-10T08:14:53.225Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_provider_path_encoding": [
+    {
+      "from": "fixed",
+      "to": "verified",
+      "at": "2026-06-10T08:15:10.499Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_pr_index_unstable": [
+    {
+      "from": "fixed",
+      "to": "verified",
+      "at": "2026-06-10T08:15:11.141Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_sync_plan_git_fetch": [
+    {
+      "from": "fixed",
+      "to": "verified",
+      "at": "2026-06-10T08:15:11.767Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_unsanitized_provider_output": [
+    {
+      "from": "fixed",
+      "to": "verified",
+      "at": "2026-06-10T08:15:12.362Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_config_remote_repo_mismatch": [
+    {
+      "from": "fixed",
+      "to": "verified",
+      "at": "2026-06-10T08:15:15.454Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_trusted_hosts_base_url_bypass": [
+    {
+      "from": "fixed",
+      "to": "verified",
+      "at": "2026-06-10T08:15:20.539Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_http_redirect_ssrf": [
+    {
+      "from": "fixed",
+      "to": "verified",
+      "at": "2026-06-10T08:15:25.644Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_git_ref_option_injection": [
+    {
+      "from": "fixed",
+      "to": "verified",
+      "at": "2026-06-10T08:15:26.220Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_envelope_field_override": [
+    {
+      "from": "fixed",
+      "to": "verified",
+      "at": "2026-06-10T08:15:26.818Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_unsanitized_errors_and_urls": [
+    {
+      "from": "fixed",
+      "to": "verified",
+      "at": "2026-06-10T08:15:27.391Z",
       "by": "actor_coding_agent",
       "note": null
     }

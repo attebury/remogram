@@ -2,7 +2,8 @@ bug bug_trusted_hosts_base_url_bypass {
   name "trustedHosts approves mismatched baseUrl host"
   description "trustedBaseUrl returns true when trustedHosts entry matches git remote host even when config baseUrl host differs, sending GITEA_TOKEN to attacker-controlled baseUrl."
   fixed_in [task_forge_trust_round2]
-  status fixed
+  fixed_in_verification [verification_forge_trust_round2]
+  status verified
   severity critical
   priority critical
   affects [cap_forge_remote_ops]
@@ -16,7 +17,8 @@ bug bug_http_redirect_ssrf {
   name "HTTP redirect follows with Authorization header"
   description "fetchWithTimeout uses default fetch redirect behavior; compromised forge can 302 to metadata or exfil endpoints with token."
   fixed_in [task_forge_trust_round2]
-  status fixed
+  fixed_in_verification [verification_forge_trust_round2]
+  status verified
   severity high
   priority high
   affects [cap_forge_remote_ops]
@@ -30,7 +32,8 @@ bug bug_git_ref_option_injection {
   name "Git ref and remote strings allow option injection"
   description "git rev-parse, rev-list, and remote get-url pass user/MCP strings without validation; values starting with - are interpreted as git flags."
   fixed_in [task_forge_trust_round2]
-  status fixed
+  fixed_in_verification [verification_forge_trust_round2]
+  status verified
   severity high
   priority high
   affects [cap_forge_remote_ops]
@@ -44,7 +47,8 @@ bug bug_envelope_field_override {
   name "forgePacket body can override envelope trust fields"
   description "forgePacket spreads body after setting provider_id, repo_id, ok; malicious or buggy provider can set ok true or override type and repo_id."
   fixed_in [task_forge_trust_round2]
-  status fixed
+  fixed_in_verification [verification_forge_trust_round2]
+  status verified
   severity medium
   priority medium
   affects [cap_forge_remote_ops]
@@ -58,7 +62,8 @@ bug bug_unsanitized_errors_and_urls {
   name "API errors and syncPlan.remote unsanitized"
   description "fetchJson error messages flow verbatim into error_message; syncPlan returns remote name without sanitizeField; URL fields lack scheme allowlist."
   fixed_in [task_forge_trust_round2]
-  status fixed
+  fixed_in_verification [verification_forge_trust_round2]
+  status verified
   severity medium
   priority medium
   affects [cap_forge_remote_ops]
