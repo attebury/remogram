@@ -6,7 +6,7 @@ plan plan_github_api_provider {
   priority high
   steps {
     step scaffold_provider status pending description "Create packages/provider-github-api package exporting a provider with id github-api; wire repoStatus stub returning capabilities + auth_env from GITHUB_TOKEN/GH_TOKEN."
-    step auth_and_base status pending description "Resolve GitHub token (GITHUB_TOKEN then GH_TOKEN); build api base from baseUrl (api.github.com vs GHE /api/v3); reuse core apiBase/host-binding; no token in output."
+    step auth_and_base status pending description "Resolve GitHub token (GITHUB_TOKEN then GH_TOKEN); derive API base fail-closed from verified remote host: github.com maps only to https://api.github.com, GitHub Enterprise uses the same verified host with /api/v3, and any configured cross-host API base is rejected before token use."
     step repo_and_refs status pending description "Implement repoStatus (default_branch, capabilities) and refsCompare via compare endpoint mapping ahead_by/behind_by and resolving base/head SHAs through core git-args."
     step pr_view_and_checks status pending description "Implement prView (mergeable_state -> mergeability vocab) and prChecks merging check-runs + commit statuses into existing check_conclusion precedence."
     step merge_and_sync status pending description "Implement mergePlan (reuse blocker vocabulary) and syncPlan via core git, sanitizing remote; no provider-local copies of trust primitives."

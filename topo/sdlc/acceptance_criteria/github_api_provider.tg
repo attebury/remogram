@@ -20,8 +20,8 @@ acceptance_criterion ac_github_mergeability_normalization {
 }
 
 acceptance_criterion ac_github_trust_reuse {
-  name "GitHub provider reuses core trust primitives unchanged"
-  description "Given github-api config, when forge calls run, then baseUrl host must match the git remote host (host-bound), HTTP redirects are rejected, git refs and remotes pass assertGitRef/assertGitRemote before any spawn, and outbound errors/urls are sanitized and capped via remogram-core with no provider-local copies of these primitives."
+  name "GitHub API host binding is explicit and fail closed"
+  description "Given a public GitHub remote whose verified host is github.com, when github-api builds API requests, then it may use only the fixed origin https://api.github.com and must reject any other configured API host. Given a GitHub Enterprise remote, when github-api builds API requests, then the API base must derive from the verified remote host with /api/v3 or fail closed before sending a token. In all cases HTTP redirects are rejected, git refs and remotes pass assertGitRef/assertGitRemote before any spawn, and outbound errors/urls are sanitized and capped via remogram-core with no provider-local copies of these primitives."
   requirement req_github_api_provider
   status draft
 }
