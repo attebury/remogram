@@ -8,8 +8,23 @@
 topogram agent brief . --json
 topogram work status . --json
 remogram repo status --json
-npm run security:secrets -- --base origin/dev/scaffold
+npm run security:secrets -- --base origin/remo
 ```
+
+## Integration authority
+
+**`remo`** is the sole integration branch in this repository (base authority ref). Forge default branch and Merge Lane target are both **`remo`**. There is no integration **`main`** here.
+
+Topogram commands in this repo use explicit base refs unless reviewing history:
+
+```bash
+topogram check . --json
+topogram sdlc gate . --base origin/remo --head HEAD --json
+topogram work prep . --base origin/remo --head HEAD --json
+topogram query goal-branch-queue ./topo --base origin/remo --branches 'goal/*' --json
+```
+
+Remogram packet fields such as `default_branch`, `base_ref`, and `head_ref` report **forge facts** on consumer repositories. Do not normalize those to `remo`.
 
 ## Boundary rules
 
@@ -19,6 +34,8 @@ npm run security:secrets -- --base origin/dev/scaffold
 4. No `import` from Topogram in `packages/remogram-*` or provider packages.
 
 ## Lane policy
+
+**Merge Lane owns `remo`.** Do not merge product work to `main` or `dev/scaffold`.
 
 Before reviewing or merging a PR, dogfood remogram for forge facts:
 

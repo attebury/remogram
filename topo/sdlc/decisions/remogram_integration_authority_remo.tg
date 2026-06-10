@@ -1,0 +1,7 @@
+decision decision_remogram_integration_authority_remo {
+  name "Remogram integration authority is remo"
+  description "Remogram uses a single product-named integration branch called remo as the base authority ref for merged product code, forge default branch, Merge Lane target, and Topogram --base origin/remo usage in this repository."
+  context ["Forge HEAD was main while lane integration and PR bases used dev/scaffold", "Dual authority let tooling silently assume platform-default main", "Product-named integration branch forces explicit normalization across forge, CI, agents, and Topogram commands"]
+  consequences ["Forge default branch and Merge Lane target are both remo", "Topogram commands in this repo use --base origin/remo unless reviewing a historical ref", "Obsolete integration branches main, dev/scaffold, and dev/v2 are tagged then deleted", "goal/* and plan/* branches are retained as lane archaeology", "Remogram packet default_branch and PR ref fields remain forge facts and are not rewritten to remo"]
+  status accepted
+}

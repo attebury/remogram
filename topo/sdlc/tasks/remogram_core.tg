@@ -17,5 +17,6 @@ task task_remogram_core {
   disposition active
   priority high
   work_type implementation
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  status in-progress
 }
