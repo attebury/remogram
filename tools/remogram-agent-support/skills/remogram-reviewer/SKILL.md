@@ -1,6 +1,6 @@
 ---
 name: remogram-reviewer
-description: Use when reviewing Gitea PRs in remogram dogfood as Review Lane — planning or implementation scope against Intent Packets on integration branch remo, merge readiness via remogram CLI, safe_for_merge_lane classification.
+description: Use when reviewing Gitea PRs in remogram dogfood as Review Lane — planning or implementation scope against Intent Packets on integration branch remo, merge readiness via remogram CLI, safe_for_merge_lane classification. Review Lane never merges PRs.
 metadata:
   internal: true
 ---
@@ -26,6 +26,20 @@ lifecycle state.
 Do not take local **`remo`**; Merge Lane owns **`remo`**. Fetch remote refs;
 review by remote head/base SHAs.
 
+## Does not merge
+
+Review Lane **stops after one classification**.
+
+**Never merge** — even if:
+
+- The user prompt says "review/merge" or "review and merge".
+- Only **`remogram-reviewer`** is attached (not **`remogram-merge-lane`**).
+- Classification is **`safe_for_merge_lane`**.
+
+Merge is always a **separate message** with **`/remogram-merge-lane`**, PR number,
+and reviewed head SHA. Review Lane does not perform merge as a follow-up action
+in the same turn.
+
 ## Review Start
 
 Before reviewing:
@@ -39,6 +53,9 @@ remogram merge plan --number <n> --json
 ```
 
 Record reviewed head and base SHAs. Expect PR base **`remo`** on Gitea `origin`.
+
+If `remogram` CLI fails (e.g. config), use Gitea API + local proof per
+**`remogram-dogfood`**.
 
 For Topogram behavior in this repo:
 
@@ -64,20 +81,23 @@ Local proof does not override them.
 
 ## Review Checklist
 
-- Planning PRs: SDLC records and command-owned sidecars only; draft goals;
-  unclaimed tasks; pending plan steps.
+- Planning PRs: SDLC records and command-owned sidecars only.
+- **`plan:draft` PR:** `goal_branch` stays **`draft`**; tasks unclaimed; plan steps pending.
+- **`plan:approve` PR:** `goal_branch` promoted via `sdlc transition` evidence, not hand-edits.
 - Implementation PRs: match selected task/Intent Packet; inside scope/non-goals.
 - PRs touching command-owned sidecars: current and mergeable against latest
   **`origin/remo`**; green checks alone are not enough.
 - No hand-edited lifecycle/status/history/proof sidecars.
 - Public output portable and sanitized.
 
-For authority-changing planning PRs, hand off to Merge Lane with:
+## Lifecycle coherence (planning PRs)
 
-- Reviewed PR head, base **`remo`**, goal branch ref unchanged.
-- Pre-merge invariants: checks per rule above, mergeable, head/scope unchanged.
-- Post-merge: Merge Lane updates **`origin/remo`**, runs queue with
-  **`--base origin/remo`**, does not start implementation.
+| Condition | Typical classification |
+|-----------|------------------------|
+| `plan:draft` PR but `goal_branch` or req promoted | `needs_plan_lane_classification` |
+| Hand-edited `status` without transition receipt | `needs_plan_lane_classification` |
+| `goal_branch` draft + `requirement` approved + `verification` active | `needs_plan_lane_classification` (note in findings) |
+| `plan:approve` PR without `sdlc transition` evidence for goal | `needs_plan_lane_classification` |
 
 Before `safe_for_merge_lane`, reconfirm head, base, checks, mergeability, scope.
 
@@ -91,3 +111,12 @@ Findings first, by severity. End with exactly one recommendation:
 - `needs_refresh_or_reconcile`
 - `stale_or_superseded`
 - `blocked`
+
+Then report reviewed head SHA and this footer (always):
+
+```text
+Next step (human): if safe_for_merge_lane → /remogram-merge-lane Merge PR <n>.
+Reviewed head <sha>. Do not merge in this Review Lane turn.
+```
+
+Do not merge. Do not name Merge Lane as an action Review Lane will perform.

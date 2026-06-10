@@ -16,7 +16,7 @@ Changed files:
 Lifecycle changes:
 Checks: (remogram + local proof if forge checks missing)
 Queue/work-next: (--base origin/remo)
-Next lane:
+Next lane: (Review Lane or Plan Lane from Plan; Merge Lane only after Review classifies safe_for_merge_lane — never combined)
 Stop condition:
 ```
 
@@ -70,7 +70,39 @@ Gates:
 - topogram check . --json before commit.
 - Push goal/<name>; confirm PR base is remo.
 
-Report the standard handoff block.
+Report the standard handoff block. Next lane: Review Lane only.
+```
+
+## Plan: Approve Intent Packet
+
+```text
+You are Plan Lane (remogram dogfood).
+
+Preflight:
+- Fetch origin/remo.
+- Checkout goal/<name> from current origin/remo.
+- Confirm goal_branch_<id>.status is draft.
+- Confirm user named exact goal_branch_<id> for approval.
+- Stop if worktree dirty or base stale.
+
+Task:
+Approve <goal_branch_id> via command-owned transitions only.
+
+Lifecycle:
+- topogram sdlc transition <goal_branch_id> ready . --actor <actor> --evidence-ref <ref> --json
+- topogram sdlc transition <goal_branch_id> approved . --actor <actor> --evidence-ref <ref> --write --json
+- topogram sdlc prep commit . --json before commit
+
+Rules:
+- PR title plan:approve <slug>.
+- No hand-edited status fields in .tg files.
+- No implement; no work start; no merge.
+- topo/** on goal/<name> only.
+- topogram check . --json before commit/push/PR.
+
+After approval:
+- Open or update PR: head goal/<name> → base remo.
+- Report handoff block. Next lane: Review Lane only (not Merge Lane).
 ```
 
 ## Implement: Start Selected Task
@@ -81,7 +113,9 @@ You are Implement Lane (remogram dogfood).
 Preflight:
 - Fetch origin/remo.
 - Create fresh implementation branch from current origin/remo.
-- topogram work next . --json (or queue --base origin/remo).
+- topogram query goal-branch-queue ./topo --base origin/remo --branches 'goal/*' --json
+- Confirm goal lifecycle_state is approved (not draft).
+- topogram work next . --json.
 - Confirm <task_id> is selected or code-edit-ready.
 - topogram work start <task_id> . --actor <actor> --write --json
 - topogram sdlc prep commit . --json before protected edits.
@@ -134,12 +168,15 @@ Task:
 Review PR <n> as planning PR (expect base remo).
 
 Check:
-- Planning-only scope; draft/approved lifecycle matches request.
+- Planning-only scope; draft/approved lifecycle matches PR title (plan:draft vs plan:approve).
+- plan:draft PR must not promote goal_branch, requirement, task, or verification status.
+- plan:approve PR must show sdlc transition evidence for goal approval.
 - No task start/claim/done unless in scope.
-- Command-owned sidecars coherent.
+- Command-owned sidecars coherent; no hand-edited status fields.
 - Reconfirm head/base/mergeability before safe_for_merge_lane.
 
-Return exactly one classification.
+Return exactly one classification. Do not merge.
+Report reviewed head SHA. If safe_for_merge_lane, tell human to use /remogram-merge-lane separately.
 ```
 
 ## Review: Implementation PR
@@ -161,7 +198,8 @@ Check:
 - Public output sanitized.
 - Forge checks: if missing on Gitea, note local proof requirement.
 
-Return exactly one classification.
+Return exactly one classification. Do not merge.
+Report reviewed head SHA. If safe_for_merge_lane, tell human to use /remogram-merge-lane separately.
 ```
 
 ## Merge: Reviewed PR

@@ -62,6 +62,8 @@ Cursor also loads **`~/.codex/skills/`** for Codex compatibility, so `/top` show
 
 Integration branch is **`remo`** (not GitHub `main`). Plan Lane commits `topo/**` on **`goal/*` only** — never directly on `remo`. Forge facts via **`remogram`** CLI/MCP.
 
+**Review Lane classifies only** (`/remogram-reviewer`) — never merge in the same turn. **Merge Lane** is a separate prompt (`/remogram-merge-lane`) after `safe_for_merge_lane`.
+
 After dogfood (optional): `./scripts/park-topogram-skills.sh unpark`
 
 These skills are **internal** — stripped on public export; not published via `npx skills`.
