@@ -18,28 +18,55 @@ function ratio(remogramBytes, baselineBytes) {
   return Math.round((remogramBytes / baselineBytes) * 1000) / 1000;
 }
 
+/** Baseline for ref_compare on API providers (local git only; no forge HTTP ingest). */
+export function localGitOnlyBaseline() {
+  return {
+    local_git_only: {
+      bytes: 0,
+      token_estimate: 0,
+      label: 'no_forge_http_ingest',
+      note: 'API providers resolve refs via local git; no forge HTTP body to measure for ref_compare.',
+    },
+  };
+}
+
 /**
  * Build a sizes-only compare report (no raw forge or packet bodies).
- * @param {{ providerId: string, prNumber: number, remogramPacket: object, baselines: Record<string, { bytes?: number, label?: string, truncated?: boolean, error?: string }>, capBytes?: number }} input
+ * @param {{
+ *   command: 'pr_view' | 'pr_checks' | 'ref_compare',
+ *   providerId: string,
+ *   remogramPacket: object,
+ *   baselines: Record<string, { bytes?: number, label?: string, truncated?: boolean, error?: string, note?: string }>,
+ *   capBytes?: number,
+ *   prNumber?: number,
+ *   baseRef?: string,
+ *   headRef?: string,
+ * }} input
  */
 export function compareReport({
+  command,
   providerId,
-  prNumber,
   remogramPacket,
   baselines,
   capBytes = DEFAULT_MAX_BYTES,
+  prNumber,
+  baseRef,
+  headRef,
 }) {
   const remogramBytes = byteSize(remogramPacket);
   const report = {
     schema_version: '1',
-    command: 'pr_view',
+    command,
     provider_id: providerId,
-    pr_number: prNumber,
     remogram_ingest_cap_bytes: capBytes,
     remogram_packet: sizeMetrics(remogramBytes),
     baselines: {},
     ratios: {},
   };
+
+  if (prNumber != null) report.pr_number = prNumber;
+  if (baseRef != null) report.base_ref = baseRef;
+  if (headRef != null) report.head_ref = headRef;
 
   for (const [key, baseline] of Object.entries(baselines)) {
     if (baseline.error) {
@@ -49,22 +76,35 @@ export function compareReport({
 
     const entry = {
       bytes: baseline.bytes,
-      token_estimate: tokenEstimate(baseline.bytes),
+      token_estimate: tokenEstimate(baseline.bytes ?? 0),
     };
     if (baseline.label) entry.label = baseline.label;
+    if (baseline.note) entry.note = baseline.note;
     if (baseline.truncated) entry.truncated = true;
     if (baseline.bytes > capBytes) entry.exceeds_ingest_cap = true;
 
     report.baselines[key] = entry;
-    report.ratios[`vs_${key}`] = ratio(remogramBytes, baseline.bytes);
+    if (baseline.bytes > 0) {
+      report.ratios[`vs_${key}`] = ratio(remogramBytes, baseline.bytes);
+    }
   }
 
   return report;
 }
 
+function reportTitle(report) {
+  if (report.command === 'ref_compare') {
+    return `ref_compare payload compare (${report.provider_id}, ${report.base_ref}..${report.head_ref})`;
+  }
+  if (report.command === 'pr_checks') {
+    return `pr_checks payload compare (${report.provider_id}, PR #${report.pr_number})`;
+  }
+  return `pr_view payload compare (${report.provider_id}, PR #${report.pr_number})`;
+}
+
 export function formatCompareSummary(report) {
   const lines = [
-    `pr_view payload compare (${report.provider_id}, PR #${report.pr_number})`,
+    reportTitle(report),
     `  remogram packet: ${report.remogram_packet.bytes} bytes (~${report.remogram_packet.token_estimate} tokens)`,
     `  ingest cap: ${report.remogram_ingest_cap_bytes} bytes`,
   ];
@@ -76,10 +116,11 @@ export function formatCompareSummary(report) {
     }
     const capNote = baseline.exceeds_ingest_cap ? ' [exceeds ingest cap]' : '';
     const truncNote = baseline.truncated ? ' [truncated at sidecar read cap]' : '';
-    const ratio = report.ratios[`vs_${key}`];
-    const ratioNote = ratio != null ? ` ratio=${ratio}` : '';
+    const ratioVal = report.ratios[`vs_${key}`];
+    const ratioNote = ratioVal != null ? ` ratio=${ratioVal}` : '';
+    const note = baseline.note ? ` (${baseline.note})` : '';
     lines.push(
-      `  ${key}: ${baseline.bytes} bytes (~${baseline.token_estimate} tokens)${capNote}${truncNote}${ratioNote}`,
+      `  ${key}: ${baseline.bytes} bytes (~${baseline.token_estimate} tokens)${capNote}${truncNote}${ratioNote}${note}`,
     );
   }
 

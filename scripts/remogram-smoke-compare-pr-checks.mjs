@@ -28,7 +28,7 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv);
 runSmokeCompare({
-  compareFlag: '--compare-pr-view',
+  compareFlag: '--compare-pr-checks',
   extraArgs: ['--pr-number', String(args.prNumber)],
   forgeSidecar: args.forgeSidecar,
   outDir: args.outDir,
