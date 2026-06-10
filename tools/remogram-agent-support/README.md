@@ -16,7 +16,9 @@ Two supported paths. Use either or both depending on your setup.
 
 ### Option A — `npx skills` (npm / GitHub)
 
-[vercel-labs/skills](https://github.com/vercel-labs/skills) discovers skills under `tools/remogram-agent-support/skills/` from repo root or GitHub — no reshuffle required.
+[vercel-labs/skills](https://github.com/vercel-labs/skills) clones skill files from **GitHub** — not from `@remogram/*` on npm. The shorthand `attebury/remogram` means `https://github.com/attebury/remogram` (today's public source repo; npm org `@remogram` is separate).
+
+Skills are discovered under `tools/remogram-agent-support/skills/` from repo root or GitHub — no reshuffle required.
 
 ```bash
 # Consumer — install once globally

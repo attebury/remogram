@@ -20,6 +20,8 @@ Thanks for your interest in Remogram.
 
 Canonical skills: `tools/remogram-agent-support/skills/`. Full reference: [tools/remogram-agent-support/README.md](tools/remogram-agent-support/README.md).
 
+Skills install from **GitHub** ([`github.com/attebury/remogram`](https://github.com/attebury/remogram)), not from npm — `@remogram/cli` and `@remogram/mcp` do not include skill files.
+
 ### Option A — `npx skills`
 
 Works from any machine with Node — no Remogram clone required:

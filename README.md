@@ -260,6 +260,8 @@ GitHub commit statuses and check-runs merge into `statuses[]` with normalized `s
 
 Canonical skills live under `tools/remogram-agent-support/skills/` (`remogram-consumer`, `remogram-core`). See [tools/remogram-agent-support/README.md](tools/remogram-agent-support/README.md) for details.
 
+**GitHub vs npm:** Agent skills are **not** in the `@remogram/*` npm packages (those ship CLI/MCP only). `npx skills add …` clones from the **GitHub** repo [`github.com/attebury/remogram`](https://github.com/attebury/remogram) — the `owner/repo` shorthand is GitHub notation, not an npm scope.
+
 ### Option A — `npx skills` (recommended for npm/GitHub users)
 
 Uses the open [Agent Skills](https://agentskills.io) CLI ([vercel-labs/skills](https://github.com/vercel-labs/skills)). Skills install to agent-specific paths (project: `.agents/skills/`; global Cursor: `~/.cursor/skills/`, global Codex: `~/.codex/skills/`).
