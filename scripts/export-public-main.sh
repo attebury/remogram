@@ -22,6 +22,7 @@ rm -f scripts/remogram-smoke-compare.mjs scripts/remogram-smoke-compare-lib.mjs
 rm -f scripts/remogram-smoke-compare-pr-checks.mjs scripts/remogram-smoke-compare-ref-compare.mjs
 rm -f scripts/lib/forge-sidecar-http.mjs scripts/lib/forge-sidecar-pr-view.mjs scripts/lib/forge-sidecar-pr-checks.mjs
 rm -rf tools/remogram-agent-support/skills/remogram-dogfood
+rm -rf .cursor/skills/remogram-dogfood
 
 # Keep scripts/lib/smoke-payload-metrics.mjs for fixture tests; strip smoke npm scripts
 node <<'NODE'
