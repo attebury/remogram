@@ -18,15 +18,21 @@ cd "${OUT}"
 rm -rf topo .gitea .tmp dx
 rm -f topogram.project.json topogram.sdlc-policy.json
 rm -f scripts/install-topogram-local.sh
+rm -f scripts/park-topogram-skills.sh
+rm -f scripts/dogfood-skills.list
 rm -f scripts/remogram-smoke-compare.mjs scripts/remogram-smoke-compare-lib.mjs
 rm -f scripts/remogram-smoke-compare-pr-checks.mjs scripts/remogram-smoke-compare-ref-compare.mjs
 rm -f scripts/lib/forge-sidecar-http.mjs scripts/lib/forge-sidecar-pr-view.mjs scripts/lib/forge-sidecar-pr-checks.mjs
-rm -rf tools/remogram-agent-support/skills/remogram-dogfood
-rm -rf tools/remogram-agent-support/skills/remogram-sdlc-core
-rm -rf tools/remogram-agent-support/skills/remogram-plan-lane
-rm -rf .cursor/skills/remogram-dogfood
-rm -rf .cursor/skills/remogram-sdlc-core
-rm -rf .cursor/skills/remogram-plan-lane
+DOGFOOD_LIST="${ROOT}/scripts/dogfood-skills.list"
+if [[ -f "$DOGFOOD_LIST" ]]; then
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    line="${line%%#*}"
+    line="$(echo "$line" | xargs)"
+    [[ -z "$line" ]] && continue
+    rm -rf "tools/remogram-agent-support/skills/${line}"
+    rm -rf ".cursor/skills/${line}"
+  done < "$DOGFOOD_LIST"
+fi
 rm -f .cursor/rules/remogram-maintainer.mdc
 
 node <<'NODE'

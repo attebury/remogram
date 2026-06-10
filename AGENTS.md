@@ -40,19 +40,29 @@ Human-oriented setup, testing, and provider notes live in [README.md](README.md)
 
 On the **Gitea `remo`** checkout with `topo/`: use the **lane-skills experiment** stack — not generic `topogram-*` lane skills (they assume `origin/main`).
 
+Cursor also loads **`~/.codex/skills/`** for Codex compatibility, so `/top` shows Topogram skills until parked.
+
+**Before lane work:**
+
+```bash
+./scripts/park-topogram-skills.sh park
+./scripts/install-agent-skills.sh --cursor --codex --dogfood
+```
+
 | Context | Skills |
 |---------|--------|
-| `topo/**` or lane work | `remogram-sdlc-core` → `remogram-plan-lane` (or future remogram lane skills) |
-| Forge setup + Gitea proof rules | `remogram-dogfood` |
+| SDLC / trust / `remo` workcycle | `remogram-sdlc-core` |
+| Plan Lane | `remogram-plan-lane` |
+| Implement Lane | `remogram-implement-lane` |
+| Review Lane | `remogram-reviewer` |
+| Verify Lane | `remogram-verify-lane` |
+| Merge Lane | `remogram-merge-lane` |
+| Gitea forge + merge proof | `remogram-dogfood` |
 | `packages/**` | also `remogram-core` |
 
 Integration branch is **`remo`** (not GitHub `main`). Plan Lane commits `topo/**` on **`goal/*` only** — never directly on `remo`. Forge facts via **`remogram`** CLI/MCP.
 
-Install maintainer skills:
-
-```bash
-./scripts/install-agent-skills.sh --cursor --dogfood
-```
+After dogfood (optional): `./scripts/park-topogram-skills.sh unpark`
 
 These skills are **internal** — stripped on public export; not published via `npx skills`.
 <!-- maintainer-only:end -->

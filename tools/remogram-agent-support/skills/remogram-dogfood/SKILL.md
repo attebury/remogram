@@ -10,16 +10,32 @@ metadata:
 Private maintainer checkout: Topogram models remogram in `topo/` while shipping
 product code in `packages/**`.
 
+## Before lane work
+
+Park global Topogram skills so Cursor does not surface them from `~/.codex/skills/`:
+
+```bash
+./scripts/park-topogram-skills.sh park
+./scripts/install-agent-skills.sh --cursor --codex --dogfood
+```
+
+Restore when done: `./scripts/park-topogram-skills.sh unpark`
+
+Human paste prompts: `references/lane-prompts.md`.
+
 ## Skill load order (lane-skills experiment)
 
 1. **`remogram-sdlc-core`** — trust, protected paths, branch workcycle (`remo`, `goal/*`)
-2. **`remogram-plan-lane`** — when acting as Plan Lane (more lane skills added later)
+2. Lane skill for the role:
+   - **`remogram-plan-lane`** — Plan Lane
+   - **`remogram-implement-lane`** — Implement Lane
+   - **`remogram-reviewer`** — Review Lane
+   - **`remogram-verify-lane`** — Verify Lane
+   - **`remogram-merge-lane`** — Merge Lane
 3. **`remogram-core`** — when editing `packages/**` or providers
 
 **Do not load** `topogram-core` or generic `topogram-*-lane` skills during the
 experiment — they assume `origin/main`.
-
-Install: `./scripts/install-agent-skills.sh --cursor --dogfood`
 
 ## First commands
 

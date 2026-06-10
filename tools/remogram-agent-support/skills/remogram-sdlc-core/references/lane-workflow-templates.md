@@ -72,3 +72,139 @@ Gates:
 
 Report the standard handoff block.
 ```
+
+## Implement: Start Selected Task
+
+```text
+You are Implement Lane (remogram dogfood).
+
+Preflight:
+- Fetch origin/remo.
+- Create fresh implementation branch from current origin/remo.
+- topogram work next . --json (or queue --base origin/remo).
+- Confirm <task_id> is selected or code-edit-ready.
+- topogram work start <task_id> . --actor <actor> --write --json
+- topogram sdlc prep commit . --json before protected edits.
+
+Task:
+Implement <task_id> only.
+
+Rules:
+- Do not implement on goal/* or remo.
+- Do not approve/select/merge.
+- topogram check . --json before commit/push/PR.
+- PR base remo.
+
+Report the standard handoff block.
+```
+
+## Implement: Fix Review Finding
+
+```text
+You are Implement Lane (remogram dogfood).
+
+Preflight:
+- Fetch origin/remo.
+- Confirm PR head/base and review finding still apply.
+- Worktree clean.
+
+Task:
+Fix only Review Lane finding(s) for PR <number> (base remo).
+
+Rules:
+- No scope expansion.
+- Re-run focused proof and topogram check . --json.
+- Push updated head; do not merge.
+
+Report changed files, proof, new head SHA, next lane.
+```
+
+## Review: Planning PR
+
+```text
+You are Review Lane (remogram dogfood).
+
+Preflight:
+- git fetch origin
+- Review by remote head/base SHAs; do not checkout remo.
+- remogram pr view --number <n> --json
+- remogram pr checks --number <n> --json
+
+Task:
+Review PR <n> as planning PR (expect base remo).
+
+Check:
+- Planning-only scope; draft/approved lifecycle matches request.
+- No task start/claim/done unless in scope.
+- Command-owned sidecars coherent.
+- Reconfirm head/base/mergeability before safe_for_merge_lane.
+
+Return exactly one classification.
+```
+
+## Review: Implementation PR
+
+```text
+You are Review Lane (remogram dogfood).
+
+Preflight:
+- git fetch origin
+- Review by remote head/base SHAs.
+- remogram pr view/checks/merge plan --number <n> --json
+
+Task:
+Review PR <n> against <task_id> (base remo).
+
+Check:
+- Scope matches task and Intent Packet.
+- Proof covers changed surfaces.
+- Public output sanitized.
+- Forge checks: if missing on Gitea, note local proof requirement.
+
+Return exactly one classification.
+```
+
+## Merge: Reviewed PR
+
+```text
+You are Merge Lane (remogram dogfood).
+
+Preflight:
+- git fetch origin
+- PR <n> open, not draft, base remo, head = reviewed SHA
+- remogram merge plan --number <n> --json
+- remogram pr checks --number <n> --json
+- If checks missing: topogram check . --json + npm test on reviewed refs
+- Worktree clean; scope matches review
+
+Task:
+Merge PR <n> to remo if all invariants hold.
+
+After merge:
+- Confirm origin/remo tip
+- topogram query goal-branch-queue ./topo --base origin/remo --branches 'goal/*' --json
+- Do not start follow-up work
+
+Done = handoff block includes queue/work-next from origin/remo.
+```
+
+## Verify: Target-Bound Proof
+
+```text
+You are Verify Lane (remogram dogfood).
+
+Preflight:
+- git fetch origin
+- Identify exact base, head, target surface, allowed command route
+- Stop if binding or proof route missing
+
+Task:
+Verify <verification_id> for <task_id> on reviewed refs.
+
+Rules:
+- No lifecycle/merge mutations.
+- No scope expansion beyond target.
+- Bind evidence to task, command, base/head, policy hash.
+
+Report proof status, receipt class, blockers, next lane.
+```

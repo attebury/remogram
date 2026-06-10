@@ -1,0 +1,9 @@
+# Internal maintainer skills (private Gitea checkout). One name per line.
+# Used by install-agent-skills.sh and export-public-main.sh.
+remogram-dogfood
+remogram-sdlc-core
+remogram-plan-lane
+remogram-implement-lane
+remogram-reviewer
+remogram-verify-lane
+remogram-merge-lane

@@ -5,6 +5,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CANONICAL="${ROOT}/tools/remogram-agent-support/skills"
 CURSOR_DEST="${ROOT}/.cursor/skills"
 CODEX_DEST="${HOME}/.codex/skills"
+DOGFOOD_LIST="${ROOT}/scripts/dogfood-skills.list"
 CLAUDE_DEST=""
 DO_CURSOR=0
 DO_CODEX=0
@@ -12,12 +13,14 @@ DO_CLAUDE=0
 DO_DOGFOOD=0
 CONSUMER_ONLY=0
 
-# Internal maintainer skills (private Gitea checkout only; stripped on public export)
-DOGFOOD_SKILLS=(
-  remogram-dogfood
-  remogram-sdlc-core
-  remogram-plan-lane
-)
+DOGFOOD_SKILLS=()
+if [[ -f "$DOGFOOD_LIST" ]]; then
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    line="${line%%#*}"
+    line="$(echo "$line" | xargs)"
+    [[ -n "$line" ]] && DOGFOOD_SKILLS+=("$line")
+  done < "$DOGFOOD_LIST"
+fi
 
 usage() {
   cat <<'EOF'
@@ -35,8 +38,8 @@ Options:
 EOF
   if [[ -d "${CANONICAL}/remogram-dogfood" ]]; then
     cat <<'EOF'
-  --dogfood         Also install internal maintainer skills (dogfood, sdlc-core,
-                    plan-lane) to .cursor/skills/ and ~/.codex/skills/ when --codex
+  --dogfood         Install internal maintainer skills (see scripts/dogfood-skills.list)
+                    to .cursor/skills/ and ~/.codex/skills/ when --codex
 EOF
   fi
 }

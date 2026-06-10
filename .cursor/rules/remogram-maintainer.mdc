@@ -1,18 +1,28 @@
 ---
-description: Load remogram SDLC lane skills for topo/ and Plan Lane work on private Gitea remo (maintainer dogfood only).
+description: Load remogram SDLC lane skills for topo/ and lane work on private Gitea remo (maintainer dogfood only).
 alwaysApply: true
 ---
 
 For **`topo/**`** or **lane work** in this private dogfood checkout:
 
-1. Load **`remogram-sdlc-core`**, then the lane skill (e.g. **`remogram-plan-lane`**).
-2. Load **`remogram-dogfood`** for Gitea forge setup and review/merge proof rules.
-3. Load **`remogram-core`** when also editing `packages/**`.
+**Before lane work:**
 
-**Do not load** generic `topogram-*-lane` or `topogram-core` during the lane-skills experiment.
+```bash
+./scripts/park-topogram-skills.sh park
+./scripts/install-agent-skills.sh --cursor --codex --dogfood
+```
+
+**Skill load order:**
+
+1. **`remogram-sdlc-core`**
+2. Lane skill: **`remogram-plan-lane`**, **`remogram-implement-lane`**, **`remogram-reviewer`**, **`remogram-verify-lane`**, or **`remogram-merge-lane`**
+3. **`remogram-dogfood`** for Gitea forge + merge proof
+4. **`remogram-core`** when also editing `packages/**`
+
+**Do not load** generic `topogram-*-lane` or `topogram-core` during the experiment.
 
 Integration branch: **`remo`**. Planning: **`goal/*` only** for `topo/` commits. Forge: **`remogram`** CLI/MCP.
 
-Install: `./scripts/install-agent-skills.sh --cursor --dogfood`
+After dogfood session (optional): `./scripts/park-topogram-skills.sh unpark`
 
 This rule is stripped on public export.
