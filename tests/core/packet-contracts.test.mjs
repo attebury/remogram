@@ -93,6 +93,38 @@ describe('packet contracts', () => {
     expect(bodyKeys(p)).toEqual(['blockers', 'diverged', 'local_sha', 'remote', 'remote_sha']);
   });
 
+  it('provider_capabilities', () => {
+    const p = forgePacket(PACKET_TYPES.PROVIDER_CAPABILITIES, ctx, {
+      commands: [{ name: 'repo_status', implemented: true }],
+      auth_envs: ['GITEA_TOKEN'],
+      check_sources: ['commit_statuses'],
+      mergeability_confidence: 'direct',
+      host_binding: 'trusted_base_url',
+      pagination: 'first_page_only',
+      write_support: false,
+    });
+    expect(p.type).toBe('provider_capabilities');
+    expect(bodyKeys(p)).toEqual([
+      'auth_envs',
+      'check_sources',
+      'commands',
+      'host_binding',
+      'mergeability_confidence',
+      'pagination',
+      'write_support',
+    ]);
+  });
+
+  it('provider_doctor', () => {
+    const p = forgePacket(PACKET_TYPES.PROVIDER_DOCTOR, ctx, {
+      summary: 'warn',
+      checks: [{ name: 'auth', status: 'warn', message: 'No provider auth environment variable is set' }],
+      provider_capabilities: null,
+    });
+    expect(p.type).toBe('provider_doctor');
+    expect(bodyKeys(p)).toEqual(['checks', 'provider_capabilities', 'summary']);
+  });
+
   it('forge_error', () => {
     const p = forgePacket(
       'forge_error',

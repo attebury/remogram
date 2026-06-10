@@ -1,0 +1,7 @@
+decision decision_gitlab_namespace_v1 {
+  name "GitLab provider v1 uses existing owner repo config"
+  description "The first gitlab-api provider implementation should support namespace/project using the existing owner and repo config fields, URL-encoded as the GitLab project id. Nested subgroup paths remain out of scope unless a later decision widens config deliberately."
+  context ["remogram config currently validates owner and repo as single path segments", "Gitea and GitHub providers rely on that invariant", "GitLab supports nested groups but widening owner syntax would affect shared config validation"]
+  consequences ["gitlab-api v1 can support common namespace/project repositories without changing config schema semantics", "group/subgroup/project support requires a future migration or explicit provider-specific config decision", "shared provider parity work can proceed before deciding broader namespace syntax"]
+  status accepted
+}

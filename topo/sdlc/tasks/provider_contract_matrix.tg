@@ -1,0 +1,21 @@
+task task_provider_contract_matrix {
+  name "Implement provider contract matrix"
+  description "Add a reusable hermetic test harness that proves all real API providers satisfy the same six read/plan packet shapes, error vocabulary, check normalization, mergeability, and blocker behavior."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["New CLI commands" "New provider implementation" "Live-network tests in default suite" "Envelope shape changes"]
+  entrypoints ["tests/provider/**" "tests/helpers/**" "packages/provider-gitea-api/**" "packages/provider-github-api/**" "topo/shapes/**" "README.md"]
+  satisfies [req_provider_contract_matrix]
+  acceptance_refs [ac_contract_matrix_body_parity ac_contract_matrix_failure_parity]
+  verification_refs [verification_provider_contract_matrix]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "No pre-existing defect observed while creating this draft task."
+  disposition backlog
+  priority high
+  work_type implementation
+  status unclaimed
+}

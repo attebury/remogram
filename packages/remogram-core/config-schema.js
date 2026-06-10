@@ -3,6 +3,7 @@ import { z } from 'zod';
 const providerSchema = z.enum([
   'gitea-api',
   'github-api',
+  'gitlab-api',
   'gitea-tea',
   'github-gh',
 ]);

@@ -10,8 +10,8 @@ import {
 } from '@remogram/core';
 
 const GIT_TIMEOUT_MS = 10_000;
-const PUBLIC_GITHUB_HOST = 'github.com';
-const PUBLIC_GITHUB_API = 'https://api.github.com';
+const PUBLIC_GITLAB_HOST = 'gitlab.com';
+const PUBLIC_GITLAB_API = 'https://gitlab.com/api/v4';
 const AUTH_CAPABILITIES = [
   'repo_status',
   'ref_compare',
@@ -20,38 +20,20 @@ const AUTH_CAPABILITIES = [
   'merge_plan',
   'sync_plan',
 ];
-
 const STRUCTURED_COMMANDS = AUTH_CAPABILITIES.map((name) => ({ name, implemented: true }));
 
-export function githubToken() {
-  if (process.env.GITHUB_TOKEN) return { token: process.env.GITHUB_TOKEN, env: 'GITHUB_TOKEN' };
-  if (process.env.GH_TOKEN) return { token: process.env.GH_TOKEN, env: 'GH_TOKEN' };
-  return { token: null, env: null };
+export function gitlabToken() {
+  return process.env.GITLAB_TOKEN || null;
 }
 
 export function requireToken() {
-  const auth = githubToken();
-  if (!auth.token) {
-    throw Object.assign(new Error('GITHUB_TOKEN or GH_TOKEN not set'), {
-      forgeError: forgeError(
-        ERROR_CODES.UNAUTHENTICATED_PROVIDER,
-        'GITHUB_TOKEN or GH_TOKEN not set',
-      ),
+  const token = gitlabToken();
+  if (!token) {
+    throw Object.assign(new Error('GITLAB_TOKEN not set'), {
+      forgeError: forgeError(ERROR_CODES.UNAUTHENTICATED_PROVIDER, 'GITLAB_TOKEN not set'),
     });
   }
-  return auth;
-}
-
-function configOrigin(config) {
-  if (!config.baseUrl) return null;
-  try {
-    const url = new URL(config.baseUrl);
-    return url.origin;
-  } catch {
-    throw Object.assign(new Error('Invalid baseUrl for github-api'), {
-      forgeError: forgeError(ERROR_CODES.CONFIG_INVALID, 'Invalid baseUrl for github-api provider'),
-    });
-  }
+  return token;
 }
 
 function configuredHost(config) {
@@ -59,8 +41,19 @@ function configuredHost(config) {
   try {
     return new URL(config.baseUrl).host;
   } catch {
-    throw Object.assign(new Error('Invalid baseUrl for github-api'), {
-      forgeError: forgeError(ERROR_CODES.CONFIG_INVALID, 'Invalid baseUrl for github-api provider'),
+    throw Object.assign(new Error('Invalid baseUrl for gitlab-api'), {
+      forgeError: forgeError(ERROR_CODES.CONFIG_INVALID, 'Invalid baseUrl for gitlab-api provider'),
+    });
+  }
+}
+
+function configOrigin(config) {
+  if (!config.baseUrl) return null;
+  try {
+    return new URL(config.baseUrl).origin;
+  } catch {
+    throw Object.assign(new Error('Invalid baseUrl for gitlab-api'), {
+      forgeError: forgeError(ERROR_CODES.CONFIG_INVALID, 'Invalid baseUrl for gitlab-api provider'),
     });
   }
 }
@@ -68,59 +61,51 @@ function configuredHost(config) {
 export function apiBase(config, parsed = {}) {
   const remoteHost = parsed.host || configuredHost(config);
   if (!remoteHost) {
-    throw Object.assign(new Error('remote host required for github-api'), {
-      forgeError: forgeError(ERROR_CODES.CONFIG_INVALID, 'remote host required for github-api provider'),
+    throw Object.assign(new Error('remote host required for gitlab-api'), {
+      forgeError: forgeError(ERROR_CODES.CONFIG_INVALID, 'remote host required for gitlab-api provider'),
     });
   }
 
   const host = remoteHost.toLowerCase();
   const configured = configuredHost(config);
-  if (host === PUBLIC_GITHUB_HOST) {
-    if (configured && configured.toLowerCase() !== PUBLIC_GITHUB_HOST) {
-      const message = 'github.com remotes may use only https://api.github.com for API requests';
+  if (host === PUBLIC_GITLAB_HOST) {
+    if (configured && configured.toLowerCase() !== PUBLIC_GITLAB_HOST) {
+      const message = 'gitlab.com remotes may use only https://gitlab.com/api/v4 for API requests';
       throw Object.assign(new Error(message), {
-        forgeError: forgeError(
-          ERROR_CODES.UNTRUSTED_BASE_URL,
-          message,
-        ),
+        forgeError: forgeError(ERROR_CODES.UNTRUSTED_BASE_URL, message),
       });
     }
-    return PUBLIC_GITHUB_API;
+    return PUBLIC_GITLAB_API;
   }
 
   if (configured && configured.toLowerCase() !== host) {
-    const message = `GitHub Enterprise API host must match remote host ${remoteHost}`;
+    const message = `GitLab API host must match remote host ${remoteHost}`;
     throw Object.assign(new Error(message), {
-      forgeError: forgeError(
-        ERROR_CODES.UNTRUSTED_BASE_URL,
-        message,
-      ),
+      forgeError: forgeError(ERROR_CODES.UNTRUSTED_BASE_URL, message),
     });
   }
 
   const origin = configOrigin(config) || `https://${remoteHost}`;
-  return `${origin.replace(/\/$/, '')}/api/v3`;
+  return `${origin.replace(/\/$/, '')}/api/v4`;
 }
 
 export function authHeaders(token) {
-  return {
-    Authorization: `Bearer ${token}`,
-    Accept: 'application/vnd.github+json',
-    'X-GitHub-Api-Version': '2022-11-28',
-  };
+  return { 'PRIVATE-TOKEN': token, Accept: 'application/json' };
 }
 
-export function repoApiPath(config, ...segments) {
-  const owner = encodeURIComponent(config.owner);
-  const repo = encodeURIComponent(config.repo);
-  const base = `/repos/${owner}/${repo}`;
+export function projectId(config) {
+  return encodeURIComponent(`${config.owner}/${config.repo}`);
+}
+
+export function projectApiPath(config, ...segments) {
+  const base = `/projects/${projectId(config)}`;
   if (!segments.length) return base;
   return `${base}/${segments.map((s) => encodeURIComponent(String(s))).join('/')}`;
 }
 
-export async function githubFetch(config, parsed, path, options = {}) {
+export async function gitlabFetch(config, parsed, path, options = {}) {
   const base = apiBase(config, parsed);
-  const { token } = requireToken();
+  const token = requireToken();
   const url = `${base}${path}`;
   return fetchJson(url, {
     ...options,
@@ -159,30 +144,30 @@ export function gitAheadBehind(cwd, base, head) {
   }
 }
 
-export async function repoStatus(ctx) {
-  const auth = githubToken();
-  let defaultBranch = null;
-  if (auth.token) {
-    const repo = await githubFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config));
-    defaultBranch = sanitizeField(repo.default_branch);
-  }
-  return {
-    auth_present: Boolean(auth.token),
-    auth_env: auth.env,
-    capabilities: auth.token ? AUTH_CAPABILITIES : ['repo_status'],
-    default_branch: defaultBranch,
-  };
-}
-
 export function providerCapabilities() {
   return {
     commands: STRUCTURED_COMMANDS,
-    auth_envs: ['GITHUB_TOKEN', 'GH_TOKEN'],
-    check_sources: ['commit_statuses', 'check_runs'],
+    auth_envs: ['GITLAB_TOKEN'],
+    check_sources: ['commit_statuses', 'pipelines'],
     mergeability_confidence: 'derived',
     host_binding: 'verified_remote_host',
     pagination: 'first_page_only',
     write_support: false,
+  };
+}
+
+export async function repoStatus(ctx) {
+  const token = gitlabToken();
+  let defaultBranch = null;
+  if (token) {
+    const repo = await gitlabFetch(ctx.config, ctx.parsed, projectApiPath(ctx.config));
+    defaultBranch = sanitizeField(repo.default_branch);
+  }
+  return {
+    auth_present: Boolean(token),
+    auth_env: token ? 'GITLAB_TOKEN' : null,
+    capabilities: token ? AUTH_CAPABILITIES : ['repo_status'],
+    default_branch: defaultBranch,
   };
 }
 
@@ -198,77 +183,60 @@ export async function refsCompare(ctx, baseRef, headRef) {
       forgeError: forgeError(ERROR_CODES.MISSING_REF, 'Could not resolve base or head ref'),
     });
   }
-  const counts = gitAheadBehind(ctx.cwd, baseSha, headSha);
   return {
     base_ref: sanitizeField(baseRef),
     base_sha: baseSha,
     head_ref: sanitizeField(headRef),
     head_sha: headSha,
-    ...counts,
+    ...gitAheadBehind(ctx.cwd, baseSha, headSha),
   };
 }
 
-export async function getPull(ctx, { number }) {
+export async function getMergeRequest(ctx, { number }) {
   if (number == null) {
     throw Object.assign(new Error('--number required'), {
-      forgeError: forgeError(ERROR_CODES.INVALID_ARGS, 'Provide --number for PR lookup'),
+      forgeError: forgeError(ERROR_CODES.INVALID_ARGS, 'Provide --number for merge request lookup'),
     });
   }
-  return githubFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'pulls', number));
+  return gitlabFetch(ctx.config, ctx.parsed, projectApiPath(ctx.config, 'merge_requests', number));
 }
 
-export function mergeability(pr) {
-  if (pr.mergeable === false || pr.mergeable_state === 'dirty') return 'conflicted';
-  if (pr.mergeable === true) {
-    if (!pr.mergeable_state || ['clean', 'has_hooks', 'unstable'].includes(pr.mergeable_state)) {
-      return 'clean';
-    }
+function normalizeMrState(state) {
+  if (state === 'opened') return 'open';
+  return sanitizeField(state);
+}
+
+export function mergeability(mr) {
+  const status = mr.detailed_merge_status || mr.merge_status;
+  if (mr.has_conflicts === true || ['cannot_be_merged', 'conflict'].includes(status)) {
+    return 'conflicted';
+  }
+  if (mr.has_conflicts === false && ['mergeable', 'can_be_merged'].includes(status)) {
+    return 'clean';
   }
   return 'unknown';
 }
 
 export async function prView(ctx, opts) {
-  const pr = await getPull(ctx, opts);
+  const mr = await getMergeRequest(ctx, opts);
   return {
-    pr_number: pr.number,
-    url: sanitizeUrl(pr.html_url ?? pr.url),
-    title: sanitizeField(pr.title),
-    state: sanitizeField(pr.state),
-    base_ref: sanitizeField(pr.base?.ref),
-    base_sha: sanitizeField(pr.base?.sha),
-    head_ref: sanitizeField(pr.head?.ref),
-    head_sha: sanitizeField(pr.head?.sha),
-    mergeability: mergeability(pr),
+    pr_number: mr.iid,
+    url: sanitizeUrl(mr.web_url ?? mr.url),
+    title: sanitizeField(mr.title),
+    state: normalizeMrState(mr.state),
+    base_ref: sanitizeField(mr.target_branch),
+    base_sha: sanitizeField(mr.diff_refs?.base_sha),
+    head_ref: sanitizeField(mr.source_branch),
+    head_sha: sanitizeField(mr.sha ?? mr.diff_refs?.head_sha),
+    mergeability: mergeability(mr),
   };
 }
 
-function normalizeCommitStatusState(state) {
-  if (state === 'success') return 'success';
-  if (state === 'pending') return 'pending';
-  if (state === 'failure' || state === 'error') return 'failure';
+function normalizeStatusState(state) {
+  if (state === 'success' || state === 'skipped') return 'success';
+  if (state === 'failed' || state === 'canceled') return 'failure';
+  if (['created', 'pending', 'running', 'manual', 'scheduled'].includes(state)) return 'pending';
   return 'unknown';
-}
-
-function normalizeCheckRunState(run) {
-  if (run.status && run.status !== 'completed') return 'pending';
-  if (run.conclusion === 'success' || run.conclusion === 'neutral' || run.conclusion === 'skipped') {
-    return 'success';
-  }
-  if (
-    run.conclusion === 'failure' ||
-    run.conclusion === 'timed_out' ||
-    run.conclusion === 'cancelled' ||
-    run.conclusion === 'action_required' ||
-    run.conclusion === 'startup_failure'
-  ) {
-    return 'failure';
-  }
-  if (!run.conclusion) return 'pending';
-  return 'unknown';
-}
-
-function checkRunDescription(run) {
-  return run.output?.title || run.output?.summary || run.conclusion || run.status || null;
 }
 
 export function summarizeChecks(statuses) {
@@ -292,8 +260,8 @@ export async function prChecks(ctx, opts) {
       });
     }
   } else {
-    const pr = await getPull(ctx, opts);
-    sha = pr.head?.sha;
+    const mr = await getMergeRequest(ctx, opts);
+    sha = mr.sha ?? mr.diff_refs?.head_sha;
   }
   if (!sha) {
     throw Object.assign(new Error('No SHA'), {
@@ -301,21 +269,25 @@ export async function prChecks(ctx, opts) {
     });
   }
 
-  const [statuses, checkRuns] = await Promise.all([
-    githubFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'commits', sha, 'statuses')),
-    githubFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'commits', sha, 'check-runs')),
+  const [statuses, pipelines] = await Promise.all([
+    gitlabFetch(ctx.config, ctx.parsed, projectApiPath(ctx.config, 'repository', 'commits', sha, 'statuses')),
+    gitlabFetch(
+      ctx.config,
+      ctx.parsed,
+      `${projectApiPath(ctx.config, 'pipelines')}?sha=${encodeURIComponent(sha)}`,
+    ),
   ]);
-  const mappedStatuses = (statuses || []).map((s) => ({
-    context: sanitizeField(s.context),
-    state: normalizeCommitStatusState(s.state),
-    description: sanitizeField(s.description),
+  const mappedStatuses = (statuses || []).map((status) => ({
+    context: sanitizeField(status.name || status.context),
+    state: normalizeStatusState(status.status),
+    description: sanitizeField(status.description || status.status),
   }));
-  const mappedCheckRuns = (checkRuns?.check_runs || []).map((run) => ({
-    context: sanitizeField(run.name),
-    state: normalizeCheckRunState(run),
-    description: sanitizeField(checkRunDescription(run)),
+  const mappedPipelines = (pipelines || []).map((pipeline) => ({
+    context: sanitizeField(pipeline.name || `pipeline:${pipeline.id}`),
+    state: normalizeStatusState(pipeline.status),
+    description: sanitizeField(pipeline.status),
   }));
-  const mapped = [...mappedStatuses, ...mappedCheckRuns];
+  const mapped = [...mappedStatuses, ...mappedPipelines];
   return { head_sha: sha, check_conclusion: summarizeChecks(mapped), statuses: mapped };
 }
 
@@ -365,7 +337,7 @@ export async function syncPlan(ctx, remoteName = 'origin') {
 }
 
 export const provider = {
-  id: 'github-api',
+  id: 'gitlab-api',
   providerCapabilities,
   repoStatus,
   refsCompare,

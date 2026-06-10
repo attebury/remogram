@@ -1,0 +1,15 @@
+plan plan_provider_capabilities {
+  name "Structured provider capabilities implementation plan"
+  description "Add a read-only capabilities packet and command so provider behavior is explicit and testable."
+  task task_provider_capabilities
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  priority high
+  steps {
+    step shape_and_envelope status pending description "Add a provider capabilities packet type and shape without changing existing six command packet shapes."
+    step provider_method status pending description "Add provider methods or shared helpers returning implemented commands, auth envs, check sources, mergeability confidence, host binding, pagination, and write support."
+    step cli_and_mcp status pending description "Route remogram provider capabilities --json and expose matching MCP tool with read-only annotations."
+    step tests_and_docs status pending description "Add unit, CLI, MCP, and README coverage while preserving repo status compatibility."
+    step proof status pending description "Run npm test, npm run test:coverage, and topogram check."
+  }
+  status draft
+}

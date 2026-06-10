@@ -1,0 +1,47 @@
+verification verification_provider_contract_matrix {
+  name "Provider contract matrix proof"
+  description "Hermetic test proof that real API providers pass the shared six-command provider contract matrix."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [provider_contract_matrix]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status draft
+}
+
+verification verification_provider_capabilities {
+  name "Provider capabilities proof"
+  description "Runtime proof for provider capabilities packet shape, CLI routing, MCP tool, and backwards-compatible repo status behavior."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [provider_capabilities]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status draft
+}
+
+verification verification_provider_doctor {
+  name "Provider doctor proof"
+  description "Runtime proof for remogram doctor diagnostics across config, remote trust, auth, capabilities, and missing-check readiness cases."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [provider_doctor]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status draft
+}
+
+verification verification_gitlab_api_provider {
+  name "GitLab api provider test suite"
+  description "Mocked-fetch provider tests proving envelope parity, MR normalization, pipeline/check normalization, API host binding, auth handling, capabilities, and doctor diagnostics for gitlab-api."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [gitlab_api_provider_parity]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status draft
+}

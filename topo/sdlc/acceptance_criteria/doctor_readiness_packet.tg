@@ -1,0 +1,6 @@
+acceptance_criterion ac_doctor_readiness_packet {
+  name "Doctor reports readiness without secrets"
+  description "Given remogram doctor --json, when config, remote, auth, host binding, provider capabilities, or check-status support has a problem, then the diagnostic packet reports actionable statuses and warnings without token values, raw untrusted provider blobs, or Topogram workflow fields."
+  requirement req_provider_doctor
+  status draft
+}

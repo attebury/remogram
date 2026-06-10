@@ -1,6 +1,22 @@
 export function createMockProvider(overrides = {}) {
   return {
     id: 'gitea-api',
+    providerCapabilities: async () => ({
+      commands: [
+        { name: 'repo_status', implemented: true },
+        { name: 'ref_compare', implemented: true },
+        { name: 'pr_status', implemented: true },
+        { name: 'pr_checks', implemented: true },
+        { name: 'merge_plan', implemented: true },
+        { name: 'sync_plan', implemented: true },
+      ],
+      auth_envs: ['GITEA_TOKEN'],
+      check_sources: ['commit_statuses'],
+      mergeability_confidence: 'direct',
+      host_binding: 'trusted_base_url',
+      pagination: 'first_page_only',
+      write_support: false,
+    }),
     repoStatus: async () => ({
       auth_present: true,
       auth_env: 'GITEA_TOKEN',

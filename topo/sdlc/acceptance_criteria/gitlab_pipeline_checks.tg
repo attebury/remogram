@@ -1,0 +1,6 @@
+acceptance_criterion ac_gitlab_pipeline_checks {
+  name "GitLab pipelines normalize to check vocabulary"
+  description "Given GitLab pipeline or commit status fixtures, when pr checks runs, then check_conclusion is success, failure, pending, missing, or unknown using the shared precedence and sanitized status rows."
+  requirement req_gitlab_api_provider
+  status draft
+}

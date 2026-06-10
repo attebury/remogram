@@ -1,0 +1,9 @@
+requirement req_provider_capabilities {
+  name "Provider capabilities are structured facts"
+  description "Remogram must expose a read-only provider capabilities packet so agents can query implemented commands, auth env names, check sources, mergeability confidence, host binding mode, pagination status, and write support without inferring behavior from provider ids or README prose."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority high
+  status draft
+}

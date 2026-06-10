@@ -1,0 +1,6 @@
+acceptance_criterion ac_contract_matrix_failure_parity {
+  name "Contract matrix proves failure vocabulary parity"
+  description "Given invalid refs, missing auth, missing checks, failed checks, and conflicted mergeability fixtures, when the contract matrix runs, then providers normalize to the same error codes, check conclusions, mergeability values, and merge blockers."
+  requirement req_provider_contract_matrix
+  status draft
+}

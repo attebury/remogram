@@ -1,0 +1,6 @@
+acceptance_criterion ac_doctor_mcp_tool {
+  name "Doctor is available through MCP"
+  description "Given remogram MCP is installed, when the doctor tool runs, then it returns the same read-only diagnostic packet as the CLI with readOnlyHint true and destructiveHint false."
+  requirement req_provider_doctor
+  status draft
+}

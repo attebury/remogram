@@ -19,6 +19,8 @@ const AUTH_CAPABILITIES = [
   'sync_plan',
 ];
 
+const STRUCTURED_COMMANDS = AUTH_CAPABILITIES.map((name) => ({ name, implemented: true }));
+
 export function giteaToken() {
   return process.env.GITEA_TOKEN || null;
 }
@@ -106,6 +108,18 @@ export async function repoStatus(ctx) {
     auth_env: token ? 'GITEA_TOKEN' : null,
     capabilities: token ? AUTH_CAPABILITIES : ['repo_status'],
     default_branch: defaultBranch,
+  };
+}
+
+export function providerCapabilities() {
+  return {
+    commands: STRUCTURED_COMMANDS,
+    auth_envs: ['GITEA_TOKEN'],
+    check_sources: ['commit_statuses'],
+    mergeability_confidence: 'direct',
+    host_binding: 'trusted_base_url',
+    pagination: 'first_page_only',
+    write_support: false,
   };
 }
 
@@ -247,6 +261,7 @@ export async function syncPlan(ctx, remoteName = 'origin') {
 
 export const provider = {
   id: 'gitea-api',
+  providerCapabilities,
   repoStatus,
   refsCompare,
   prView,

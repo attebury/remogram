@@ -1,0 +1,6 @@
+acceptance_criterion ac_gitlab_api_trust {
+  name "GitLab API host binding is explicit and fail closed"
+  description "Given a gitlab.com remote, when gitlab-api builds API requests, then it may use only https://gitlab.com/api/v4. Given a self-managed GitLab remote, the API base must derive from the verified remote host with /api/v4 or fail closed before sending GITLAB_TOKEN."
+  requirement req_gitlab_api_provider
+  status draft
+}

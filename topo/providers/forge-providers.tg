@@ -12,6 +12,13 @@ term term_provider_github_api {
   status active
 }
 
+term term_provider_gitlab_api {
+  name "GitLab API Provider"
+  description "Transport api. Auth env GITLAB_TOKEN. GitLab REST v4. Implements all six read/plan commands."
+  category provider
+  status active
+}
+
 term term_provider_gitea_tea {
   name "Gitea Tea Wrapper Provider"
   description "Transport wrapper_cli via tea binary. Proposed for future implementation."

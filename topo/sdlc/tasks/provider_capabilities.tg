@@ -1,0 +1,21 @@
+task task_provider_capabilities {
+  name "Implement structured provider capabilities"
+  description "Add a read-only provider capabilities command, packet shape, provider method, CLI routing, MCP tool, tests, and docs so agents can query provider support explicitly."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Write commands" "Provider-specific envelope fields in existing packets" "Live-network capability probes in default tests"]
+  entrypoints ["packages/remogram-core/**" "packages/remogram-cli/**" "packages/remogram-mcp/**" "packages/provider-*/**" "tests/**" "topo/shapes/**" "README.md"]
+  satisfies [req_provider_capabilities]
+  acceptance_refs [ac_capabilities_packet_shape ac_capabilities_no_guessing]
+  verification_refs [verification_provider_capabilities]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_provider_contract_matrix]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "No pre-existing defect observed while creating this draft task."
+  disposition backlog
+  priority high
+  work_type implementation
+  status unclaimed
+}
