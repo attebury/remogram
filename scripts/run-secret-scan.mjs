@@ -115,6 +115,7 @@ function resolveAutomaticBaseRef() {
     process.env.REMOGRAM_SECRET_SCAN_BASE_REF,
     process.env.TOPOGRAM_SECRET_SCAN_BASE_REF,
     process.env.GITHUB_BASE_REF ? `origin/${process.env.GITHUB_BASE_REF}` : null,
+    'origin/main',
     'origin/remo',
   ]) {
     if (candidate && resolveCommit(candidate, { required: false })) {
@@ -136,9 +137,12 @@ function resolveScanPlan(options) {
     return { mode: 'full-history', reason: 'no base ref available' };
   }
 
-  const baseCommit = resolveCommit(baseRef, { required: explicitBase });
+  const baseCommit = resolveCommit(baseRef, { required: false });
   if (!baseCommit) {
-    return { mode: 'full-history', reason: `automatic base ref ${baseRef} was unavailable` };
+    const reason = explicitBase
+      ? `base ref ${baseRef} was unavailable (force push, first push, or shallow clone)`
+      : `automatic base ref ${baseRef} was unavailable`;
+    return { mode: 'full-history', reason };
   }
 
   const headCommit = resolveCommit(options.head, { required: true });
