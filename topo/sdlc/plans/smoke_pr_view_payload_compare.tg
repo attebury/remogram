@@ -1,0 +1,15 @@
+plan plan_smoke_pr_view_payload_compare {
+  name "Smoke pr_view payload compare plan"
+  description "Opt-in smoke size comparison for pr_view; implement metrics, sidecar, capture-tools, fixture test, docs; verify on remo."
+  task task_smoke_pr_view_payload_compare
+  architecture_patterns [contract_boundary, command_owned_mutation]
+  priority medium
+  steps {
+    step metrics_and_sidecar status done description "scripts/lib smoke-payload-metrics.mjs and forge-sidecar-pr-view.mjs for three API providers."
+    step capture_tools status done description "capture-tools --compare-pr-view flags and remogram-smoke-compare.mjs orchestrator."
+    step fixture_test status done description "tests/smoke/pr-view-payload-compare.test.mjs CI-safe."
+    step docs status done description "README Payload size smoke compare section and optional AGENTS pointer."
+    step verify status done description "Record verification and close task on remo."
+  }
+  status complete
+}

@@ -1,0 +1,9 @@
+requirement req_smoke_pr_view_payload_compare {
+  name "Smoke pr_view payload size comparison"
+  description "Remogram must offer an opt-in smoke compare for pr_view only that reports sizes and token estimates without writing raw forge JSON to artifacts. Fixture unit test runs in CI without live forge. Live sidecar supports github-api, gitlab-api, and gitea-api when tokens and .remogram.json are present. README documents 8KB ingest cap and GitHub GraphQL decision."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority medium
+  status approved
+}

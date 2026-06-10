@@ -1546,5 +1546,112 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "task_smoke_pr_view_payload_compare": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-10T09:02:49.732Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-10T09:02:49.752Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-10T09:04:40.000Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "goal_branch_smoke_pr_view_payload_compare": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-10T09:04:46.064Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-10T09:04:49.005Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-10T09:04:52.227Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-10T09:04:52.425Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_smoke_pr_view_payload_compare#metrics_and_sidecar": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T09:04:59.930Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_smoke_pr_view_payload_compare#capture_tools": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T09:05:00.142Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_smoke_pr_view_payload_compare#fixture_test": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T09:05:00.518Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_smoke_pr_view_payload_compare#docs": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T09:05:00.768Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_smoke_pr_view_payload_compare#verify": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T09:05:00.972Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_smoke_pr_view_payload_compare": [
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-10T09:05:01.169Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
   ]
 }

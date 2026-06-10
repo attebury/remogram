@@ -1,0 +1,22 @@
+task task_smoke_pr_view_payload_compare {
+  name "Implement smoke pr_view payload compare"
+  description "Metrics helper, forge sidecar for three API providers, capture-tools flags, fixture test, README and npm script for opt-in pr_view size comparison."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["pr_checks compare" "Default npm test wiring" "Changing DEFAULT_MAX_BYTES" "npm publish"]
+  entrypoints ["scripts/**" "packages/remogram-mcp/capture-tools.mjs" "tests/smoke/**" "README.md" "package.json"]
+  satisfies [req_smoke_pr_view_payload_compare]
+  acceptance_refs [ac_smoke_pr_view_fixture_test ac_smoke_pr_view_capture_tools ac_smoke_pr_view_sidecar_providers ac_smoke_pr_view_docs]
+  verification_refs [verification_smoke_pr_view_payload_compare]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, command_owned_mutation]
+  disposition active
+  priority medium
+  work_type implementation
+  claimed_by [actor_coding_agent]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Smoke payload compare feature; no product defect observed."
+  status done
+}

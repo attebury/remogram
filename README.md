@@ -89,6 +89,28 @@ Optional local pre-push gate: `./scripts/install-pre-push-hook.sh` (origin pushe
 - **CI:** GitHub Actions (`.github/workflows/test.yml`, `.github/workflows/secret-scan.yml`) runs on push/PR when hosted on GitHub. For local **Gitea**, mirror workflows live under `.gitea/workflows/` (Node 20, stub Topogram sibling, `npm ci`, `npm test`, `npm run test:coverage`, plus Gitleaks via `npm run security:secrets`). Gitea Actions may require enabling workflows in server settings.
 - **Lane checks:** `remogram pr checks` reads forge commit statuses. On local Gitea without Actions/status posting, `check_conclusion: "missing"` is expected. In that mode, lanes still use remogram for PR facts and mergeability, then require local proof (`topogram check . --json`, `npm test`) before merge. Missing statuses are not a substitute for failed statuses; if the forge reports failure or pending, treat that as a blocker.
 
+### Payload size smoke compare (pr_view only)
+
+Remogram caps forge HTTP ingest at **8192 bytes** (`DEFAULT_MAX_BYTES` in `packages/remogram-core/caps.js`; enforced by `fetchJson` in `packages/remogram-core/http.js`). Normalized packets add a small envelope on top of selected fields.
+
+For **`pr view`** / MCP **`pr_status`**, `github-api` uses **GraphQL field selection** instead of REST `GET /pulls/{number}` because full REST pull JSON often exceeds the ingest cap in live smoke. See [`topo/sdlc/decisions/github_api_graphql_pr_view.tg`](topo/sdlc/decisions/github_api_graphql_pr_view.tg).
+
+Opt-in compare (sizes only — no raw forge JSON in artifacts):
+
+```bash
+npm run smoke:compare-pr-view -- --pr-number 1              # MCP pr_status packet vs config provider
+npm run smoke:compare-pr-view -- --pr-number 1 --forge-sidecar   # + live forge baseline (needs token)
+npm run smoke:compare-pr-view -- --out /tmp/smoke-pr-1 --forge-sidecar
+```
+
+Output is `size_report.json` with byte counts and token estimates (`ceil(bytes/4)`). **Ratios** are `remogram_packet_bytes / baseline_bytes` — compare against **`provider_path`** (what the provider actually fetches), not an arbitrary minimal JSON snippet. GitHub sidecar also records **`github_rest_pull`** to show why GraphQL was chosen.
+
+Fixture regression (no live forge, not part of default `npm test` wiring):
+
+```bash
+npm test -- tests/smoke/pr-view-payload-compare.test.mjs
+```
+
 ## Packages
 
 | Package | Role |

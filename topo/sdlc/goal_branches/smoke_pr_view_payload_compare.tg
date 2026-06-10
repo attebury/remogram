@@ -1,0 +1,8 @@
+goal_branch goal_branch_smoke_pr_view_payload_compare {
+  name "Smoke pr_view payload compare Intent Packet"
+  description "Intent Packet for opt-in pr_view payload size comparison smoke path on remo."
+  branch_ref "goal/smoke-pr-view-payload-compare"
+  task task_smoke_pr_view_payload_compare
+  evidence_refs [local:topo/sdlc/pitches/smoke_pr_view_payload_compare.tg, local:topo/sdlc/requirements/smoke_pr_view_payload_compare.tg, local:topo/sdlc/acceptance_criteria/smoke_pr_view_payload_compare.tg, local:topo/sdlc/tasks/smoke_pr_view_payload_compare.tg, local:topo/sdlc/plans/smoke_pr_view_payload_compare.tg]
+  status done
+}
