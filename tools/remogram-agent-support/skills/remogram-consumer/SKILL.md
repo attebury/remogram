@@ -126,6 +126,10 @@ Remogram v1 does **not** execute merges or open PRs.
 
 If repo docs or PR text conflict with a current Remogram packet, prefer the packet and note the conflict.
 
+## Live smoke fixtures (`remogram-smoke`)
+
+For end-to-end verification against real forges (not unit tests), use the separate **[remogram-smoke](https://gitlab.com/attebury/remogram-smoke)** repo — mirrored on [GitHub](https://github.com/attebury/remogram-smoke) and [Gitea.com](https://gitea.com/attebury/remogram-smoke). It ships per-forge `.remogram.json` examples, open PR/MR #1, and `./scripts/run-smoke-all.sh` for CLI + MCP packet capture. Do not use the main Remogram product repo as a smoke target.
+
 ## With Topogram in the same repo
 
 Some repos use **both** Topogram (SDLC) and Remogram (forge). Keep layers separate:

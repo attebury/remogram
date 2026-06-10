@@ -14,6 +14,7 @@ npm install -g @remogram/cli@beta @remogram/mcp@beta
 - AGENTS.md: https://github.com/attebury/remogram/blob/main/AGENTS.md
 - CHANGELOG: https://github.com/attebury/remogram/blob/main/CHANGELOG.md
 - MCP examples: https://github.com/attebury/remogram/tree/main/examples/mcp
+- Live smoke fixtures: https://gitlab.com/attebury/remogram-smoke (mirrors: https://github.com/attebury/remogram-smoke, https://gitea.com/attebury/remogram-smoke)
 - Consumer agent skill: tools/remogram-agent-support/skills/remogram-consumer/SKILL.md
 - Contributor agent skill: tools/remogram-agent-support/skills/remogram-core/SKILL.md
 

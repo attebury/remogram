@@ -24,7 +24,7 @@ Default branch: **`main`**.
 ### Beta limitations
 
 - **Read/plan v1 only** — no PR create, merge execute, or push.
-- Payload-size smoke compare is monorepo dev tooling only (not shipped in npm beta).
+- Payload-size smoke compare is monorepo dev tooling only (not shipped in npm beta). For live cross-forge checks, use the **[remogram-smoke](https://gitlab.com/attebury/remogram-smoke)** fixture repos.
 
 ## Providers
 
@@ -148,6 +148,46 @@ You do not need smoke compare to see Remogram output. Every command supports **`
    ```
 3. **MCP:** tools `doctor`, `provider_capabilities`, `repo_status`, `ref_compare`, `pr_status`, `pr_checks`, `merge_plan`, `sync_plan` return the same JSON. See [examples/mcp/README.md](examples/mcp/README.md).
 4. **Verify envelope fields:** every packet includes `type`, `schema_version`, `provider_id`, `remote_name`, `repo_id`, `observed_at`, and `ok`. When `ok` is `false`, read the `error` field.
+
+## Live smoke fixtures (`remogram-smoke`)
+
+**[remogram-smoke](https://gitlab.com/attebury/remogram-smoke)** is a separate, minimal repository used to exercise Remogram against **real forges** — not your application repo. It is mirrored on GitLab, GitHub, and Gitea so you can run the same v1 read/plan commands everywhere with predictable fixture data.
+
+| Forge | Clone URL |
+|-------|-----------|
+| **GitLab** (source of truth) | https://gitlab.com/attebury/remogram-smoke.git |
+| **GitHub** | https://github.com/attebury/remogram-smoke.git |
+| **Gitea.com** | https://gitea.com/attebury/remogram-smoke.git |
+
+Self-hosted Gitea mirrors use the same git content; see the smoke repo README for local `localhost` setup.
+
+### Why it exists
+
+- **Safe sandbox** — open PR/MR #1, branch compares, and checks without touching product repos like [remogram](https://github.com/attebury/remogram).
+- **Cross-forge parity** — same `main` + `feature/smoke-1` branches and open PR/MR **#1** on each host.
+- **Ready-made config** — copy `config/remogram.*.json.example` → `.remogram.json` per forge (tokens in env only).
+- **Full v1 battery** — scripts run `doctor`, `repo status`, `refs compare`, `pr view`, `pr checks`, and `merge plan` (CLI and MCP captures).
+
+### Quick start
+
+```bash
+git clone https://gitlab.com/attebury/remogram-smoke.git
+cd remogram-smoke
+cp config/remogram.github.json.example .remogram.json   # or gitlab / gitea example
+export GITHUB_TOKEN=...                                   # or GITLAB_TOKEN / GITEA_TOKEN
+remogram doctor --json
+remogram pr view --number 1 --json
+```
+
+Multi-forge capture (requires tokens; skips hosts without auth):
+
+```bash
+./scripts/run-smoke-all.sh
+```
+
+Results land under `runs/<timestamp>/` with a human-readable `REPORT.md`. See the [remogram-smoke README](https://gitlab.com/attebury/remogram-smoke/-/blob/main/README.md) for auth scopes, mirror publishing, and expected forge facts (e.g. `check_conclusion: "missing"` on Gitea without CI statuses).
+
+**Note:** Payload-size smoke compare (`npm run smoke:compare-*`) lives in the Remogram **developer** monorepo only and is not shipped in npm beta. For live verification after install, use **remogram-smoke** and `--json` packets instead.
 
 ## MCP
 
