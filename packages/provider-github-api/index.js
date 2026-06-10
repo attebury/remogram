@@ -12,6 +12,26 @@ import {
 const GIT_TIMEOUT_MS = 10_000;
 const PUBLIC_GITHUB_HOST = 'github.com';
 const PUBLIC_GITHUB_API = 'https://api.github.com';
+const PUBLIC_GITHUB_GRAPHQL = 'https://api.github.com/graphql';
+
+const PR_VIEW_QUERY = `
+query RemogramPrView($owner: String!, $repo: String!, $number: Int!) {
+  repository(owner: $owner, name: $repo) {
+    pullRequest(number: $number) {
+      number
+      url
+      title
+      state
+      mergeable
+      mergeStateStatus
+      baseRefName
+      baseRefOid
+      headRefName
+      headRefOid
+    }
+  }
+}
+`;
 const AUTH_CAPABILITIES = [
   'repo_status',
   'ref_compare',
@@ -128,6 +148,83 @@ export async function githubFetch(config, parsed, path, options = {}) {
   });
 }
 
+export function graphqlEndpoint(config, parsed = {}) {
+  const remoteHost = (parsed.host || configuredHost(config) || '').toLowerCase();
+  if (remoteHost === PUBLIC_GITHUB_HOST) {
+    return PUBLIC_GITHUB_GRAPHQL;
+  }
+  const origin = configOrigin(config) || `https://${parsed.host}`;
+  return `${origin.replace(/\/$/, '')}/api/graphql`;
+}
+
+export function mapMergeStateStatus(status) {
+  if (!status) return undefined;
+  return String(status).toLowerCase();
+}
+
+export function graphqlPullToRestShape(node) {
+  if (!node) return null;
+  let mergeable = null;
+  if (node.mergeable === 'CONFLICTING') mergeable = false;
+  else if (node.mergeable === 'MERGEABLE') mergeable = true;
+
+  return {
+    number: node.number,
+    html_url: node.url,
+    title: node.title,
+    state: mapMergeStateStatus(node.state),
+    mergeable,
+    mergeable_state: mapMergeStateStatus(node.mergeStateStatus),
+    base: { ref: node.baseRefName, sha: node.baseRefOid },
+    head: { ref: node.headRefName, sha: node.headRefOid },
+  };
+}
+
+export async function githubGraphql(config, parsed, query, variables) {
+  const { token } = requireToken();
+  const url = graphqlEndpoint(config, parsed);
+  const body = await fetchJson(url, {
+    method: 'POST',
+    headers: {
+      ...authHeaders(token),
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query, variables }),
+  });
+
+  if (body.errors?.length) {
+    const message = sanitizeField(body.errors[0]?.message) || 'GraphQL request failed';
+    throw Object.assign(new Error(message), {
+      forgeError: forgeError(ERROR_CODES.API_ERROR, message),
+    });
+  }
+
+  return body.data;
+}
+
+export async function fetchPullGraphql(config, parsed, number) {
+  if (number == null) {
+    throw Object.assign(new Error('--number required'), {
+      forgeError: forgeError(ERROR_CODES.INVALID_ARGS, 'Provide --number for PR lookup'),
+    });
+  }
+
+  const data = await githubGraphql(config, parsed, PR_VIEW_QUERY, {
+    owner: config.owner,
+    repo: config.repo,
+    number,
+  });
+
+  const pr = graphqlPullToRestShape(data?.repository?.pullRequest);
+  if (!pr) {
+    throw Object.assign(new Error('Pull request not found'), {
+      forgeError: forgeError(ERROR_CODES.API_ERROR, `Pull request ${number} not found`),
+    });
+  }
+
+  return pr;
+}
+
 function gitExec(cwd, args) {
   return execFileSync('git', args, { cwd, encoding: 'utf8', timeout: GIT_TIMEOUT_MS }).trim();
 }
@@ -208,15 +305,6 @@ export async function refsCompare(ctx, baseRef, headRef) {
   };
 }
 
-export async function getPull(ctx, { number }) {
-  if (number == null) {
-    throw Object.assign(new Error('--number required'), {
-      forgeError: forgeError(ERROR_CODES.INVALID_ARGS, 'Provide --number for PR lookup'),
-    });
-  }
-  return githubFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'pulls', number));
-}
-
 export function mergeability(pr) {
   if (pr.mergeable === false || pr.mergeable_state === 'dirty') return 'conflicted';
   if (pr.mergeable === true) {
@@ -228,7 +316,7 @@ export function mergeability(pr) {
 }
 
 export async function prView(ctx, opts) {
-  const pr = await getPull(ctx, opts);
+  const pr = await fetchPullGraphql(ctx.config, ctx.parsed, opts.number);
   return {
     pr_number: pr.number,
     url: sanitizeUrl(pr.html_url ?? pr.url),
@@ -292,7 +380,7 @@ export async function prChecks(ctx, opts) {
       });
     }
   } else {
-    const pr = await getPull(ctx, opts);
+    const pr = await fetchPullGraphql(ctx.config, ctx.parsed, opts.number);
     sha = pr.head?.sha;
   }
   if (!sha) {

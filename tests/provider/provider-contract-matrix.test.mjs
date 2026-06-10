@@ -83,18 +83,18 @@ function githubCase() {
       global.fetch.mockResolvedValueOnce(jsonResponse(load('github-api', 'repo.json')));
     },
     mockPrView() {
-      global.fetch.mockResolvedValueOnce(jsonResponse(load('github-api', 'pull-clean.json')));
+      global.fetch.mockResolvedValueOnce(jsonResponse(load('github-api', 'pull-graphql-clean.json')));
     },
     mockPrChecksSuccess() {
       global.fetch
-        .mockResolvedValueOnce(jsonResponse(load('github-api', 'pull-clean.json')))
+        .mockResolvedValueOnce(jsonResponse(load('github-api', 'pull-graphql-clean.json')))
         .mockResolvedValueOnce(jsonResponse(load('github-api', 'statuses-success.json')))
         .mockResolvedValueOnce(jsonResponse(load('github-api', 'check-runs-success.json')));
     },
     mockMergePlanMissingChecks() {
       global.fetch
-        .mockResolvedValueOnce(jsonResponse(load('github-api', 'pull-clean.json')))
-        .mockResolvedValueOnce(jsonResponse(load('github-api', 'pull-clean.json')))
+        .mockResolvedValueOnce(jsonResponse(load('github-api', 'pull-graphql-clean.json')))
+        .mockResolvedValueOnce(jsonResponse(load('github-api', 'pull-graphql-clean.json')))
         .mockResolvedValueOnce(jsonResponse([]))
         .mockResolvedValueOnce(jsonResponse({ check_runs: [] }));
     },

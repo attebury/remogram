@@ -9,6 +9,8 @@ import {
   repoApiPath,
   summarizeChecks,
   mergeability,
+  graphqlEndpoint,
+  graphqlPullToRestShape,
 } from '@remogram/provider-github-api';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -29,6 +31,10 @@ function jsonResponse(body, status = 200) {
       },
     },
   };
+}
+
+function graphqlResponse(name) {
+  return jsonResponse(load(name));
 }
 
 const ctx = {
@@ -96,6 +102,19 @@ describe('apiBase', () => {
         { ...ctx.parsed, host: 'git.example.test' },
       ),
     ).toThrow(/must match remote host git\.example\.test/);
+  });
+
+  it('binds public GitHub GraphQL to api.github.com/graphql', () => {
+    expect(graphqlEndpoint(ctx.config, ctx.parsed)).toBe('https://api.github.com/graphql');
+  });
+
+  it('derives GitHub Enterprise GraphQL from the verified remote host', () => {
+    expect(
+      graphqlEndpoint(
+        { ...ctx.config, baseUrl: 'https://git.example.test' },
+        { ...ctx.parsed, host: 'git.example.test' },
+      ),
+    ).toBe('https://git.example.test/api/graphql');
   });
 });
 
@@ -172,14 +191,16 @@ describe('provider-github-api fixtures', () => {
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
-  it('prView maps mergeability and sanitizes fields', async () => {
-    global.fetch.mockResolvedValueOnce(jsonResponse(load('pull-clean.json')));
+  it('prView maps mergeability via GraphQL and sanitizes fields', async () => {
+    global.fetch.mockResolvedValueOnce(graphqlResponse('pull-graphql-clean.json'));
     const body = await provider.prView(ctx, { number: 42 });
     expect(body.pr_number).toBe(42);
     expect(body.mergeability).toBe('clean');
     expect(body.title).toBe('Add GitHub provider with newline');
     expect(body.base_ref).toBe('main');
     expect(body.head_sha).toBe('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
+    expect(global.fetch.mock.calls[0][0]).toBe('https://api.github.com/graphql');
+    expect(global.fetch.mock.calls[0][1].method).toBe('POST');
     expect(bodyKeys(forgePacket(PACKET_TYPES.PR_STATUS, packetCtx, body))).toEqual([
       'base_ref',
       'base_sha',
@@ -194,7 +215,8 @@ describe('provider-github-api fixtures', () => {
   });
 
   it('maps dirty mergeability to conflicted', () => {
-    expect(mergeability(load('pull-conflicted.json'))).toBe('conflicted');
+    const pr = graphqlPullToRestShape(load('pull-graphql-conflicted.json').data.repository.pullRequest);
+    expect(mergeability(pr)).toBe('conflicted');
   });
 
   it('prChecks rejects option injection ref', async () => {
@@ -205,7 +227,7 @@ describe('provider-github-api fixtures', () => {
 
   it('prChecks maps commit statuses plus check-runs to success conclusion', async () => {
     global.fetch
-      .mockResolvedValueOnce(jsonResponse(load('pull-clean.json')))
+      .mockResolvedValueOnce(graphqlResponse('pull-graphql-clean.json'))
       .mockResolvedValueOnce(jsonResponse(load('statuses-success.json')))
       .mockResolvedValueOnce(jsonResponse(load('check-runs-success.json')));
     const body = await provider.prChecks(ctx, { number: 42 });
@@ -240,8 +262,8 @@ describe('provider-github-api fixtures', () => {
 
   it('mergePlan uses the shared blocker vocabulary', async () => {
     global.fetch
-      .mockResolvedValueOnce(jsonResponse(load('pull-conflicted.json')))
-      .mockResolvedValueOnce(jsonResponse(load('pull-conflicted.json')))
+      .mockResolvedValueOnce(graphqlResponse('pull-graphql-conflicted.json'))
+      .mockResolvedValueOnce(graphqlResponse('pull-graphql-conflicted.json'))
       .mockResolvedValueOnce(jsonResponse([]))
       .mockResolvedValueOnce(jsonResponse({ check_runs: [] }));
     const body = await provider.mergePlan(ctx, { number: 43 });
@@ -258,8 +280,8 @@ describe('provider-github-api fixtures', () => {
 
   it('mergePlan reports the happy path with no blockers', async () => {
     global.fetch
-      .mockResolvedValueOnce(jsonResponse(load('pull-clean.json')))
-      .mockResolvedValueOnce(jsonResponse(load('pull-clean.json')))
+      .mockResolvedValueOnce(graphqlResponse('pull-graphql-clean.json'))
+      .mockResolvedValueOnce(graphqlResponse('pull-graphql-clean.json'))
       .mockResolvedValueOnce(jsonResponse(load('statuses-success.json')))
       .mockResolvedValueOnce(jsonResponse(load('check-runs-success.json')));
     const body = await provider.mergePlan(ctx, { number: 42 });
