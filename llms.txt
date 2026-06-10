@@ -1,8 +1,8 @@
-# remogram
+# Remogram
 
 Generic SCM/forge boundary CLI and MCP server. Emits provider-attributed, SHA-bound JSON facts only.
 
-Developed by and for Topogram: https://topogram.dev (not required to use remogram).
+Developed by and for Topogram: https://topogram.dev (not required to use Remogram).
 
 ## Install (beta)
 

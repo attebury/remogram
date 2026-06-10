@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in remogram.
+Thanks for your interest in Remogram.
 
 ## Getting started
 
@@ -9,7 +9,7 @@ Thanks for your interest in remogram.
 3. Install dependencies: `npm ci`
 4. Link local packages (optional): `./scripts/npm-link.sh`
 
-Topogram is **not** required to build or test remogram.
+Topogram is **not** required to build or test Remogram.
 
 ## Pull requests
 

@@ -1,6 +1,6 @@
-# Claude Code — remogram MCP
+# Claude Code — Remogram MCP
 
-Claude Code registers MCP servers via the **`claude mcp`** CLI (stdio transport). Skills for remogram live separately under `tools/remogram-agent-support/skills/` — install with `./scripts/install-agent-skills.sh --claude <path>`.
+Claude Code registers MCP servers via the **`claude mcp`** CLI (stdio transport). Skills for Remogram live separately under `tools/remogram-agent-support/skills/` — install with `./scripts/install-agent-skills.sh --claude <path>`.
 
 ## Prerequisites
 

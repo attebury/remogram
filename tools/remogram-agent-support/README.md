@@ -1,17 +1,17 @@
 # Remogram agent support
 
-Agent-agnostic skill pack for remogram CLI and MCP. Canonical source:
+Agent-agnostic skill pack for Remogram CLI and MCP. Canonical source:
 
 ```
 tools/remogram-agent-support/skills/
 ├── remogram-consumer/   # any repo with .remogram.json
-├── remogram-core/       # remogram product development
-└── remogram-dogfood/    # remogram repo + Topogram SDLC on remo
+├── remogram-core/       # Remogram product development
+└── remogram-dogfood/    # Remogram repo + Topogram SDLC on remo
 ```
 
 ## Install
 
-From the remogram repository root:
+From the Remogram repository root:
 
 ```bash
 ./scripts/install-agent-skills.sh --all
@@ -37,7 +37,7 @@ From the remogram repository root:
 |---------|--------|
 | Any consumer repo with `.remogram.json` | `remogram-consumer` |
 | Editing `packages/remogram-*` or providers | `remogram-core` |
-| remogram repo lanes, SDLC, merge to `remo` | `remogram-dogfood` + Topogram lane skills |
+| Remogram repo lanes, SDLC, merge to `remo` | `remogram-dogfood` + Topogram lane skills |
 
 ## Adapters
 

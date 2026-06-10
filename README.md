@@ -1,8 +1,8 @@
-# remogram
+# Remogram
 
 Generic SCM/forge boundary CLI and MCP server. Emits provider-attributed, SHA-bound JSON facts only — no SDLC or workflow concepts in output.
 
-remogram was developed by and for [Topogram](https://topogram.dev). Topogram is not required to install or use remogram.
+Remogram was developed by and for [Topogram](https://topogram.dev). Topogram is not required to install or use Remogram.
 
 ## Install (beta)
 
@@ -47,7 +47,7 @@ remogram doctor --json
 
 ### CLI wrapper providers (not supported in beta)
 
-Each forge also has an official command-line tool. remogram may eventually support **optional wrapper providers** that shell out to those binaries and normalize their JSON into the same typed packets as the API providers:
+Each forge also has an official command-line tool. Remogram may eventually support **optional wrapper providers** that shell out to those binaries and normalize their JSON into the same typed packets as the API providers:
 
 | Forge | Supported today | Reserved wrapper ID | Would wrap |
 |-------|-----------------|---------------------|------------|
@@ -73,9 +73,9 @@ The npm packages `@remogram/provider-github-gh` and `@remogram/provider-gitea-te
 
 #### Why wrappers are not supported yet
 
-Beta focused on **direct forge HTTP** because it is the best fit for remogram's constraints:
+Beta focused on **direct forge HTTP** because it is the best fit for Remogram's constraints:
 
-1. **Agent-safe packets** — remogram caps forge ingest at **8192 bytes** and selects fields explicitly (e.g. GitHub PR view uses GraphQL instead of full REST). Wrapper CLIs often emit large, version-dependent JSON that is harder to cap and normalize reliably.
+1. **Agent-safe packets** — Remogram caps forge ingest at **8192 bytes** and selects fields explicitly (e.g. GitHub PR view uses GraphQL instead of full REST). Wrapper CLIs often emit large, version-dependent JSON that is harder to cap and normalize reliably.
 2. **Headless and CI-friendly** — API providers need only a token env var. Wrappers require `gh` / `tea` / `glab` on PATH, their own login flows, and subprocess handling with the same trust rules as git.
 3. **One backend per forge for v1** — `github-api`, `gitea-api`, and `gitlab-api` already implement all six read/plan commands with shared packet shapes. Wrappers would duplicate that surface without adding new commands in beta.
 4. **Maintenance surface** — CLI output changes between tool versions; each wrapper is an ongoing compatibility contract on top of the API adapters.
@@ -86,7 +86,7 @@ Beta focused on **direct forge HTTP** because it is the best fit for remogram's 
 
 Wrapper providers are **post-beta, demand-driven**:
 
-- **If** users need remogram to reuse an existing `gh` / `tea` / `glab` login instead of managing API tokens, or policy blocks direct API access but allows official CLIs, we would implement wrappers behind the reserved IDs (and add `gitlab-glab` for parity with `glab`).
+- **If** users need Remogram to reuse an existing `gh` / `tea` / `glab` login instead of managing API tokens, or policy blocks direct API access but allows official CLIs, we would implement wrappers behind the reserved IDs (and add `gitlab-glab` for parity with `glab`).
 - **Likely order if built:** shared subprocess + JSON ingest helper in `@remogram/core`, then `github-gh` first (`gh --json` is the most stable), then `gitea-tea` and `gitlab-glab`.
 - **Until then:** use the `*-api` providers above. They are the supported path for CLI, MCP, and agents.
 
@@ -136,7 +136,7 @@ remogram sync plan --remote origin --json
 
 ## Inspect and verify packets
 
-You do not need smoke compare to see remogram output. Every command supports **`--json`** and returns the same typed packet as MCP tools.
+You do not need smoke compare to see Remogram output. Every command supports **`--json`** and returns the same typed packet as MCP tools.
 
 1. **Sanity check first:** `remogram doctor --json` — config, provider, remote, and auth env presence.
 2. **CLI:** run any command with `--json`, for example:
@@ -151,7 +151,7 @@ You do not need smoke compare to see remogram output. Every command supports **`
 
 ## MCP
 
-remogram-mcp is a **stdio MCP server** (agent-agnostic). Each host has its own config file format.
+**Remogram MCP** (`remogram-mcp`) is a **stdio MCP server** (agent-agnostic). Each host has its own config file format.
 
 ```bash
 ./scripts/npm-link.sh                 # remogram-mcp on PATH
@@ -208,7 +208,7 @@ For stub providers (`github-gh`, `gitea-tea`), every command shows `"implemented
 
 ## GitHub normalization notes
 
-For **`pr view`** / MCP **`pr_status`**, `github-api` uses **GraphQL field selection** instead of full REST pull JSON because large REST bodies often exceed remogram's **8192-byte** forge HTTP ingest cap.
+For **`pr view`** / MCP **`pr_status`**, `github-api` uses **GraphQL field selection** instead of full REST pull JSON because large REST bodies often exceed Remogram's **8192-byte** forge HTTP ingest cap.
 
 GitHub commit statuses and check-runs merge into `statuses[]` with normalized `state`. `mergeable` reduces to `clean`, `conflicted`, or `unknown`. Public `github.com` uses `https://api.github.com`; GitHub Enterprise derives `https://<host>/api/v3`.
 

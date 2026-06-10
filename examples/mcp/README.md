@@ -1,13 +1,13 @@
-# remogram MCP setup examples
+# Remogram MCP setup examples
 
-remogram ships a **stdio MCP server** (`remogram-mcp`) that delegates to the CLI. The server is agent-agnostic; each host has its own config file format and location.
+Remogram ships a **stdio MCP server** (`remogram-mcp`) that delegates to the CLI. The server is agent-agnostic; each host has its own config file format and location.
 
 ## Prerequisites
 
-From the remogram repo (or after installing packages globally):
+From the Remogram repo (or after installing packages globally):
 
 ```bash
-./scripts/npm-link.sh    # remogram + remogram-mcp on PATH
+./scripts/npm-link.sh    # Remogram CLI + remogram-mcp on PATH
 ```
 
 In **consumer repos** (your project with `.remogram.json`), point the server at that repo with `REMOGRAM_CWD` (see each example).
