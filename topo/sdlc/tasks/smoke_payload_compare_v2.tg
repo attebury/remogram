@@ -1,0 +1,19 @@
+task task_smoke_payload_compare_v2 {
+  name "Implement smoke payload compare v2"
+  description "Extend smoke metrics, sidecar, capture-tools, npm scripts, fixture tests, and README for pr_checks and ref_compare payload size comparison."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["npm publish" "Changing DEFAULT_MAX_BYTES" "Default npm test wiring for all smoke compare" "ref_compare forge HTTP baselines on git-local providers" "pr_view regressions"]
+  entrypoints ["scripts/**" "packages/remogram-mcp/capture-tools.mjs" "tests/smoke/**" "README.md" "package.json"]
+  satisfies [req_smoke_payload_compare_v2]
+  acceptance_refs [ac_smoke_pr_checks_fixture_test ac_smoke_ref_compare_fixture_test ac_smoke_payload_compare_v2_capture_tools ac_smoke_payload_compare_v2_sidecar ac_smoke_payload_compare_v2_docs]
+  verification_refs [verification_smoke_payload_compare_v2]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_smoke_pr_view_payload_compare]
+  architecture_patterns [contract_boundary, command_owned_mutation]
+  disposition backlog
+  priority medium
+  work_type implementation
+  status unclaimed
+}

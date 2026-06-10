@@ -1,0 +1,9 @@
+requirement req_smoke_payload_compare_v2 {
+  name "Smoke payload compare v2 for pr_checks and ref_compare"
+  description "Remogram must extend the v1 smoke payload compare harness to pr_checks and ref_compare with sizes-only reports. pr_checks sidecar records bytes for each provider HTTP path used today on github-api gitlab-api and gitea-api. ref_compare reports remogram packet size and documents that API providers resolve refs via local git without forge HTTP ingest for compare. Fixture tests run without live forge. README documents new commands and interpretation."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority medium
+  status approved
+}

@@ -1,0 +1,17 @@
+plan plan_smoke_payload_compare_v2 {
+  name "Smoke payload compare v2 plan"
+  description "Extend v1 harness to pr_checks and ref_compare; implement on impl/smoke-payload-compare-v2 after plan merge."
+  task task_smoke_payload_compare_v2
+  architecture_patterns [contract_boundary, command_owned_mutation]
+  priority medium
+  steps {
+    step generalize_metrics status pending description "Extend smoke-payload-metrics compareReport for command pr_checks and ref_compare baseline shapes."
+    step pr_checks_sidecar status pending description "forge-sidecar-pr-checks.mjs for github statuses plus check-runs, gitlab statuses plus pipelines, gitea statuses."
+    step ref_compare_report status pending description "ref_compare sizes-only report with local_git_only baseline note; no uncapped forge fetch."
+    step capture_tools_and_scripts status pending description "capture-tools flags and npm smoke scripts for pr_checks and ref_compare."
+    step fixture_tests status pending description "tests/smoke/pr-checks-payload-compare.test.mjs and ref-compare-payload-compare.test.mjs."
+    step docs status pending description "README v2 commands and baseline interpretation."
+    step verify status pending description "Record verification and close task on remo."
+  }
+  status active
+}

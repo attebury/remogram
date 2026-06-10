@@ -1,0 +1,12 @@
+pitch pitch_smoke_payload_compare_v2 {
+  name "Smoke payload compare v2 (pr_checks and ref_compare)"
+  description "Extend opt-in smoke payload size comparison beyond pr_view to pr_checks and ref_compare using the v1 metrics and sidecar patterns. Sizes-only output; live forge optional."
+  appetite "small"
+  problem "v1 smoke compare covers pr_status only. Operators cannot measure pr_checks multi-fetch baselines (statuses plus check-runs or pipelines) or document ref_compare as a local-git packet with no forge ingest path."
+  solution_sketch "Generalize compareReport command field; add sidecar modules for pr_checks provider paths on all three API providers; add ref_compare packet-size fixture with explicit no-forge-baseline note; extend capture-tools flags and npm scripts; fixture tests; README section update."
+  rabbit_holes "Full REST dumps in CI; wiring all smoke compare into default npm test; changing ingest cap; ref_compare forge HTTP baselines where providers use local git only."
+  no_go_areas "Changing DEFAULT_MAX_BYTES; Topogram concepts in remogram output; npm publish; hand-editing command-owned sidecars."
+  affects [cap_forge_remote_ops]
+  priority medium
+  status submitted
+}
