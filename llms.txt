@@ -1,0 +1,28 @@
+# remogram
+
+Generic SCM/forge boundary CLI and MCP server. Emits provider-attributed, SHA-bound JSON facts only.
+
+Developed by and for Topogram: https://topogram.dev (not required to use remogram).
+
+## Install (beta)
+
+npm install -g @remogram/cli@beta @remogram/mcp@beta
+
+## Key docs
+
+- README: https://github.com/attebury/remogram/blob/main/README.md
+- AGENTS.md: https://github.com/attebury/remogram/blob/main/AGENTS.md
+- CHANGELOG: https://github.com/attebury/remogram/blob/main/CHANGELOG.md
+- MCP examples: https://github.com/attebury/remogram/tree/main/examples/mcp
+- Consumer agent skill: tools/remogram-agent-support/skills/remogram-consumer/SKILL.md
+- Contributor agent skill: tools/remogram-agent-support/skills/remogram-core/SKILL.md
+
+## First commands
+
+remogram doctor --json
+remogram repo status --json
+remogram pr view --number 1 --json
+
+## v1 scope
+
+Read/plan only. No PR create, merge execute, or push.

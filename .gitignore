@@ -4,3 +4,7 @@ node_modules/
 coverage/
 .cursor/mcp.json
 .remogram.json
+.tmp/
+pr_checks.json
+size_report.json
+size_report/

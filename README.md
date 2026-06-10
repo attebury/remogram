@@ -1,34 +1,43 @@
 # remogram
 
-Generic SCM/forge boundary CLI and MCP server. Emits provider-attributed, SHA-bound JSON facts only — no Topogram or SDLC concepts in output.
+Generic SCM/forge boundary CLI and MCP server. Emits provider-attributed, SHA-bound JSON facts only — no SDLC or workflow concepts in output.
 
-Sibling to [Topogram](https://github.com/attebury/topogram): Topogram models remogram in `topo/` during development; remogram has **no Topogram runtime dependency**.
+remogram was developed by and for [Topogram](https://topogram.dev). Topogram is not required to install or use remogram.
 
-## Branch model
-
-| Branch | Role |
-|--------|------|
-| **`remo`** | Sole integration authority — merged product line, forge default, Merge Lane target |
-| **`goal/*`, `plan/*`** | Topogram lane archaeology and workflow branches (not integration authority) |
-
-Clone and open PRs against **`remo`**. Topogram commands in this repo use `--base origin/remo` unless reviewing a historical ref. See [AGENTS.md](AGENTS.md) and [agent skills](tools/remogram-agent-support/README.md).
-
-## Bootstrap
+## Install (beta)
 
 ```bash
-cd ~/Documents/remogram
-./scripts/install-topogram-local.sh
-npm run topo:init    # first time only
-npm run topo:check
-npm link --workspace packages/remogram-cli
-npm link --workspace packages/remogram-mcp
+npm install -g @remogram/cli@beta @remogram/mcp@beta
 ```
 
-Requires sibling checkout at `~/Documents/topogram` (or `TOPOGRAM_ENGINE`).
+From a git checkout (development):
+
+```bash
+git clone https://github.com/attebury/remogram.git
+cd remogram
+npm ci
+./scripts/npm-link.sh
+```
+
+Default branch: **`main`**.
+
+### Beta limitations
+
+- **Read/plan v1 only** — no PR create, merge execute, or push.
+- Wrapper providers (`gitea-tea`, `github-gh`) are stubs that return `provider_unsupported`.
+- Payload-size smoke compare is monorepo dev tooling only (not shipped in npm beta).
 
 ## Consumer config
 
-Copy `.remogram.json.example` to your repo root. Auth uses `GITEA_TOKEN` for `gitea-api`; `github-api` resolves `GITHUB_TOKEN` first, then `GH_TOKEN`; `gitlab-api` uses `GITLAB_TOKEN`.
+Copy [`.remogram.json.example`](.remogram.json.example) to your repo root.
+
+Auth env vars by provider:
+
+| Provider | Token env |
+|----------|-----------|
+| `gitea-api` | `GITEA_TOKEN` |
+| `github-api` | `GITHUB_TOKEN` or `GH_TOKEN` |
+| `gitlab-api` | `GITLAB_TOKEN` |
 
 ## Commands (v1 — read/plan only)
 
@@ -43,6 +52,21 @@ remogram merge plan --number 1 --json
 remogram sync plan --remote origin --json
 ```
 
+## Inspect and verify packets
+
+You do not need smoke compare to see remogram output. Every command supports **`--json`** and returns the same typed packet as MCP tools.
+
+1. **Sanity check first:** `remogram doctor --json` — config, provider, remote, and auth env presence.
+2. **CLI:** run any command with `--json`, for example:
+   ```bash
+   remogram repo status --json
+   remogram pr view --number 1 --json
+   remogram pr checks --number 1 --json
+   remogram refs compare --base main --head feature/x --json
+   ```
+3. **MCP:** tools `doctor`, `provider_capabilities`, `repo_status`, `ref_compare`, `pr_status`, `pr_checks`, `merge_plan`, `sync_plan` return the same JSON. See [examples/mcp/README.md](examples/mcp/README.md).
+4. **Verify envelope fields:** every packet includes `type`, `schema_version`, `provider_id`, `remote_name`, `repo_id`, `observed_at`, and `ok`. When `ok` is `false`, read the `error` field.
+
 ## MCP
 
 remogram-mcp is a **stdio MCP server** (agent-agnostic). Each host has its own config file format.
@@ -52,99 +76,62 @@ remogram-mcp is a **stdio MCP server** (agent-agnostic). Each host has its own c
 ./scripts/install-project-mcp.sh      # Cursor only: .cursor/mcp.json.example → .cursor/mcp.json
 ```
 
-**Other agents:** labeled examples for Cursor, Claude Desktop, OpenAI Codex, and Claude Code are in [examples/mcp/README.md](examples/mcp/README.md).
+Labeled examples for Cursor, Claude Desktop, OpenAI Codex, and Claude Code: [examples/mcp/README.md](examples/mcp/README.md).
 
-Tools: `doctor`, `provider_capabilities`, `repo_status`, `ref_compare`, `pr_status`, `pr_checks`, `merge_plan`, `sync_plan`. Each tool returns the same JSON as `remogram ... --json`. Set the provider-specific token in your environment.
-
-## SDLC (development)
-
-```bash
-topogram work start task_remogram_core . --actor <you> --write --json
-topogram sdlc prep commit . --json
-```
-
-See [AGENTS.md](AGENTS.md).
+Set the provider-specific token in your environment. In consumer repos, set `REMOGRAM_CWD` to the repo root (see examples).
 
 ## Testing
 
 ```bash
 npm test              # full suite
 npm run test:coverage # remogram-core coverage report
-npm run security:secrets -- --base origin/remo
+npm run security:secrets -- --full-history
 ```
 
-Use `npm run security:secrets -- --full-history` when no reliable base ref exists.
-Optional local pre-push gate: `./scripts/install-pre-push-hook.sh` (origin pushes only).
+Optional local pre-push gate: `./scripts/install-pre-push-hook.sh`.
 
-| Layer | Location | What runs | Git required |
-|-------|----------|-----------|--------------|
-| Core unit | `tests/core/` | Envelope, caps, `assertForgeReady`, HTTP, packet contracts | Temp repos in `resolve.test.mjs` only |
-| Provider | `tests/provider/` | Gitea and GitHub API adapters with mocked `fetch` + JSON fixtures | Some tests resolve refs via local git |
-| CLI integration | `tests/cli/` | All read-only commands via `runCli` with temp `.remogram.json` and injected mock provider; default `PROVIDERS` wiring in `default-providers.test.mjs` | Temp git repo per test |
-| MCP | `tests/mcp/` | `packetToMcpContent` unit tests, stdio `listTools`, offline `callTool` battery, live capture via `packages/remogram-mcp/capture-tools.mjs` | Smoke uses repo cwd |
+| Layer | Location | What runs |
+|-------|----------|-----------|
+| Core unit | `tests/core/` | Envelope, caps, HTTP, packet contracts |
+| Provider | `tests/provider/` | API adapters with mocked `fetch` + fixtures |
+| CLI integration | `tests/cli/` | Read-only commands via `runCli` with mock provider |
+| MCP | `tests/mcp/` | Tool listing, offline `callTool`, packet shaping |
 
 - Tests live under `tests/**/*.test.mjs` only.
-- `dx/` agent progress logs are **excluded** from test and coverage scope.
-- `runCli(argv, { cwd, providers })` accepts `options.providers` **for tests only** — production CLI and MCP spawn use the built-in `PROVIDERS` map; do not inject providers in app code.
-- Coverage (`npm run test:coverage`) reports **`packages/remogram-core`** only — not MCP or provider packages. That scope is intentional: providers and MCP are exercised by fixture tests and cross-forge smoke, not coverage percentages.
-- **`ref_compare`** on `github-api` / `gitlab-api` / `gitea-api` requires a forge auth env var even though comparison uses local git; **`sync_plan`** does not.
-- **CI:** GitHub Actions (`.github/workflows/test.yml`, `.github/workflows/secret-scan.yml`) runs on push/PR when hosted on GitHub. For local **Gitea**, mirror workflows live under `.gitea/workflows/` (Node 20, stub Topogram sibling, `npm ci`, `npm test`, `npm run test:coverage`, plus Gitleaks via `npm run security:secrets`). Gitea Actions may require enabling workflows in server settings.
-- **Lane checks:** `remogram pr checks` reads forge commit statuses. On local Gitea without Actions/status posting, `check_conclusion: "missing"` is expected. In that mode, lanes still use remogram for PR facts and mergeability, then require local proof (`topogram check . --json`, `npm test`) before merge. Missing statuses are not a substitute for failed statuses; if the forge reports failure or pending, treat that as a blocker.
-
-### Payload size smoke compare
-
-Remogram caps forge HTTP ingest at **8192 bytes** (`DEFAULT_MAX_BYTES` in `packages/remogram-core/caps.js`; enforced by `fetchJson` in `packages/remogram-core/http.js`). Normalized packets add a small envelope on top of selected fields.
-
-For **`pr view`** / MCP **`pr_status`**, `github-api` uses **GraphQL field selection** instead of REST `GET /pulls/{number}` because full REST pull JSON often exceeds the ingest cap in live smoke. See [`topo/sdlc/decisions/github_api_graphql_pr_view.tg`](topo/sdlc/decisions/github_api_graphql_pr_view.tg).
-
-Opt-in compare (sizes only — no raw forge JSON in artifacts):
-
-```bash
-npm run smoke:compare-pr-view -- --pr-number 1              # MCP pr_status packet vs config provider
-npm run smoke:compare-pr-view -- --pr-number 1 --forge-sidecar   # + live forge baseline (needs token)
-npm run smoke:compare-pr-checks -- --pr-number 1 --forge-sidecar # pr_checks multi-fetch baselines
-npm run smoke:compare-ref-compare -- --base main --head feature/x  # ref_compare packet; local git only
-```
-
-Output is `size_report.json` with byte counts and token estimates (`ceil(bytes/4)`). **Ratios** are `remogram_packet_bytes / baseline_bytes` — compare against **`provider_path`** or per-fetch keys (`commit_statuses`, `check_runs`, `pipelines`), not arbitrary minimal JSON.
-
-**`ref_compare`** reports a `local_git_only` baseline (0 bytes) because API providers resolve refs via local git — there is no forge HTTP ingest path to measure.
-
-Fixture regression (no live forge, not part of default `npm test` wiring):
-
-```bash
-npm test -- tests/smoke/pr-view-payload-compare.test.mjs
-npm test -- tests/smoke/pr-checks-payload-compare.test.mjs tests/smoke/ref-compare-payload-compare.test.mjs
-```
+- Coverage (`npm run test:coverage`) reports **`packages/remogram-core`** only.
+- **`ref_compare`** on API providers requires a forge auth env var even though comparison uses local git; **`sync_plan`** does not.
+- **CI:** GitHub Actions on push/PR to `main` (`.github/workflows/`).
 
 ## Packages
 
 | Package | Role |
 |---------|------|
-| `remogram-core` | Envelope, config, caps, HTTP utils |
-| `remogram-cli` | CLI surface |
-| `remogram-mcp` | MCP stdio adapter (delegates to CLI) |
-| `provider-gitea-api` | Gitea REST adapter |
-| `provider-github-api` | GitHub REST v3 adapter |
-| `provider-gitlab-api` | GitLab REST v4 adapter |
-| `provider-gitea-tea`, `provider-github-gh` | Proposed wrapper providers → `provider_unsupported` |
+| `@remogram/core` | Envelope, config, caps, HTTP utils |
+| `@remogram/cli` | CLI surface |
+| `@remogram/mcp` | MCP stdio adapter (delegates to CLI) |
+| `@remogram/provider-gitea-api` | Gitea REST adapter |
+| `@remogram/provider-github-api` | GitHub REST/GraphQL adapter |
+| `@remogram/provider-gitlab-api` | GitLab REST adapter |
+| `@remogram/provider-gitea-tea`, `@remogram/provider-github-gh` | Wrapper stubs → `provider_unsupported` |
 
-## Provider Capabilities
+## Provider capabilities
 
-`remogram provider capabilities --json` returns structured provider facts so agents do not infer behavior from provider names. It reports implemented read/plan commands, auth environment variable names, check source support, mergeability confidence, host-binding mode, pagination status, and `write_support: false` for v1.
+`remogram provider capabilities --json` returns structured provider facts: implemented commands, auth env names, check source support, mergeability confidence, host-binding mode, and `write_support: false` for v1.
 
 ## Doctor
 
-`remogram doctor --json` returns a provider-attributed readiness packet for config presence/schema validity, git remote parsing, owner/repo matching, trusted host binding, auth environment presence, provider capabilities, and check-source support. It reports auth env names and whether one is present, but never token values. Live API reachability is not checked by default.
+`remogram doctor --json` reports config presence/schema validity, git remote parsing, owner/repo matching, trusted host binding, auth env presence, and provider capabilities. It never returns token values.
 
-## GitHub Normalization Notes
+## GitHub normalization notes
 
-`github-api` keeps the shared v1 envelope unchanged. GitHub commit statuses and check-runs are merged into the existing `statuses[]` body with `context`, normalized `state`, and `description`; check-runs that are queued or in progress become `pending`, successful/neutral/skipped runs become `success`, failed/cancelled/timed-out/action-required runs become `failure`, and unmapped values become `unknown`.
+For **`pr view`** / MCP **`pr_status`**, `github-api` uses **GraphQL field selection** instead of full REST pull JSON because large REST bodies often exceed remogram's **8192-byte** forge HTTP ingest cap.
 
-GitHub `mergeable` and `mergeable_state` are reduced to `clean`, `conflicted`, or `unknown`. Values that do not prove a clean or conflicted merge stay `unknown` instead of widening packet shape. Public `github.com` remotes always use `https://api.github.com`; GitHub Enterprise remotes derive `https://<verified-host>/api/v3`.
+GitHub commit statuses and check-runs merge into `statuses[]` with normalized `state`. `mergeable` reduces to `clean`, `conflicted`, or `unknown`. Public `github.com` uses `https://api.github.com`; GitHub Enterprise derives `https://<host>/api/v3`.
 
-## GitLab Normalization Notes
+## GitLab normalization notes
 
-`gitlab-api` maps GitLab Merge Requests to the existing PR packet vocabulary. Merge request `iid` becomes `pr_number`; `opened` becomes `open`; target/source branches map to base/head refs. GitLab `detailed_merge_status`, `merge_status`, and `has_conflicts` reduce to `clean`, `conflicted`, or `unknown`.
+`gitlab-api` maps merge requests to the shared PR vocabulary (`iid` → `pr_number`). Commit statuses and pipelines merge into `statuses[]`. Public `gitlab.com` uses `https://gitlab.com/api/v4`; self-managed hosts derive `https://<host>/api/v4`.
 
-GitLab commit statuses and pipelines are merged into the shared `statuses[]` body. `success` and `skipped` become `success`; `failed` and `canceled` become `failure`; queued/running/manual states become `pending`; unmapped states become `unknown`. Public `gitlab.com` remotes always use `https://gitlab.com/api/v4`; self-managed GitLab remotes derive `https://<verified-host>/api/v4`. The first implementation supports the existing `owner` + `repo` config shape (`namespace/project`) and does not widen config for nested subgroups.
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Agent skills: `./scripts/install-agent-skills.sh --all`.

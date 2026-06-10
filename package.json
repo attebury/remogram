@@ -1,10 +1,14 @@
 {
   "name": "remogram",
-  "version": "0.1.0",
+  "version": "0.1.0-beta.0",
   "private": true,
   "description": "Generic SCM/forge boundary CLI and MCP — provider facts only, no SDLC concepts",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/attebury/remogram.git"
+  },
   "workspaces": [
     "packages/*"
   ],
@@ -18,15 +22,9 @@
     "smoke:compare-pr-view": "node ./scripts/remogram-smoke-compare.mjs",
     "smoke:compare-pr-checks": "node ./scripts/remogram-smoke-compare-pr-checks.mjs",
     "smoke:compare-ref-compare": "node ./scripts/remogram-smoke-compare-ref-compare.mjs",
-    "topogram": "topogram",
-    "topo:brief": "topogram agent brief . --json",
-    "topo:check": "topogram check . --json",
-    "topo:onboard": "topogram onboard . --json",
-    "topo:init": "topogram init . --adopt-sdlc --json",
     "security:secrets": "node ./scripts/run-secret-scan.mjs"
   },
   "devDependencies": {
-    "@topogram/cli": "file:../topogram/engine",
     "@vitest/coverage-v8": "^3.2.4",
     "vitest": "^3.2.4"
   }

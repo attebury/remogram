@@ -1,8 +1,7 @@
 {
   "version": "1",
-  "provider": "gitea-api",
+  "provider": "github-api",
   "remote": "origin",
-  "owner": "attebury",
-  "repo": "remogram",
-  "baseUrl": "http://localhost:3000"
+  "owner": "your-org",
+  "repo": "your-repo"
 }
