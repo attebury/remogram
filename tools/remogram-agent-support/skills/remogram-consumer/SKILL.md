@@ -38,6 +38,8 @@ Copy from remogram's `.remogram.json.example`. Typical shape:
 | `github-api` | `GITHUB_TOKEN`, then `GH_TOKEN` |
 | `gitlab-api` | `GITLAB_TOKEN` |
 
+Do **not** use `github-gh` or `gitea-tea` in beta — those IDs are reserved for unimplemented CLI-wrapper backends. Use `github-api` or `gitea-api` instead.
+
 `provider capabilities --json` is authoritative for command support, check sources, mergeability confidence, and `write_support: false` in v1.
 
 ## First commands by task

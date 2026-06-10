@@ -24,20 +24,72 @@ Default branch: **`main`**.
 ### Beta limitations
 
 - **Read/plan v1 only** — no PR create, merge execute, or push.
-- Wrapper providers (`gitea-tea`, `github-gh`) are stubs that return `provider_unsupported`.
 - Payload-size smoke compare is monorepo dev tooling only (not shipped in npm beta).
+
+## Providers
+
+Set `"provider"` in [`.remogram.json`](.remogram.json.example). **Beta supports three forge backends** — all use forge HTTP APIs (GitHub also uses GraphQL for PR view). You do **not** need the `gh` or `tea` CLIs installed.
+
+| Your forge | `"provider"` value | Token env |
+|------------|-------------------|-----------|
+| Gitea (incl. self-hosted) | `gitea-api` | `GITEA_TOKEN` |
+| GitHub (incl. Enterprise) | `github-api` | `GITHUB_TOKEN` or `GH_TOKEN` |
+| GitLab (incl. self-managed) | `gitlab-api` | `GITLAB_TOKEN` |
+
+Self-hosted Gitea/GitLab: add `"baseUrl"` to your forge root (see example patterns in provider notes below).
+
+Check what your config enables:
+
+```bash
+remogram provider capabilities --json
+remogram doctor --json
+```
+
+### Not supported yet: `github-gh` and `gitea-tea`
+
+`github-gh` and `gitea-tea` are **reserved provider IDs** for a possible future mode: delegate to the official [`gh`](https://cli.github.com/) and [`tea`](https://gitea.com/gitea/tea) command-line tools instead of remogram's REST/GraphQL adapters.
+
+**They are not implemented in beta.** Do not put them in `.remogram.json`. If you do, commands fail with a typed packet:
+
+- `ok: false`
+- `error_code: "provider_unsupported"`
+- `error_message: "Provider not implemented in v1"`
+
+| If you use… | Set `"provider"` to… | Not… |
+|-------------|---------------------|------|
+| GitHub | `github-api` | `github-gh` |
+| Gitea | `gitea-api` | `gitea-tea` |
+
+The npm packages `@remogram/provider-github-gh` and `@remogram/provider-gitea-tea` exist only so the CLI can list these IDs honestly in `provider capabilities` (`implemented: false`). You never install or configure them separately.
 
 ## Consumer config
 
-Copy [`.remogram.json.example`](.remogram.json.example) to your repo root.
+Copy [`.remogram.json.example`](.remogram.json.example) to your repo root and set `provider`, `owner`, `repo`, and `remote` to match your project.
 
-Auth env vars by provider:
+Example for GitHub:
 
-| Provider | Token env |
-|----------|-----------|
-| `gitea-api` | `GITEA_TOKEN` |
-| `github-api` | `GITHUB_TOKEN` or `GH_TOKEN` |
-| `gitlab-api` | `GITLAB_TOKEN` |
+```json
+{
+  "version": "1",
+  "provider": "github-api",
+  "remote": "origin",
+  "owner": "your-org",
+  "repo": "your-repo"
+}
+```
+
+Example for self-hosted Gitea:
+
+```json
+{
+  "version": "1",
+  "provider": "gitea-api",
+  "remote": "origin",
+  "owner": "your-org",
+  "repo": "your-repo",
+  "baseUrl": "https://forge.example.com"
+}
+```
 
 ## Commands (v1 — read/plan only)
 
@@ -109,14 +161,16 @@ Optional local pre-push gate: `./scripts/install-pre-push-hook.sh`.
 | `@remogram/core` | Envelope, config, caps, HTTP utils |
 | `@remogram/cli` | CLI surface |
 | `@remogram/mcp` | MCP stdio adapter (delegates to CLI) |
-| `@remogram/provider-gitea-api` | Gitea REST adapter |
-| `@remogram/provider-github-api` | GitHub REST/GraphQL adapter |
-| `@remogram/provider-gitlab-api` | GitLab REST adapter |
-| `@remogram/provider-gitea-tea`, `@remogram/provider-github-gh` | Wrapper stubs → `provider_unsupported` |
+| `@remogram/provider-gitea-api` | Gitea REST — **use with `"provider": "gitea-api"`** |
+| `@remogram/provider-github-api` | GitHub REST/GraphQL — **use with `"provider": "github-api"`** |
+| `@remogram/provider-gitlab-api` | GitLab REST — **use with `"provider": "gitlab-api"`** |
+| `@remogram/provider-gitea-tea`, `@remogram/provider-github-gh` | Reserved placeholders (not implemented; see [Providers](#not-supported-yet-github-gh-and-gitea-tea)) |
 
 ## Provider capabilities
 
-`remogram provider capabilities --json` returns structured provider facts: implemented commands, auth env names, check source support, mergeability confidence, host-binding mode, and `write_support: false` for v1.
+`remogram provider capabilities --json` returns structured provider facts: which commands are implemented, auth env names, check source support, mergeability confidence, host-binding mode, and `write_support: false` for v1.
+
+For stub providers (`github-gh`, `gitea-tea`), every command shows `"implemented": false`.
 
 ## Doctor
 
