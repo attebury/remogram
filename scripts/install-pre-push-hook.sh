@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 HOOK="$REPO_ROOT/.git/hooks/pre-push"
-BASE_REF="${REMOGRAM_SECRET_SCAN_BASE_REF:-origin/dev/scaffold}"
+BASE_REF="${REMOGRAM_SECRET_SCAN_BASE_REF:-origin/remo}"
 
 cat > "$HOOK" <<EOF
 #!/usr/bin/env bash

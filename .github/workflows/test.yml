@@ -2,7 +2,7 @@ name: test
 
 on:
   push:
-    branches: [main, dev/scaffold, 'goal/**', 'plan/**']
+    branches: [remo, 'goal/**', 'plan/**']
   pull_request:
 
 jobs:

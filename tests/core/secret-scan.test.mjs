@@ -11,7 +11,7 @@ describe('security:secrets gate', () => {
     const script = readFileSync(join(repoRoot, 'scripts/run-secret-scan.mjs'), 'utf8');
     expect(script).toMatch(/Usage: npm run security:secrets -- \[--base <ref>\] \[--head <ref>\] \[--full-history\]/);
     expect(script).toMatch(/REMOGRAM_SECRET_SCAN_BASE_REF/);
-    expect(script).toMatch(/origin\/dev\/scaffold/);
+    expect(script).toMatch(/origin\/remo/);
     expect(script).toMatch(/\.gitleaks\.toml/);
   });
 
