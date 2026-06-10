@@ -45,10 +45,20 @@ Before starting work:
 
 1. Fetch current **`origin/remo`**.
 2. Create the implementation branch from current **`origin/remo`**.
-3. Run `topogram work next . --json` or queue with **`--base origin/remo`**.
-4. Confirm the intended task is selected or code-edit-ready.
-5. Run read-only `work start` and inspect blockers.
-6. Run `work start --write` only after the preview is clean.
+3. Run queue with **`--base origin/remo`**:
+
+```bash
+topogram query goal-branch-queue ./topo --base origin/remo --branches 'goal/*' --json
+topogram work next . --json
+```
+
+4. Confirm the intended goal shows **`lifecycle_state: approved`** (or **`active`**
+   only if the current packet explicitly says that branch is the implementation ref).
+   If the goal is still **`draft`**, stop: Plan Lane approval required (`plan:approve`
+   + `topogram sdlc transition` on the named `goal_branch_<id>`).
+5. Confirm the intended task is selected or code-edit-ready.
+6. Run read-only `work start` and inspect blockers.
+7. Run `work start --write` only after the preview is clean.
 
 Protected edits require:
 
