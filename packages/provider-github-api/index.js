@@ -1,3 +1,361 @@
-import { createStubProvider } from '@remogram/core/stub-provider.js';
+import { execFileSync } from 'node:child_process';
+import {
+  fetchJson,
+  sanitizeField,
+  sanitizeUrl,
+  assertGitRef,
+  assertGitRemote,
+  ERROR_CODES,
+  forgeError,
+} from '@remogram/core';
 
-export const provider = createStubProvider('github-api');
+const GIT_TIMEOUT_MS = 10_000;
+const PUBLIC_GITHUB_HOST = 'github.com';
+const PUBLIC_GITHUB_API = 'https://api.github.com';
+const AUTH_CAPABILITIES = [
+  'repo_status',
+  'ref_compare',
+  'pr_status',
+  'pr_checks',
+  'merge_plan',
+  'sync_plan',
+];
+
+export function githubToken() {
+  if (process.env.GITHUB_TOKEN) return { token: process.env.GITHUB_TOKEN, env: 'GITHUB_TOKEN' };
+  if (process.env.GH_TOKEN) return { token: process.env.GH_TOKEN, env: 'GH_TOKEN' };
+  return { token: null, env: null };
+}
+
+export function requireToken() {
+  const auth = githubToken();
+  if (!auth.token) {
+    throw Object.assign(new Error('GITHUB_TOKEN or GH_TOKEN not set'), {
+      forgeError: forgeError(
+        ERROR_CODES.UNAUTHENTICATED_PROVIDER,
+        'GITHUB_TOKEN or GH_TOKEN not set',
+      ),
+    });
+  }
+  return auth;
+}
+
+function configOrigin(config) {
+  if (!config.baseUrl) return null;
+  try {
+    const url = new URL(config.baseUrl);
+    return url.origin;
+  } catch {
+    throw Object.assign(new Error('Invalid baseUrl for github-api'), {
+      forgeError: forgeError(ERROR_CODES.CONFIG_INVALID, 'Invalid baseUrl for github-api provider'),
+    });
+  }
+}
+
+function configuredHost(config) {
+  if (!config.baseUrl) return null;
+  try {
+    return new URL(config.baseUrl).host;
+  } catch {
+    throw Object.assign(new Error('Invalid baseUrl for github-api'), {
+      forgeError: forgeError(ERROR_CODES.CONFIG_INVALID, 'Invalid baseUrl for github-api provider'),
+    });
+  }
+}
+
+export function apiBase(config, parsed = {}) {
+  const remoteHost = parsed.host || configuredHost(config);
+  if (!remoteHost) {
+    throw Object.assign(new Error('remote host required for github-api'), {
+      forgeError: forgeError(ERROR_CODES.CONFIG_INVALID, 'remote host required for github-api provider'),
+    });
+  }
+
+  const host = remoteHost.toLowerCase();
+  const configured = configuredHost(config);
+  if (host === PUBLIC_GITHUB_HOST) {
+    if (configured && configured.toLowerCase() !== PUBLIC_GITHUB_HOST) {
+      const message = 'github.com remotes may use only https://api.github.com for API requests';
+      throw Object.assign(new Error(message), {
+        forgeError: forgeError(
+          ERROR_CODES.UNTRUSTED_BASE_URL,
+          message,
+        ),
+      });
+    }
+    return PUBLIC_GITHUB_API;
+  }
+
+  if (configured && configured.toLowerCase() !== host) {
+    const message = `GitHub Enterprise API host must match remote host ${remoteHost}`;
+    throw Object.assign(new Error(message), {
+      forgeError: forgeError(
+        ERROR_CODES.UNTRUSTED_BASE_URL,
+        message,
+      ),
+    });
+  }
+
+  const origin = configOrigin(config) || `https://${remoteHost}`;
+  return `${origin.replace(/\/$/, '')}/api/v3`;
+}
+
+export function authHeaders(token) {
+  return {
+    Authorization: `Bearer ${token}`,
+    Accept: 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+  };
+}
+
+export function repoApiPath(config, ...segments) {
+  const owner = encodeURIComponent(config.owner);
+  const repo = encodeURIComponent(config.repo);
+  const base = `/repos/${owner}/${repo}`;
+  if (!segments.length) return base;
+  return `${base}/${segments.map((s) => encodeURIComponent(String(s))).join('/')}`;
+}
+
+export async function githubFetch(config, parsed, path, options = {}) {
+  const base = apiBase(config, parsed);
+  const { token } = requireToken();
+  const url = `${base}${path}`;
+  return fetchJson(url, {
+    ...options,
+    headers: { ...authHeaders(token), ...(options.headers || {}) },
+  });
+}
+
+function gitExec(cwd, args) {
+  return execFileSync('git', args, { cwd, encoding: 'utf8', timeout: GIT_TIMEOUT_MS }).trim();
+}
+
+export function gitRevParse(cwd, ref) {
+  assertGitRef(ref);
+  try {
+    return gitExec(cwd, ['rev-parse', ref]);
+  } catch {
+    return null;
+  }
+}
+
+export function gitCurrentBranch(cwd) {
+  try {
+    return gitExec(cwd, ['rev-parse', '--abbrev-ref', 'HEAD']);
+  } catch {
+    return null;
+  }
+}
+
+export function gitAheadBehind(cwd, base, head) {
+  try {
+    const out = gitExec(cwd, ['rev-list', '--left-right', '--count', `${base}...${head}`]);
+    const [behind, ahead] = out.split(/\s+/).map(Number);
+    return { ahead_by: ahead, behind_by: behind };
+  } catch {
+    return { ahead_by: null, behind_by: null };
+  }
+}
+
+export async function repoStatus(ctx) {
+  const auth = githubToken();
+  let defaultBranch = null;
+  if (auth.token) {
+    const repo = await githubFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config));
+    defaultBranch = sanitizeField(repo.default_branch);
+  }
+  return {
+    auth_present: Boolean(auth.token),
+    auth_env: auth.env,
+    capabilities: auth.token ? AUTH_CAPABILITIES : ['repo_status'],
+    default_branch: defaultBranch,
+  };
+}
+
+export async function refsCompare(ctx, baseRef, headRef) {
+  apiBase(ctx.config, ctx.parsed);
+  requireToken();
+  assertGitRef(baseRef, 'base');
+  assertGitRef(headRef, 'head');
+  const baseSha = gitRevParse(ctx.cwd, baseRef);
+  const headSha = gitRevParse(ctx.cwd, headRef);
+  if (!baseSha || !headSha) {
+    throw Object.assign(new Error('Missing ref'), {
+      forgeError: forgeError(ERROR_CODES.MISSING_REF, 'Could not resolve base or head ref'),
+    });
+  }
+  const counts = gitAheadBehind(ctx.cwd, baseSha, headSha);
+  return {
+    base_ref: sanitizeField(baseRef),
+    base_sha: baseSha,
+    head_ref: sanitizeField(headRef),
+    head_sha: headSha,
+    ...counts,
+  };
+}
+
+export async function getPull(ctx, { number }) {
+  if (number == null) {
+    throw Object.assign(new Error('--number required'), {
+      forgeError: forgeError(ERROR_CODES.INVALID_ARGS, 'Provide --number for PR lookup'),
+    });
+  }
+  return githubFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'pulls', number));
+}
+
+export function mergeability(pr) {
+  if (pr.mergeable === false || pr.mergeable_state === 'dirty') return 'conflicted';
+  if (pr.mergeable === true) {
+    if (!pr.mergeable_state || ['clean', 'has_hooks', 'unstable'].includes(pr.mergeable_state)) {
+      return 'clean';
+    }
+  }
+  return 'unknown';
+}
+
+export async function prView(ctx, opts) {
+  const pr = await getPull(ctx, opts);
+  return {
+    pr_number: pr.number,
+    url: sanitizeUrl(pr.html_url ?? pr.url),
+    title: sanitizeField(pr.title),
+    state: sanitizeField(pr.state),
+    base_ref: sanitizeField(pr.base?.ref),
+    base_sha: sanitizeField(pr.base?.sha),
+    head_ref: sanitizeField(pr.head?.ref),
+    head_sha: sanitizeField(pr.head?.sha),
+    mergeability: mergeability(pr),
+  };
+}
+
+function normalizeCommitStatusState(state) {
+  if (state === 'success') return 'success';
+  if (state === 'pending') return 'pending';
+  if (state === 'failure' || state === 'error') return 'failure';
+  return 'unknown';
+}
+
+function normalizeCheckRunState(run) {
+  if (run.status && run.status !== 'completed') return 'pending';
+  if (run.conclusion === 'success' || run.conclusion === 'neutral' || run.conclusion === 'skipped') {
+    return 'success';
+  }
+  if (
+    run.conclusion === 'failure' ||
+    run.conclusion === 'timed_out' ||
+    run.conclusion === 'cancelled' ||
+    run.conclusion === 'action_required' ||
+    run.conclusion === 'startup_failure'
+  ) {
+    return 'failure';
+  }
+  if (!run.conclusion) return 'pending';
+  return 'unknown';
+}
+
+function checkRunDescription(run) {
+  return run.output?.title || run.output?.summary || run.conclusion || run.status || null;
+}
+
+export function summarizeChecks(statuses) {
+  if (!statuses.length) return 'missing';
+  if (statuses.some((s) => s.state === 'failure')) return 'failure';
+  if (statuses.some((s) => s.state === 'pending')) return 'pending';
+  if (statuses.every((s) => s.state === 'success')) return 'success';
+  return 'unknown';
+}
+
+export async function prChecks(ctx, opts) {
+  apiBase(ctx.config, ctx.parsed);
+  requireToken();
+  let sha;
+  if (opts.ref) {
+    assertGitRef(opts.ref, 'ref');
+    sha = gitRevParse(ctx.cwd, opts.ref);
+    if (!sha) {
+      throw Object.assign(new Error('Missing ref'), {
+        forgeError: forgeError(ERROR_CODES.MISSING_REF, `Could not resolve ref ${opts.ref}`),
+      });
+    }
+  } else {
+    const pr = await getPull(ctx, opts);
+    sha = pr.head?.sha;
+  }
+  if (!sha) {
+    throw Object.assign(new Error('No SHA'), {
+      forgeError: forgeError(ERROR_CODES.MISSING_REF, 'Could not determine head SHA for checks'),
+    });
+  }
+
+  const [statuses, checkRuns] = await Promise.all([
+    githubFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'commits', sha, 'statuses')),
+    githubFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'commits', sha, 'check-runs')),
+  ]);
+  const mappedStatuses = (statuses || []).map((s) => ({
+    context: sanitizeField(s.context),
+    state: normalizeCommitStatusState(s.state),
+    description: sanitizeField(s.description),
+  }));
+  const mappedCheckRuns = (checkRuns?.check_runs || []).map((run) => ({
+    context: sanitizeField(run.name),
+    state: normalizeCheckRunState(run),
+    description: sanitizeField(checkRunDescription(run)),
+  }));
+  const mapped = [...mappedStatuses, ...mappedCheckRuns];
+  return { head_sha: sha, check_conclusion: summarizeChecks(mapped), statuses: mapped };
+}
+
+export async function mergePlan(ctx, opts) {
+  const view = await prView(ctx, opts);
+  const checks = await prChecks(ctx, { number: view.pr_number });
+  const blockers = [];
+  if (view.mergeability === 'conflicted') blockers.push('merge_conflict');
+  if (view.state !== 'open') blockers.push('pr_not_open');
+  if (checks.check_conclusion === 'failure') blockers.push('checks_failed');
+  if (checks.check_conclusion === 'missing') blockers.push('checks_missing');
+  if (checks.check_conclusion === 'pending') blockers.push('checks_pending');
+  return {
+    pr_number: view.pr_number,
+    mergeability: view.mergeability,
+    checks_conclusion: checks.check_conclusion,
+    blockers,
+  };
+}
+
+export async function syncPlan(ctx, remoteName = 'origin') {
+  assertGitRemote(remoteName, 'remote');
+  apiBase(ctx.config, ctx.parsed);
+  const localSha = gitRevParse(ctx.cwd, 'HEAD');
+  const branch = gitCurrentBranch(ctx.cwd);
+  let remoteSha = null;
+  if (branch && branch !== 'HEAD') {
+    remoteSha = gitRevParse(ctx.cwd, `${remoteName}/${branch}`);
+  }
+  const blockers = [];
+  let diverged = false;
+  if (localSha && remoteSha && localSha !== remoteSha) {
+    const { ahead_by, behind_by } = gitAheadBehind(ctx.cwd, remoteSha, localSha);
+    if (ahead_by > 0 && behind_by > 0) {
+      diverged = true;
+      blockers.push('divergent_remotes');
+    }
+  }
+  if (!remoteSha) blockers.push('missing_remote_ref');
+  return {
+    remote: sanitizeField(remoteName),
+    local_sha: localSha,
+    remote_sha: remoteSha,
+    diverged,
+    blockers,
+  };
+}
+
+export const provider = {
+  id: 'github-api',
+  repoStatus,
+  refsCompare,
+  prView,
+  prChecks,
+  mergePlan,
+  syncPlan,
+};

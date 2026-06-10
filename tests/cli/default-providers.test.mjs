@@ -1,6 +1,5 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { runCli } from '@remogram/cli';
-import { ERROR_CODES } from '@remogram/core';
 import { setupTempForge, captureCliOutput } from '../helpers/temp-forge.mjs';
 
 describe('CLI default PROVIDERS map', () => {
@@ -11,7 +10,7 @@ describe('CLI default PROVIDERS map', () => {
     while (cleanups.length) cleanups.pop().cleanup();
   });
 
-  it('uses default PROVIDERS for github-api stub without options.providers', async () => {
+  it('uses default PROVIDERS for github-api without options.providers', async () => {
     const setup = setupTempForge({
       config: {
         version: '1',
@@ -29,9 +28,10 @@ describe('CLI default PROVIDERS map', () => {
       runCli(['repo', 'status', '--json'], { cwd: setup.dir }),
     );
     const packet = JSON.parse(logs[0]);
-    expect(packet.ok).toBe(false);
-    expect(packet.type).toBe('forge_error');
-    expect(packet.error_code).toBe(ERROR_CODES.PROVIDER_UNSUPPORTED);
+    expect(packet.ok).toBe(true);
+    expect(packet.type).toBe('repo_status');
+    expect(packet.auth_present).toBe(false);
+    expect(packet.capabilities).toEqual(['repo_status']);
     expect(packet.provider_id).toBe('github-api');
   });
 });

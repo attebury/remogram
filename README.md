@@ -19,7 +19,7 @@ Requires sibling checkout at `~/Documents/topogram` (or `TOPOGRAM_ENGINE`).
 
 ## Consumer config
 
-Copy `.remogram.json.example` to your repo root. Auth via `GITEA_TOKEN` (gitea-api provider).
+Copy `.remogram.json.example` to your repo root. Auth uses `GITEA_TOKEN` for `gitea-api`; `github-api` resolves `GITHUB_TOKEN` first, then `GH_TOKEN`.
 
 ## Commands (v1 — read/plan only)
 
@@ -41,7 +41,7 @@ remogram sync plan --remote origin --json
 
 Reload MCP in Cursor (Settings → MCP). Tools: `repo_status`, `ref_compare`, `pr_status`, `pr_checks`, `merge_plan`, `sync_plan`.
 
-Each tool returns the same JSON as `remogram ... --json`. Set `GITEA_TOKEN` in your environment.
+Each tool returns the same JSON as `remogram ... --json`. Set the provider-specific token in your environment.
 
 ## SDLC (development)
 
@@ -62,7 +62,7 @@ npm run test:coverage # remogram-core coverage report
 | Layer | Location | What runs | Git required |
 |-------|----------|-----------|--------------|
 | Core unit | `tests/core/` | Envelope, caps, `assertForgeReady`, HTTP, packet contracts | Temp repos in `resolve.test.mjs` only |
-| Provider | `tests/provider/` | Gitea adapter with mocked `fetch` + JSON fixtures | One test resolves refs via local git |
+| Provider | `tests/provider/` | Gitea and GitHub API adapters with mocked `fetch` + JSON fixtures | Some tests resolve refs via local git |
 | CLI integration | `tests/cli/` | All six commands via `runCli` with temp `.remogram.json` and injected mock provider; default `PROVIDERS` wiring in `default-providers.test.mjs` | Temp git repo per test |
 | MCP | `tests/mcp/` | `packetToMcpContent` unit tests + stdio server smoke | Smoke uses repo cwd |
 
@@ -81,4 +81,11 @@ npm run test:coverage # remogram-core coverage report
 | `remogram-cli` | CLI surface |
 | `remogram-mcp` | MCP stdio adapter (delegates to CLI) |
 | `provider-gitea-api` | Gitea REST adapter |
-| `provider-*` stubs | Proposed providers → `provider_unsupported` |
+| `provider-github-api` | GitHub REST v3 adapter |
+| `provider-gitea-tea`, `provider-github-gh` | Proposed wrapper providers → `provider_unsupported` |
+
+## GitHub Normalization Notes
+
+`github-api` keeps the shared v1 envelope unchanged. GitHub commit statuses and check-runs are merged into the existing `statuses[]` body with `context`, normalized `state`, and `description`; check-runs that are queued or in progress become `pending`, successful/neutral/skipped runs become `success`, failed/cancelled/timed-out/action-required runs become `failure`, and unmapped values become `unknown`.
+
+GitHub `mergeable` and `mergeable_state` are reduced to `clean`, `conflicted`, or `unknown`. Values that do not prove a clean or conflicted merge stay `unknown` instead of widening packet shape. Public `github.com` remotes always use `https://api.github.com`; GitHub Enterprise remotes derive `https://<verified-host>/api/v3`.

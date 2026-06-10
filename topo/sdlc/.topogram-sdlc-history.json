@@ -367,6 +367,110 @@
       "at": "2026-06-10T01:51:06.745Z",
       "by": "gpt-5.5",
       "note": null
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-10T02:02:13.143Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "task_github_api_provider": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-10T01:56:20.477Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-10T01:56:20.486Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    }
+  ],
+  "plan_github_api_provider#scaffold_provider": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T02:09:14.484Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_github_api_provider#auth_and_base": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T02:09:14.661Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_github_api_provider#repo_and_refs": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T02:09:14.843Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_github_api_provider#pr_view_and_checks": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T02:09:15.023Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_github_api_provider#merge_and_sync": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T02:09:15.204Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_github_api_provider#wire_cli_and_providers": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T02:09:15.386Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_github_api_provider#provider_tests": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T02:09:15.567Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_github_api_provider#normalization_note": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T02:09:15.749Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_github_api_provider#verify": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T02:09:15.930Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ]
 }
