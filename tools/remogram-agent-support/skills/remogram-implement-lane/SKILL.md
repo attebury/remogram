@@ -54,11 +54,15 @@ topogram work next . --json
 
 4. Confirm the intended goal shows **`lifecycle_state: approved`** (or **`active`**
    only if the current packet explicitly says that branch is the implementation ref).
-   If the goal is still **`draft`**, stop: Plan Lane approval required (`plan:approve`
-   + `topogram sdlc transition` on the named `goal_branch_<id>`).
-5. Confirm the intended task is selected or code-edit-ready.
-6. Run read-only `work start` and inspect blockers.
-7. Run `work start --write` only after the preview is clean.
+   If the goal is still **`draft`**, stop: Plan Lane **`plan:approve`** required.
+5. Confirm the intended task is **queue selectable** or **ready** for the named wave
+   (acceptance criteria **approved** on **`origin/remo`**). If the goal is approved
+   but the queue is **blocked** (e.g. `acceptance_not_approved`), stop: Plan Lane
+   **`plan:claim-wave`** required for that `task_<wave>` — goal approval alone is
+   not sufficient.
+6. Confirm the intended task is selected or code-edit-ready via `work next`.
+7. Run read-only `work start` and inspect blockers.
+8. Run `work start --write` only after the preview is clean.
 
 Protected edits require:
 

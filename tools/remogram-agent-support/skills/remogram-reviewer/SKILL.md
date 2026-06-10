@@ -37,8 +37,8 @@ Review Lane **stops after one classification**.
 - Classification is **`safe_for_merge_lane`**.
 
 Merge is always a **separate message** with **`/remogram-merge-lane`**, PR number,
-and reviewed head SHA. Review Lane does not perform merge as a follow-up action
-in the same turn.
+and reviewed head SHA. Review Lane does not merge — even as a follow-up in the
+same chat after `safe_for_merge_lane`.
 
 ## Review Start
 
@@ -84,6 +84,7 @@ Local proof does not override them.
 - Planning PRs: SDLC records and command-owned sidecars only.
 - **`plan:draft` PR:** `goal_branch` stays **`draft`**; tasks unclaimed; plan steps pending.
 - **`plan:approve` PR:** `goal_branch` promoted via `sdlc transition` evidence, not hand-edits.
+- **`plan:claim-wave` PR:** named wave task’s acceptance criteria promoted via `sdlc transition`; task stays unclaimed.
 - Implementation PRs: match selected task/Intent Packet; inside scope/non-goals.
 - PRs touching command-owned sidecars: current and mergeable against latest
   **`origin/remo`**; green checks alone are not enough.
@@ -98,6 +99,9 @@ Local proof does not override them.
 | Hand-edited `status` without transition receipt | `needs_plan_lane_classification` |
 | `goal_branch` draft + `requirement` approved + `verification` active | `needs_plan_lane_classification` (note in findings) |
 | `plan:approve` PR without `sdlc transition` evidence for goal | `needs_plan_lane_classification` |
+| `plan:claim-wave` PR but task claimed or ACs still draft | `needs_plan_lane_classification` |
+| `plan:claim-wave` PR without AC `sdlc transition` receipts for named wave | `needs_plan_lane_classification` |
+| `plan:approve` PR that also approves ACs (mixed approve + claim) | `needs_plan_lane_classification` (split PRs) |
 
 Before `safe_for_merge_lane`, reconfirm head, base, checks, mergeability, scope.
 
@@ -115,8 +119,9 @@ Findings first, by severity. End with exactly one recommendation:
 Then report reviewed head SHA and this footer (always):
 
 ```text
-Next step (human): if safe_for_merge_lane → /remogram-merge-lane Merge PR <n>.
-Reviewed head <sha>. Do not merge in this Review Lane turn.
+Reviewed head <sha>. Review Lane never merges PRs.
+If safe_for_merge_lane: new message → /remogram-merge-lane Merge PR <n>. Reviewed head <sha>.
 ```
 
-Do not merge. Do not name Merge Lane as an action Review Lane will perform.
+Do not merge PRs from Review Lane. Do not name Merge Lane as an action Review
+Lane will perform in this message.
