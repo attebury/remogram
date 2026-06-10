@@ -1,0 +1,13 @@
+---
+description: Load remogram skills for forge-fact work in this repository.
+alwaysApply: true
+---
+
+Use the remogram skill set when available:
+
+- **`remogram-dogfood`** — Topogram SDLC + `remo` integration in this repo
+- **`remogram-core`** — remogram product code under `packages/**`
+
+Canonical skills live in `tools/remogram-agent-support/skills/`. Install globally with `./scripts/install-agent-skills.sh`.
+
+When skills are unavailable, run `remogram doctor --json` and `topogram agent brief . --json`, then follow current CLI packets. Skills are guidance; SDLC gates and ownership are enforced by Topogram CLI when editing protected paths.

@@ -11,7 +11,7 @@ Sibling to [Topogram](https://github.com/attebury/topogram): Topogram models rem
 | **`remo`** | Sole integration authority — merged product line, forge default, Merge Lane target |
 | **`goal/*`, `plan/*`** | Topogram lane archaeology and workflow branches (not integration authority) |
 
-Clone and open PRs against **`remo`**. Topogram commands in this repo use `--base origin/remo` unless reviewing a historical ref. See [AGENTS.md](AGENTS.md).
+Clone and open PRs against **`remo`**. Topogram commands in this repo use `--base origin/remo` unless reviewing a historical ref. See [AGENTS.md](AGENTS.md) and [agent skills](tools/remogram-agent-support/README.md).
 
 ## Bootstrap
 
