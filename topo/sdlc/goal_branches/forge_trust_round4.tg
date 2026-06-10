@@ -4,5 +4,5 @@ goal_branch goal_branch_forge_trust_round4 {
   branch_ref "goal/forge-trust-round4"
   task task_forge_trust_round4_wave1
   evidence_refs [local:topo/sdlc/pitches/forge_trust_round4.tg, local:topo/sdlc/requirements/forge_trust_round4.tg, local:topo/sdlc/plans/forge_trust_round4.tg, local:topo/sdlc/decisions/forge_ingest_cap_policy.tg, local:topo/sdlc/decisions/packet_trust_doctrine.tg, local:topo/sdlc/bugs/forge-trust-round4.tg]
-  status draft
+  status approved
 }
