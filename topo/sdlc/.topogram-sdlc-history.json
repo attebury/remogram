@@ -13,6 +13,13 @@
       "at": "2026-06-09T22:49:25.403Z",
       "by": "actor_coding_agent",
       "note": null
+    },
+    {
+      "from": "approved",
+      "to": "archived",
+      "at": "2026-06-10T08:13:57.730Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ],
   "goal_branch_test_strategy_hardening": [
@@ -508,6 +515,13 @@
       "at": "2026-06-10T05:43:57.045Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-10T08:13:44.379Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ],
   "task_forge_trust_round3": [
@@ -797,6 +811,29 @@
       "from": "pending",
       "to": "done",
       "at": "2026-06-10T08:09:31.871Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "task_forge_trust_round2": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-10T08:13:33.800Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-10T08:13:33.820Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-10T08:13:41.087Z",
       "by": "actor_coding_agent",
       "note": null
     }
