@@ -2,5 +2,5 @@ acceptance_criterion ac_gitlab_abstraction_findings {
   name "GitLab abstraction leak points documented"
   description "Given gitlab-api implementation is complete, when the provider lands, then documentation records every GitLab primitive that did not map cleanly to the shared envelope and whether it was normalized, omitted, reported by capabilities, or mapped to unknown."
   requirement req_gitlab_api_provider
-  status draft
+  status approved
 }

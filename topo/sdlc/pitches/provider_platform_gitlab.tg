@@ -8,5 +8,5 @@ pitch pitch_provider_platform_gitlab {
   no_go_areas "Topogram concepts in remogram output; Topogram imports in provider packages; provider-specific fields leaking into shared packet bodies; token values in logs, packets, errors, or diagnostics."
   affects [cap_forge_remote_ops]
   priority high
-  status draft
+  status covered
 }

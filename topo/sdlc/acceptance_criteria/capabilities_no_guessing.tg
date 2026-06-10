@@ -2,5 +2,5 @@ acceptance_criterion ac_capabilities_no_guessing {
   name "Capabilities prevent provider-name inference"
   description "Given gitea-api, github-api, and future gitlab-api providers, when agents need provider behavior, then they can rely on capabilities facts rather than provider id naming or README prose."
   requirement req_provider_capabilities
-  status draft
+  status approved
 }

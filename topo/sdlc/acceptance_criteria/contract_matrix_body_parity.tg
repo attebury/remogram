@@ -2,5 +2,5 @@ acceptance_criterion ac_contract_matrix_body_parity {
   name "Contract matrix proves packet body parity"
   description "Given any real API provider in the default provider map, when the provider contract matrix runs, then all six read/plan command bodies match the shared packet body keys and do not introduce provider-specific fields."
   requirement req_provider_contract_matrix
-  status draft
+  status approved
 }

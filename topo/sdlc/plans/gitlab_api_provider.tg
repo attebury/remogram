@@ -5,13 +5,13 @@ plan plan_gitlab_api_provider {
   architecture_patterns [contract_boundary, fail_closed_gate]
   priority high
   steps {
-    step scaffold_provider status pending description "Create packages/provider-gitlab-api package exporting provider id gitlab-api; wire config schema, CLI dependency, provider map, and proposed provider term."
-    step auth_and_base status pending description "Resolve GITLAB_TOKEN; bind gitlab.com to https://gitlab.com/api/v4 and self-managed GitLab to https://<verified-host>/api/v4 before sending tokens."
-    step repo_refs_sync status pending description "Implement repoStatus, refsCompare, and syncPlan using shared git guards and provider capability facts."
-    step mr_view_checks_merge status pending description "Implement prView, prChecks, and mergePlan by mapping GitLab merge requests, pipelines/statuses, and merge status into shared vocabulary."
-    step contract_tests status pending description "Add mocked GitLab fixtures and run the shared provider contract matrix against gitlab-api."
-    step docs_and_findings status pending description "Update README/provider docs and record GitLab normalization findings."
-    step proof status pending description "Run npm test, npm run test:coverage, and topogram check."
+    step scaffold_provider status done description "Create packages/provider-gitlab-api package exporting provider id gitlab-api; wire config schema, CLI dependency, provider map, and proposed provider term."
+    step auth_and_base status done description "Resolve GITLAB_TOKEN; bind gitlab.com to https://gitlab.com/api/v4 and self-managed GitLab to https://<verified-host>/api/v4 before sending tokens."
+    step repo_refs_sync status done description "Implement repoStatus, refsCompare, and syncPlan using shared git guards and provider capability facts."
+    step mr_view_checks_merge status done description "Implement prView, prChecks, and mergePlan by mapping GitLab merge requests, pipelines/statuses, and merge status into shared vocabulary."
+    step contract_tests status done description "Add mocked GitLab fixtures and run the shared provider contract matrix against gitlab-api."
+    step docs_and_findings status done description "Update README/provider docs and record GitLab normalization findings."
+    step proof status done description "Run npm test, npm run test:coverage, and topogram check."
   }
-  status draft
+  status complete
 }

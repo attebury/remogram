@@ -957,5 +957,594 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "goal_branch_provider_platform_gitlab": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-10T08:19:14.485Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-10T08:19:14.778Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "approved",
+      "to": "ready",
+      "at": "2026-06-10T08:21:48.956Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-10T08:21:56.193Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-10T08:21:56.476Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-10T08:21:56.764Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "task_provider_contract_matrix": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-10T08:19:18.758Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-10T08:19:18.776Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-10T08:19:48.939Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_contract_matrix_body_parity": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T08:19:42.174Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_contract_matrix_failure_parity": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T08:19:42.488Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_capabilities_packet_shape": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T08:19:42.803Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_capabilities_no_guessing": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T08:19:43.124Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_doctor_readiness_packet": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T08:19:43.427Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_doctor_mcp_tool": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T08:19:43.725Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_gitlab_envelope_parity": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T08:19:44.017Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_gitlab_mr_normalization": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T08:19:44.307Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_gitlab_pipeline_checks": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T08:19:44.596Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_gitlab_api_trust": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T08:19:44.879Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_gitlab_abstraction_findings": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T08:19:45.165Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "req_provider_contract_matrix": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-10T08:19:52.422Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-10T08:20:07.543Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-10T08:20:12.930Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "req_provider_capabilities": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-10T08:19:52.992Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-10T08:20:11.236Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-10T08:20:11.514Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "task_provider_capabilities": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-10T08:19:53.661Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-10T08:19:53.683Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-10T08:19:54.739Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "req_provider_doctor": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-10T08:19:53.736Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-10T08:20:11.795Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-10T08:20:12.076Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "req_gitlab_api_provider": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-10T08:19:54.324Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-10T08:20:12.367Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-10T08:20:12.648Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "task_provider_doctor": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-10T08:19:55.083Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-10T08:19:55.099Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-10T08:19:56.060Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "task_gitlab_api_provider": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-10T08:19:56.396Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-10T08:19:56.412Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-10T08:19:57.373Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "pitch_provider_platform_gitlab": [
+    {
+      "from": "draft",
+      "to": "covered",
+      "at": "2026-06-10T08:21:20.886Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_contract_matrix": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-10T08:21:22.009Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-10T08:21:23.480Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_contract_matrix#inventory_provider_shapes": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:22.302Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_contract_matrix#build_contract_harness": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:22.601Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_contract_matrix#migrate_existing_providers": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:22.898Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_contract_matrix#proof": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:23.190Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_capabilities": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-10T08:21:23.767Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-10T08:21:25.499Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_capabilities#shape_and_envelope": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:24.056Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_capabilities#provider_method": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:24.348Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_capabilities#cli_and_mcp": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:24.632Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_capabilities#tests_and_docs": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:24.920Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_capabilities#proof": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:25.209Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_doctor": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-10T08:21:25.786Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-10T08:21:27.508Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_doctor#diagnostic_contract": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:26.074Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_doctor#core_diagnostics": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:26.363Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_doctor#cli_and_mcp": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:26.650Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_doctor#tests_and_docs": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:26.935Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_provider_doctor#proof": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:27.223Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_gitlab_api_provider": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-10T08:21:27.793Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-10T08:21:30.113Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_gitlab_api_provider#scaffold_provider": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:28.082Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_gitlab_api_provider#auth_and_base": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:28.370Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_gitlab_api_provider#repo_refs_sync": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:28.664Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_gitlab_api_provider#mr_view_checks_merge": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:28.959Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_gitlab_api_provider#contract_tests": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:29.246Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_gitlab_api_provider#docs_and_findings": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:29.533Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_gitlab_api_provider#proof": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:21:29.821Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
   ]
 }

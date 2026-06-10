@@ -2,5 +2,5 @@ acceptance_criterion ac_gitlab_envelope_parity {
   name "GitLab packets are envelope-compatible"
   description "Given a configured gitlab-api repo, when any of the six read/plan commands runs with --json, then provider_id is gitlab-api and the packet body matches the shared shape used by gitea-api and github-api."
   requirement req_gitlab_api_provider
-  status draft
+  status approved
 }

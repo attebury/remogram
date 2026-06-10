@@ -2,5 +2,5 @@ acceptance_criterion ac_gitlab_mr_normalization {
   name "GitLab merge requests normalize to PR vocabulary"
   description "Given a GitLab merge request IID, when pr view or merge plan runs, then remogram preserves the shared PR packet vocabulary, maps GitLab merge status to clean/conflicted/unknown, and uses the existing merge blocker names."
   requirement req_gitlab_api_provider
-  status draft
+  status approved
 }

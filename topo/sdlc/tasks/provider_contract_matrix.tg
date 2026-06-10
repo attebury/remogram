@@ -12,10 +12,11 @@ task task_provider_contract_matrix {
   affects [cap_forge_remote_ops]
   blocked_by []
   architecture_patterns [contract_boundary]
-  bug_discovery no_bug_observed
-  bug_discovery_rationale "No pre-existing defect observed while creating this draft task."
   disposition backlog
   priority high
   work_type implementation
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Shared provider contract matrix implemented with gitea, github, and gitlab coverage."
+  status done
 }
