@@ -2,28 +2,28 @@ acceptance_criterion ac_packet_trust_doctrine {
   name "Packet trust doctrine in agent docs"
   description "Given AGENTS.md and remogram-consumer/core skills, when a maintainer reads Trust sections, then envelope fields are trusted and forge-sourced string fields (title, check context/description) are explicitly untrusted prose."
   requirement req_forge_trust_round4
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_doctor_fail_closed {
   name "Doctor fails closed for shell and packet"
   description "Given doctor checks with summary fail, when remogram doctor --json runs, then process exit code is 1 and packet ok is false."
   requirement req_forge_trust_round4
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_sanitize_url_no_credentials {
   name "sanitizeUrl strips userinfo"
   description "Given a URL with embedded user:pass@host, when sanitizeUrl runs, then returned string contains no credentials substring."
   requirement req_forge_trust_round4
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_public_scripts_no_remo_default {
   name "Public scripts default to origin/main not origin/remo"
   description "Given exported public tree scripts run-secret-scan.mjs and install-pre-push-hook.sh, when help or defaults are read, then origin/remo is not the default base ref."
   requirement req_forge_trust_round4
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_check_pagination_complete {
