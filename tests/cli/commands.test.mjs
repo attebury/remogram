@@ -87,6 +87,27 @@ describe('remogram cli commands', () => {
     expect(JSON.stringify(packet)).not.toContain('test-token');
   });
 
+  it('doctor fails closed on config mismatch', async () => {
+    const config = { ...defaultTestConfig(), owner: 'wrong-owner' };
+    const setup = setupTempForge({
+      config,
+      remoteUrl: 'https://localhost:3000/owner/repo.git',
+    });
+    cleanups.push(setup);
+    const provider = createMockProvider();
+    const providers = { 'gitea-api': provider };
+    const { logs } = await captureCliOutput(() =>
+      runCli(['doctor', '--json'], { cwd: setup.dir, providers }),
+    );
+    const packet = JSON.parse(logs[0]);
+    expect(packet.type).toBe(PACKET_TYPES.PROVIDER_DOCTOR);
+    expect(packet.summary).toBe('fail');
+    expect(packet.ok).toBe(false);
+    expect(packet.error_code).toBe('config_invalid');
+    expect(process.exitCode).toBe(1);
+    process.exitCode = undefined;
+  });
+
   it('refs compare', async () => {
     const { cli } = env();
     const { logs } = await cli(['refs', 'compare', '--base', 'main', '--head', 'feat/x']);

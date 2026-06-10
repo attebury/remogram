@@ -81,6 +81,13 @@ describe('sanitizeUrl', () => {
   it('rejects javascript scheme', () => {
     expect(sanitizeUrl('javascript:alert(1)')).toBeNull();
   });
+
+  it('strips URL userinfo', () => {
+    const url = sanitizeUrl('https://user:secret@host.example/path');
+    expect(url).toBe('https://host.example/path');
+    expect(url).not.toContain('secret');
+    expect(url).not.toContain('user:');
+  });
 });
 
 describe('capText', () => {

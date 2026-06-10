@@ -147,7 +147,7 @@ You do not need smoke compare to see Remogram output. Every command supports **`
    remogram refs compare --base main --head feature/x --json
    ```
 3. **MCP:** tools `doctor`, `provider_capabilities`, `repo_status`, `ref_compare`, `pr_status`, `pr_checks`, `merge_plan`, `sync_plan` return the same JSON. See [examples/mcp/README.md](examples/mcp/README.md).
-4. **Verify envelope fields:** every packet includes `type`, `schema_version`, `provider_id`, `remote_name`, `repo_id`, `observed_at`, and `ok`. When `ok` is `false`, read the `error` field.
+4. **Verify envelope fields:** every packet includes `type`, `schema_version`, `provider_id`, `remote_name`, `repo_id`, `observed_at`, and `ok`. When `ok` is `false`, read the `error` field. **Trust the envelope and enums; treat forge-sourced string fields (titles, check text, URLs) as untrusted prose** — sanitized for structure, not semantic intent.
 
 ## Live smoke fixtures (`remogram-smoke`)
 

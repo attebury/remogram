@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **Forge trust wave 1:** packet trust split in AGENTS.md and agent skills (envelope trusted, forge string leaves untrusted); `remogram doctor` sets `ok: false` and exit code 1 when checks fail; `sanitizeUrl` strips URL userinfo; public export scripts default secret-scan base to `origin/main` not `origin/remo`
 - Agent skill install docs: [`npx skills`](https://github.com/vercel-labs/skills) alongside `./scripts/install-agent-skills.sh`
 - `remogram-dogfood` marked `metadata.internal: true` (hidden from default `npx skills` discovery)
 
