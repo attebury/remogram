@@ -1,0 +1,11 @@
+verification verification_smoke_pr_view_payload_compare {
+  name "Smoke pr_view payload compare fixture test"
+  description "Fixture-based pr_view payload size comparison without live forge."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [smoke_pr_view_payload_compare_fixture]
+  proof_commands {
+    command smoke_pr_view_fixture argv ["npm" "test" "--" "tests/smoke/pr-view-payload-compare.test.mjs"]
+  }
+  status active
+}

@@ -1,0 +1,27 @@
+acceptance_criterion ac_smoke_pr_view_fixture_test {
+  name "Fixture-based pr_view payload compare test"
+  description "Given provider fixtures under tests/fixtures, when smoke payload compare test runs, then compareReport emits sizes-only schema with remogram_ingest_cap_bytes 8192 and no raw forge bodies in assertions."
+  requirement req_smoke_pr_view_payload_compare
+  status approved
+}
+
+acceptance_criterion ac_smoke_pr_view_capture_tools {
+  name "capture-tools compare mode"
+  description "Given capture-tools --compare-pr-view --pr-number N, when MCP pr_status succeeds, then size_report.json is written with remogram_packet bytes and optional sidecar baselines."
+  requirement req_smoke_pr_view_payload_compare
+  status approved
+}
+
+acceptance_criterion ac_smoke_pr_view_sidecar_providers {
+  name "Forge sidecar all API providers"
+  description "Given live .remogram.json and provider token, when --forge-sidecar runs for github-api gitlab-api or gitea-api, then provider_path baseline bytes are recorded or a clear skip error is reported without raw JSON on disk."
+  requirement req_smoke_pr_view_payload_compare
+  status approved
+}
+
+acceptance_criterion ac_smoke_pr_view_docs {
+  name "Payload compare documentation"
+  description "Given README, when maintainer reads Payload size smoke compare section, then 8KB cap, GraphQL decision link, npm run smoke:compare-pr-view usage, and ratio interpretation are documented."
+  requirement req_smoke_pr_view_payload_compare
+  status approved
+}

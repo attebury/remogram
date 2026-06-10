@@ -1,0 +1,12 @@
+pitch pitch_smoke_pr_view_payload_compare {
+  name "Smoke pr_view payload size comparison"
+  description "Opt-in smoke path comparing Remogram pr_status packet bytes against provider forge responses for pr_view only. Sizes-only output protects agent context budget; documents 8KB ingest cap and GitHub GraphQL decision."
+  appetite "small"
+  problem "Operators lack a repeatable way to measure how much Remogram normalization shrinks forge payloads for pr_view, or why GitHub uses GraphQL instead of REST. Existing capture-tools stores packets but not baseline byte comparisons."
+  solution_sketch "Extend capture-tools with --compare-pr-view, optional forge sidecar for all three API providers, fixture-based CI test, README section linking decision_github_api_graphql_pr_view and DEFAULT_MAX_BYTES."
+  rabbit_holes "Full REST dump in CI artifacts; wiring compare into default npm test; extending to pr_checks in v1."
+  no_go_areas "Changing production ingest cap; Topogram concepts in remogram output; hand-editing command-owned sidecars."
+  affects [cap_forge_remote_ops]
+  priority medium
+  status submitted
+}
