@@ -7,7 +7,10 @@ Repo-local orientation only. **Skills and CLI packets outrank this file.**
 | Product / forge boundary | `tools/remogram-agent-support/skills/remogram-core/` |
 | Consumer repos (`.remogram.json`) | `tools/remogram-agent-support/skills/remogram-consumer/` |
 
-Install skills for Cursor/Codex/Claude: `./scripts/install-agent-skills.sh --all`. See `tools/remogram-agent-support/README.md`.
+Install skills (see [tools/remogram-agent-support/README.md](tools/remogram-agent-support/README.md)):
+
+- **`npx skills`** — `npx skills add attebury/remogram --skill remogram-consumer -g -y` (consumer) or `--skill remogram-core` (contributor)
+- **Install script** — `./scripts/install-agent-skills.sh --all` from a clone (Cursor sync, Codex, Claude plugin)
 
 ## First commands
 

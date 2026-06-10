@@ -1,6 +1,8 @@
 ---
 name: remogram-dogfood
 description: Use when working in the remogram repository with Topogram SDLC, lane workflow, PR review/merge, or integration on remo. Layers remogram-specific overrides on topogram-core and lane skills — does not replace them.
+metadata:
+  internal: true
 ---
 
 # Remogram Dogfood

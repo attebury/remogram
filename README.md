@@ -256,6 +256,52 @@ GitHub commit statuses and check-runs merge into `statuses[]` with normalized `s
 
 `gitlab-api` maps merge requests to the shared PR vocabulary (`iid` → `pr_number`). Commit statuses and pipelines merge into `statuses[]`. Public `gitlab.com` uses `https://gitlab.com/api/v4`; self-managed hosts derive `https://<host>/api/v4`.
 
+## Agent skills
+
+Canonical skills live under `tools/remogram-agent-support/skills/` (`remogram-consumer`, `remogram-core`). See [tools/remogram-agent-support/README.md](tools/remogram-agent-support/README.md) for details.
+
+### Option A — `npx skills` (recommended for npm/GitHub users)
+
+Uses the open [Agent Skills](https://agentskills.io) CLI ([vercel-labs/skills](https://github.com/vercel-labs/skills)). Skills install to agent-specific paths (project: `.agents/skills/`; global Cursor: `~/.cursor/skills/`, global Codex: `~/.codex/skills/`).
+
+```bash
+# Consumer — any repo with .remogram.json (install once, global)
+npx skills add attebury/remogram --skill remogram-consumer -g -a cursor,codex -y
+
+# Contributor — this repo (project scope)
+npx skills add attebury/remogram --skill remogram-core -a cursor -y
+
+# List available skills without installing
+npx skills add attebury/remogram --list
+```
+
+Explicit subpath (same skills, narrower source):
+
+```bash
+npx skills add attebury/remogram/tree/main/tools/remogram-agent-support --skill remogram-consumer -g -y
+```
+
+`npx skills` does **not** install Cursor rules (`.cursor/rules/`) or the Claude Code plugin adapter — those stay in-repo or use Option B.
+
+### Option B — install script (Remogram repo checkout)
+
+From a clone of this repository — syncs `.cursor/skills/`, Codex global skills, and optional Claude plugin:
+
+```bash
+./scripts/install-agent-skills.sh --all
+```
+
+| Flag | Target |
+|------|--------|
+| `--cursor` | `.cursor/skills/` in this repo (`remogram-core`) |
+| `--codex` | `~/.codex/skills/` (`remogram-consumer` + `remogram-core`) |
+| `--claude PATH` | copy Claude Code plugin adapter |
+| `--consumer-only` | With `--codex`, install only `remogram-consumer` |
+| `--dogfood` | Also install `remogram-dogfood` (private maintainer checkout only; hidden from public GitHub) |
+| `--all` | `--cursor` and `--codex` (default when no flags) |
+
+Private **`remo`** maintainers with Topogram dogfood: `./scripts/install-agent-skills.sh --cursor --dogfood`.
+
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Agent skills: `./scripts/install-agent-skills.sh --all`.
+See [CONTRIBUTING.md](CONTRIBUTING.md).

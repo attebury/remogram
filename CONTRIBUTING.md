@@ -18,11 +18,31 @@ Thanks for your interest in Remogram.
 
 ## Agent skills
 
-Consumer and contributor skills live under `tools/remogram-agent-support/skills/`. Install locally with:
+Canonical skills: `tools/remogram-agent-support/skills/`. Full reference: [tools/remogram-agent-support/README.md](tools/remogram-agent-support/README.md).
+
+### Option A — `npx skills`
+
+Works from any machine with Node — no Remogram clone required:
+
+```bash
+# Consumer skill (global; use in any repo with .remogram.json)
+npx skills add attebury/remogram --skill remogram-consumer -g -a cursor,codex -y
+
+# Contributor skill (project scope in this repo)
+npx skills add attebury/remogram --skill remogram-core -a cursor -y
+```
+
+### Option B — install script
+
+From a Remogram clone — syncs committed `.cursor/skills/`, Codex globals, and optional Claude plugin:
 
 ```bash
 ./scripts/install-agent-skills.sh --all
 ```
+
+Use `./scripts/install-agent-skills.sh --cursor --dogfood` on private maintainer checkouts when the dogfood skill is present.
+
+Edit canonical files under `tools/remogram-agent-support/skills/`, then re-run the install script or `npx skills update` for installed copies.
 
 ## License
 

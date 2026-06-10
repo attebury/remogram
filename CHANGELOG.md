@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Changed
+
+- Agent skill install docs: [`npx skills`](https://github.com/vercel-labs/skills) alongside `./scripts/install-agent-skills.sh`
+- `remogram-dogfood` marked `metadata.internal: true` (hidden from default `npx skills` discovery)
+
 ## [0.1.0-beta.0] - 2026-06-10
 
 ### Added
@@ -17,7 +24,6 @@ All notable changes to this project will be documented in this file.
 
 - Read/plan only — no PR create, merge execute, or push
 - `github-gh` and `gitea-tea` provider IDs are reserved CLI-wrapper placeholders (not implemented); use `*-api` providers — GitLab's CLI is `glab` but has no wrapper ID yet (see README)
-- Payload-size smoke compare is not packaged in npm beta (monorepo dev tooling only)
 - Payload-size smoke compare is not packaged in npm beta (monorepo dev tooling only)
 
 [0.1.0-beta.0]: https://github.com/attebury/remogram/releases/tag/v0.1.0-beta.0
