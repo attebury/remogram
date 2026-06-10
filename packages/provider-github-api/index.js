@@ -1,15 +1,16 @@
-import { execFileSync } from 'node:child_process';
 import {
   fetchJson,
   sanitizeField,
   sanitizeUrl,
   assertGitRef,
   assertGitRemote,
+  gitRevParse,
+  gitCurrentBranch,
+  gitAheadBehind,
   ERROR_CODES,
   forgeError,
 } from '@remogram/core';
 
-const GIT_TIMEOUT_MS = 10_000;
 const PUBLIC_GITHUB_HOST = 'github.com';
 const PUBLIC_GITHUB_API = 'https://api.github.com';
 const PUBLIC_GITHUB_GRAPHQL = 'https://api.github.com/graphql';
@@ -223,37 +224,6 @@ export async function fetchPullGraphql(config, parsed, number) {
   }
 
   return pr;
-}
-
-function gitExec(cwd, args) {
-  return execFileSync('git', args, { cwd, encoding: 'utf8', timeout: GIT_TIMEOUT_MS }).trim();
-}
-
-export function gitRevParse(cwd, ref) {
-  assertGitRef(ref);
-  try {
-    return gitExec(cwd, ['rev-parse', ref]);
-  } catch {
-    return null;
-  }
-}
-
-export function gitCurrentBranch(cwd) {
-  try {
-    return gitExec(cwd, ['rev-parse', '--abbrev-ref', 'HEAD']);
-  } catch {
-    return null;
-  }
-}
-
-export function gitAheadBehind(cwd, base, head) {
-  try {
-    const out = gitExec(cwd, ['rev-list', '--left-right', '--count', `${base}...${head}`]);
-    const [behind, ahead] = out.split(/\s+/).map(Number);
-    return { ahead_by: ahead, behind_by: behind };
-  } catch {
-    return { ahead_by: null, behind_by: null };
-  }
 }
 
 export async function repoStatus(ctx) {
