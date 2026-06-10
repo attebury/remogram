@@ -1,16 +1,15 @@
-# Progress: Verify Lane — task_test_strategy_followup closeout
+# Progress: Verify Lane — task_test_strategy_hardening retroactive closeout
 
 ## Approach
-Command-owned verification receipts, plan step completion, task done, goal_branch done on `verify/test-strategy-followup-closeout` from `dev/scaffold` @ `f423dca`.
+Round 1 implementation already on `dev/scaffold` (PR #8). Command-owned retroactive closeout on `verify/test-strategy-hardening-closeout` @ `7c792c8`.
 
 ## Steps So Far
 1. Proof: npm test (61 pass), test:coverage (core ~92%), topogram check green.
-2. Verification receipts recorded for `verification_test_strategy_followup`.
-3. Six plan steps → done; `sdlc complete task_test_strategy_followup`; goal_branch → done.
-4. Closeout: verification **passing**, 0 blockers.
+2. work start → goal active → 10 plan steps done → verification receipts → task done → goal done.
+3. Closeout passing; sdlc prep commit green.
 
 ## Current Status
-Closeout branch ready to push/merge to `dev/scaffold`.
+Closeout branch ready for PR → Review → Merge.
 
 ## Next safe lane
-Review Lane → Merge Lane on closeout PR. No new implementation without new Intent Packet.
+Review Lane on closeout PR.

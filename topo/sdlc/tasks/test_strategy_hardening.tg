@@ -12,10 +12,11 @@ task task_test_strategy_hardening {
   affects [cap_forge_remote_ops cap_validate_workspace]
   blocked_by []
   architecture_patterns [contract_boundary, command_owned_mutation]
-  bug_discovery no_bug_observed
-  bug_discovery_rationale "Maintainer code review 2026-06-09; testing strategy gaps not security bugs."
   disposition active
   priority high
   work_type testing
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Round 1 test strategy hardening landed in PR #8; retroactive closeout."
+  status done
 }
