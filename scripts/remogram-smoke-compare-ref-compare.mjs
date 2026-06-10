@@ -2,19 +2,19 @@
 import { runSmokeCompare } from './remogram-smoke-compare-lib.mjs';
 
 function parseArgs(argv) {
-  const args = { prNumber: 1, forgeSidecar: false, outDir: null, sizesOnly: true };
+  const args = { base: 'main', head: 'feature/smoke-1', outDir: null, sizesOnly: true };
   for (let i = 2; i < argv.length; i += 1) {
     const arg = argv[i];
-    if (arg === '--forge-sidecar') {
-      args.forgeSidecar = true;
-      continue;
-    }
     if (arg === '--keep-packet') {
       args.sizesOnly = false;
       continue;
     }
-    if (arg === '--pr-number') {
-      args.prNumber = Number(argv[++i]);
+    if (arg === '--base') {
+      args.base = argv[++i];
+      continue;
+    }
+    if (arg === '--head') {
+      args.head = argv[++i];
       continue;
     }
     if (arg === '--out') {
@@ -28,9 +28,9 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv);
 runSmokeCompare({
-  compareFlag: '--compare-pr-view',
-  extraArgs: ['--pr-number', String(args.prNumber)],
-  forgeSidecar: args.forgeSidecar,
+  compareFlag: '--compare-ref-compare',
+  extraArgs: ['--base', args.base, '--head', args.head],
+  forgeSidecar: false,
   outDir: args.outDir,
   sizesOnly: args.sizesOnly,
 });

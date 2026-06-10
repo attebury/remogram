@@ -15,5 +15,6 @@ task task_smoke_payload_compare_v2 {
   disposition backlog
   priority medium
   work_type implementation
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  status in-progress
 }

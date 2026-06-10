@@ -16,6 +16,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "smoke:compare-pr-view": "node ./scripts/remogram-smoke-compare.mjs",
+    "smoke:compare-pr-checks": "node ./scripts/remogram-smoke-compare-pr-checks.mjs",
+    "smoke:compare-ref-compare": "node ./scripts/remogram-smoke-compare-ref-compare.mjs",
     "topogram": "topogram",
     "topo:brief": "topogram agent brief . --json",
     "topo:check": "topogram check . --json",

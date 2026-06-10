@@ -94,6 +94,7 @@ describe('pr-view payload compare fixtures', () => {
     const body = githubPrBody(graphql);
     const packet = forgePacket(PACKET_TYPES.PR_STATUS, packetCtx('github-api'), body);
     const report = compareReport({
+      command: 'pr_view',
       providerId: 'github-api',
       prNumber: body.pr_number,
       remogramPacket: packet,
@@ -114,6 +115,7 @@ describe('pr-view payload compare fixtures', () => {
     const body = giteaPrBody(pull);
     const packet = forgePacket(PACKET_TYPES.PR_STATUS, packetCtx('gitea-api'), body);
     const report = compareReport({
+      command: 'pr_view',
       providerId: 'gitea-api',
       prNumber: body.pr_number,
       remogramPacket: packet,
@@ -132,6 +134,7 @@ describe('pr-view payload compare fixtures', () => {
     const body = gitlabMrBody(mr);
     const packet = forgePacket(PACKET_TYPES.PR_STATUS, packetCtx('gitlab-api'), body);
     const report = compareReport({
+      command: 'pr_view',
       providerId: 'gitlab-api',
       prNumber: body.pr_number,
       remogramPacket: packet,
@@ -157,6 +160,7 @@ describe('pr-view payload compare fixtures', () => {
       mergeability: 'clean',
     });
     const report = compareReport({
+      command: 'pr_view',
       providerId: 'github-api',
       prNumber: 1,
       remogramPacket: packet,
