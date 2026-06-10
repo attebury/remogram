@@ -17,6 +17,25 @@ remogram repo status --json
 3. v1 commands are read/plan only — no `pr create` or merge execute.
 4. No `import` from Topogram in `packages/remogram-*` or provider packages.
 
+## Lane policy
+
+Before reviewing or merging a PR, dogfood remogram for forge facts:
+
+```bash
+remogram pr view --number <n> --json
+remogram pr checks --number <n> --json
+remogram merge plan --number <n> --json
+```
+
+`check_conclusion: "missing"` means the forge has no commit status records for the PR head. In local Gitea where Actions/status posting is intentionally not configured, this is an expected forge fact, not by itself a failed check. Review/Merge Lane must then require local proof from current refs, at minimum:
+
+```bash
+topogram check . --json
+npm test
+```
+
+When forge statuses are present, failures or pending statuses remain blockers. Do not treat local proof as a substitute for failed forge checks; use it only when statuses are missing because this repo is running without forge CI.
+
 ## Protected edits
 
 Policy: `topogram.sdlc-policy.json`. Before changing `packages/**`, `topo/**`, or tests:
