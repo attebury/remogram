@@ -103,6 +103,43 @@ Rules:
 After approval:
 - Open or update PR: head goal/<name> → base remo.
 - Report handoff block. Next lane: Review Lane only (not Merge Lane).
+- If queue still blocked on acceptance criteria: handoff notes plan:claim-wave next — not Implement.
+```
+
+## Plan: Claim Wave
+
+```text
+You are Plan Lane (remogram dogfood).
+
+Preflight:
+- Fetch origin/remo.
+- Checkout goal/<name> from current origin/remo.
+- Confirm goal_branch_<id> is already approved on origin/remo.
+- Confirm user named exact task_<wave> and wave acceptance_refs to approve.
+- Stop if worktree dirty or base stale.
+
+Task:
+Claim wave <task_id> — approve its acceptance criteria only.
+
+Lifecycle (per acceptance_refs on the task record):
+- topogram sdlc transition <ac-id> approved . --actor <actor> --write --json
+- topogram sdlc prep commit . --json before commit
+
+Verify:
+- topogram query goal-branch-queue ./topo --base origin/remo --branches 'goal/*' --json
+- Named task selectable or ready (or report remaining blockers).
+
+Rules:
+- PR title plan:claim-wave <slug> <wave>.
+- No hand-edited status fields in .tg files.
+- Do not transition task to claimed; no work start; no implement; no merge.
+- topo/** on goal/<name> only.
+- topogram check . --json before commit/push/PR.
+
+After claim-wave:
+- Open or update PR: head goal/<name> → base remo.
+- Report handoff block. Next lane: Review Lane only.
+- Implement Lane only after merge and queue shows wave ready.
 ```
 
 ## Implement: Start Selected Task
@@ -115,6 +152,8 @@ Preflight:
 - Create fresh implementation branch from current origin/remo.
 - topogram query goal-branch-queue ./topo --base origin/remo --branches 'goal/*' --json
 - Confirm goal lifecycle_state is approved (not draft).
+- Confirm <task_id> wave is queue selectable/ready (not blocked on acceptance_not_approved).
+- If blocked: stop — Plan Lane plan:claim-wave required first.
 - topogram work next . --json.
 - Confirm <task_id> is selected or code-edit-ready.
 - topogram work start <task_id> . --actor <actor> --write --json
@@ -168,9 +207,10 @@ Task:
 Review PR <n> as planning PR (expect base remo).
 
 Check:
-- Planning-only scope; draft/approved lifecycle matches PR title (plan:draft vs plan:approve).
-- plan:draft PR must not promote goal_branch, requirement, task, or verification status.
-- plan:approve PR must show sdlc transition evidence for goal approval.
+- Planning-only scope; lifecycle matches PR title (plan:draft | plan:approve | plan:claim-wave).
+- plan:draft PR must not promote goal_branch, requirement, task, AC, or verification status.
+- plan:approve PR must show sdlc transition evidence for goal approval only.
+- plan:claim-wave PR must show AC sdlc transition receipts; task stays unclaimed.
 - No task start/claim/done unless in scope.
 - Command-owned sidecars coherent; no hand-edited status fields.
 - Reconfirm head/base/mergeability before safe_for_merge_lane.

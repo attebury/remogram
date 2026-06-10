@@ -10,6 +10,10 @@ in a **separate message** with reviewed head SHA.
 Run `./scripts/park-topogram-skills.sh park` before lane work so Cursor does not
 surface generic Topogram skills from `~/.codex/skills/`.
 
+**Three Plan Lane paths (separate PRs):** `plan:draft` (proposal) → `plan:approve`
+(goal authorized) → `plan:claim-wave` (wave ACs approved, queue ready). Goal
+approval does not authorize Implement — claim-wave does.
+
 ## Repo preamble
 
 ```text
@@ -90,7 +94,55 @@ Forbidden:
 PR title: plan:approve forge-trust-round4
 
 Done = PR open to remo + goal_branch.status approved + topogram check green.
-Done ≠ merge to remo.
+Done ≠ merge to remo. Done ≠ Implement (queue may still need plan:claim-wave).
+
+Handoff Next lane: Review Lane only.
+```
+
+## Plan Lane — claim wave (Round 4, wave 1)
+
+```text
+/remogram-plan-lane
+
+[Paste repo preamble]
+
+You are Plan Lane.
+
+Branch: goal/forge-trust-round4 from origin/remo.
+
+Task: Claim wave task_forge_trust_round4_wave1 only.
+
+Preflight:
+- git fetch origin
+- Checkout goal/forge-trust-round4 from origin/remo
+- Confirm goal_branch_forge_trust_round4.status is approved on origin/remo
+- Confirm task_forge_trust_round4_wave1.status is unclaimed
+- topogram check . --json before commit
+
+Lifecycle (command-owned only — approve this wave's acceptance_refs):
+1. topogram sdlc transition ac_packet_trust_doctrine approved . \
+     --actor <actor> --write --json
+2. topogram sdlc transition ac_doctor_fail_closed approved . \
+     --actor <actor> --write --json
+3. topogram sdlc transition ac_sanitize_url_no_credentials approved . \
+     --actor <actor> --write --json
+4. topogram sdlc transition ac_public_scripts_no_remo_default approved . \
+     --actor <actor> --write --json
+5. topogram sdlc prep commit . --json before commit
+
+Verify:
+topogram query goal-branch-queue ./topo --base origin/remo --branches 'goal/forge-trust-round4' --json
+(Wave 1 should be selectable or ready after merge — report blockers if not.)
+
+Forbidden:
+- Hand-edit status fields in .tg files
+- Transition task to claimed; work start; implement; merge PR
+- Commit topo/ to remo
+
+PR title: plan:claim-wave forge-trust-round4 wave1
+
+Done = PR open to remo + Wave 1 ACs approved + topogram check green.
+Done ≠ task claimed. Done ≠ merge to remo. Done ≠ Implement until queue green on remo.
 
 Handoff Next lane: Review Lane only.
 ```
@@ -103,8 +155,9 @@ Handoff Next lane: Review Lane only.
 [Paste repo preamble]
 Load remogram-core for packages/**.
 
-Preflight: origin/remo; fresh branch from remo; confirm goal lifecycle_state
-approved via goal-branch-queue; work start <task_id>; prep commit.
+Preflight: origin/remo; fresh branch from remo; goal-branch-queue shows goal
+approved AND named task selectable/ready (plan:claim-wave done if was blocked);
+work start <task_id>; prep commit.
 
 Task: Implement <task_id> only.
 
@@ -133,7 +186,7 @@ If safe_for_merge_lane: tell human to run /remogram-merge-lane in a separate mes
 
 [Paste repo preamble]
 
-Merge PR <n> to remo. Reviewed head <sha> from prior Review Lane turn.
+Merge PR <n> to remo. Reviewed head <sha> from Review Lane classification above.
 
 Post-merge: queue from origin/remo in handoff block.
 ```
