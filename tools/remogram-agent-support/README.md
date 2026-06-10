@@ -43,8 +43,9 @@ From the remogram repository root:
 
 | Agent | Path |
 |-------|------|
-| Cursor | `adapters/cursor/` (rule + sync via install script) |
-| Claude Code | `adapters/claude-code-plugin/` |
-| Codex | `adapters/codex/README.md` |
+| **All MCP hosts** | [`examples/mcp/README.md`](../../examples/mcp/README.md) — Cursor, Claude Desktop, Codex, Claude Code |
+| Cursor | `adapters/cursor/` (rule + sync via install script); MCP: `.cursor/mcp.json.example` |
+| Claude Code | `adapters/claude-code-plugin/`; MCP: `examples/mcp/claude-code.md` |
+| Codex | `adapters/codex/README.md`; MCP: `examples/mcp/codex.*.config.toml.example` |
 
 Do not edit adapter copies by hand — change canonical `skills/` and re-run the install script.

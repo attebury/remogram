@@ -9,3 +9,5 @@ Install into your Claude Code plugins directory:
 Or symlink this folder after populating `skills/` via the install script.
 
 Canonical skill sources: `../../skills/`. Edit those files, then re-run the install script.
+
+MCP wiring (separate from skills): [examples/mcp/claude-code.md](../../../../examples/mcp/claude-code.md).

@@ -45,14 +45,16 @@ remogram sync plan --remote origin --json
 
 ## MCP
 
+remogram-mcp is a **stdio MCP server** (agent-agnostic). Each host has its own config file format.
+
 ```bash
-./scripts/npm-link.sh              # remogram-mcp on PATH
-./scripts/install-project-mcp.sh     # copies .cursor/mcp.json.example → .cursor/mcp.json
+./scripts/npm-link.sh                 # remogram-mcp on PATH
+./scripts/install-project-mcp.sh      # Cursor only: .cursor/mcp.json.example → .cursor/mcp.json
 ```
 
-Reload MCP in Cursor (Settings → MCP). Tools: `doctor`, `provider_capabilities`, `repo_status`, `ref_compare`, `pr_status`, `pr_checks`, `merge_plan`, `sync_plan`.
+**Other agents:** labeled examples for Cursor, Claude Desktop, OpenAI Codex, and Claude Code are in [examples/mcp/README.md](examples/mcp/README.md).
 
-Each tool returns the same JSON as `remogram ... --json`. Set the provider-specific token in your environment.
+Tools: `doctor`, `provider_capabilities`, `repo_status`, `ref_compare`, `pr_status`, `pr_checks`, `merge_plan`, `sync_plan`. Each tool returns the same JSON as `remogram ... --json`. Set the provider-specific token in your environment.
 
 ## SDLC (development)
 

@@ -28,4 +28,4 @@ Restart or start a new Codex session so skill descriptions refresh.
 
 ## Consumer repos
 
-For day-to-day forge work in other projects, **`remogram-consumer`** alone is usually enough. Install it globally once; enable remogram MCP in that project's Cursor/Codex config separately.
+For day-to-day forge work in other projects, **`remogram-consumer`** alone is usually enough. Install it globally once; enable remogram MCP using the Codex example in [`examples/mcp/`](../../../../examples/mcp/README.md) (project `.codex/config.toml` or `~/.codex/config.toml`).

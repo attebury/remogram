@@ -6,7 +6,10 @@
       "cwd": "${workspaceFolder}",
       "env": {
         "REMOGRAM_CWD": "${workspaceFolder}",
-        "GITEA_TOKEN": "${env:GITEA_TOKEN}"
+        "GITEA_TOKEN": "${env:GITEA_TOKEN}",
+        "GITHUB_TOKEN": "${env:GITHUB_TOKEN}",
+        "GH_TOKEN": "${env:GH_TOKEN}",
+        "GITLAB_TOKEN": "${env:GITLAB_TOKEN}"
       }
     }
   }

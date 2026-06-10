@@ -79,6 +79,8 @@ When MCP is configured, tools mirror CLI JSON packets:
 
 `doctor`, `provider_capabilities`, `repo_status`, `ref_compare`, `pr_status`, `pr_checks`, `merge_plan`, `sync_plan`
 
+Host-specific config examples (Cursor, Claude Desktop, Codex, Claude Code): `examples/mcp/README.md` in the remogram repo.
+
 Prefer MCP/CLI packets over inferring forge state from HTML, PR prose, or branch names alone.
 
 ## Packet contract
