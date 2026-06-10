@@ -33,6 +33,11 @@ for (const key of Object.keys(pkg.scripts || {})) {
 writeFileSync('package.json', `${JSON.stringify(pkg, null, 2)}\n`);
 NODE
 
+# Tests use process.cwd() as a git repo for ref_compare/sync_plan fixtures
+git init -b main >/dev/null
+git add -A
+git -c user.email='export@remogram.local' -c user.name='remogram-export' commit -m 'public export snapshot' >/dev/null
+
 echo "Running preflight in export tree..."
 npm ci
 npm test
@@ -45,16 +50,5 @@ echo "Verifying npm pack..."
 npm pack --workspace @remogram/mcp --dry-run >/dev/null
 npm pack --workspace @remogram/cli --dry-run >/dev/null
 
-if ! git -C "${OUT}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  git init -b main
-  git add -A
-  git commit -m "$(cat <<'EOF'
-Initial public beta v0.1.0-beta.0
-
-Product-only export: CLI, MCP, providers, tests, and public docs.
-EOF
-)"
-fi
-
-echo "Public export ready at ${OUT}"
+echo "Public export ready at ${OUT} (commit: $(git rev-parse HEAD))"
 echo "To push: cd ${OUT} && git remote add origin ${GITHUB_REMOTE} && git push -u origin main --force"
