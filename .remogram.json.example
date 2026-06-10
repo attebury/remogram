@@ -4,6 +4,5 @@
   "remote": "origin",
   "owner": "attebury",
   "repo": "remogram",
-  "baseUrl": "http://localhost:3000",
-  "trustedHosts": ["localhost:3000"]
+  "baseUrl": "http://localhost:3000"
 }

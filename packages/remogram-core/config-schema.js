@@ -23,7 +23,6 @@ export const configSchema = z
     owner: repoSegmentSchema,
     repo: repoSegmentSchema,
     baseUrl: z.string().url().optional(),
-    trustedHosts: z.array(z.string().min(1)).optional(),
   })
   .strict();
 

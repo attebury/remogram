@@ -20,6 +20,14 @@ describe('remogram-mcp run-cli', () => {
     expect(JSON.parse(out.content[0].text).error_code).toBe('oversized_raw_output');
   });
 
+  it('packetToMcpContent sanitizes stderr on parse failure', () => {
+    const out = packetToMcpContent('not json', 'Bearer ghp_fake-token-xyz leaked', 1, false);
+    expect(out.isError).toBe(true);
+    const packet = JSON.parse(out.content[0].text);
+    expect(JSON.stringify(packet)).not.toContain('ghp_fake-token-xyz');
+    expect(packet.error_message).toBe('CLI did not return JSON');
+  });
+
   it('forgeErrorPacket from core is MCP-compatible', () => {
     const packet = forgeErrorPacket(
       unknownForgeContext(),

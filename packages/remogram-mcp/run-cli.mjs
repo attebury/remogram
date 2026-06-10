@@ -8,11 +8,23 @@ import {
   ERROR_CODES,
   forgeError,
   capText,
+  sanitizeField,
 } from '@remogram/core';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 const MAX_OUTPUT_BYTES = 65_536;
+
+function safeCliErrorMessage(stderr, stdout) {
+  const raw = stderr || stdout || '';
+  const capped = capText(raw, MAX_OUTPUT_BYTES);
+  const sanitized = sanitizeField(capped.text);
+  if (!sanitized) return 'CLI did not return JSON';
+  if (/Bearer\s|ghp_|gho_|glpat-|GITLAB_TOKEN|GITEA_TOKEN/i.test(sanitized)) {
+    return 'CLI did not return JSON';
+  }
+  return sanitized;
+}
 
 export function remogramCwd() {
   return process.env.REMOGRAM_CWD || process.cwd();
@@ -81,7 +93,7 @@ export function packetToMcpContent(stdout, stderr, code, truncated = false) {
       unknownForgeContext(),
       forgeError(
         ERROR_CODES.UNPARSEABLE_PROVIDER_OUTPUT,
-        stderr || stdout || 'CLI did not return JSON',
+        safeCliErrorMessage(stderr, stdout),
       ),
     );
   }

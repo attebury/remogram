@@ -10,6 +10,8 @@ import {
 } from '@remogram/core';
 
 const GIT_TIMEOUT_MS = 10_000;
+const PUBLIC_GITEA_HOST = 'gitea.com';
+const PUBLIC_GITEA_API = 'https://gitea.com/api/v1';
 const AUTH_CAPABILITIES = [
   'repo_status',
   'ref_compare',
@@ -35,13 +37,63 @@ export function requireToken() {
   return token;
 }
 
-export function apiBase(config) {
-  if (!config.baseUrl) {
+function configuredHost(config) {
+  if (!config.baseUrl) return null;
+  try {
+    return new URL(config.baseUrl).host;
+  } catch {
+    throw Object.assign(new Error('Invalid baseUrl for gitea-api'), {
+      forgeError: forgeError(ERROR_CODES.CONFIG_INVALID, 'Invalid baseUrl for gitea-api provider'),
+    });
+  }
+}
+
+function configOrigin(config) {
+  if (!config.baseUrl) return null;
+  try {
+    return new URL(config.baseUrl).origin;
+  } catch {
+    throw Object.assign(new Error('Invalid baseUrl for gitea-api'), {
+      forgeError: forgeError(ERROR_CODES.CONFIG_INVALID, 'Invalid baseUrl for gitea-api provider'),
+    });
+  }
+}
+
+export function apiBase(config, parsed = {}) {
+  const remoteHost = parsed.host || configuredHost(config);
+  if (!remoteHost) {
+    throw Object.assign(new Error('remote host required for gitea-api'), {
+      forgeError: forgeError(ERROR_CODES.CONFIG_INVALID, 'remote host required for gitea-api provider'),
+    });
+  }
+
+  const host = remoteHost.toLowerCase();
+  const configured = configuredHost(config);
+  if (host === PUBLIC_GITEA_HOST) {
+    if (configured && configured.toLowerCase() !== PUBLIC_GITEA_HOST) {
+      const message = 'gitea.com remotes may use only https://gitea.com for API requests';
+      throw Object.assign(new Error(message), {
+        forgeError: forgeError(ERROR_CODES.UNTRUSTED_BASE_URL, message),
+      });
+    }
+    return PUBLIC_GITEA_API;
+  }
+
+  if (!configured) {
     throw Object.assign(new Error('baseUrl required for gitea-api'), {
       forgeError: forgeError(ERROR_CODES.CONFIG_INVALID, 'baseUrl required for gitea-api provider'),
     });
   }
-  return `${config.baseUrl.replace(/\/$/, '')}/api/v1`;
+
+  if (configured.toLowerCase() !== host) {
+    const message = `Gitea API host must match remote host ${remoteHost}`;
+    throw Object.assign(new Error(message), {
+      forgeError: forgeError(ERROR_CODES.UNTRUSTED_BASE_URL, message),
+    });
+  }
+
+  const origin = configOrigin(config) || `https://${remoteHost}`;
+  return `${origin.replace(/\/$/, '')}/api/v1`;
 }
 
 export function authHeaders(token) {
@@ -56,9 +108,9 @@ export function repoApiPath(config, ...segments) {
   return `${base}/${segments.map((s) => encodeURIComponent(String(s))).join('/')}`;
 }
 
-export async function giteaFetch(config, path, options = {}) {
+export async function giteaFetch(config, parsed, path, options = {}) {
   const token = requireToken();
-  const url = `${apiBase(config)}${path}`;
+  const url = `${apiBase(config, parsed)}${path}`;
   return fetchJson(url, {
     ...options,
     headers: { ...authHeaders(token), ...(options.headers || {}) },
@@ -100,7 +152,7 @@ export async function repoStatus(ctx) {
   const token = giteaToken();
   let defaultBranch = null;
   if (token) {
-    const repo = await giteaFetch(ctx.config, repoApiPath(ctx.config));
+    const repo = await giteaFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config));
     defaultBranch = sanitizeField(repo.default_branch);
   }
   return {
@@ -117,7 +169,7 @@ export function providerCapabilities() {
     auth_envs: ['GITEA_TOKEN'],
     check_sources: ['commit_statuses'],
     mergeability_confidence: 'direct',
-    host_binding: 'trusted_base_url',
+    host_binding: 'verified_remote_host',
     pagination: 'first_page_only',
     write_support: false,
   };
@@ -150,7 +202,7 @@ export async function getPull(ctx, { number }) {
       forgeError: forgeError(ERROR_CODES.INVALID_ARGS, 'Provide --number for PR lookup'),
     });
   }
-  return giteaFetch(ctx.config, repoApiPath(ctx.config, 'pulls', number));
+  return giteaFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'pulls', number));
 }
 
 function mergeability(pr) {
@@ -196,6 +248,7 @@ export async function prChecks(ctx, opts) {
   }
   const statuses = await giteaFetch(
     ctx.config,
+    ctx.parsed,
     repoApiPath(ctx.config, 'commits', sha, 'statuses'),
   );
   const mapped = (statuses || []).map((s) => ({

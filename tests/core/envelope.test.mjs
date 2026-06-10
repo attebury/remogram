@@ -108,33 +108,37 @@ describe('parseConfigFile', () => {
 });
 
 describe('trustedBaseUrl', () => {
-  it('fails closed when hosts mismatch with empty trustedHosts', () => {
-    expect(trustedBaseUrl({ baseUrl: 'http://evil:3000', trustedHosts: [] }, 'localhost:3000')).toBe(
-      false,
-    );
+  it('fails closed when baseUrl host mismatches remote', () => {
+    expect(trustedBaseUrl({ baseUrl: 'http://evil:3000' }, 'localhost:3000')).toBe(false);
   });
 
-  it('rejects evil.com even when trustedHosts lists config host', () => {
-    const config = {
-      baseUrl: 'http://localhost:3000',
-      trustedHosts: ['localhost:3000'],
-    };
-    expect(trustedBaseUrl(config, 'evil.com')).toBe(false);
+  it('rejects evil.com remote even when baseUrl is localhost', () => {
+    expect(trustedBaseUrl({ baseUrl: 'http://localhost:3000' }, 'evil.com')).toBe(false);
   });
 
-  it('rejects evil baseUrl when trustedHosts matches remote only', () => {
-    expect(
-      trustedBaseUrl(
-        { baseUrl: 'https://attacker.example', trustedHosts: ['localhost:3000'] },
-        'localhost:3000',
+  it('rejects evil baseUrl when remote is localhost', () => {
+    expect(trustedBaseUrl({ baseUrl: 'https://attacker.example' }, 'localhost:3000')).toBe(false);
+  });
+
+  it('allows localhost and 127.0.0.1 alias', () => {
+    expect(trustedBaseUrl({ baseUrl: 'http://localhost:3000' }, '127.0.0.1:3000')).toBe(true);
+  });
+});
+
+describe('parseConfigFile trustedHosts removal', () => {
+  it('rejects trustedHosts in config', () => {
+    expect(() =>
+      parseConfigFile(
+        JSON.stringify({
+          version: '1',
+          provider: 'gitea-api',
+          owner: 'o',
+          repo: 'r',
+          baseUrl: 'http://localhost:3000',
+          trustedHosts: ['localhost:3000'],
+        }),
       ),
-    ).toBe(false);
-  });
-
-  it('allows localhost and 127.0.0.1 alias without trustedHosts', () => {
-    expect(
-      trustedBaseUrl({ baseUrl: 'http://localhost:3000' }, '127.0.0.1:3000'),
-    ).toBe(true);
+    ).toThrow();
   });
 });
 

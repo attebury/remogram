@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { provider, repoApiPath } from '@remogram/provider-gitea-api';
+import { provider, repoApiPath, apiBase } from '@remogram/provider-gitea-api';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const fixtures = join(__dirname, '../fixtures/gitea-api');
@@ -26,6 +26,44 @@ const ctx = {
 describe('repoApiPath', () => {
   it('encodes path segments', () => {
     expect(repoApiPath({ owner: 'a/b', repo: 'c' })).toContain(encodeURIComponent('a/b'));
+  });
+});
+
+describe('apiBase', () => {
+  it('binds self-hosted Gitea to verified remote host', () => {
+    expect(
+      apiBase(
+        { ...ctx.config, baseUrl: 'http://localhost:3000' },
+        ctx.parsed,
+      ),
+    ).toBe('http://localhost:3000/api/v1');
+  });
+
+  it('binds gitea.com to https://gitea.com/api/v1', () => {
+    expect(
+      apiBase(
+        { ...ctx.config, baseUrl: 'https://gitea.com' },
+        { ...ctx.parsed, host: 'gitea.com' },
+      ),
+    ).toBe('https://gitea.com/api/v1');
+  });
+
+  it('rejects gitea.com remote with mismatched baseUrl host', () => {
+    expect(() =>
+      apiBase(
+        { ...ctx.config, baseUrl: 'https://evil.example' },
+        { ...ctx.parsed, host: 'gitea.com' },
+      ),
+    ).toThrow(/gitea.com remotes/);
+  });
+
+  it('rejects self-hosted API host mismatch before token use', () => {
+    expect(() =>
+      apiBase(
+        { ...ctx.config, baseUrl: 'https://evil.example.test' },
+        { ...ctx.parsed, host: 'git.example.test' },
+      ),
+    ).toThrow(/must match remote host git\.example\.test/);
   });
 });
 

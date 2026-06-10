@@ -28,8 +28,7 @@ Copy from remogram's `.remogram.json.example`. Typical shape:
   "remote": "origin",
   "owner": "org",
   "repo": "project",
-  "baseUrl": "https://forge.example",
-  "trustedHosts": ["forge.example"]
+  "baseUrl": "https://forge.example"
 }
 ```
 
