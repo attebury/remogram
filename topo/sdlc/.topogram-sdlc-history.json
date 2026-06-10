@@ -351,6 +351,13 @@
       "at": "2026-06-10T01:51:06.386Z",
       "by": "gpt-5.5",
       "note": null
+    },
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-10T02:50:50.813Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ],
   "goal_branch_github_api_provider": [
@@ -374,6 +381,13 @@
       "at": "2026-06-10T02:02:13.143Z",
       "by": "actor_coding_agent",
       "note": null
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-10T02:50:50.993Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ],
   "task_github_api_provider": [
@@ -390,6 +404,13 @@
       "at": "2026-06-10T01:56:20.486Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-10T02:50:50.600Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ],
   "plan_github_api_provider#scaffold_provider": [

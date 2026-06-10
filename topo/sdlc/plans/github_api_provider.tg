@@ -15,5 +15,5 @@ plan plan_github_api_provider {
     step normalization_note status done description "Write the abstraction findings note (ac_github_abstraction_findings): every GitHub primitive that did not map cleanly and how it was handled; feeds the go/no-go on Tier 3."
     step verify status done description "npm test green; coverage policy unchanged or provider included by decision; topogram check green; mark acceptance criteria met."
   }
-  status active
+  status complete
 }

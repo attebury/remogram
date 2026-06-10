@@ -17,6 +17,6 @@ task task_github_api_provider {
   work_type implementation
   claimed_by [actor_coding_agent]
   bug_discovery no_bug_observed
-  bug_discovery_rationale "Review fixes expanded GitHub provider parity coverage, host-binding regression tests, plan-step receipts, and refreshed proof; no separate defect was discovered."
-  status in-progress
+  bug_discovery_rationale "Post-merge Verify Lane proof passed on dev/scaffold merge b2a4800; no new bugs observed during closeout."
+  status done
 }
