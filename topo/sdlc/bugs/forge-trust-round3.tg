@@ -1,7 +1,8 @@
 bug bug_gitea_api_host_binding_gap {
   name "Gitea apiBase ignores verified remote host"
   description "provider-gitea-api builds API URLs from config.baseUrl only; unlike github-api and gitlab-api there is no in-provider host mismatch rejection before token use."
-  status open
+  fixed_in [task_forge_trust_round3]
+  status fixed
   severity high
   priority high
   affects [cap_forge_remote_ops]
@@ -14,7 +15,8 @@ bug bug_gitea_api_host_binding_gap {
 bug bug_trusted_hosts_schema_drift {
   name "trustedHosts in schema but unused"
   description "config schema and .remogram.json.example include trustedHosts but trustedBaseUrl ignores the field, misleading operators about host trust semantics."
-  status open
+  fixed_in [task_forge_trust_round3]
+  status fixed
   severity medium
   priority medium
   affects [cap_forge_remote_ops]
@@ -27,7 +29,8 @@ bug bug_trusted_hosts_schema_drift {
 bug bug_mcp_stderr_leak {
   name "MCP embeds raw stderr on parse failure"
   description "packetToMcpContent passes stderr verbatim into forgeError message when CLI stdout is not JSON."
-  status open
+  fixed_in [task_forge_trust_round3]
+  status fixed
   severity medium
   priority medium
   affects [cap_forge_remote_ops]

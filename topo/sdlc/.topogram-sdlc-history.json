@@ -509,5 +509,296 @@
       "by": "actor_coding_agent",
       "note": "task started"
     }
+  ],
+  "task_forge_trust_round3": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-10T08:07:00.486Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-10T08:07:00.504Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-10T08:07:09.082Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "task_git_helpers_shared": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-10T08:07:12.633Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-10T08:07:12.649Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-10T08:07:24.809Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "task_test_strategy_round3": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-10T08:07:27.112Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-10T08:07:27.133Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-10T08:07:28.113Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_gitea_api_host_binding_gap": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-10T08:08:31.185Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-10T08:09:01.973Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_trusted_hosts_schema_drift": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-10T08:09:02.070Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-10T08:09:02.718Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_mcp_stderr_leak": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-10T08:09:02.326Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-10T08:09:02.948Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_forge_trust_round3": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-10T08:09:09.880Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "superseded",
+      "at": "2026-06-10T08:09:24.632Z",
+      "by": "actor_coding_agent",
+      "note": "Wave 1 complete"
+    }
+  ],
+  "plan_forge_trust_round3#gitea_api_host_binding": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:09:13.160Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_test_strategy_round3": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-10T08:09:13.297Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-10T08:09:29.281Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_forge_trust_round3#remove_trusted_hosts": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:09:13.469Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_test_strategy_round3#mcp_security_battery": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:09:13.614Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_forge_trust_round3#mcp_stderr_sanitize": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:09:13.788Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_test_strategy_round3#fetch_json_redirect": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:09:13.936Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_forge_trust_round3#verify": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:09:14.106Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_test_strategy_round3#env_isolation": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:09:14.253Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_test_strategy_round3#coverage_policy_docs": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:09:14.562Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_test_strategy_round3#real_provider_cli": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:09:14.854Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_test_strategy_round3#verify": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:09:15.146Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_git_helpers_shared": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-10T08:09:30.698Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-10T08:09:32.156Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_git_helpers_shared#add_git_local_module": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:09:30.998Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_git_helpers_shared#wire_providers": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:09:31.295Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_git_helpers_shared#add_tests": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:09:31.583Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_git_helpers_shared#verify": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-10T08:09:31.871Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
   ]
 }

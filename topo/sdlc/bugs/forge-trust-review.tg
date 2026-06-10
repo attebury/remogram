@@ -1,6 +1,7 @@
 bug bug_trusted_base_url_bypass {
   name "trustedBaseUrl bypass via trustedHosts configHost match"
   description "trustedBaseUrl returns true for any remoteHost when trustedHosts contains an entry matching config baseUrl host, allowing token exfiltration to attacker baseUrl."
+  fixed_in [task_forge_trust_hardening]
   status fixed
   severity critical
   priority critical
@@ -14,6 +15,7 @@ bug bug_trusted_base_url_bypass {
 bug bug_config_remote_repo_mismatch {
   name "Config owner/repo not verified against git remote"
   description "API calls use config owner/repo while packets claim repo_id from config; stale or malicious .remogram.json targets wrong forge repo."
+  fixed_in [task_forge_trust_hardening]
   status fixed
   severity high
   priority high
@@ -25,6 +27,7 @@ bug bug_config_remote_repo_mismatch {
 bug bug_provider_path_encoding {
   name "Unencoded owner/repo path segments in Gitea API URLs"
   description "Config strings with slashes or dot-dot segments may reach unintended API paths with user token."
+  fixed_in [task_forge_trust_hardening]
   status fixed
   severity high
   priority high
@@ -36,6 +39,7 @@ bug bug_provider_path_encoding {
 bug bug_pr_index_unstable {
   name "PR --index lookup capped and order-unstable"
   description "getPull by index used first 50 state=all PRs; removed for v1 in favor of --number only."
+  fixed_in [task_forge_trust_hardening]
   status fixed
   severity high
   priority high
@@ -47,6 +51,7 @@ bug bug_pr_index_unstable {
 bug bug_sync_plan_git_fetch {
   name "sync plan runs git fetch despite read-only contract"
   description "syncPlan mutates remote-tracking refs; removed git fetch for read-only v1."
+  fixed_in [task_forge_trust_hardening]
   status fixed
   severity high
   priority high
@@ -58,6 +63,7 @@ bug bug_sync_plan_git_fetch {
 bug bug_unsanitized_provider_output {
   name "Provider strings not capped or sanitized before packets"
   description "PR titles, URLs, check contexts flow verbatim into JSON packets and MCP agent context."
+  fixed_in [task_forge_trust_hardening]
   status fixed
   severity high
   priority high

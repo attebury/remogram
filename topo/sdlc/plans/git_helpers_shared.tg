@@ -5,10 +5,10 @@ plan plan_git_helpers_shared {
   architecture_patterns [contract_boundary, command_owned_mutation]
   priority medium
   steps {
-    step add_git_local_module status pending description "packages/remogram-core/git-local.js with gitRevParse, gitCurrentBranch, gitAheadBehind."
-    step wire_providers status pending description "Replace provider-local copies; export from core index."
-    step add_tests status pending description "tests/core/git-local.test.mjs or extend git-args tests."
-    step verify status pending description "npm test; provider contract matrix unchanged."
+    step add_git_local_module status done description "packages/remogram-core/git-local.js with gitRevParse, gitCurrentBranch, gitAheadBehind."
+    step wire_providers status done description "Replace provider-local copies; export from core index."
+    step add_tests status done description "tests/core/git-local.test.mjs or extend git-args tests."
+    step verify status done description "npm test; provider contract matrix unchanged."
   }
-  status draft
+  status complete
 }
