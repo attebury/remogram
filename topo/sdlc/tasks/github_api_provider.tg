@@ -1,0 +1,20 @@
+task task_github_api_provider {
+  name "Implement GitHub api provider (read/plan)"
+  description "Implement packages/provider-github-api for the six read/plan commands against GitHub REST v3, normalizing check-runs/statuses and mergeable_state into the shared vocabulary, reusing remogram-core trust primitives, with mocked-fetch provider tests and CLI wiring. Deliver a normalization note on abstraction leak points."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Mutation commands" "GraphQL API" "GitHub App/OAuth" "Pagination beyond first page" "Other providers" "Changes to shared envelope or shapes"]
+  entrypoints ["packages/provider-github-api/**" "packages/remogram-cli/**" "tests/provider/**" "tests/cli/**" "topo/providers/**" "README.md"]
+  satisfies [req_github_api_provider]
+  acceptance_refs [ac_github_envelope_parity ac_github_checks_normalization ac_github_mergeability_normalization ac_github_trust_reuse ac_github_auth_and_capabilities ac_github_abstraction_findings]
+  verification_refs [verification_github_api_provider]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  bug_discovery none
+  disposition active
+  priority high
+  work_type implementation
+  status unclaimed
+}

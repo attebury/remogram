@@ -1,0 +1,41 @@
+acceptance_criterion ac_github_envelope_parity {
+  name "GitHub packets are envelope-compatible with gitea"
+  description "Given a configured github-api repo, when any of the six commands runs with --json, then the packet validates against the same shape as gitea-api (shape_repo_status, shape_ref_compare, shape_pr_status, shape_pr_checks, shape_merge_plan, shape_sync_plan), contains all required envelope fields, sets provider_id to github-api, and contains no fields absent from the shared shape."
+  requirement req_github_api_provider
+  status draft
+}
+
+acceptance_criterion ac_github_checks_normalization {
+  name "Check-runs and statuses normalize to shared vocabulary"
+  description "Given a GitHub ref or PR head with a mix of check-runs and commit statuses, when pr checks runs, then check_conclusion is one of the existing values (success, failure, pending, missing, unknown) using the same precedence as gitea-api, and individual statuses are sanitized and capped identically."
+  requirement req_github_api_provider
+  status draft
+}
+
+acceptance_criterion ac_github_mergeability_normalization {
+  name "mergeable_state normalizes to shared mergeability vocabulary"
+  description "Given a GitHub PR with mergeable/mergeable_state set, when pr view or merge plan runs, then mergeability is one of clean, conflicted, or unknown, and merge plan blockers use the same vocabulary as gitea-api (merge_conflict, pr_not_open, checks_failed, checks_missing, checks_pending)."
+  requirement req_github_api_provider
+  status draft
+}
+
+acceptance_criterion ac_github_trust_reuse {
+  name "GitHub provider reuses core trust primitives unchanged"
+  description "Given github-api config, when forge calls run, then baseUrl host must match the git remote host (host-bound), HTTP redirects are rejected, git refs and remotes pass assertGitRef/assertGitRemote before any spawn, and outbound errors/urls are sanitized and capped via remogram-core with no provider-local copies of these primitives."
+  requirement req_github_api_provider
+  status draft
+}
+
+acceptance_criterion ac_github_auth_and_capabilities {
+  name "Auth env and capability reporting"
+  description "Given GITHUB_TOKEN or GH_TOKEN is unset, when an authenticated command runs, then UNAUTHENTICATED_PROVIDER with ok false and no token in output. Given repo status runs, then auth_env reflects the resolved GitHub token variable and capabilities lists only commands the provider actually implements."
+  requirement req_github_api_provider
+  status draft
+}
+
+acceptance_criterion ac_github_abstraction_findings {
+  name "Abstraction leak points documented"
+  description "Given implementation is complete, when the provider lands, then a short normalization note records every GitHub primitive that did not map cleanly to the shared envelope and how it was handled (capabilities flag, omission, or unknown value), so the go/no-go decision on further extension is evidence-based."
+  requirement req_github_api_provider
+  status draft
+}

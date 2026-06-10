@@ -1,0 +1,12 @@
+pitch pitch_github_api_provider {
+  name "GitHub API Provider (abstraction test)"
+  description "Implement a second real provider (GitHub REST) for the six read/plan commands to prove the provider-neutral envelope holds across forges before any further investment."
+  appetite "medium"
+  problem "Provider-agnosticism is currently a claim, not a fact: gitea-api is the only real provider and three providers are stubs throwing provider_unsupported. The envelope, capability model, and plan semantics have never been exercised against a forge with different primitives (check-runs vs commit statuses, mergeable_state, MR/PR terminology). Until a second provider exists, the abstraction's leak points are unknown and further extension (writes, more providers) is unvalidated risk."
+  solution_sketch "Add provider-github-api implementing repoStatus, refsCompare, prView, prChecks, mergePlan, syncPlan against GitHub REST v3 with GITHUB_TOKEN/GH_TOKEN auth, reusing remogram-core http/caps/git-args/envelope unchanged. Map GitHub check-runs + commit statuses into the existing check_conclusion vocabulary and mergeable_state into the existing mergeability vocabulary. Where GitHub primitives do not map cleanly, surface the gap via capabilities and a normalization note rather than widening the envelope. Output packets must be byte-for-byte schema-compatible with gitea-api (same shapes, only provider_id differs)."
+  rabbit_holes "Mutation commands (pr create, merge execute, push); GraphQL API; GitHub App / OAuth flows; pagination beyond first page; GitLab or other providers; changing the shared envelope or shapes to accommodate GitHub."
+  no_go_areas "Topogram concepts in output; importing Topogram into provider packages; new schema_version; provider-specific fields leaking into shared shapes; live-network tests in default suite."
+  affects [cap_forge_remote_ops]
+  priority high
+  status submitted
+}
