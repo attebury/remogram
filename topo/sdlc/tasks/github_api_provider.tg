@@ -4,7 +4,8 @@ task task_github_api_provider {
   feature feature_remogram
   phase implementation
   scope current_feature
-  non_goals ["Mutation commands" "GraphQL API" "GitHub App/OAuth" "Pagination beyond first page" "Other providers" "Changes to shared envelope or shapes"]
+  non_goals ["Mutation commands" "GraphQL beyond read-only pull request view normalization" "GitHub App/OAuth" "Pagination beyond first page" "Other providers" "Changes to shared envelope or shapes"]
+  introduces_decisions [decision_github_api_graphql_pr_view]
   entrypoints ["packages/provider-github-api/**" "packages/remogram-cli/**" "tests/provider/**" "tests/cli/**" "topo/providers/**" "README.md"]
   satisfies [req_github_api_provider]
   acceptance_refs [ac_github_envelope_parity ac_github_checks_normalization ac_github_mergeability_normalization ac_github_trust_reuse ac_github_auth_and_capabilities ac_github_abstraction_findings]
