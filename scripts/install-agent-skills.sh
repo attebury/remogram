@@ -5,12 +5,22 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CANONICAL="${ROOT}/tools/remogram-agent-support/skills"
 CURSOR_DEST="${ROOT}/.cursor/skills"
 CODEX_DEST="${HOME}/.codex/skills"
+DOGFOOD_LIST="${ROOT}/scripts/dogfood-skills.list"
 CLAUDE_DEST=""
 DO_CURSOR=0
 DO_CODEX=0
 DO_CLAUDE=0
 DO_DOGFOOD=0
 CONSUMER_ONLY=0
+
+DOGFOOD_SKILLS=()
+if [[ -f "$DOGFOOD_LIST" ]]; then
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    line="${line%%#*}"
+    line="$(echo "$line" | xargs)"
+    [[ -n "$line" ]] && DOGFOOD_SKILLS+=("$line")
+  done < "$DOGFOOD_LIST"
+fi
 
 usage() {
   cat <<'EOF'
@@ -28,7 +38,8 @@ Options:
 EOF
   if [[ -d "${CANONICAL}/remogram-dogfood" ]]; then
     cat <<'EOF'
-  --dogfood         Also install remogram-dogfood (private maintainer checkout only)
+  --dogfood         Install internal maintainer skills (see scripts/dogfood-skills.list)
+                    to .cursor/skills/ and ~/.codex/skills/ when --codex
 EOF
   fi
 }
@@ -43,6 +54,13 @@ copy_skill() {
   rm -rf "${dest}/${name}"
   cp -R "${CANONICAL}/${name}" "${dest}/${name}"
   echo "installed ${name} -> ${dest}/${name}"
+}
+
+install_dogfood_skills() {
+  local dest="$1"
+  for skill in "${DOGFOOD_SKILLS[@]}"; do
+    copy_skill "$skill" "$dest"
+  done
 }
 
 while [[ $# -gt 0 ]]; do
@@ -67,7 +85,7 @@ if [[ "$DO_CURSOR" -eq 1 ]]; then
   mkdir -p "$CURSOR_DEST"
   copy_skill remogram-core "$CURSOR_DEST"
   if [[ "$DO_DOGFOOD" -eq 1 ]]; then
-    copy_skill remogram-dogfood "$CURSOR_DEST"
+    install_dogfood_skills "$CURSOR_DEST"
   fi
 fi
 
@@ -78,7 +96,7 @@ if [[ "$DO_CODEX" -eq 1 ]]; then
     copy_skill remogram-core "$CODEX_DEST"
   fi
   if [[ "$DO_DOGFOOD" -eq 1 ]]; then
-    copy_skill remogram-dogfood "$CODEX_DEST"
+    install_dogfood_skills "$CODEX_DEST"
   fi
 fi
 
@@ -96,7 +114,7 @@ if [[ "$DO_CLAUDE" -eq 1 ]]; then
     copy_skill "$skill" "${CLAUDE_DEST}/skills"
   done
   if [[ "$DO_DOGFOOD" -eq 1 ]]; then
-    copy_skill remogram-dogfood "${CLAUDE_DEST}/skills"
+    install_dogfood_skills "${CLAUDE_DEST}/skills"
   fi
   echo "Claude plugin installed at ${CLAUDE_DEST}"
 fi
