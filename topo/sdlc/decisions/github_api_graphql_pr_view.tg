@@ -1,0 +1,7 @@
+decision decision_github_api_graphql_pr_view {
+  name "GitHub provider uses GraphQL for read-only PR view normalization"
+  description "provider-github-api may call GitHub GraphQL for read-only pull request field selection when serving pr view, resolving head SHA for pr checks, and merge plan metadata. REST v3 remains authoritative for check-runs, commit statuses, refs compare, and repo status. No GraphQL mutations and no shared envelope or shape changes."
+  context ["REST GET /pulls/{number} raw payloads exceeded remogram-core output caps in cross-forge smoke testing", "GraphQL field selection keeps normalized pr_view_packet under the byte cap while preserving schema_version 1 shapes", "Merged implementation on remo via plan/github-pr-view-graphql"]
+  consequences ["task_github_api_provider non_goal GraphQL API is narrowed to GraphQL beyond read-only pull request view normalization", "Future GraphQL expansion for other commands requires a new SDLC decision", "Check listing and forge compare paths stay on REST"]
+  status accepted
+}
