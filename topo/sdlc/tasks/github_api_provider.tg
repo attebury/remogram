@@ -13,7 +13,7 @@ task task_github_api_provider {
   blocked_by []
   architecture_patterns [contract_boundary, fail_closed_gate]
   bug_discovery none
-  disposition active
+  disposition backlog
   priority high
   work_type implementation
   status unclaimed
