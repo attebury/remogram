@@ -22,11 +22,15 @@ Options:
   --cursor          Sync remogram-core to .cursor/skills/
   --codex           Copy remogram-consumer (+ core) to ~/.codex/skills/
   --claude PATH     Copy Claude Code plugin adapter to PATH
-  --dogfood         Also install remogram-dogfood (private maintainer checkout only)
   --consumer-only   With --codex, install only remogram-consumer
   --all             --cursor and --codex (default when no flags)
   -h, --help        Show this help
 EOF
+  if [[ -d "${CANONICAL}/remogram-dogfood" ]]; then
+    cat <<'EOF'
+  --dogfood         Also install remogram-dogfood (private maintainer checkout only)
+EOF
+  fi
 }
 
 copy_skill() {
