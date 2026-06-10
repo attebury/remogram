@@ -45,6 +45,50 @@ shape shape_repo_status {
   status active
 }
 
+shape shape_provider_capabilities {
+  name "Provider Capabilities Packet"
+  description "Output of remogram provider capabilities."
+  fields {
+    type string required
+    schema_version integer required
+    provider_id string required
+    remote_name string required
+    repo_id string required
+    observed_at string required
+    ok boolean required
+    commands string optional
+    auth_envs string optional
+    check_sources string optional
+    mergeability_confidence string optional
+    host_binding string optional
+    pagination string optional
+    write_support boolean optional
+    error_code string optional
+    error_message string optional
+  }
+  status active
+}
+
+shape shape_provider_doctor {
+  name "Provider Doctor Packet"
+  description "Output of remogram doctor."
+  fields {
+    type string required
+    schema_version integer required
+    provider_id string required
+    remote_name string required
+    repo_id string required
+    observed_at string required
+    ok boolean required
+    summary string optional
+    checks string optional
+    provider_capabilities string optional
+    error_code string optional
+    error_message string optional
+  }
+  status active
+}
+
 shape shape_ref_compare {
   name "Ref Compare Packet"
   description "Output of remogram refs compare."

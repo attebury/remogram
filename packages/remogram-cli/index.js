@@ -1,23 +1,32 @@
 import {
   loadConfig,
+  findConfigPath,
   assertForgeReady,
+  gitRemoteUrl,
+  parseRemoteUrl,
+  trustedBaseUrl,
+  assertConfigMatchesRemote,
   forgeContext,
   forgePacket,
   forgeErrorPacket,
+  unknownForgeContext,
   PACKET_TYPES,
   ERROR_CODES,
   forgeError,
+  sanitizeField,
   assertGitRef,
   assertGitRemote,
 } from '@remogram/core';
 import { provider as giteaApi } from '@remogram/provider-gitea-api';
 import { provider as githubApi } from '@remogram/provider-github-api';
+import { provider as gitlabApi } from '@remogram/provider-gitlab-api';
 import { provider as giteaTea } from '@remogram/provider-gitea-tea';
 import { provider as githubGh } from '@remogram/provider-github-gh';
 
 const PROVIDERS = {
   'gitea-api': giteaApi,
   'github-api': githubApi,
+  'gitlab-api': gitlabApi,
   'gitea-tea': giteaTea,
   'github-gh': githubGh,
 };
@@ -52,6 +61,143 @@ function handleError(err, ctx, asJson) {
   process.exitCode = 1;
 }
 
+function doctorCheck(name, status, message, details = null) {
+  return {
+    name,
+    status,
+    message: sanitizeField(message),
+    ...(details ? { details } : {}),
+  };
+}
+
+function doctorSummary(checks) {
+  if (checks.some((check) => check.status === 'fail')) return 'fail';
+  if (checks.some((check) => check.status === 'warn')) return 'warn';
+  return 'pass';
+}
+
+function contextFromConfig(config, cwd, parsed = null) {
+  return {
+    providerId: config.provider,
+    remoteName: config.remote,
+    repoId: parsed ? `${parsed.owner}/${parsed.repo}` : `${config.owner}/${config.repo}`,
+    config,
+    cwd,
+    parsed,
+  };
+}
+
+async function buildDoctorPacket(cwd, providers) {
+  const checks = [];
+  const configPath = findConfigPath(cwd);
+  let loaded = null;
+  let config = null;
+  let parsed = null;
+  let ctx = unknownForgeContext();
+  let providerCapabilities = null;
+
+  if (!configPath) {
+    checks.push(doctorCheck('config', 'fail', 'No .remogram.json found'));
+    return forgePacket(PACKET_TYPES.PROVIDER_DOCTOR, ctx, {
+      summary: doctorSummary(checks),
+      checks,
+      provider_capabilities: null,
+    });
+  }
+
+  try {
+    loaded = loadConfig(cwd);
+    config = loaded.config;
+    ctx = contextFromConfig(config, loaded.cwd);
+    checks.push(doctorCheck('config', 'pass', '.remogram.json is present and valid'));
+  } catch (err) {
+    checks.push(doctorCheck('config', 'fail', err.forgeError?.message || err.message));
+    return forgePacket(PACKET_TYPES.PROVIDER_DOCTOR, ctx, {
+      summary: doctorSummary(checks),
+      checks,
+      provider_capabilities: null,
+    });
+  }
+
+  const provider = providers[config.provider];
+  if (!provider) {
+    checks.push(doctorCheck('provider', 'fail', `Unsupported provider: ${config.provider}`));
+  } else {
+    checks.push(doctorCheck('provider', 'pass', `${config.provider} is registered`));
+    if (typeof provider.providerCapabilities === 'function') {
+      providerCapabilities = await provider.providerCapabilities(ctx);
+      checks.push(doctorCheck('capabilities', 'pass', 'Provider capabilities are available'));
+    } else {
+      checks.push(doctorCheck('capabilities', 'fail', 'Provider capabilities are not implemented'));
+    }
+  }
+
+  let remoteUrl = null;
+  try {
+    assertGitRemote(config.remote, 'config.remote');
+    remoteUrl = gitRemoteUrl(loaded.cwd, config.remote);
+    parsed = parseRemoteUrl(remoteUrl);
+    if (!parsed) {
+      checks.push(doctorCheck('remote', 'fail', 'Could not parse git remote URL'));
+    } else {
+      ctx = contextFromConfig(config, loaded.cwd, parsed);
+      checks.push(doctorCheck('remote', 'pass', 'Git remote URL parses successfully', {
+        host: sanitizeField(parsed.host),
+        owner: sanitizeField(parsed.owner),
+        repo: sanitizeField(parsed.repo),
+      }));
+    }
+  } catch (err) {
+    checks.push(doctorCheck('remote', 'fail', err.forgeError?.message || err.message));
+  }
+
+  if (parsed) {
+    try {
+      assertConfigMatchesRemote(config, parsed);
+      checks.push(doctorCheck('repo_match', 'pass', 'Config owner/repo matches git remote'));
+    } catch (err) {
+      checks.push(doctorCheck('repo_match', 'fail', err.forgeError?.message || err.message));
+    }
+
+    if (config.baseUrl && !trustedBaseUrl(config, parsed.host)) {
+      checks.push(
+        doctorCheck('host_binding', 'fail', `baseUrl host does not match remote host ${parsed.host}`),
+      );
+    } else {
+      checks.push(doctorCheck('host_binding', 'pass', 'Configured host binding is trusted'));
+    }
+  }
+
+  if (providerCapabilities) {
+    const envNames = providerCapabilities.auth_envs || [];
+    const presentEnv = envNames.find((name) => Boolean(process.env[name])) || null;
+    checks.push(
+      doctorCheck(
+        'auth',
+        presentEnv ? 'pass' : 'warn',
+        presentEnv ? `${presentEnv} is present` : 'No provider auth environment variable is set',
+        { env_names: envNames, present_env: presentEnv },
+      ),
+    );
+
+    if (!providerCapabilities.check_sources?.length) {
+      checks.push(doctorCheck('checks', 'warn', 'Provider does not report forge check sources'));
+    } else {
+      checks.push(doctorCheck('checks', 'pass', 'Provider reports forge check sources', {
+        sources: providerCapabilities.check_sources,
+      }));
+    }
+  }
+
+  checks.push(doctorCheck('api_reachability', 'skipped', 'Live API reachability is not checked by default'));
+
+  return forgePacket(PACKET_TYPES.PROVIDER_DOCTOR, ctx, {
+    summary: doctorSummary(checks),
+    checks,
+    provider_capabilities: providerCapabilities,
+  });
+}
+
 export async function runCli(argv, options = {}) {
   const cwd = options.cwd ?? process.env.REMOGRAM_CWD ?? process.cwd();
   const providers = options.providers ?? PROVIDERS;
@@ -77,6 +223,11 @@ export async function runCli(argv, options = {}) {
   }
 
   const [group, sub] = positional;
+
+  if (group === 'doctor' && sub == null) {
+    output(await buildDoctorPacket(cwd, providers), asJson);
+    return;
+  }
 
   let ctx;
   try {
@@ -105,7 +256,13 @@ export async function runCli(argv, options = {}) {
 
   try {
     let packet;
-    if (group === 'repo' && sub === 'status') {
+    if (group === 'provider' && sub === 'capabilities') {
+      packet = forgePacket(
+        PACKET_TYPES.PROVIDER_CAPABILITIES,
+        ctx,
+        await provider.providerCapabilities(ctx),
+      );
+    } else if (group === 'repo' && sub === 'status') {
       packet = forgePacket(PACKET_TYPES.REPO_STATUS, ctx, await provider.repoStatus(ctx));
     } else if (group === 'refs' && sub === 'compare') {
       if (!flags.base || !flags.head) {
@@ -161,7 +318,7 @@ export async function runCli(argv, options = {}) {
       throw Object.assign(new Error(`Unknown command: ${positional.join(' ')}`), {
         forgeError: forgeError(
           ERROR_CODES.INVALID_ARGS,
-          'Unknown command. Try: repo status, refs compare, pr view, pr checks, merge plan, sync plan',
+          'Unknown command. Try: provider capabilities, repo status, refs compare, pr view, pr checks, merge plan, sync plan',
         ),
       });
     }

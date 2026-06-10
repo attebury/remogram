@@ -4,6 +4,18 @@ import { runRemogramCli, packetToMcpContent } from './run-cli.mjs';
 export function registerTools(server) {
   const tools = [
     {
+      name: 'doctor',
+      description: 'Read-only provider readiness diagnostics for config, remote trust, auth, capabilities, and checks.',
+      inputSchema: z.object({}),
+      args: ['doctor'],
+    },
+    {
+      name: 'provider_capabilities',
+      description: 'Structured provider capability facts for commands, auth, checks, host binding, pagination, and write support.',
+      inputSchema: z.object({}),
+      args: ['provider', 'capabilities'],
+    },
+    {
       name: 'repo_status',
       description: 'Forge repo status facts (auth, capabilities, default branch).',
       inputSchema: z.object({}),

@@ -1,0 +1,21 @@
+task task_gitlab_api_provider {
+  name "Implement GitLab api provider (read/plan)"
+  description "Implement packages/provider-gitlab-api for the six read/plan commands against GitLab REST v4, normalizing merge requests, pipelines, statuses, and merge status into the shared remogram vocabulary."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Mutation commands" "GraphQL API" "GitLab OAuth/application auth" "Nested subgroup config widening" "Pagination beyond first page" "Changes to existing six packet shapes"]
+  entrypoints ["packages/provider-gitlab-api/**" "packages/remogram-core/**" "packages/remogram-cli/**" "packages/remogram-mcp/**" "tests/provider/**" "tests/cli/**" "topo/providers/**" "README.md"]
+  satisfies [req_gitlab_api_provider]
+  acceptance_refs [ac_gitlab_envelope_parity ac_gitlab_mr_normalization ac_gitlab_pipeline_checks ac_gitlab_api_trust ac_gitlab_abstraction_findings]
+  verification_refs [verification_gitlab_api_provider]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_provider_doctor]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "No pre-existing defect observed while creating this draft task."
+  disposition backlog
+  priority high
+  work_type implementation
+  status unclaimed
+}

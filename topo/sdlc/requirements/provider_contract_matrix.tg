@@ -1,0 +1,9 @@
+requirement req_provider_contract_matrix {
+  name "Provider contract matrix proves six-command parity"
+  description "Remogram must have a reusable provider contract matrix that proves each real API provider emits the same six read/plan packet body shapes, envelope fields, blocker vocabulary, and failure behavior for repo status, refs compare, pr view, pr checks, merge plan, and sync plan."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority high
+  status draft
+}

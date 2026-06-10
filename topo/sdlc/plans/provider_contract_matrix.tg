@@ -1,0 +1,14 @@
+plan plan_provider_contract_matrix {
+  name "Provider contract matrix implementation plan"
+  description "Prove gitea-api and github-api satisfy one shared six-command provider contract before adding more provider surface."
+  task task_provider_contract_matrix
+  architecture_patterns [contract_boundary]
+  priority high
+  steps {
+    step inventory_provider_shapes status pending description "Inventory current gitea-api and github-api fixture expectations and extract shared packet body key assertions."
+    step build_contract_harness status pending description "Create reusable provider contract helpers that can run the same six-command body, failure, check, mergeability, and blocker assertions per provider."
+    step migrate_existing_providers status pending description "Run the matrix for gitea-api and github-api while keeping provider-specific edge tests local to each provider."
+    step proof status pending description "Run npm test, npm run test:coverage, and topogram check."
+  }
+  status draft
+}

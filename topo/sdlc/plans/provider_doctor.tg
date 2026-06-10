@@ -1,0 +1,15 @@
+plan plan_provider_doctor {
+  name "Provider doctor implementation plan"
+  description "Add diagnostic packets that explain provider readiness without leaking secrets or workflow concepts."
+  task task_provider_doctor
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  priority high
+  steps {
+    step diagnostic_contract status pending description "Define doctor packet shape for config, remote trust, host binding, auth presence, capabilities, and check-status readiness."
+    step core_diagnostics status pending description "Reuse config parsing, remote parsing, trusted host checks, sanitization, and provider capability facts to build diagnostics."
+    step cli_and_mcp status pending description "Route remogram doctor --json and expose matching MCP tool with read-only annotations."
+    step tests_and_docs status pending description "Cover missing config, invalid config, host mismatch, missing auth, and local missing forge status scenarios."
+    step proof status pending description "Run npm test, npm run test:coverage, and topogram check."
+  }
+  status draft
+}

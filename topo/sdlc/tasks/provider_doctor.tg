@@ -1,0 +1,21 @@
+task task_provider_doctor {
+  name "Implement remogram doctor diagnostics"
+  description "Add a read-only doctor command and MCP tool that diagnoses config, remote trust, API host binding, auth presence, provider capabilities, and check-status readiness without leaking secrets."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Mutation commands" "Provider raw output dumps" "Topogram workflow concepts in packets" "Replacing repo status"]
+  entrypoints ["packages/remogram-core/**" "packages/remogram-cli/**" "packages/remogram-mcp/**" "packages/provider-*/**" "tests/**" "topo/shapes/**" "README.md"]
+  satisfies [req_provider_doctor]
+  acceptance_refs [ac_doctor_readiness_packet ac_doctor_mcp_tool]
+  verification_refs [verification_provider_doctor]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_provider_capabilities]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "No pre-existing defect observed while creating this draft task."
+  disposition backlog
+  priority high
+  work_type implementation
+  status unclaimed
+}

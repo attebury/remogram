@@ -10,6 +10,9 @@ describe('remogram cli commands', () => {
 
   afterEach(() => {
     while (cleanups.length) cleanups.pop().cleanup();
+    delete process.env.GITEA_TOKEN;
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.GH_TOKEN;
   });
 
   function env() {
@@ -46,6 +49,42 @@ describe('remogram cli commands', () => {
     expect(packet.type).toBe(PACKET_TYPES.REPO_STATUS);
     expect(packet.ok).toBe(true);
     expect(packet.auth_present).toBe(true);
+  });
+
+  it('provider capabilities', async () => {
+    const { cli } = env();
+    const { logs } = await cli(['provider', 'capabilities']);
+    const packet = JSON.parse(logs[0]);
+    expectEnvelope(packet);
+    expect(packet.type).toBe(PACKET_TYPES.PROVIDER_CAPABILITIES);
+    expect(packet.commands).toContainEqual({ name: 'repo_status', implemented: true });
+    expect(packet.auth_envs).toEqual(['GITEA_TOKEN']);
+    expect(packet.check_sources).toEqual(['commit_statuses']);
+    expect(packet.mergeability_confidence).toBe('direct');
+    expect(packet.host_binding).toBe('trusted_base_url');
+    expect(packet.pagination).toBe('first_page_only');
+    expect(packet.write_support).toBe(false);
+  });
+
+  it('doctor reports readiness without secrets', async () => {
+    delete process.env.GITEA_TOKEN;
+    const { cli } = env();
+    const { logs } = await cli(['doctor']);
+    const packet = JSON.parse(logs[0]);
+    expectEnvelope(packet);
+    expect(packet.type).toBe(PACKET_TYPES.PROVIDER_DOCTOR);
+    expect(packet.ok).toBe(true);
+    expect(packet.summary).toBe('warn');
+    expect(packet.provider_capabilities.auth_envs).toEqual(['GITEA_TOKEN']);
+    expect(packet.checks).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: 'config', status: 'pass' }),
+        expect.objectContaining({ name: 'remote', status: 'pass' }),
+        expect.objectContaining({ name: 'host_binding', status: 'pass' }),
+        expect.objectContaining({ name: 'auth', status: 'warn' }),
+      ]),
+    );
+    expect(JSON.stringify(packet)).not.toContain('test-token');
   });
 
   it('refs compare', async () => {

@@ -9,6 +9,8 @@ export const PACKET_TYPES = {
   PR_CHECKS: 'pr_checks',
   MERGE_PLAN: 'merge_plan',
   SYNC_PLAN: 'sync_plan',
+  PROVIDER_CAPABILITIES: 'provider_capabilities',
+  PROVIDER_DOCTOR: 'provider_doctor',
   FORGE_ERROR: 'forge_error',
 };
 

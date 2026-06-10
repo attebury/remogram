@@ -1,0 +1,9 @@
+{
+  "name": "@remogram/provider-gitlab-api",
+  "version": "0.1.0",
+  "description": "GitLab API provider for remogram",
+  "type": "module",
+  "license": "MIT",
+  "exports": { ".": "./index.js" },
+  "dependencies": { "@remogram/core": "0.1.0" }
+}

@@ -1,0 +1,6 @@
+acceptance_criterion ac_capabilities_packet_shape {
+  name "Capabilities packet is structured and stable"
+  description "Given remogram provider capabilities --json, when any configured provider returns capabilities, then the packet contains the standard envelope and structured fields for commands, auth envs, check sources, mergeability confidence, host binding, pagination, and write support without changing repo status compatibility."
+  requirement req_provider_capabilities
+  status draft
+}

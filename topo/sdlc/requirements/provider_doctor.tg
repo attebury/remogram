@@ -1,0 +1,9 @@
+requirement req_provider_doctor {
+  name "Provider doctor explains readiness without leaking secrets"
+  description "Remogram must expose a read-only doctor packet that explains config, remote trust, API host binding, auth presence, provider capabilities, and check-status readiness in a provider-attributed envelope without emitting tokens or Topogram workflow concepts."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority high
+  status draft
+}
