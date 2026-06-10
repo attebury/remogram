@@ -17,7 +17,8 @@ task task_forge_trust_round4_wave1 {
   work_type bugfix
   bug_discovery bug_linked
   linked_bugs [bug_packet_trust_contradiction bug_doctor_exit_zero bug_doctor_ok_on_fail bug_sanitize_url_credentials bug_public_origin_remo_leak]
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  status in-progress
 }
 
 task task_forge_trust_round4_wave2 {

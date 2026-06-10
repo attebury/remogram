@@ -16,7 +16,7 @@ function usage() {
     'Usage: npm run security:secrets -- [--base <ref>] [--head <ref>] [--full-history]',
     '',
     'By default the scan uses REMOGRAM_SECRET_SCAN_BASE_REF, TOPOGRAM_SECRET_SCAN_BASE_REF,',
-    'GITHUB_BASE_REF, or origin/remo when available.',
+    'GITHUB_BASE_REF, or origin/main when available.',
     'Use --full-history when no reliable base ref exists or for release/manual verification.',
   ].join('\n');
 }

@@ -87,6 +87,24 @@ function contextFromConfig(config, cwd, parsed = null) {
   };
 }
 
+function finalizeDoctorPacket(ctx, checks, providerCapabilities) {
+  const summary = doctorSummary(checks);
+  const error =
+    summary === 'fail'
+      ? forgeError(ERROR_CODES.CONFIG_INVALID, 'Doctor checks failed')
+      : null;
+  return forgePacket(
+    PACKET_TYPES.PROVIDER_DOCTOR,
+    ctx,
+    {
+      summary,
+      checks,
+      provider_capabilities: providerCapabilities,
+    },
+    error,
+  );
+}
+
 async function buildDoctorPacket(cwd, providers) {
   const checks = [];
   const configPath = findConfigPath(cwd);
@@ -98,11 +116,7 @@ async function buildDoctorPacket(cwd, providers) {
 
   if (!configPath) {
     checks.push(doctorCheck('config', 'fail', 'No .remogram.json found'));
-    return forgePacket(PACKET_TYPES.PROVIDER_DOCTOR, ctx, {
-      summary: doctorSummary(checks),
-      checks,
-      provider_capabilities: null,
-    });
+    return finalizeDoctorPacket(ctx, checks, null);
   }
 
   try {
@@ -112,11 +126,7 @@ async function buildDoctorPacket(cwd, providers) {
     checks.push(doctorCheck('config', 'pass', '.remogram.json is present and valid'));
   } catch (err) {
     checks.push(doctorCheck('config', 'fail', err.forgeError?.message || err.message));
-    return forgePacket(PACKET_TYPES.PROVIDER_DOCTOR, ctx, {
-      summary: doctorSummary(checks),
-      checks,
-      provider_capabilities: null,
-    });
+    return finalizeDoctorPacket(ctx, checks, null);
   }
 
   const provider = providers[config.provider];
@@ -191,11 +201,7 @@ async function buildDoctorPacket(cwd, providers) {
 
   checks.push(doctorCheck('api_reachability', 'skipped', 'Live API reachability is not checked by default'));
 
-  return forgePacket(PACKET_TYPES.PROVIDER_DOCTOR, ctx, {
-    summary: doctorSummary(checks),
-    checks,
-    provider_capabilities: providerCapabilities,
-  });
+  return finalizeDoctorPacket(ctx, checks, providerCapabilities);
 }
 
 export async function runCli(argv, options = {}) {
@@ -225,7 +231,9 @@ export async function runCli(argv, options = {}) {
   const [group, sub] = positional;
 
   if (group === 'doctor' && sub == null) {
-    output(await buildDoctorPacket(cwd, providers), asJson);
+    const packet = await buildDoctorPacket(cwd, providers);
+    output(packet, asJson);
+    if (!packet.ok) process.exitCode = 1;
     return;
   }
 

@@ -27,6 +27,8 @@ export function sanitizeUrl(value, maxBytes = DEFAULT_FIELD_MAX_BYTES) {
   try {
     const u = new URL(String(value));
     if (u.protocol !== 'http:' && u.protocol !== 'https:') return null;
+    u.username = '';
+    u.password = '';
     return sanitizeField(u.href, maxBytes);
   } catch {
     return null;
