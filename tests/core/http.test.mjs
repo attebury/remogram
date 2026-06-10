@@ -86,4 +86,19 @@ describe('fetchJson edge cases', () => {
       forgeError: { code: ERROR_CODES.API_ERROR, message: 'HTTP redirect rejected' },
     });
   });
+
+  it('rejects redirects in fetchJson', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        status: 302,
+        ok: false,
+        body: null,
+      }),
+    );
+
+    await expect(fetchJson('http://localhost:3000/api')).rejects.toMatchObject({
+      forgeError: { code: ERROR_CODES.API_ERROR, message: 'HTTP redirect rejected' },
+    });
+  });
 });

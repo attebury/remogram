@@ -130,6 +130,25 @@ describe('remogram-mcp callTool', () => {
     );
   }, 15_000);
 
+  it('ref_compare rejects invalid ref via MCP', async () => {
+    const setup = setupGithubForge();
+    cleanups.push(setup);
+    await withMcpClient(
+      setup.dir,
+      async (client) => {
+        const result = await client.callTool({
+          name: 'ref_compare',
+          arguments: { base: '--show-toplevel', head: 'main' },
+        });
+        expect(result.isError).toBe(true);
+        const packet = parseMcpPacket(result);
+        expect(packet.ok).toBe(false);
+        expect(packet.error_code).toBe('invalid_args');
+      },
+      { GITHUB_TOKEN: 'test-token' },
+    );
+  }, 15_000);
+
   it('sync_plan returns sync_plan packet via MCP', async () => {
     const setup = setupGithubForge();
     cleanups.push(setup);
@@ -144,6 +163,21 @@ describe('remogram-mcp callTool', () => {
       expect(packet.type).toBe(PACKET_TYPES.SYNC_PLAN);
       expect(packet.remote).toBe('origin');
       expect(packet.blockers).toContain('missing_remote_ref');
+    });
+  }, 15_000);
+
+  it('pr_checks without auth returns forge_error via MCP', async () => {
+    const setup = setupGithubForge();
+    cleanups.push(setup);
+    await withMcpClient(setup.dir, async (client) => {
+      const result = await client.callTool({
+        name: 'pr_checks',
+        arguments: { number: 1 },
+      });
+      expect(result.isError).toBe(true);
+      const packet = parseMcpPacket(result);
+      expect(packet.ok).toBe(false);
+      expect(packet.type).toBe('forge_error');
     });
   }, 15_000);
 

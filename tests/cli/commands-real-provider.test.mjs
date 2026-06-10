@@ -1,20 +1,30 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { runCli } from '@remogram/cli';
+import { PACKET_TYPES, SCHEMA_VERSION } from '@remogram/core';
 import { setupTempForge, captureCliOutput } from '../helpers/temp-forge.mjs';
 
-describe('CLI default PROVIDERS map', () => {
+describe('CLI real-provider integration', () => {
   /** @type {ReturnType<typeof setupTempForge>[]} */
   const cleanups = [];
 
   afterEach(() => {
     while (cleanups.length) cleanups.pop().cleanup();
-    delete process.env.GITEA_TOKEN;
     delete process.env.GITHUB_TOKEN;
     delete process.env.GH_TOKEN;
     delete process.env.GITLAB_TOKEN;
+    delete process.env.GITEA_TOKEN;
   });
 
-  it('uses default PROVIDERS for github-api without options.providers', async () => {
+  function expectEnvelope(packet, providerId) {
+    expect(packet.schema_version).toBe(SCHEMA_VERSION);
+    expect(packet.provider_id).toBe(providerId);
+    expect(packet.remote_name).toBe('origin');
+    expect(packet.repo_id).toBe('owner/repo');
+    expect(packet.observed_at).toMatch(/^\d{4}-/);
+    expect(typeof packet.ok).toBe('boolean');
+  }
+
+  it('github-api sync plan via default PROVIDERS', async () => {
     const setup = setupTempForge({
       config: {
         version: '1',
@@ -29,17 +39,16 @@ describe('CLI default PROVIDERS map', () => {
     cleanups.push(setup);
 
     const { logs } = await captureCliOutput(() =>
-      runCli(['repo', 'status', '--json'], { cwd: setup.dir }),
+      runCli(['sync', 'plan', '--remote', 'origin', '--json'], { cwd: setup.dir }),
     );
     const packet = JSON.parse(logs[0]);
+    expectEnvelope(packet, 'github-api');
+    expect(packet.type).toBe(PACKET_TYPES.SYNC_PLAN);
     expect(packet.ok).toBe(true);
-    expect(packet.type).toBe('repo_status');
-    expect(packet.auth_present).toBe(false);
-    expect(packet.capabilities).toEqual(['repo_status']);
-    expect(packet.provider_id).toBe('github-api');
+    expect(packet.blockers).toContain('missing_remote_ref');
   });
 
-  it('uses default PROVIDERS for gitlab-api without options.providers', async () => {
+  it('gitlab-api sync plan via default PROVIDERS', async () => {
     const setup = setupTempForge({
       config: {
         version: '1',
@@ -54,13 +63,11 @@ describe('CLI default PROVIDERS map', () => {
     cleanups.push(setup);
 
     const { logs } = await captureCliOutput(() =>
-      runCli(['repo', 'status', '--json'], { cwd: setup.dir }),
+      runCli(['sync', 'plan', '--remote', 'origin', '--json'], { cwd: setup.dir }),
     );
     const packet = JSON.parse(logs[0]);
+    expectEnvelope(packet, 'gitlab-api');
+    expect(packet.type).toBe(PACKET_TYPES.SYNC_PLAN);
     expect(packet.ok).toBe(true);
-    expect(packet.type).toBe('repo_status');
-    expect(packet.auth_present).toBe(false);
-    expect(packet.capabilities).toEqual(['repo_status']);
-    expect(packet.provider_id).toBe('gitlab-api');
   });
 });

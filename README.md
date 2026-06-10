@@ -84,7 +84,8 @@ Optional local pre-push gate: `./scripts/install-pre-push-hook.sh` (origin pushe
 - Tests live under `tests/**/*.test.mjs` only.
 - `dx/` agent progress logs are **excluded** from test and coverage scope.
 - `runCli(argv, { cwd, providers })` accepts `options.providers` **for tests only** — production CLI and MCP spawn use the built-in `PROVIDERS` map; do not inject providers in app code.
-- Coverage (`npm run test:coverage`) reports **`packages/remogram-core`** only — not MCP or provider packages.
+- Coverage (`npm run test:coverage`) reports **`packages/remogram-core`** only — not MCP or provider packages. That scope is intentional: providers and MCP are exercised by fixture tests and cross-forge smoke, not coverage percentages.
+- **`ref_compare`** on `github-api` / `gitlab-api` / `gitea-api` requires a forge auth env var even though comparison uses local git; **`sync_plan`** does not.
 - **CI:** GitHub Actions (`.github/workflows/test.yml`, `.github/workflows/secret-scan.yml`) runs on push/PR when hosted on GitHub. For local **Gitea**, mirror workflows live under `.gitea/workflows/` (Node 20, stub Topogram sibling, `npm ci`, `npm test`, `npm run test:coverage`, plus Gitleaks via `npm run security:secrets`). Gitea Actions may require enabling workflows in server settings.
 - **Lane checks:** `remogram pr checks` reads forge commit statuses. On local Gitea without Actions/status posting, `check_conclusion: "missing"` is expected. In that mode, lanes still use remogram for PR facts and mergeability, then require local proof (`topogram check . --json`, `npm test`) before merge. Missing statuses are not a substitute for failed statuses; if the forge reports failure or pending, treat that as a blocker.
 
