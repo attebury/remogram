@@ -1,0 +1,34 @@
+acceptance_criterion ac_smoke_pr_checks_fixture_test {
+  name "Fixture-based pr_checks payload compare test"
+  description "Given provider fixtures for statuses and check sources, when pr_checks payload compare fixture test runs, then compareReport emits sizes-only schema for command pr_checks with remogram_ingest_cap_bytes 8192 and multi-baseline keys per provider."
+  requirement req_smoke_payload_compare_v2
+  status approved
+}
+
+acceptance_criterion ac_smoke_ref_compare_fixture_test {
+  name "Fixture-based ref_compare payload compare test"
+  description "Given temp forge git refs, when ref_compare payload compare fixture test runs, then compareReport records remogram packet bytes and baselines note local_git_only with no forge HTTP body counts."
+  requirement req_smoke_payload_compare_v2
+  status approved
+}
+
+acceptance_criterion ac_smoke_payload_compare_v2_capture_tools {
+  name "capture-tools compare modes for pr_checks and ref_compare"
+  description "Given capture-tools --compare-pr-checks --pr-number N or --compare-ref-compare --base B --head H, when MCP tool succeeds, then size_report.json is written with command-specific baselines and optional --forge-sidecar fetches."
+  requirement req_smoke_payload_compare_v2
+  status approved
+}
+
+acceptance_criterion ac_smoke_payload_compare_v2_sidecar {
+  name "pr_checks sidecar all API providers"
+  description "Given live .remogram.json and provider token, when pr_checks sidecar runs for github-api gitlab-api or gitea-api, then provider_path baseline byte counts are recorded per HTTP fetch or clear skip errors without raw JSON on disk."
+  requirement req_smoke_payload_compare_v2
+  status approved
+}
+
+acceptance_criterion ac_smoke_payload_compare_v2_docs {
+  name "v2 payload compare documentation"
+  description "Given README Payload size smoke compare section, when maintainer reads it, then pr_checks and ref_compare usage, baseline keys, and ref_compare local-git note are documented alongside existing pr_view guidance."
+  requirement req_smoke_payload_compare_v2
+  status approved
+}
