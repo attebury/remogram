@@ -1,0 +1,111 @@
+acceptance_criterion ac_packet_trust_doctrine {
+  name "Packet trust doctrine in agent docs"
+  description "Given AGENTS.md and remogram-consumer/core skills, when a maintainer reads Trust sections, then envelope fields are trusted and forge-sourced string fields (title, check context/description) are explicitly untrusted prose."
+  requirement req_forge_trust_round4
+  status draft
+}
+
+acceptance_criterion ac_doctor_fail_closed {
+  name "Doctor fails closed for shell and packet"
+  description "Given doctor checks with summary fail, when remogram doctor --json runs, then process exit code is 1 and packet ok is false."
+  requirement req_forge_trust_round4
+  status draft
+}
+
+acceptance_criterion ac_sanitize_url_no_credentials {
+  name "sanitizeUrl strips userinfo"
+  description "Given a URL with embedded user:pass@host, when sanitizeUrl runs, then returned string contains no credentials substring."
+  requirement req_forge_trust_round4
+  status draft
+}
+
+acceptance_criterion ac_public_scripts_no_remo_default {
+  name "Public scripts default to origin/main not origin/remo"
+  description "Given exported public tree scripts run-secret-scan.mjs and install-pre-push-hook.sh, when help or defaults are read, then origin/remo is not the default base ref."
+  requirement req_forge_trust_round4
+  status draft
+}
+
+acceptance_criterion ac_check_pagination_complete {
+  name "Check listing paginates until exhausted"
+  description "Given mocked forge APIs with failing check on page 2, when pr_checks runs, then check_conclusion is failure and merge_plan includes checks_failed blocker."
+  requirement req_forge_trust_round4
+  status draft
+}
+
+acceptance_criterion ac_gitea_state_normalization {
+  name "Gitea states normalized to shared enum"
+  description "Given Gitea API returns mixed-case or alias states, when pr_checks and pr_view run, then states map to success failure pending error or open closed before summarizeChecks."
+  requirement req_forge_trust_round4
+  status draft
+}
+
+acceptance_criterion ac_merge_plan_page2_failure {
+  name "Merge plan sees page-2 check failure"
+  description "Given GitHub check-runs page 2 contains conclusion failure, when merge plan --number runs, then blockers includes checks_failed."
+  requirement req_forge_trust_round4
+  status draft
+}
+
+acceptance_criterion ac_capabilities_ingest_facts {
+  name "Capabilities report ingest and pagination facts"
+  description "Given provider capabilities --json, when packet is returned, then forge_ingest_cap_bytes is 8192 by default and check_pagination describes behavior honestly."
+  requirement req_forge_trust_round4
+  status draft
+}
+
+acceptance_criterion ac_env_ingest_override_warn {
+  name "Env ingest override reported in doctor"
+  description "Given REMOGRAM_FORGE_INGEST_MAX_BYTES set, when doctor runs, then effective cap is reported and a warn check notes agent-safe guarantee is weakened."
+  requirement req_forge_trust_round4
+  status draft
+}
+
+acceptance_criterion ac_no_config_ingest_field {
+  name "No ingest cap in config schema"
+  description "Given .remogram.json with ingest_max_bytes field, when parseConfigFile runs, then CONFIG_INVALID strict rejection occurs."
+  requirement req_forge_trust_round4
+  status draft
+}
+
+acceptance_criterion ac_sha_language_precision {
+  name "SHA-bound language precise in README and skills"
+  description "Given README and remogram-core skill, when SHA-bound claims are read, then git-resolved refs are distinguished from forge-reported PR SHAs."
+  requirement req_forge_trust_round4
+  status draft
+}
+
+acceptance_criterion ac_mcp_pr_checks_schema {
+  name "MCP pr_checks requires number or ref"
+  description "Given MCP pr_checks with empty input, when schema validation runs, then request is rejected before CLI spawn."
+  requirement req_forge_trust_round4
+  status draft
+}
+
+acceptance_criterion ac_export_denylist_test {
+  name "Export denylist regression test"
+  description "Given export-public-main.sh denylist, when test runs against exported tree fixture, then topo .gitea remogram-dogfood and sidecar scripts are absent."
+  requirement req_forge_trust_round4
+  status draft
+}
+
+acceptance_criterion ac_refs_compare_no_token {
+  name "refs compare works without forge token"
+  description "Given valid git refs and no auth env, when refs compare --base --head runs on API provider, then ref_compare packet ok is true with local SHAs."
+  requirement req_forge_trust_round4
+  status draft
+}
+
+acceptance_criterion ac_stub_doctor_warn {
+  name "Doctor warns on stub providers"
+  description "Given provider github-gh or gitea-tea in config, when doctor runs, then a fail or warn check states provider is not implemented."
+  requirement req_forge_trust_round4
+  status draft
+}
+
+acceptance_criterion ac_core_secret_redaction {
+  name "Core sanitizeField redacts token patterns"
+  description "Given error message containing ghp_ or Bearer token pattern, when sanitizeField runs in core, then pattern is redacted consistently with MCP policy."
+  requirement req_forge_trust_round4
+  status draft
+}

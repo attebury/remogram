@@ -1,0 +1,220 @@
+bug bug_packet_trust_contradiction {
+  name "AGENTS.md marks whole packets trusted while embedding forge prose"
+  description "Trust sections instruct agents to trust CLI/MCP packets, but pr_status and pr_checks packets include forge-sourced titles and check descriptions that can carry semantic prompt injection."
+  status open
+  severity high
+  priority critical
+  affects [cap_forge_remote_ops]
+  failure_mode "Agent follows packet trust policy and overweight adversarial PR title or check description."
+  linked_task task_forge_trust_round4_wave1
+  reproduction "Set PR title to instruction-like prose; remogram pr view --number N --json; agent told to trust packet."
+  boundary_test_added false
+}
+
+bug bug_doctor_exit_zero {
+  name "Doctor exits 0 when summary is fail"
+  description "remogram doctor returns without setting process.exitCode when checks fail."
+  status open
+  severity medium
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "CI scripts using exit code only treat broken forge setup as success."
+  linked_task task_forge_trust_round4_wave1
+  reproduction "Invalid .remogram.json; remogram doctor --json; echo $? yields 0."
+  boundary_test_added false
+}
+
+bug bug_doctor_ok_on_fail {
+  name "Doctor packet ok true when summary fail"
+  description "buildDoctorPacket never passes error to forgePacket; ok remains true when summary is fail."
+  status open
+  severity medium
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Agents keyed on packet.ok miss config failures."
+  linked_task task_forge_trust_round4_wave1
+  reproduction "Owner/repo mismatch; doctor packet has ok true and summary fail."
+  boundary_test_added false
+}
+
+bug bug_sanitize_url_credentials {
+  name "sanitizeUrl preserves URL userinfo"
+  description "sanitizeUrl returns u.href which can embed user:pass from malicious forge URL fields."
+  status open
+  severity medium
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Credentials from forge response leak into agent-visible packets."
+  linked_task task_forge_trust_round4_wave1
+  reproduction "sanitizeUrl('https://user:secret@host/path') contains secret substring."
+  boundary_test_added false
+}
+
+bug bug_public_origin_remo_leak {
+  name "Public export scripts default to origin/remo"
+  description "run-secret-scan.mjs and install-pre-push-hook.sh reference origin/remo as default base ref in public GitHub tree."
+  status open
+  severity low
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Public consumers see private integration branch naming; wrong default for github.com/main workflows."
+  linked_task task_forge_trust_round4_wave1
+  reproduction "Read scripts on GitHub main branch."
+  boundary_test_added false
+}
+
+bug bug_check_pagination_first_page_only {
+  name "pr_checks uses first page only"
+  description "GitHub GitLab Gitea providers fetch one page of statuses/check-runs/pipelines; merge_plan can miss failures on later pages."
+  status open
+  severity high
+  priority critical
+  affects [cap_forge_remote_ops]
+  failure_mode "merge_plan reports no checks_failed while failing check exists on page 2."
+  linked_task task_forge_trust_round4_wave2
+  reproduction "Mock check-runs page 1 success page 2 failure; merge plan omits blocker."
+  boundary_test_added false
+}
+
+bug bug_gitea_check_state_passthrough {
+  name "Gitea check state not normalized"
+  description "Gitea prChecks passes sanitizeField on state without mapping to shared enum unlike GitHub GitLab."
+  status open
+  severity high
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Hostile or buggy Gitea API returns misleading state strings; summarizeChecks misclassifies."
+  linked_task task_forge_trust_round4_wave2
+  reproduction "Gitea status state Success; check_conclusion not success."
+  boundary_test_added false
+}
+
+bug bug_gitea_pr_state_case {
+  name "Gitea mergePlan case-sensitive open check"
+  description "mergePlan uses view.state !== open without lowercasing; Open from API skips pr_not_open blocker."
+  status open
+  severity medium
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Closed or non-open PR treated as merge-ready on state casing mismatch."
+  linked_task task_forge_trust_round4_wave2
+  reproduction "Gitea returns state Open; merge_plan blockers omit pr_not_open when PR closed elsewhere."
+  boundary_test_added false
+}
+
+bug bug_forge_ingest_oversize_checks {
+  name "8 KiB ingest cap breaks legitimate check endpoints"
+  description "fetchJson rejects raw bodies over DEFAULT_MAX_BYTES before normalization; busy repos hit OVERSIZED_RAW_OUTPUT on pr_checks despite fixable via pagination not cap increase."
+  status open
+  severity high
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "merge_plan and pr_checks unavailable on real repos; agents misread as forge outage."
+  linked_task task_forge_trust_round4_wave3
+  reproduction "Mock check-runs JSON over 8192 bytes; pr_checks returns OVERSIZED_RAW_OUTPUT."
+  boundary_test_added false
+}
+
+bug bug_sha_bound_overclaim {
+  name "Product claims SHA-bound for all packets"
+  description "README and skills imply universal SHA-bound facts; PR-number paths use forge-reported SHAs without local reconciliation; STALE_HEAD unused."
+  status open
+  severity medium
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Agents treat forge head_sha as worktree-ground-truth."
+  linked_task task_forge_trust_round4_wave3
+  reproduction "Compare local HEAD to pr_view head_sha after local commit; no stale_head signal."
+  boundary_test_added false
+}
+
+bug bug_mcp_pr_checks_empty_args {
+  name "MCP pr_checks allows empty input"
+  description "Zod schema permits {} without number or ref; CLI parity gap."
+  status open
+  severity medium
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "MCP forwards invalid pr checks invocation."
+  linked_task task_forge_trust_round4_wave4
+  reproduction "callTool pr_checks with {}."
+  boundary_test_added false
+}
+
+bug bug_export_denylist_untested {
+  name "Export denylist has no automated test"
+  description "export-public-main.sh rm list is manual; new private paths can leak to GitHub main."
+  status open
+  severity high
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "topo or dogfood accidentally published on missed denylist update."
+  linked_task task_forge_trust_round4_wave4
+  reproduction "Add new private dir; forget export script; public export includes it."
+  boundary_test_added false
+}
+
+bug bug_refs_compare_requires_token {
+  name "refs compare requires token on API providers"
+  description "refsCompare calls requireToken despite git-only operation."
+  status open
+  severity medium
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Capabilities advertise full support; refs compare fails without auth."
+  linked_task task_forge_trust_round4_wave4
+  reproduction "Unset GITHUB_TOKEN; remogram refs compare --base main --head HEAD --json fails."
+  boundary_test_added false
+}
+
+bug bug_stub_provider_doctor_clean {
+  name "Stub providers pass doctor"
+  description "github-gh and gitea-tea valid in config; doctor does not fail; commands throw at runtime."
+  status open
+  severity medium
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Misconfigured provider ID discovered only on first command."
+  linked_task task_forge_trust_round4_wave4
+  reproduction "provider github-gh in config; doctor summary pass."
+  boundary_test_added false
+}
+
+bug bug_mcp_core_redaction_split {
+  name "Secret redaction only in MCP not core"
+  description "safeCliErrorMessage redacts tokens; core sanitizeField does not."
+  status open
+  severity low
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "CLI path API errors may echo token-like substrings from forge."
+  linked_task task_forge_trust_round4_wave4
+  reproduction "Forge error message contains ghp_ substring; CLI packet error_message includes it."
+  boundary_test_added false
+}
+
+bug bug_git_ahead_behind_unvalidated {
+  name "gitAheadBehind skips assertGitRef"
+  description "Exported helper accepts base/head without validation; footgun for direct importers."
+  status open
+  severity low
+  priority low
+  affects [cap_forge_remote_ops]
+  failure_mode "Future caller passes injectable ref."
+  linked_task task_forge_trust_round4_wave4
+  reproduction "Import gitAheadBehind with ref starting with dash."
+  boundary_test_added false
+}
+
+bug bug_config_parent_walk {
+  name "Config discovery walks parent directories"
+  description "findConfigPath can load .remogram.json outside intended repo root based on cwd."
+  status open
+  severity medium
+  priority low
+  affects [cap_forge_remote_ops]
+  failure_mode "Confused deputy: wrong forge binding from subdirectory cwd."
+  linked_task task_forge_trust_round4_wave4
+  reproduction "Nested dir without config; parent has .remogram.json; unexpected binding."
+  boundary_test_added false
+}

@@ -1,0 +1,8 @@
+goal_branch goal_branch_forge_trust_round4 {
+  name "Forge Trust Round 4 Intent Packet"
+  description "Draft Intent Packet for post-beta architecture review remediation on remo. Four waves: trust/doctor, merge integrity, forge ingest architecture, MCP/export hygiene. Planning-only until explicit approval."
+  branch_ref "goal/forge-trust-round4"
+  task task_forge_trust_round4_wave1
+  evidence_refs [local:topo/sdlc/pitches/forge_trust_round4.tg, local:topo/sdlc/requirements/forge_trust_round4.tg, local:topo/sdlc/plans/forge_trust_round4.tg, local:topo/sdlc/decisions/forge_ingest_cap_policy.tg, local:topo/sdlc/decisions/packet_trust_doctrine.tg, local:topo/sdlc/bugs/forge-trust-round4.tg]
+  status draft
+}

@@ -1,0 +1,87 @@
+task task_forge_trust_round4_wave1 {
+  name "Wave 1 — Trust doctrine and doctor honesty"
+  description "Implement packet trust split per decision_packet_trust_doctrine. Fix doctor exit code and ok flag. Fix sanitizeUrl credential leak. Scrub origin/remo from public-bound scripts."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["STALE_HEAD implementation" "Semantic packet schema redesign" "npm publish"]
+  entrypoints ["AGENTS.md" "README.md" "tools/remogram-agent-support/skills/**" "packages/remogram-core/caps.js" "packages/remogram-cli/index.js" "scripts/run-secret-scan.mjs" "scripts/install-pre-push-hook.sh" "CHANGELOG.md"]
+  satisfies [req_forge_trust_round4]
+  acceptance_refs [ac_packet_trust_doctrine ac_doctor_fail_closed ac_sanitize_url_no_credentials ac_public_scripts_no_remo_default]
+  verification_refs [verification_forge_trust_round4_wave1]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority critical
+  work_type bugfix
+  bug_discovery bug_linked
+  linked_bugs [bug_packet_trust_contradiction bug_doctor_exit_zero bug_doctor_ok_on_fail bug_sanitize_url_credentials bug_public_origin_remo_leak]
+  status pending
+}
+
+task task_forge_trust_round4_wave2 {
+  name "Wave 2 — Merge integrity (checks pagination and Gitea parity)"
+  description "Paginate forge check sources so merge_plan cannot miss failures beyond page 1. Normalize Gitea check states and PR open state to match GitHub/GitLab bounded enums."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Raising DEFAULT_MAX_BYTES globally" "GraphQL for check listing"]
+  entrypoints ["packages/provider-github-api/**" "packages/provider-gitlab-api/**" "packages/provider-gitea-api/**" "tests/provider/**"]
+  satisfies [req_forge_trust_round4]
+  acceptance_refs [ac_check_pagination_complete ac_gitea_state_normalization ac_merge_plan_page2_failure]
+  verification_refs [verification_forge_trust_round4_wave2]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round4_wave1]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority critical
+  work_type bugfix
+  bug_discovery bug_linked
+  linked_bugs [bug_check_pagination_first_page_only bug_gitea_check_state_passthrough bug_gitea_pr_state_case]
+  status pending
+}
+
+task task_forge_trust_round4_wave3 {
+  name "Wave 3 — Forge ingest architecture (8 KiB policy)"
+  description "Implement decision_forge_ingest_cap_policy: keep default 8192, report effective cap in capabilities, optional env override with doctor warning, README/skills SHA-bound precision. Ensure check pagination keeps normalized packets bounded without requiring global cap increase."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["ingest_max_bytes in .remogram.json" "Removing DEFAULT_MAX_BYTES"]
+  entrypoints ["packages/remogram-core/caps.js" "packages/remogram-core/http.js" "packages/provider-*/index.js" "README.md" "tools/remogram-agent-support/skills/**" "tests/core/**" "tests/provider/**"]
+  satisfies [req_forge_trust_round4]
+  acceptance_refs [ac_capabilities_ingest_facts ac_env_ingest_override_warn ac_no_config_ingest_field ac_sha_language_precision]
+  verification_refs [verification_forge_trust_round4_wave3]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round4_wave2]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type enhancement
+  bug_discovery bug_linked
+  linked_bugs [bug_forge_ingest_oversize_checks bug_sha_bound_overclaim]
+  status pending
+}
+
+task task_forge_trust_round4_wave4 {
+  name "Wave 4 — MCP, export, and capability honesty"
+  description "MCP pr_checks schema refine and integration tests; centralize secret redaction in core; export denylist regression test; stub provider doctor warn; refsCompare without requireToken; gitAheadBehind assertGitRef."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["MCP coverage policy change" "Full CLI/MCP packet parity matrix"]
+  entrypoints ["packages/remogram-mcp/**" "packages/remogram-cli/index.js" "packages/remogram-core/git-local.js" "scripts/export-public-main.sh" "tests/export/**" "tests/mcp/**" ".github/workflows/**"]
+  satisfies [req_forge_trust_round4]
+  acceptance_refs [ac_mcp_pr_checks_schema ac_export_denylist_test ac_refs_compare_no_token ac_stub_doctor_warn ac_core_secret_redaction]
+  verification_refs [verification_forge_trust_round4_wave4]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round4_wave3]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  bug_discovery bug_linked
+  linked_bugs [bug_mcp_pr_checks_empty_args bug_export_denylist_untested bug_refs_compare_requires_token bug_stub_provider_doctor_clean bug_mcp_core_redaction_split bug_git_ahead_behind_unvalidated]
+  status pending
+}

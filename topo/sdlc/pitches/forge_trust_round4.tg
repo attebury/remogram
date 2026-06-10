@@ -1,0 +1,12 @@
+pitch pitch_forge_trust_round4 {
+  name "Forge Trust Round 4 — Beta Hardening"
+  description "Fourth-pass paranoid architecture review remediation: honest trust doctrine, merge-plan integrity (check pagination and Gitea normalization), forge ingest architecture without .remogram.json cap config, doctor/MCP/export hygiene, and capability honesty."
+  appetite "large"
+  problem "Post-beta review found trust-policy contradiction (packets marked trusted while embedding forge prose), merge_plan false negatives from first-page-only checks, 8 KiB raw ingest failures on legitimate check endpoints, doctor exit 0 on fail, refs compare requiring tokens, Gitea state passthrough, MCP pr_checks schema gap, export denylist untested, and origin/remo leaking in public scripts."
+  solution_sketch "Four implementation waves plus architecture decisions: (1) trust doctrine and doctor honesty, (2) merge integrity, (3) forge ingest — pagination and capabilities reporting, default 8192 with optional env override only, (4) MCP/export/platform hygiene. No .remogram.json ingest cap field."
+  rabbit_holes "Full semantic prompt firewall; per-repo configurable ingest caps; raising global 8 KiB to fix checks; STALE_HEAD local reconciliation in wave 1."
+  no_go_areas "Mutation commands; npm publish changes; hand-editing command-owned sidecars; rewriting rounds 1–3 archaeology."
+  affects [cap_forge_remote_ops]
+  priority critical
+  status submitted
+}
