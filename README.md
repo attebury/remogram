@@ -57,7 +57,11 @@ See [AGENTS.md](AGENTS.md).
 ```bash
 npm test              # full suite
 npm run test:coverage # remogram-core coverage report
+npm run security:secrets -- --base origin/dev/scaffold
 ```
+
+Use `npm run security:secrets -- --full-history` when no reliable base ref exists.
+Optional local pre-push gate: `./scripts/install-pre-push-hook.sh` (origin pushes only).
 
 | Layer | Location | What runs | Git required |
 |-------|----------|-----------|--------------|
@@ -70,7 +74,7 @@ npm run test:coverage # remogram-core coverage report
 - `dx/` agent progress logs are **excluded** from test and coverage scope.
 - `runCli(argv, { cwd, providers })` accepts `options.providers` **for tests only** — production CLI and MCP spawn use the built-in `PROVIDERS` map; do not inject providers in app code.
 - Coverage (`npm run test:coverage`) reports **`packages/remogram-core`** only — not MCP or provider packages.
-- **CI:** GitHub Actions (`.github/workflows/test.yml`) runs on push/PR when hosted on GitHub. For local **Gitea**, mirror workflow lives at `.gitea/workflows/test.yml` (same steps: Node 20, stub Topogram sibling, `npm ci`, `npm test`, `npm run test:coverage`). Gitea Actions may require enabling workflows in server settings.
+- **CI:** GitHub Actions (`.github/workflows/test.yml`, `.github/workflows/secret-scan.yml`) runs on push/PR when hosted on GitHub. For local **Gitea**, mirror workflows live under `.gitea/workflows/` (Node 20, stub Topogram sibling, `npm ci`, `npm test`, `npm run test:coverage`, plus Gitleaks via `npm run security:secrets`). Gitea Actions may require enabling workflows in server settings.
 - **Lane checks:** `remogram pr checks` reads forge commit statuses. On local Gitea without Actions/status posting, `check_conclusion: "missing"` is expected. In that mode, lanes still use remogram for PR facts and mergeability, then require local proof (`topogram check . --json`, `npm test`) before merge. Missing statuses are not a substitute for failed statuses; if the forge reports failure or pending, treat that as a blocker.
 
 ## Packages
