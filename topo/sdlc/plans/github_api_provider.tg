@@ -1,0 +1,19 @@
+plan plan_github_api_provider {
+  name "GitHub api provider implementation plan"
+  description "Stand up provider-github-api for six read/plan commands and prove envelope parity with gitea-api; implemented on goal/github-api-provider."
+  task task_github_api_provider
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  priority high
+  steps {
+    step scaffold_provider status pending description "Create packages/provider-github-api package exporting a provider with id github-api; wire repoStatus stub returning capabilities + auth_env from GITHUB_TOKEN/GH_TOKEN."
+    step auth_and_base status pending description "Resolve GitHub token (GITHUB_TOKEN then GH_TOKEN); derive API base fail-closed from verified remote host: github.com maps only to https://api.github.com, GitHub Enterprise uses the same verified host with /api/v3, and any configured cross-host API base is rejected before token use."
+    step repo_and_refs status pending description "Implement repoStatus (default_branch, capabilities) and refsCompare via compare endpoint mapping ahead_by/behind_by and resolving base/head SHAs through core git-args."
+    step pr_view_and_checks status pending description "Implement prView (mergeable_state -> mergeability vocab) and prChecks merging check-runs + commit statuses into existing check_conclusion precedence."
+    step merge_and_sync status pending description "Implement mergePlan (reuse blocker vocabulary) and syncPlan via core git, sanitizing remote; no provider-local copies of trust primitives."
+    step wire_cli_and_providers status pending description "Register github-api in CLI PROVIDERS map; flip topo/providers term github_api to active; update README provider table."
+    step provider_tests status pending description "Add mocked-fetch provider tests with GitHub JSON fixtures covering check-run/status mix, mergeable_state values, auth-missing, and envelope-shape assertions; extend CLI test to route github-api."
+    step normalization_note status pending description "Write the abstraction findings note (ac_github_abstraction_findings): every GitHub primitive that did not map cleanly and how it was handled; feeds the go/no-go on Tier 3."
+    step verify status pending description "npm test green; coverage policy unchanged or provider included by decision; topogram check green; mark acceptance criteria met."
+  }
+  status draft
+}
