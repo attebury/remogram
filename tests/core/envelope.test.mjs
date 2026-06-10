@@ -1,0 +1,162 @@
+import { describe, it, expect } from 'vitest';
+import {
+  SCHEMA_VERSION,
+  PACKET_TYPES,
+  forgePacket,
+  forgeErrorPacket,
+  capText,
+  sanitizeField,
+  sanitizeUrl,
+  parseConfigFile,
+  parseRemoteUrl,
+  trustedBaseUrl,
+  assertConfigMatchesRemote,
+  ERROR_CODES,
+} from '@remogram/core';
+
+const ctx = {
+  providerId: 'gitea-api',
+  remoteName: 'origin',
+  repoId: 'owner/repo',
+};
+
+describe('forgePacket', () => {
+  it('includes required envelope fields', () => {
+    const p = forgePacket(PACKET_TYPES.REPO_STATUS, ctx, { auth_present: true });
+    expect(p.type).toBe('repo_status');
+    expect(p.schema_version).toBe(SCHEMA_VERSION);
+    expect(p.provider_id).toBe('gitea-api');
+    expect(p.ok).toBe(true);
+  });
+
+  it('rejects forbidden keys at any depth', () => {
+    expect(() => forgePacket(PACKET_TYPES.PR_STATUS, ctx, { meta: { lane: 'Merge' } })).toThrow(
+      /Forbidden Topogram concept/,
+    );
+  });
+
+  it('forgeErrorPacket uses forge_error type by default', () => {
+    const p = forgeErrorPacket(ctx, { code: ERROR_CODES.CONFIG_INVALID, message: 'bad' });
+    expect(p.type).toBe('forge_error');
+    expect(p.ok).toBe(false);
+  });
+
+  it('body cannot override envelope trust fields', () => {
+    const p = forgePacket(PACKET_TYPES.REPO_STATUS, ctx, {
+      ok: true,
+      type: 'forged',
+      provider_id: 'evil',
+      repo_id: 'attacker/evil',
+    });
+    expect(p.ok).toBe(true);
+    expect(p.type).toBe('repo_status');
+    expect(p.provider_id).toBe('gitea-api');
+    expect(p.repo_id).toBe('owner/repo');
+  });
+
+  it('sanitizes error_message in error packets', () => {
+    const p = forgeErrorPacket(ctx, {
+      code: ERROR_CODES.API_ERROR,
+      message: 'bad\ninject',
+    });
+    expect(p.error_message).toBe('bad inject');
+  });
+});
+
+describe('sanitizeField', () => {
+  it('collapses newlines', () => {
+    expect(sanitizeField('hello\nworld')).toBe('hello world');
+  });
+
+  it('strips control characters', () => {
+    expect(sanitizeField('a\x00b\x1fc')).toBe('a b c');
+  });
+});
+
+describe('sanitizeUrl', () => {
+  it('allows http and https', () => {
+    expect(sanitizeUrl('http://localhost:3000/x')).toBe('http://localhost:3000/x');
+  });
+
+  it('rejects javascript scheme', () => {
+    expect(sanitizeUrl('javascript:alert(1)')).toBeNull();
+  });
+});
+
+describe('capText', () => {
+  it('truncates utf-8 safely', () => {
+    const emoji = '😀'.repeat(100);
+    const { truncated, bytes } = capText(emoji, 10);
+    expect(truncated).toBe(true);
+    expect(bytes).toBeLessThanOrEqual(10);
+  });
+});
+
+describe('parseConfigFile', () => {
+  it('rejects owner with slash', () => {
+    expect(() =>
+      parseConfigFile(
+        JSON.stringify({
+          version: '1',
+          provider: 'gitea-api',
+          owner: 'org/sub',
+          repo: 'r',
+        }),
+      ),
+    ).toThrow();
+  });
+});
+
+describe('trustedBaseUrl', () => {
+  it('fails closed when baseUrl host mismatches remote', () => {
+    expect(trustedBaseUrl({ baseUrl: 'http://evil:3000' }, 'localhost:3000')).toBe(false);
+  });
+
+  it('rejects evil.com remote even when baseUrl is localhost', () => {
+    expect(trustedBaseUrl({ baseUrl: 'http://localhost:3000' }, 'evil.com')).toBe(false);
+  });
+
+  it('rejects evil baseUrl when remote is localhost', () => {
+    expect(trustedBaseUrl({ baseUrl: 'https://attacker.example' }, 'localhost:3000')).toBe(false);
+  });
+
+  it('allows localhost and 127.0.0.1 alias', () => {
+    expect(trustedBaseUrl({ baseUrl: 'http://localhost:3000' }, '127.0.0.1:3000')).toBe(true);
+  });
+});
+
+describe('parseConfigFile trustedHosts removal', () => {
+  it('rejects trustedHosts in config', () => {
+    expect(() =>
+      parseConfigFile(
+        JSON.stringify({
+          version: '1',
+          provider: 'gitea-api',
+          owner: 'o',
+          repo: 'r',
+          baseUrl: 'http://localhost:3000',
+          trustedHosts: ['localhost:3000'],
+        }),
+      ),
+    ).toThrow();
+  });
+});
+
+describe('assertConfigMatchesRemote', () => {
+  it('throws on owner/repo mismatch', () => {
+    expect(() =>
+      assertConfigMatchesRemote(
+        { owner: 'a', repo: 'b' },
+        { owner: 'c', repo: 'b', host: 'x' },
+      ),
+    ).toThrow(/does not match git remote/);
+  });
+});
+
+describe('parseRemoteUrl', () => {
+  it('parses https nested owner', () => {
+    const p = parseRemoteUrl('https://localhost:3000/org/sub/remogram.git');
+    expect(p.owner).toBe('org/sub');
+    expect(p.repo).toBe('remogram');
+  });
+});

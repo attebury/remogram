@@ -1,0 +1,17 @@
+title = "Remogram Gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Documented remogram false positives: hermetic test tokens and local-only scratch paths."
+condition = "OR"
+regexTarget = "match"
+regexes = [
+  '''test-token''',
+]
+paths = [
+  '''^\.tmp/''',
+  '''^tests/''',
+  '''^\.remogram\.json\.example$''',
+]

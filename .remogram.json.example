@@ -1,0 +1,7 @@
+{
+  "version": "1",
+  "provider": "github-api",
+  "remote": "origin",
+  "owner": "your-org",
+  "repo": "your-repo"
+}

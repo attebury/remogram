@@ -1,0 +1,16 @@
+{
+  "name": "remogram-agent-support",
+  "version": "0.1.0",
+  "description": "Reusable remogram agent skills for forge-fact workflows in consumer repos and remogram product development.",
+  "author": {
+    "name": "Remogram"
+  },
+  "repository": "https://github.com/attebury/remogram",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Remogram Agent Support",
+    "shortDescription": "Forge-fact skills for remogram CLI and MCP in any configured repository.",
+    "longDescription": "Use remogram-consumer for day-to-day forge reads in repos with .remogram.json. Use remogram-core for remogram product work and remogram-dogfood when developing remogram itself with Topogram SDLC on remo."
+  }
+}
