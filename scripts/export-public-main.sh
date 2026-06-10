@@ -15,7 +15,7 @@ git -C "${ROOT}" archive HEAD | tar -x -C "${OUT}"
 cd "${OUT}"
 
 # Drop private dogfood / maintainer-only paths
-rm -rf topo .gitea .tmp
+rm -rf topo .gitea .tmp dx
 rm -f topogram.project.json topogram.sdlc-policy.json
 rm -f scripts/install-topogram-local.sh
 rm -f scripts/remogram-smoke-compare.mjs scripts/remogram-smoke-compare-lib.mjs

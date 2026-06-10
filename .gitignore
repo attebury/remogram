@@ -5,6 +5,7 @@ coverage/
 .cursor/mcp.json
 .remogram.json
 .tmp/
+dx/
 pr_checks.json
 size_report.json
 size_report/
