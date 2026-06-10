@@ -79,7 +79,7 @@ Optional local pre-push gate: `./scripts/install-pre-push-hook.sh` (origin pushe
 | Core unit | `tests/core/` | Envelope, caps, `assertForgeReady`, HTTP, packet contracts | Temp repos in `resolve.test.mjs` only |
 | Provider | `tests/provider/` | Gitea and GitHub API adapters with mocked `fetch` + JSON fixtures | Some tests resolve refs via local git |
 | CLI integration | `tests/cli/` | All read-only commands via `runCli` with temp `.remogram.json` and injected mock provider; default `PROVIDERS` wiring in `default-providers.test.mjs` | Temp git repo per test |
-| MCP | `tests/mcp/` | `packetToMcpContent` unit tests + stdio server smoke | Smoke uses repo cwd |
+| MCP | `tests/mcp/` | `packetToMcpContent` unit tests, stdio `listTools`, offline `callTool` battery, live capture via `packages/remogram-mcp/capture-tools.mjs` | Smoke uses repo cwd |
 
 - Tests live under `tests/**/*.test.mjs` only.
 - `dx/` agent progress logs are **excluded** from test and coverage scope.
