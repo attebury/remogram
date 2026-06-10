@@ -1,0 +1,3 @@
+# Gitleaks historical false-positive baseline.
+# Add exact fingerprints only for committed historical fixtures that must remain.
+# Do not add broad live-source exceptions; current secret-shaped content should fail CI.

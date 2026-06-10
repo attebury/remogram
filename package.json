@@ -19,7 +19,8 @@
     "topo:brief": "topogram agent brief . --json",
     "topo:check": "topogram check . --json",
     "topo:onboard": "topogram onboard . --json",
-    "topo:init": "topogram init . --adopt-sdlc --json"
+    "topo:init": "topogram init . --adopt-sdlc --json",
+    "security:secrets": "node ./scripts/run-secret-scan.mjs"
   },
   "devDependencies": {
     "@topogram/cli": "file:../topogram/engine",

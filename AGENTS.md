@@ -8,6 +8,7 @@
 topogram agent brief . --json
 topogram work status . --json
 remogram repo status --json
+npm run security:secrets -- --base origin/dev/scaffold
 ```
 
 ## Boundary rules
