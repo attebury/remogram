@@ -87,10 +87,11 @@ export function apiBase(config, parsed = {}) {
   }
 
   if (configured && configured.toLowerCase() !== host) {
-    throw Object.assign(new Error('Untrusted GitHub Enterprise API base'), {
+    const message = `GitHub Enterprise API host must match remote host ${remoteHost}`;
+    throw Object.assign(new Error(message), {
       forgeError: forgeError(
         ERROR_CODES.UNTRUSTED_BASE_URL,
-        `GitHub Enterprise API host must match remote host ${remoteHost}`,
+        message,
       ),
     });
   }

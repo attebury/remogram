@@ -17,6 +17,6 @@ task task_github_api_provider {
   work_type implementation
   claimed_by [actor_coding_agent]
   bug_discovery no_bug_observed
-  bug_discovery_rationale "GitHub provider implementation added fail-closed host binding, token handling, mocked provider fixtures, CLI wiring proof, and local proof receipts; no separate defect was discovered during implementation."
+  bug_discovery_rationale "Review fixes expanded GitHub provider parity coverage, host-binding regression tests, plan-step receipts, and refreshed proof; no separate defect was discovered."
   status in-progress
 }

@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { forgePacket, PACKET_TYPES } from '@remogram/core';
 import {
   provider,
   apiBase,
@@ -42,6 +43,26 @@ const ctx = {
   parsed: { owner: 'owner', repo: 'repo', host: 'github.com' },
 };
 
+const ENVELOPE_KEYS = [
+  'type',
+  'schema_version',
+  'provider_id',
+  'remote_name',
+  'repo_id',
+  'observed_at',
+  'ok',
+];
+
+const packetCtx = {
+  providerId: 'github-api',
+  remoteName: 'origin',
+  repoId: 'owner/repo',
+};
+
+function bodyKeys(packet) {
+  return Object.keys(packet).filter((k) => !ENVELOPE_KEYS.includes(k)).sort();
+}
+
 describe('repoApiPath', () => {
   it('encodes path segments', () => {
     expect(repoApiPath({ owner: 'a/b', repo: 'c' })).toContain(encodeURIComponent('a/b'));
@@ -67,6 +88,15 @@ describe('apiBase', () => {
       ),
     ).toBe('https://git.example.test/api/v3');
   });
+
+  it('rejects GitHub Enterprise API host mismatches before token use', () => {
+    expect(() =>
+      apiBase(
+        { ...ctx.config, baseUrl: 'https://evil.example.test' },
+        { ...ctx.parsed, host: 'git.example.test' },
+      ),
+    ).toThrow(/must match remote host git\.example\.test/);
+  });
 });
 
 describe('provider-github-api fixtures', () => {
@@ -87,6 +117,12 @@ describe('provider-github-api fixtures', () => {
     expect(body.auth_present).toBe(false);
     expect(body.auth_env).toBeNull();
     expect(body.capabilities).toEqual(['repo_status']);
+    expect(bodyKeys(forgePacket(PACKET_TYPES.REPO_STATUS, packetCtx, body))).toEqual([
+      'auth_env',
+      'auth_present',
+      'capabilities',
+      'default_branch',
+    ]);
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
@@ -100,6 +136,24 @@ describe('provider-github-api fixtures', () => {
     expect(body.capabilities).toContain('pr_status');
     expect(global.fetch.mock.calls[0][0]).toBe('https://api.github.com/repos/owner/repo');
     expect(global.fetch.mock.calls[0][1].headers.Authorization).toBe('Bearer test-token');
+  });
+
+  it('refsCompare resolves local refs and preserves shared packet body keys', async () => {
+    const body = await provider.refsCompare(ctx, 'HEAD', 'HEAD');
+    expect(body.base_ref).toBe('HEAD');
+    expect(body.head_ref).toBe('HEAD');
+    expect(body.base_sha).toMatch(/^[0-9a-f]{40}$/);
+    expect(body.head_sha).toBe(body.base_sha);
+    expect(body.ahead_by).toBe(0);
+    expect(body.behind_by).toBe(0);
+    expect(bodyKeys(forgePacket(PACKET_TYPES.REF_COMPARE, packetCtx, body))).toEqual([
+      'ahead_by',
+      'base_ref',
+      'base_sha',
+      'behind_by',
+      'head_ref',
+      'head_sha',
+    ]);
   });
 
   it('repoStatus falls back to GH_TOKEN', async () => {
@@ -126,6 +180,17 @@ describe('provider-github-api fixtures', () => {
     expect(body.title).toBe('Add GitHub provider with newline');
     expect(body.base_ref).toBe('main');
     expect(body.head_sha).toBe('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
+    expect(bodyKeys(forgePacket(PACKET_TYPES.PR_STATUS, packetCtx, body))).toEqual([
+      'base_ref',
+      'base_sha',
+      'head_ref',
+      'head_sha',
+      'mergeability',
+      'pr_number',
+      'state',
+      'title',
+      'url',
+    ]);
   });
 
   it('maps dirty mergeability to conflicted', () => {
@@ -149,6 +214,21 @@ describe('provider-github-api fixtures', () => {
       { context: 'ci/status', state: 'success', description: 'status ok' },
       { context: 'ci/check', state: 'success', description: 'check ok' },
     ]);
+    expect(bodyKeys(forgePacket(PACKET_TYPES.PR_CHECKS, packetCtx, body))).toEqual([
+      'check_conclusion',
+      'head_sha',
+      'statuses',
+    ]);
+  });
+
+  it('prChecks supports a local git ref without fetching the pull request', async () => {
+    global.fetch
+      .mockResolvedValueOnce(jsonResponse(load('statuses-success.json')))
+      .mockResolvedValueOnce(jsonResponse(load('check-runs-success.json')));
+    const body = await provider.prChecks(ctx, { ref: 'HEAD' });
+    expect(body.head_sha).toMatch(/^[0-9a-f]{40}$/);
+    expect(body.check_conclusion).toBe('success');
+    expect(global.fetch).toHaveBeenCalledTimes(2);
   });
 
   it('summarizes missing, pending, failure, and unknown checks', () => {
@@ -168,6 +248,38 @@ describe('provider-github-api fixtures', () => {
     expect(body.mergeability).toBe('conflicted');
     expect(body.checks_conclusion).toBe('missing');
     expect(body.blockers).toEqual(['merge_conflict', 'checks_missing']);
+    expect(bodyKeys(forgePacket(PACKET_TYPES.MERGE_PLAN, packetCtx, body))).toEqual([
+      'blockers',
+      'checks_conclusion',
+      'mergeability',
+      'pr_number',
+    ]);
+  });
+
+  it('mergePlan reports the happy path with no blockers', async () => {
+    global.fetch
+      .mockResolvedValueOnce(jsonResponse(load('pull-clean.json')))
+      .mockResolvedValueOnce(jsonResponse(load('pull-clean.json')))
+      .mockResolvedValueOnce(jsonResponse(load('statuses-success.json')))
+      .mockResolvedValueOnce(jsonResponse(load('check-runs-success.json')));
+    const body = await provider.mergePlan(ctx, { number: 42 });
+    expect(body.mergeability).toBe('clean');
+    expect(body.checks_conclusion).toBe('success');
+    expect(body.blockers).toEqual([]);
+  });
+
+  it('syncPlan preserves shared packet body keys', async () => {
+    const body = await provider.syncPlan(ctx, 'origin');
+    expect(body.remote).toBe('origin');
+    expect(body.local_sha).toMatch(/^[0-9a-f]{40}$/);
+    expect(Array.isArray(body.blockers)).toBe(true);
+    expect(bodyKeys(forgePacket(PACKET_TYPES.SYNC_PLAN, packetCtx, body))).toEqual([
+      'blockers',
+      'diverged',
+      'local_sha',
+      'remote',
+      'remote_sha',
+    ]);
   });
 
   it('propagates redirect rejection from core HTTP helper', async () => {
