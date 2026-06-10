@@ -1800,5 +1800,41 @@
         "local:human-approve-round4"
       ]
     }
+  ],
+  "ac_packet_trust_doctrine": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T22:21:27.840Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_doctor_fail_closed": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T22:21:28.037Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_sanitize_url_no_credentials": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T22:21:28.226Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_public_scripts_no_remo_default": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-10T22:21:28.419Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
   ]
 }
