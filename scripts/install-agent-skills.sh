@@ -12,6 +12,13 @@ DO_CLAUDE=0
 DO_DOGFOOD=0
 CONSUMER_ONLY=0
 
+# Internal maintainer skills (private Gitea checkout only; stripped on public export)
+DOGFOOD_SKILLS=(
+  remogram-dogfood
+  remogram-sdlc-core
+  remogram-plan-lane
+)
+
 usage() {
   cat <<'EOF'
 Install remogram agent skills from canonical tools/remogram-agent-support/skills/.
@@ -28,7 +35,8 @@ Options:
 EOF
   if [[ -d "${CANONICAL}/remogram-dogfood" ]]; then
     cat <<'EOF'
-  --dogfood         Also install remogram-dogfood (private maintainer checkout only)
+  --dogfood         Also install internal maintainer skills (dogfood, sdlc-core,
+                    plan-lane) to .cursor/skills/ and ~/.codex/skills/ when --codex
 EOF
   fi
 }
@@ -43,6 +51,13 @@ copy_skill() {
   rm -rf "${dest}/${name}"
   cp -R "${CANONICAL}/${name}" "${dest}/${name}"
   echo "installed ${name} -> ${dest}/${name}"
+}
+
+install_dogfood_skills() {
+  local dest="$1"
+  for skill in "${DOGFOOD_SKILLS[@]}"; do
+    copy_skill "$skill" "$dest"
+  done
 }
 
 while [[ $# -gt 0 ]]; do
@@ -67,7 +82,7 @@ if [[ "$DO_CURSOR" -eq 1 ]]; then
   mkdir -p "$CURSOR_DEST"
   copy_skill remogram-core "$CURSOR_DEST"
   if [[ "$DO_DOGFOOD" -eq 1 ]]; then
-    copy_skill remogram-dogfood "$CURSOR_DEST"
+    install_dogfood_skills "$CURSOR_DEST"
   fi
 fi
 
@@ -78,7 +93,7 @@ if [[ "$DO_CODEX" -eq 1 ]]; then
     copy_skill remogram-core "$CODEX_DEST"
   fi
   if [[ "$DO_DOGFOOD" -eq 1 ]]; then
-    copy_skill remogram-dogfood "$CODEX_DEST"
+    install_dogfood_skills "$CODEX_DEST"
   fi
 fi
 
@@ -96,7 +111,7 @@ if [[ "$DO_CLAUDE" -eq 1 ]]; then
     copy_skill "$skill" "${CLAUDE_DEST}/skills"
   done
   if [[ "$DO_DOGFOOD" -eq 1 ]]; then
-    copy_skill remogram-dogfood "${CLAUDE_DEST}/skills"
+    install_dogfood_skills "${CLAUDE_DEST}/skills"
   fi
   echo "Claude plugin installed at ${CLAUDE_DEST}"
 fi

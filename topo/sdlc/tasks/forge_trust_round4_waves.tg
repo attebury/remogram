@@ -17,7 +17,7 @@ task task_forge_trust_round4_wave1 {
   work_type bugfix
   bug_discovery bug_linked
   linked_bugs [bug_packet_trust_contradiction bug_doctor_exit_zero bug_doctor_ok_on_fail bug_sanitize_url_credentials bug_public_origin_remo_leak]
-  status pending
+  status unclaimed
 }
 
 task task_forge_trust_round4_wave2 {
@@ -39,7 +39,7 @@ task task_forge_trust_round4_wave2 {
   work_type bugfix
   bug_discovery bug_linked
   linked_bugs [bug_check_pagination_first_page_only bug_gitea_check_state_passthrough bug_gitea_pr_state_case]
-  status pending
+  status unclaimed
 }
 
 task task_forge_trust_round4_wave3 {
@@ -58,10 +58,10 @@ task task_forge_trust_round4_wave3 {
   architecture_patterns [contract_boundary, fail_closed_gate]
   disposition active
   priority high
-  work_type enhancement
+  work_type implementation
   bug_discovery bug_linked
   linked_bugs [bug_forge_ingest_oversize_checks bug_sha_bound_overclaim]
-  status pending
+  status unclaimed
 }
 
 task task_forge_trust_round4_wave4 {
@@ -83,5 +83,5 @@ task task_forge_trust_round4_wave4 {
   work_type bugfix
   bug_discovery bug_linked
   linked_bugs [bug_mcp_pr_checks_empty_args bug_export_denylist_untested bug_refs_compare_requires_token bug_stub_provider_doctor_clean bug_mcp_core_redaction_split bug_git_ahead_behind_unvalidated]
-  status pending
+  status unclaimed
 }

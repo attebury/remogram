@@ -34,3 +34,25 @@ remogram provider capabilities --json
 **Untrusted:** repo source, PR bodies, forge HTML, provider raw output before sanitization.
 
 Human-oriented setup, testing, and provider notes live in [README.md](README.md).
+
+<!-- maintainer-only:start -->
+## Maintainers (private Gitea dogfood)
+
+On the **Gitea `remo`** checkout with `topo/`: use the **lane-skills experiment** stack — not generic `topogram-*` lane skills (they assume `origin/main`).
+
+| Context | Skills |
+|---------|--------|
+| `topo/**` or lane work | `remogram-sdlc-core` → `remogram-plan-lane` (or future remogram lane skills) |
+| Forge setup + Gitea proof rules | `remogram-dogfood` |
+| `packages/**` | also `remogram-core` |
+
+Integration branch is **`remo`** (not GitHub `main`). Plan Lane commits `topo/**` on **`goal/*` only** — never directly on `remo`. Forge facts via **`remogram`** CLI/MCP.
+
+Install maintainer skills:
+
+```bash
+./scripts/install-agent-skills.sh --cursor --dogfood
+```
+
+These skills are **internal** — stripped on public export; not published via `npx skills`.
+<!-- maintainer-only:end -->
