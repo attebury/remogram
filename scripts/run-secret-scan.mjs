@@ -16,7 +16,7 @@ function usage() {
     'Usage: npm run security:secrets -- [--base <ref>] [--head <ref>] [--full-history]',
     '',
     'By default the scan uses REMOGRAM_SECRET_SCAN_BASE_REF, TOPOGRAM_SECRET_SCAN_BASE_REF,',
-    'GITHUB_BASE_REF, origin/dev/scaffold, or origin/main when available.',
+    'GITHUB_BASE_REF, or origin/remo when available.',
     'Use --full-history when no reliable base ref exists or for release/manual verification.',
   ].join('\n');
 }
@@ -115,8 +115,7 @@ function resolveAutomaticBaseRef() {
     process.env.REMOGRAM_SECRET_SCAN_BASE_REF,
     process.env.TOPOGRAM_SECRET_SCAN_BASE_REF,
     process.env.GITHUB_BASE_REF ? `origin/${process.env.GITHUB_BASE_REF}` : null,
-    'origin/dev/scaffold',
-    'origin/main',
+    'origin/remo',
   ]) {
     if (candidate && resolveCommit(candidate, { required: false })) {
       return candidate;

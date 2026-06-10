@@ -4,6 +4,15 @@ Generic SCM/forge boundary CLI and MCP server. Emits provider-attributed, SHA-bo
 
 Sibling to [Topogram](https://github.com/attebury/topogram): Topogram models remogram in `topo/` during development; remogram has **no Topogram runtime dependency**.
 
+## Branch model
+
+| Branch | Role |
+|--------|------|
+| **`remo`** | Sole integration authority — merged product line, forge default, Merge Lane target |
+| **`goal/*`, `plan/*`** | Topogram lane archaeology and workflow branches (not integration authority) |
+
+Clone and open PRs against **`remo`**. Topogram commands in this repo use `--base origin/remo` unless reviewing a historical ref. See [AGENTS.md](AGENTS.md).
+
 ## Bootstrap
 
 ```bash
@@ -59,7 +68,7 @@ See [AGENTS.md](AGENTS.md).
 ```bash
 npm test              # full suite
 npm run test:coverage # remogram-core coverage report
-npm run security:secrets -- --base origin/dev/scaffold
+npm run security:secrets -- --base origin/remo
 ```
 
 Use `npm run security:secrets -- --full-history` when no reliable base ref exists.

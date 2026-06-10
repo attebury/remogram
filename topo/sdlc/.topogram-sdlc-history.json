@@ -493,5 +493,21 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "task_remogram_core": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-10T05:43:57.034Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-10T05:43:57.045Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    }
   ]
 }

@@ -1,6 +1,6 @@
 acceptance_criterion ac_remogram {
   name "Remogram v1 tests and repo status packet"
-  description "Given remogram is built from dev/scaffold, when npm test and remogram repo status --json run with valid config, then tests pass and repo_status packet has schema_version 1 and required envelope fields."
+  description "Given remogram is built from remo, when npm test and remogram repo status --json run with valid config, then tests pass and repo_status packet has schema_version 1 and required envelope fields."
   requirement req_remogram
   status approved
 }
