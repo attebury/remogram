@@ -1,0 +1,12 @@
+verification verification_forge_trust_round3 {
+  name "Forge trust round 3 test suite"
+  description "Regression tests for Gitea apiBase host binding, trustedHosts removal, MCP stderr sanitization."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round3_regression]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_gitea_api_host_binding_gap, bug_trusted_hosts_schema_drift, bug_mcp_stderr_leak]
+  status active
+}

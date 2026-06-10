@@ -1,0 +1,20 @@
+acceptance_criterion ac_gitea_api_host_binding {
+  name "Gitea API host binding in provider"
+  description "Given gitea-api config and parsed remote host, when apiBase runs, then API origin matches verified remote host and rejects baseUrl host mismatches before token use, mirroring github-api and gitlab-api."
+  requirement req_forge_trust_round3
+  status approved
+}
+
+acceptance_criterion ac_config_trusted_hosts_removed {
+  name "trustedHosts removed from config"
+  description "Given .remogram.json includes trustedHosts, when parseConfigFile runs, then CONFIG_INVALID or strict schema rejection occurs. Given .remogram.json.example, when maintainer copies it, then trustedHosts is absent."
+  requirement req_forge_trust_round3
+  status approved
+}
+
+acceptance_criterion ac_mcp_stderr_sanitized {
+  name "MCP parse-failure errors sanitized"
+  description "Given CLI returns non-JSON stdout and stderr contains token-like material, when packetToMcpContent runs, then error_message is sanitized and capped and does not contain the raw secret substring."
+  requirement req_forge_trust_round3
+  status approved
+}

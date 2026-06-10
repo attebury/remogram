@@ -1,0 +1,34 @@
+acceptance_criterion ac_test_mcp_security_battery {
+  name "MCP security test battery"
+  description "Given remogram-mcp stdio client and temp forge, when ref_compare receives invalid ref or pr_checks runs with token, then isError and envelope match expected codes. Given oversized CLI stdout, when callTool runs, then oversized_raw_output or isError."
+  requirement req_test_strategy_round3
+  status approved
+}
+
+acceptance_criterion ac_test_fetch_json_redirect {
+  name "fetchJson redirect rejection"
+  description "Given HTTP 301 response, when fetchJson runs, then ERROR_CODES.API_ERROR with redirect rejected message."
+  requirement req_test_strategy_round3
+  status approved
+}
+
+acceptance_criterion ac_test_default_providers_env_isolation {
+  name "default-providers env isolation"
+  description "Given GITLAB_TOKEN set in environment, when default-providers tests run with afterEach cleanup, then auth_present assertions remain stable and suite passes under env -u GITLAB_TOKEN."
+  requirement req_test_strategy_round3
+  status approved
+}
+
+acceptance_criterion ac_test_coverage_policy_documented {
+  name "Coverage policy documented"
+  description "Given README Testing section, when maintainer reads it, then core-only vitest coverage is documented as intentional and providers/MCP are covered by fixture tests and smoke."
+  requirement req_test_strategy_round3
+  status approved
+}
+
+acceptance_criterion ac_test_real_provider_cli_path {
+  name "Thin real-provider CLI integration"
+  description "Given temp forge with github-api config and mocked fetch where needed, when runCli sync plan or refs compare runs without mock provider injection, then envelope has schema_version 1 and expected type."
+  requirement req_test_strategy_round3
+  status approved
+}

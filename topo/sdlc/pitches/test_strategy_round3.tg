@@ -1,0 +1,12 @@
+pitch pitch_test_strategy_round3 {
+  name "Test Strategy Round 3 (Code Review)"
+  description "Close 2026-06-10 code review test gaps: MCP security battery, fetchJson redirect unit test, CLI env isolation, coverage policy honesty, optional thin real-provider CLI path."
+  appetite "small"
+  problem "MCP callTool tests omit ref injection, pr_checks, and truncation; fetchJson redirect only tested via fetchTextCapped; default-providers tests omit GITLAB_TOKEN cleanup; README does not document intentional core-only coverage scope."
+  solution_sketch "Extend tests/mcp/tools.test.mjs and mcp.test.mjs, http.test.mjs, default-providers.test.mjs; document coverage policy in README; optional commands-real-provider.test.mjs."
+  rabbit_holes "Live four-forge E2E in unit tests; mandatory coverage thresholds on all packages."
+  no_go_areas "New CLI commands; hand-editing command-owned sidecars."
+  affects [cap_forge_remote_ops cap_validate_workspace]
+  priority medium
+  status submitted
+}

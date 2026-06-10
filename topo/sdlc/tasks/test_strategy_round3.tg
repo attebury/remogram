@@ -1,0 +1,21 @@
+task task_test_strategy_round3 {
+  name "Implement test strategy round 3"
+  description "MCP security tests, fetchJson redirect, env isolation, README coverage policy, optional real-provider CLI test."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Live Gitea integration" "100% monorepo coverage" "New CLI commands"]
+  entrypoints ["tests/**" "README.md" "packages/remogram-mcp/**"]
+  satisfies [req_test_strategy_round3]
+  acceptance_refs [ac_test_mcp_security_battery ac_test_fetch_json_redirect ac_test_default_providers_env_isolation ac_test_coverage_policy_documented ac_test_real_provider_cli_path]
+  verification_refs [verification_remogram_test]
+  affects [cap_forge_remote_ops cap_validate_workspace]
+  blocked_by [task_git_helpers_shared]
+  architecture_patterns [contract_boundary, command_owned_mutation]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Test gap closure from code review; no new product bugs observed."
+  disposition active
+  priority medium
+  work_type testing
+  status unclaimed
+}

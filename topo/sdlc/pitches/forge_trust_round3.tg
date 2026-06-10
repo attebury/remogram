@@ -1,0 +1,12 @@
+pitch pitch_forge_trust_round3 {
+  name "Forge Trust Round 3"
+  description "Close third-pass code review gaps: Gitea API host binding parity with GitHub/GitLab, remove dead trustedHosts config, and cap/sanitize MCP stderr on CLI parse failures."
+  appetite "small"
+  problem "Round 2 closed redirect, git argv, and envelope issues but Gitea still builds API URLs from config.baseUrl without in-provider host verification; trustedHosts remains in schema/example though trustedBaseUrl ignores it; MCP packetToMcpContent embeds raw stderr on JSON parse failure."
+  solution_sketch "Mirror apiBase(config, parsed) in provider-gitea-api; remove trustedHosts from config schema and example; sanitize and cap stderr in remogram-mcp run-cli with regression tests."
+  rabbit_holes "Full MCP auth layer; rewriting round 2 records; expanding coverage to all packages."
+  no_go_areas "Mutation commands; hand-editing command-owned sidecars; live stub providers."
+  affects [cap_forge_remote_ops]
+  priority high
+  status submitted
+}
