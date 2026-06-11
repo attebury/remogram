@@ -1,0 +1,16 @@
+{
+  "number": 43,
+  "html_url": "https://github.com/owner/repo/pull/43",
+  "title": "Conflicted branch",
+  "state": "open",
+  "mergeable": false,
+  "mergeable_state": "dirty",
+  "base": {
+    "ref": "main",
+    "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "head": {
+    "ref": "feature/conflict",
+    "sha": "cccccccccccccccccccccccccccccccccccccccc"
+  }
+}

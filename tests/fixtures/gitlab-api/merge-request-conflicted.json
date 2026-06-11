@@ -1,0 +1,17 @@
+{
+  "id": 1002,
+  "iid": 43,
+  "web_url": "https://gitlab.com/owner/repo/-/merge_requests/43",
+  "title": "Conflicted GitLab MR",
+  "state": "opened",
+  "target_branch": "main",
+  "source_branch": "feature/conflict",
+  "sha": "cccccccccccccccccccccccccccccccccccccccc",
+  "detailed_merge_status": "cannot_be_merged",
+  "merge_status": "cannot_be_merged",
+  "has_conflicts": true,
+  "diff_refs": {
+    "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "head_sha": "cccccccccccccccccccccccccccccccccccccccc"
+  }
+}
