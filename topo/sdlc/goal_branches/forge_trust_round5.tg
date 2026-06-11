@@ -5,5 +5,5 @@ goal_branch goal_branch_forge_trust_round5 {
   task task_forge_trust_round5_wave4
   evidence_refs [local:topo/sdlc/pitches/forge_trust_round5.tg, local:topo/sdlc/requirements/forge_trust_round5.tg, local:topo/sdlc/plans/forge_trust_round4.tg, local:topo/sdlc/plans/forge_trust_round5.tg, local:topo/sdlc/decisions/stale_head_reconciliation.tg, local:topo/sdlc/decisions/auth_aware_capability_matrix.tg, local:topo/sdlc/decisions/packet_trust_doctrine.tg, local:topo/sdlc/bugs/forge-trust-round4.tg]
   witness_refs []
-  status active
+  status done
 }
