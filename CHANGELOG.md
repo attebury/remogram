@@ -4,11 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [0.1.0-beta.1] - 2026-06-11
+
 ### Changed
 
-- **Forge trust wave 1:** packet trust split in AGENTS.md and agent skills (envelope trusted, forge string leaves untrusted); `remogram doctor` sets `ok: false` and exit code 1 when checks fail; `sanitizeUrl` strips URL userinfo; public export scripts default secret-scan base to `origin/main` not `origin/remo`
+- **Forge trust round 4 (waves 1–4):** packet trust doctrine in AGENTS.md and agent skills (envelope trusted, forge string leaves untrusted); `remogram doctor` fail-closed (exit code 1 and `ok: false` when checks fail); `sanitizeUrl` strips URL userinfo; check pagination for GitHub, GitLab, and Gitea; Gitea check/PR state normalization; forge ingest cap in provider capabilities with optional env override warn; CONFIG_INVALID for disallowed config fields; MCP `pr_checks` schema validation; centralized core secret redaction; `refs compare` without forge token on API providers; stub provider doctor warn; export denylist regression test
 - Agent skill install docs: [`npx skills`](https://github.com/vercel-labs/skills) alongside `./scripts/install-agent-skills.sh`
 - `remogram-dogfood` marked `metadata.internal: true` (hidden from default `npx skills` discovery)
+
+### Fixed
+
+- Public export preflight failure when `export-public-main.sh` strips `dogfood-skills.list` before `npm test` in the export tree (PR #56)
 
 ## [0.1.0-beta.0] - 2026-06-10
 
@@ -27,4 +33,5 @@ All notable changes to this project will be documented in this file.
 - `github-gh` and `gitea-tea` provider IDs are reserved CLI-wrapper placeholders (not implemented); use `*-api` providers — GitLab's CLI is `glab` but has no wrapper ID yet (see README)
 - Payload-size smoke compare is not packaged in npm beta (monorepo dev tooling only)
 
+[0.1.0-beta.1]: https://github.com/attebury/remogram/releases/tag/v0.1.0-beta.1
 [0.1.0-beta.0]: https://github.com/attebury/remogram/releases/tag/v0.1.0-beta.0

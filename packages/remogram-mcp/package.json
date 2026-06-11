@@ -1,6 +1,6 @@
 {
   "name": "@remogram/mcp",
-  "version": "0.1.0-beta.0",
+  "version": "0.1.0-beta.1",
   "description": "Remogram MCP server delegating to CLI",
   "type": "module",
   "license": "MIT",
@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.0",
-    "@remogram/cli": "0.1.0-beta.0",
+    "@remogram/cli": "0.1.0-beta.1",
     "zod": "^3.25.76"
   }
 }
