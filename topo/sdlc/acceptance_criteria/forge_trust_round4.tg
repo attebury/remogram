@@ -51,28 +51,28 @@ acceptance_criterion ac_capabilities_ingest_facts {
   name "Capabilities report ingest and pagination facts"
   description "Given provider capabilities --json, when packet is returned, then forge_ingest_cap_bytes is 8192 by default and check_pagination describes behavior honestly."
   requirement req_forge_trust_round4
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_env_ingest_override_warn {
   name "Env ingest override reported in doctor"
   description "Given REMOGRAM_FORGE_INGEST_MAX_BYTES set, when doctor runs, then effective cap is reported and a warn check notes agent-safe guarantee is weakened."
   requirement req_forge_trust_round4
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_no_config_ingest_field {
   name "No ingest cap in config schema"
   description "Given .remogram.json with ingest_max_bytes field, when parseConfigFile runs, then CONFIG_INVALID strict rejection occurs."
   requirement req_forge_trust_round4
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_sha_language_precision {
   name "SHA-bound language precise in README and skills"
   description "Given README and remogram-core skill, when SHA-bound claims are read, then git-resolved refs are distinguished from forge-reported PR SHAs."
   requirement req_forge_trust_round4
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_mcp_pr_checks_schema {
