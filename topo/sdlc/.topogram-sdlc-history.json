@@ -2056,5 +2056,84 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "plan_forge_trust_round4#wave1_trust_doctor": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-11T16:12:16.418Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_forge_trust_round4#wave2_merge_integrity": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-11T16:12:16.668Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_forge_trust_round4#wave3_forge_ingest": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-11T16:12:16.982Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_forge_trust_round4#wave4_mcp_export": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-11T16:12:17.188Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_forge_trust_round4#verify": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-11T16:12:17.405Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_forge_trust_round4": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-11T16:12:17.610Z",
+      "by": "actor_integration_lane",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-11T16:12:22.076Z",
+      "by": "actor_integration_lane",
+      "note": "Waves 1-4 + verify on remo@897168b"
+    }
+  ],
+  "plan_forge_trust_round4#wave5_deferred": [
+    {
+      "from": "pending",
+      "to": "skipped",
+      "at": "2026-06-11T16:12:21.881Z",
+      "by": "actor_integration_lane",
+      "note": "Deferred to future forge trust wave 5 goal"
+    }
+  ],
+  "req_forge_trust_round4": [
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-11T16:12:37.020Z",
+      "by": "actor_integration_lane",
+      "note": "0.1.0-beta.1"
+    }
   ]
 }
