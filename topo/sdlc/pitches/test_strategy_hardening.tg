@@ -8,5 +8,5 @@ pitch pitch_test_strategy_hardening {
   no_go_areas "Rewriting forge trust fixes; mutation commands; hand-editing command-owned sidecars; approving Intent Packet without explicit user request; tests or coverage for dx/ agent progress logs."
   affects [cap_forge_remote_ops cap_validate_workspace]
   priority high
-  status submitted
+  status rejected
 }

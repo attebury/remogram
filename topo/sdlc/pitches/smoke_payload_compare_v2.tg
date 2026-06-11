@@ -8,5 +8,5 @@ pitch pitch_smoke_payload_compare_v2 {
   no_go_areas "Changing DEFAULT_MAX_BYTES; Topogram concepts in remogram output; npm publish; hand-editing command-owned sidecars."
   affects [cap_forge_remote_ops]
   priority medium
-  status submitted
+  status rejected
 }

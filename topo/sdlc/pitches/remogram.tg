@@ -8,5 +8,5 @@ pitch pitch_remogram {
   no_go_areas "SDLC fields in remogram output; cherry-picking legacy remogram code."
   affects [cap_forge_remote_ops]
   priority high
-  status submitted
+  status rejected
 }

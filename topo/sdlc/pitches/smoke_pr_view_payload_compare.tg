@@ -8,5 +8,5 @@ pitch pitch_smoke_pr_view_payload_compare {
   no_go_areas "Changing production ingest cap; Topogram concepts in remogram output; hand-editing command-owned sidecars."
   affects [cap_forge_remote_ops]
   priority medium
-  status submitted
+  status rejected
 }

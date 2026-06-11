@@ -8,5 +8,5 @@ pitch pitch_test_strategy_round3 {
   no_go_areas "New CLI commands; hand-editing command-owned sidecars."
   affects [cap_forge_remote_ops cap_validate_workspace]
   priority medium
-  status submitted
+  status rejected
 }
