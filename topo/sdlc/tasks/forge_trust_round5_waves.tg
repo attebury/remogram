@@ -61,10 +61,10 @@ task task_forge_trust_round5_wave3 {
   disposition active
   priority high
   work_type implementation
+  claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_refs_compare_requires_token bug_stub_provider_doctor_clean]
-  claimed_by [actor_coding_agent]
-  status in-progress
+  status done
 }
 
 task task_forge_trust_round5_wave4 {

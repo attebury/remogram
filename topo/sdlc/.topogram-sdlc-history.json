@@ -2552,6 +2552,16 @@
       "evidence_refs": [
         "local:impl-forge-trust-round5-wave3"
       ]
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-11T20:01:31.837Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "local:wave3-closeout"
+      ]
     }
   ],
   "decision_stale_head_reconciliation": [
@@ -2743,6 +2753,54 @@
       "at": "2026-06-11T19:49:22.835Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-11T20:01:22.787Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_forge_trust_round5#wave3_capability_matrix": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-11T20:01:31.719Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_refs_compare_requires_token": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-11T20:01:39.396Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-11T20:01:39.722Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_stub_provider_doctor_clean": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-11T20:01:43.400Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-11T20:01:43.683Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ]
 }
