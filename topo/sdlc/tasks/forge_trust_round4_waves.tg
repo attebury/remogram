@@ -86,5 +86,6 @@ task task_forge_trust_round4_wave4 {
   work_type bugfix
   bug_discovery bug_linked
   linked_bugs [bug_mcp_pr_checks_empty_args bug_export_denylist_untested bug_refs_compare_requires_token bug_stub_provider_doctor_clean bug_mcp_core_redaction_split bug_git_ahead_behind_unvalidated]
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  status in-progress
 }
