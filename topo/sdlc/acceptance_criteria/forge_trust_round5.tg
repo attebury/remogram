@@ -2,14 +2,14 @@ acceptance_criterion ac_stale_head_pr_by_number {
   name "STALE_HEAD when forge PR head diverges from local git"
   description "Given a PR resolved by number whose forge head_sha differs from locally resolved git rev for that PR head ref, when remogram pr view or pr checks runs, then packet ok is false and error_code is stale_head with portable head refs in the body."
   requirement req_forge_trust_round5
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_sha_language_narrowed {
   name "SHA-bound language scoped to git-resolved refs"
   description "Given README and remogram agent skills, when Trust or capability prose is read, then SHA-bound claims apply to git-resolved refs only and PR-by-number paths are described as forge metadata subject to reconciliation."
   requirement req_forge_trust_round5
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_config_stops_at_git_root {

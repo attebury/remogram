@@ -2474,6 +2474,23 @@
       "evidence_refs": [
         "origin/remo@0d27812"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-11T18:52:41.456Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "local:plan-claim-wave-round5-w1"
+      ]
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-11T18:52:50.840Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ],
   "decision_stale_head_reconciliation": [
@@ -2491,6 +2508,40 @@
       "to": "accepted",
       "at": "2026-06-11T17:04:31.651Z",
       "by": "actor_planning_lane",
+      "note": null
+    }
+  ],
+  "req_forge_trust_round5": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-11T18:52:40.487Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-11T18:52:40.804Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_stale_head_pr_by_number": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T18:52:41.040Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_sha_language_narrowed": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T18:52:41.253Z",
+      "by": "actor_coding_agent",
       "note": null
     }
   ]
