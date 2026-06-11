@@ -295,6 +295,13 @@
       "at": "2026-06-10T01:51:05.109Z",
       "by": "gpt-5.5",
       "note": null
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-11T16:14:12.432Z",
+      "by": "actor_integration_lane",
+      "note": "0.1.0-beta.1 on remo"
     }
   ],
   "ac_github_envelope_parity": [
@@ -2301,6 +2308,33 @@
       "at": "2026-06-11T16:13:59.747Z",
       "by": "actor_integration_lane",
       "note": "Tests on remo"
+    }
+  ],
+  "req_remogram": [
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-11T16:14:12.236Z",
+      "by": "actor_integration_lane",
+      "note": "0.1.0-beta.1 on remo"
+    }
+  ],
+  "req_smoke_pr_view_payload_compare": [
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-11T16:14:12.628Z",
+      "by": "actor_integration_lane",
+      "note": "0.1.0-beta.1 on remo"
+    }
+  ],
+  "req_smoke_payload_compare_v2": [
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-11T16:14:12.823Z",
+      "by": "actor_integration_lane",
+      "note": "0.1.0-beta.1 on remo"
     }
   ]
 }
