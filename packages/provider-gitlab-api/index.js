@@ -10,6 +10,7 @@ import {
   ERROR_CODES,
   forgeError,
   forgeIngestCapabilityFacts,
+  apiProviderCommands,
 } from '@remogram/core';
 
 const PUBLIC_GITLAB_HOST = 'gitlab.com';
@@ -22,7 +23,7 @@ const AUTH_CAPABILITIES = [
   'merge_plan',
   'sync_plan',
 ];
-const STRUCTURED_COMMANDS = AUTH_CAPABILITIES.map((name) => ({ name, implemented: true }));
+const STRUCTURED_COMMANDS = apiProviderCommands();
 
 export function gitlabToken() {
   return process.env.GITLAB_TOKEN || null;

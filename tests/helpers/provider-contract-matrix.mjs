@@ -64,6 +64,7 @@ const COMMANDS = new Set([
   'merge_plan',
   'sync_plan',
 ]);
+const AUTH_CLASSES = new Set(['none', 'git_only', 'token_required']);
 
 export function jsonResponse(body, status = 200) {
   return {
@@ -126,6 +127,7 @@ export function runProviderContractMatrix(cases) {
           for (const command of body.commands) {
             expect(COMMANDS.has(command.name)).toBe(true);
             expect(typeof command.implemented).toBe('boolean');
+            expect(AUTH_CLASSES.has(command.auth_class)).toBe(true);
           }
           expectBodyKeys(PACKET_TYPES.PROVIDER_CAPABILITIES, testCase, body);
         });
@@ -159,8 +161,8 @@ export function runProviderContractMatrix(cases) {
           expect(global.fetch).not.toHaveBeenCalled();
         });
 
-        it('emits the shared ref_compare body shape', async () => {
-          testCase.useAuth();
+        it('emits the shared ref_compare body shape without forge auth', async () => {
+          testCase.clearAuth();
 
           const body = await testCase.provider.refsCompare(testCase.ctx, 'HEAD', 'HEAD');
 
@@ -213,8 +215,8 @@ export function runProviderContractMatrix(cases) {
           expectBodyKeys(PACKET_TYPES.MERGE_PLAN, testCase, body);
         });
 
-        it('emits the shared sync_plan body shape', async () => {
-          testCase.useAuth();
+        it('emits the shared sync_plan body shape without forge auth', async () => {
+          testCase.clearAuth();
 
           const body = await testCase.provider.syncPlan(testCase.ctx, 'origin');
 

@@ -12,6 +12,7 @@ import {
   ERROR_CODES,
   forgeError,
   forgeIngestCapabilityFacts,
+  apiProviderCommands,
 } from '@remogram/core';
 
 const PUBLIC_GITHUB_HOST = 'github.com';
@@ -45,7 +46,7 @@ const AUTH_CAPABILITIES = [
   'sync_plan',
 ];
 
-const STRUCTURED_COMMANDS = AUTH_CAPABILITIES.map((name) => ({ name, implemented: true }));
+const STRUCTURED_COMMANDS = apiProviderCommands();
 
 export function githubToken() {
   if (process.env.GITHUB_TOKEN) return { token: process.env.GITHUB_TOKEN, env: 'GITHUB_TOKEN' };

@@ -223,7 +223,7 @@ Optional local pre-push gate: `./scripts/install-pre-push-hook.sh`.
 
 - Tests live under `tests/**/*.test.mjs` only.
 - Coverage (`npm run test:coverage`) reports **`packages/remogram-core`** only.
-- **`ref_compare`** on API providers requires a forge auth env var even though comparison uses local git; **`sync_plan`** does not.
+- **`ref_compare`** and **`sync_plan`** on API providers use local git only (`auth_class: git_only`); no forge token is required.
 - **CI:** GitHub Actions on push/PR to `main` (`.github/workflows/`).
 
 ## Packages
@@ -240,15 +240,26 @@ Optional local pre-push gate: `./scripts/install-pre-push-hook.sh`.
 
 ## Provider capabilities
 
-`remogram provider capabilities --json` returns structured provider facts: which commands are implemented, auth env names, check source support, mergeability confidence, host-binding mode, `pagination` (check listing behavior), `forge_ingest_cap_bytes` (effective raw HTTP ingest cap, default **8192**), and `write_support: false` for v1.
+`remogram provider capabilities --json` returns structured provider facts: which commands are implemented, per-command **`auth_class`** (`none`, `git_only`, or `token_required`), auth env names, check source support, mergeability confidence, host-binding mode, `pagination` (check listing behavior), `forge_ingest_cap_bytes` (effective raw HTTP ingest cap, default **8192**), and `write_support: false` for v1.
+
+### Auth class matrix (API providers)
+
+| Command | `auth_class` | Notes |
+|---------|--------------|-------|
+| `repo_status` | `none` | Runs without a token; default branch and full capability list require auth |
+| `ref_compare` | `git_only` | Resolves refs and ahead/behind via local git |
+| `sync_plan` | `git_only` | Compares local and remote-tracking SHAs via git |
+| `pr_status` | `token_required` | Forge REST/GraphQL |
+| `pr_checks` | `token_required` | Forge check/status APIs (ref mode still needs token for check fetch) |
+| `merge_plan` | `token_required` | Composes PR view and checks |
 
 Forge HTTP ingest is capped at **8192 bytes** by default (pre-parse). This is a product invariant — not a `.remogram.json` field. Operators may set undocumented `REMOGRAM_FORGE_INGEST_MAX_BYTES` for local debugging only; `remogram doctor --json` warns when that override weakens the agent-safe guarantee and reports the effective cap.
 
-For stub providers (`github-gh`, `gitea-tea`), every command shows `"implemented": false`. GitLab has no wrapper stub yet — use `gitlab-api`.
+For stub providers (`github-gh`, `gitea-tea`), every command shows `"implemented": false` with the same auth classes for documentation. **`remogram doctor --json`** warns that these providers are not fully supported before you invoke forge commands. GitLab has no wrapper stub yet — use `gitlab-api`.
 
 ## Doctor
 
-`remogram doctor --json` reports config presence/schema validity, git remote parsing, owner/repo matching, trusted host binding, auth env presence, and provider capabilities. It never returns token values.
+`remogram doctor --json` reports config presence/schema validity, git remote parsing, owner/repo matching, trusted host binding, auth env presence, and provider capabilities. Stub or misconfigured provider IDs (`github-gh`, `gitea-tea`) produce a **warn** on the provider check before any forge command runs. Doctor never returns token values.
 
 ## GitHub normalization notes
 

@@ -95,7 +95,7 @@ describe('packet contracts', () => {
 
   it('provider_capabilities', () => {
     const p = forgePacket(PACKET_TYPES.PROVIDER_CAPABILITIES, ctx, {
-      commands: [{ name: 'repo_status', implemented: true }],
+      commands: [{ name: 'repo_status', implemented: true, auth_class: 'none' }],
       auth_envs: ['GITEA_TOKEN'],
       check_sources: ['commit_statuses'],
       mergeability_confidence: 'direct',

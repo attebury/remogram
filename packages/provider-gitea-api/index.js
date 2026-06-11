@@ -10,6 +10,7 @@ import {
   ERROR_CODES,
   forgeError,
   forgeIngestCapabilityFacts,
+  apiProviderCommands,
 } from '@remogram/core';
 const PUBLIC_GITEA_HOST = 'gitea.com';
 const PUBLIC_GITEA_API = 'https://gitea.com/api/v1';
@@ -22,7 +23,7 @@ const AUTH_CAPABILITIES = [
   'sync_plan',
 ];
 
-const STRUCTURED_COMMANDS = AUTH_CAPABILITIES.map((name) => ({ name, implemented: true }));
+const STRUCTURED_COMMANDS = apiProviderCommands();
 
 export function giteaToken() {
   return process.env.GITEA_TOKEN || null;
