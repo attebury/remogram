@@ -1809,6 +1809,16 @@
       "evidence_refs": [
         "local:impl-wave1-start"
       ]
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-11T03:13:13.937Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "0de582a"
+      ]
     }
   ],
   "ac_packet_trust_doctrine": [
