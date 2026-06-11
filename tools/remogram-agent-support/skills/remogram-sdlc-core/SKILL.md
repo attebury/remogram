@@ -32,19 +32,25 @@ topogram query goal-branch-queue ./topo --base origin/remo --branches 'goal/*' -
 remogram repo status --json
 ```
 
-### Local topogram (maintainer checkout)
+### Local CLI on PATH (maintainer checkout)
 
-`topogram` is **not** a remogram dependency — the published `@remogram/*` package is
-topogram-free. Local development uses the sibling Topogram checkout. In this
-maintainer dogfood checkout, alias it for your session so the bare `topogram ...`
-commands in these skills resolve:
+Neither `topogram` nor `remogram` is a runtime dependency of the published
+`@remogram/*` package — public consumers stay topogram-free. In this maintainer
+dogfood checkout, link both CLIs once from your sibling/local checkouts so bare
+`topogram ...` and `remogram ...` in these skills resolve everywhere (including
+`observer-snapshot.sh`):
 
 ```bash
-alias topogram='node ../topogram/engine/src/cli.js'   # or a global install/link
+cd ../topogram/engine && npm link    # -> topogram on PATH
+cd ../../remogram/packages/remogram-cli && npm link   # -> remogram on PATH
 ```
 
-The `observer-snapshot.sh` proto already auto-detects the sibling engine; the lane
-skills assume `topogram` resolves to your local Topogram.
+Re-run `npm link` from the same directory after moving either checkout. To remove:
+`npm unlink -g @topogram/cli` / `npm unlink -g @remogram/cli`.
+
+The `observer-snapshot.sh` proto also auto-detects a sibling topogram engine if
+`topogram` is not on PATH; linking is preferred so lane skills and the snapshot
+both use the same invocation.
 
 ## Integration Authority (This Repo)
 
