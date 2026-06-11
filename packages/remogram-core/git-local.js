@@ -25,6 +25,8 @@ export function gitCurrentBranch(cwd) {
 }
 
 export function gitAheadBehind(cwd, base, head) {
+  assertGitRef(base, 'base');
+  assertGitRef(head, 'head');
   try {
     const out = gitExec(cwd, ['rev-list', '--left-right', '--count', `${base}...${head}`]);
     const [behind, ahead] = out.split(/\s+/).map(Number);

@@ -135,11 +135,23 @@ async function buildDoctorPacket(cwd, providers) {
   if (!provider) {
     checks.push(doctorCheck('provider', 'fail', `Unsupported provider: ${config.provider}`));
   } else {
-    checks.push(doctorCheck('provider', 'pass', `${config.provider} is registered`));
     if (typeof provider.providerCapabilities === 'function') {
       providerCapabilities = await provider.providerCapabilities(ctx);
+      const stubProvider =
+        providerCapabilities.commands?.length > 0
+        && providerCapabilities.commands.every((command) => command.implemented === false);
+      checks.push(
+        doctorCheck(
+          'provider',
+          stubProvider ? 'warn' : 'pass',
+          stubProvider
+            ? `${config.provider} is not implemented in v1; use an *-api provider`
+            : `${config.provider} is registered`,
+        ),
+      );
       checks.push(doctorCheck('capabilities', 'pass', 'Provider capabilities are available'));
     } else {
+      checks.push(doctorCheck('provider', 'pass', `${config.provider} is registered`));
       checks.push(doctorCheck('capabilities', 'fail', 'Provider capabilities are not implemented'));
     }
   }

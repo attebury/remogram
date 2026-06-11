@@ -71,6 +71,12 @@ describe('sanitizeField', () => {
   it('strips control characters', () => {
     expect(sanitizeField('a\x00b\x1fc')).toBe('a b c');
   });
+
+  it('redacts token patterns', () => {
+    expect(sanitizeField('Bearer ghp_abc123xyz leaked')).not.toMatch(/ghp_abc123xyz/);
+    expect(sanitizeField('Bearer ghp_abc123xyz leaked')).toContain('[REDACTED]');
+    expect(sanitizeField('token GITLAB_TOKEN in message')).not.toMatch(/GITLAB_TOKEN/);
+  });
 });
 
 describe('sanitizeUrl', () => {

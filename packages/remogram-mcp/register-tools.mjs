@@ -41,10 +41,15 @@ export function registerTools(server) {
     {
       name: 'pr_checks',
       description: 'CI/check conclusions for a PR number or git ref.',
-      inputSchema: z.object({
-        number: z.number().int().positive().optional(),
-        ref: z.string().optional(),
-      }),
+      inputSchema: z
+        .object({
+          number: z.number().int().positive().optional(),
+          ref: z.string().optional(),
+        })
+        .refine(
+          (input) => input.number != null || (input.ref != null && input.ref.trim() !== ''),
+          { message: '--number or --ref required for pr checks' },
+        ),
       args: (input) => {
         const a = ['pr', 'checks'];
         if (input.number != null) a.push('--number', String(input.number));

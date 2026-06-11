@@ -277,7 +277,6 @@ export function providerCapabilities() {
 
 export async function refsCompare(ctx, baseRef, headRef) {
   apiBase(ctx.config, ctx.parsed);
-  requireToken();
   assertGitRef(baseRef, 'base');
   assertGitRef(headRef, 'head');
   const baseSha = gitRevParse(ctx.cwd, baseRef);

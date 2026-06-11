@@ -180,6 +180,14 @@ describe('provider-github-api fixtures', () => {
     ]);
   });
 
+  it('refsCompare works without forge token', async () => {
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.GH_TOKEN;
+    const body = await provider.refsCompare(ctx, 'HEAD', 'HEAD');
+    expect(body.base_sha).toMatch(/^[0-9a-f]{40}$/);
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
   it('repoStatus falls back to GH_TOKEN', async () => {
     delete process.env.GITHUB_TOKEN;
     process.env.GH_TOKEN = 'gh-token';

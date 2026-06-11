@@ -110,24 +110,20 @@ describe('remogram-mcp callTool', () => {
   it('ref_compare resolves refs through MCP', async () => {
     const setup = setupGithubForge();
     cleanups.push(setup);
-    await withMcpClient(
-      setup.dir,
-      async (client) => {
-        const result = await client.callTool({
-          name: 'ref_compare',
-          arguments: { base: 'main', head: 'feature/smoke-1' },
-        });
-        expect(result.isError).toBe(false);
-        const packet = parseMcpPacket(result);
-        expectEnvelope(packet);
-        expect(packet.type).toBe(PACKET_TYPES.REF_COMPARE);
-        expect(packet.base_ref).toBe('main');
-        expect(packet.head_ref).toBe('feature/smoke-1');
-        expect(packet.ahead_by).toBe(1);
-        expect(packet.behind_by).toBe(0);
-      },
-      { GITHUB_TOKEN: 'test-token' },
-    );
+    await withMcpClient(setup.dir, async (client) => {
+      const result = await client.callTool({
+        name: 'ref_compare',
+        arguments: { base: 'main', head: 'feature/smoke-1' },
+      });
+      expect(result.isError).toBe(false);
+      const packet = parseMcpPacket(result);
+      expectEnvelope(packet);
+      expect(packet.type).toBe(PACKET_TYPES.REF_COMPARE);
+      expect(packet.base_ref).toBe('main');
+      expect(packet.head_ref).toBe('feature/smoke-1');
+      expect(packet.ahead_by).toBe(1);
+      expect(packet.behind_by).toBe(0);
+    });
   }, 15_000);
 
   it('ref_compare rejects invalid ref via MCP', async () => {
@@ -178,6 +174,16 @@ describe('remogram-mcp callTool', () => {
       const packet = parseMcpPacket(result);
       expect(packet.ok).toBe(false);
       expect(packet.type).toBe('forge_error');
+    });
+  }, 15_000);
+
+  it('pr_checks rejects empty input at MCP schema', async () => {
+    const setup = setupGithubForge();
+    cleanups.push(setup);
+    await withMcpClient(setup.dir, async (client) => {
+      const result = await client.callTool({ name: 'pr_checks', arguments: {} });
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toMatch(/--number or --ref required/i);
     });
   }, 15_000);
 

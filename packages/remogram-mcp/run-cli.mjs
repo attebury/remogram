@@ -20,9 +20,7 @@ function safeCliErrorMessage(stderr, stdout) {
   const capped = capText(raw, MAX_OUTPUT_BYTES);
   const sanitized = sanitizeField(capped.text);
   if (!sanitized) return 'CLI did not return JSON';
-  if (/Bearer\s|ghp_|gho_|glpat-|GITLAB_TOKEN|GITEA_TOKEN/i.test(sanitized)) {
-    return 'CLI did not return JSON';
-  }
+  if (sanitized.includes('[REDACTED]')) return 'CLI did not return JSON';
   return sanitized;
 }
 
