@@ -1,0 +1,6 @@
+{
+  "id": 123,
+  "path_with_namespace": "owner/repo",
+  "default_branch": "main",
+  "web_url": "https://gitlab.com/owner/repo"
+}

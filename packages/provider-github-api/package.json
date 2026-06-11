@@ -1,0 +1,27 @@
+{
+  "name": "@remogram/provider-github-api",
+  "version": "0.1.0-beta.2",
+  "description": "GitHub API provider for remogram",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/attebury/remogram.git",
+    "directory": "packages/provider-github-api"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "*.js"
+  ],
+  "exports": {
+    ".": "./index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@remogram/core": "0.1.0-beta.2"
+  }
+}
