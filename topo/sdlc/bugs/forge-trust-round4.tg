@@ -210,7 +210,8 @@ bug bug_git_ahead_behind_unvalidated {
 bug bug_config_parent_walk {
   name "Config discovery walks parent directories"
   description "findConfigPath can load .remogram.json outside intended repo root based on cwd."
-  status open
+  fixed_in [task_forge_trust_round5_wave2]
+  status fixed
   severity medium
   priority low
   affects [cap_forge_remote_ops]

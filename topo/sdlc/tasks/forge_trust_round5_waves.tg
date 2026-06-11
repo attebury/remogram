@@ -38,10 +38,10 @@ task task_forge_trust_round5_wave2 {
   disposition active
   priority high
   work_type bugfix
+  claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_config_parent_walk]
-  claimed_by [actor_coding_agent]
-  status in-progress
+  status done
 }
 
 task task_forge_trust_round5_wave3 {
