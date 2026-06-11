@@ -32,6 +32,20 @@ topogram query goal-branch-queue ./topo --base origin/remo --branches 'goal/*' -
 remogram repo status --json
 ```
 
+### Local topogram (maintainer checkout)
+
+`topogram` is **not** a remogram dependency — the published `@remogram/*` package is
+topogram-free. Local development uses the sibling Topogram checkout. In this
+maintainer dogfood checkout, alias it for your session so the bare `topogram ...`
+commands in these skills resolve:
+
+```bash
+alias topogram='node ../topogram/engine/src/cli.js'   # or a global install/link
+```
+
+The `observer-snapshot.sh` proto already auto-detects the sibling engine; the lane
+skills assume `topogram` resolves to your local Topogram.
+
 ## Integration Authority (This Repo)
 
 | Topic | Rule |

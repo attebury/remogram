@@ -21,7 +21,7 @@ Queue/work-next: (--base origin/remo)
 Evidence_class: authoritative | unlinked | stale | advisory
 Stop condition:
 Next lane: (Review Lane or Plan Lane from Plan; Merge Lane only after Review classifies safe_for_merge_lane — never combined)
-Classification: (Review Gate only)
+Classification: (Review Lane only)
 ```
 
 ## Standard Packet Envelope (required at every boundary)
@@ -46,7 +46,7 @@ Emit **both** the semi-structured handoff block above **and** this Topogram-shap
 }
 ```
 
-When delegating to a subagent, parent lane may also emit `lane_delegation` (advisory; parent retains mutations). Review Gate classifies `missing_packet_envelope` if this JSON block is absent.
+When delegating to a subagent, parent lane may also emit `lane_delegation` (advisory; parent retains mutations). Review Lane classifies `missing_packet_envelope` if this JSON block is absent.
 
 ## Issue Promotion Preflight (Plan Lane)
 
@@ -337,18 +337,18 @@ Preflight:
 - Create integrate/<slug> from current origin/remo
 
 Task:
-Land command-owned sidecar only: verification runs jsonl, SDLC prep/history, lifecycle mutations required for Closeout Gate.
+Land command-owned sidecar only: verification runs jsonl, SDLC prep/history, lifecycle mutations required to satisfy the closeout guard.
 
 Rules:
 - PR title integrate:<slug> — authority/integration commitment rung
 - PR base remo; no packages/** product features unless bugfix for sidecar tooling
 - topogram sdlc prep commit . --json before commit
 - topogram check . --json before push/PR
-- Forbidden: declare task done from this PR without Closeout Gate evidence
+- Forbidden: declare task done from this PR without closeout-guard evidence
 
 After push:
 - Report handoff with Artifact_rung: integration_pr
-- Next lane: Proof Gate then Closeout Gate (not Release)
+- Next: evaluate the proof guard then the closeout guard (edge predicates per decision_lane_canon), then route to stop — not Release
 ```
 
 ## Integration: Goal cluster closeout
