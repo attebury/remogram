@@ -16,7 +16,7 @@ acceptance_criterion ac_config_stops_at_git_root {
   name "Config discovery stops at git root"
   description "Given a nested working directory without .remogram.json but a parent directory outside the repo git root has .remogram.json, when remogram loads config, then it does not bind to the parent config and returns CONFIG_NOT_FOUND or uses only in-repo config."
   requirement req_forge_trust_round5
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_capabilities_auth_classes {

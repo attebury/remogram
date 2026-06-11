@@ -2626,5 +2626,14 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "ac_config_stops_at_git_root": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T19:26:55.502Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
   ]
 }
