@@ -3,5 +3,5 @@ decision decision_forge_ingest_cap_policy {
   description "Remogram keeps DEFAULT_MAX_BYTES 8192 as the default raw forge HTTP ingest cap (pre-parse). It is a product security invariant for agent-safe boundaries, not a .remogram.json field. Consumer repos must not commit per-repo ingest limits. Operators may override via undocumented REMOGRAM_FORGE_INGEST_MAX_BYTES env for local debugging only; doctor and provider capabilities must report the effective cap. Fixing pr_checks and merge_plan oversize failures uses pagination, field selection, and normalized bounded output — not raising the global default or adding config schema fields."
   context ["Paranoid architecture review 2026-06: 8 KiB cap breaks legitimate check-run payloads but prevents unbounded hostile ingest", "GitHub pr view already uses GraphQL field selection under the cap", "Configurable .remogram.json cap would erode portable agent guarantees and team policy drift"]
   consequences ["No ingest_max_bytes in config schema v1", "provider capabilities include forge_ingest_cap_bytes and check_pagination facts", "README and skills narrow SHA-bound language to git-resolved refs", "Optional env override documented as breaks agent-safe guarantee"]
-  status proposed
+  status accepted
 }

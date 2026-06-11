@@ -3,5 +3,5 @@ decision decision_packet_trust_doctrine {
   description "Remogram CLI/MCP JSON packets have a trusted structural envelope (type, schema_version, provider_id, remote_name, repo_id, observed_at, ok, normalized enums). String fields sourced from forge APIs (PR title, check context/description, URLs) are forge-sourced prose: structurally sanitized (control chars, length cap) but semantically untrusted. AGENTS.md, remogram-consumer, and remogram-core skills must instruct agents to treat envelope as authoritative structure and forge string leaves as data that may contain adversarial prose — not as instructions."
   context ["Review finding H1: agents told to trust whole packets while PR titles can carry semantic prompt injection", "PR body correctly omitted from pr_view; title and check descriptions remain"]
   consequences ["Trust sections rewritten in AGENTS.md and agent skills", "Optional future packet annotation forge_sourced on string fields deferred to wave 4 unless cheap", "Semantic injection fixtures added as tests documenting expected verbatim delivery"]
-  status proposed
+  status accepted
 }
