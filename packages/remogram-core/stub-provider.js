@@ -1,4 +1,5 @@
 import { ERROR_CODES, forgeError } from './contracts/errors.js';
+import { stubProviderCommands } from './auth-classes.js';
 
 export function createStubProvider(id) {
   function unsupported() {
@@ -8,14 +9,7 @@ export function createStubProvider(id) {
   }
   function providerCapabilities() {
     return {
-      commands: [
-        { name: 'repo_status', implemented: false },
-        { name: 'ref_compare', implemented: false },
-        { name: 'pr_status', implemented: false },
-        { name: 'pr_checks', implemented: false },
-        { name: 'merge_plan', implemented: false },
-        { name: 'sync_plan', implemented: false },
-      ],
+      commands: stubProviderCommands(),
       auth_envs: [],
       check_sources: [],
       mergeability_confidence: 'unknown',

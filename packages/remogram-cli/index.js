@@ -151,7 +151,7 @@ async function buildDoctorPacket(cwd, providers) {
           'provider',
           stubProvider ? 'warn' : 'pass',
           stubProvider
-            ? `${config.provider} is not implemented in v1; use an *-api provider`
+            ? `${config.provider} is not fully supported in v1; use an *-api provider`
             : `${config.provider} is registered`,
         ),
       );

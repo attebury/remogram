@@ -131,7 +131,38 @@ describe('remogram cli commands', () => {
         expect.objectContaining({
           name: 'provider',
           status: 'warn',
-          message: expect.stringMatching(/not implemented/i),
+          message: expect.stringMatching(/not fully supported/i),
+        }),
+      ]),
+    );
+  });
+
+  it('doctor warns on gitea-tea stub provider', async () => {
+    const config = {
+      version: '1',
+      provider: 'gitea-tea',
+      owner: 'owner',
+      repo: 'repo',
+      remote: 'origin',
+    };
+    const setup = setupTempForge({
+      config,
+      remoteUrl: 'https://localhost:3000/owner/repo.git',
+    });
+    cleanups.push(setup);
+    const { provider: giteaTea } = await import('@remogram/provider-gitea-tea');
+    const providers = { 'gitea-tea': giteaTea };
+    const { logs } = await captureCliOutput(() =>
+      runCli(['doctor', '--json'], { cwd: setup.dir, providers }),
+    );
+    const packet = JSON.parse(logs[0]);
+    expect(packet.summary).toBe('warn');
+    expect(packet.checks).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: 'provider',
+          status: 'warn',
+          message: expect.stringMatching(/not fully supported/i),
         }),
       ]),
     );

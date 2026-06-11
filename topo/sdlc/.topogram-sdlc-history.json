@@ -2542,6 +2542,16 @@
       "evidence_refs": [
         "local:wave2-closeout"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-11T19:51:16.526Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "local:impl-forge-trust-round5-wave3"
+      ]
     }
   ],
   "decision_stale_head_reconciliation": [
@@ -2717,6 +2727,22 @@
       "at": "2026-06-11T19:44:19.644Z",
       "by": "actor_coding_agent",
       "note": null
+    }
+  ],
+  "task_forge_trust_round5_wave3": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-11T19:49:22.809Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-11T19:49:22.835Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ]
 }
