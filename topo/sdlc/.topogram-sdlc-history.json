@@ -1993,6 +1993,58 @@
       "at": "2026-06-11T02:42:38.764Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-11T02:44:52.362Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_mcp_pr_checks_schema": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T02:44:51.360Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_export_denylist_test": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T02:44:51.545Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_refs_compare_no_token": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T02:44:51.732Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_stub_doctor_warn": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T02:44:51.924Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_core_secret_redaction": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T02:44:52.116Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ]
 }
