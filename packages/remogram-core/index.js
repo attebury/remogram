@@ -12,7 +12,7 @@ export {
   forgeIngestCapabilityFacts,
 } from './caps.js';
 export { assertGitRef, assertGitRemote } from './git-args.js';
-export { gitRevParse, gitCurrentBranch, gitAheadBehind } from './git-local.js';
+export { gitRevParse, gitCurrentBranch, gitAheadBehind, gitRepoRoot } from './git-local.js';
 export {
   localHeadShaForPr,
   staleHeadDetails,

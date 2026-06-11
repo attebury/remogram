@@ -1,20 +1,35 @@
 import { execFileSync } from 'node:child_process';
-import { readFileSync, existsSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { readFileSync, existsSync, realpathSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 import { parseConfigFile } from './config-schema.js';
 import { ERROR_CODES, forgeError } from './contracts/errors.js';
 import { assertGitRemote } from './git-args.js';
+import { gitRepoRoot } from './git-local.js';
 
 const HOST_ALIASES = new Map([
   ['localhost:3000', '127.0.0.1:3000'],
   ['127.0.0.1:3000', 'localhost:3000'],
 ]);
 
+function samePath(a, b) {
+  try {
+    return realpathSync(a) === realpathSync(b);
+  } catch {
+    return resolve(a) === resolve(b);
+  }
+}
+
 export function findConfigPath(startDir = process.cwd()) {
+  const repoRoot = gitRepoRoot(startDir);
   let dir = startDir;
   while (true) {
     const candidate = join(dir, '.remogram.json');
     if (existsSync(candidate)) return candidate;
+    if (repoRoot) {
+      if (samePath(dir, repoRoot)) break;
+    } else {
+      break;
+    }
     const parent = dirname(dir);
     if (parent === dir) break;
     dir = parent;
