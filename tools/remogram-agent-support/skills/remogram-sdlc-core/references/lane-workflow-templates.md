@@ -414,7 +414,7 @@ Example `observer_report`:
   },
   "blockers": [],
   "wip": { "dirty_worktree": false },
-  "next_actor": "review_gate",
+  "next_actor": "review_lane",
   "next_commands": [
     "topogram query goal-branch-queue ./topo --base origin/remo --branches 'goal/*' --json"
   ],
@@ -422,14 +422,17 @@ Example `observer_report`:
 }
 ```
 
-**Runbook**
+**Runbook** (actors-only enum per Topogram `decision_lane_canon`: `plan_lane`,
+`implement_lane`, `review_lane`, `verify_lane`, `merge_lane`, `integration_lane`,
+`retro_lane`, `open_issue`, `stop`)
 
 1. Merge Lane done → run snapshot with `OBSERVER_BASE=origin/remo`
 2. If queue shows approved goal + selectable task → `next_actor: implement_lane`
-3. If open planning PR needs review → `next_actor: review_gate`
-4. If impl merged but receipt unlinked → `next_actor: integration_lane` (wave closeout)
-5. If all cluster tasks done and goal_branch still active with check red → `next_actor: integration_lane` (goal cluster closeout)
-6. If ambiguous → `next_actor: stop` and list blockers
+3. If open planning PR needs review → `next_actor: review_lane`
+4. If reviewed PR needs target-bound proof → `next_actor: verify_lane`
+5. If impl merged but receipt unlinked → `next_actor: integration_lane` (wave closeout)
+6. If all cluster tasks done and goal_branch still active with check red → `next_actor: integration_lane` (goal cluster closeout)
+7. If ambiguous → `next_actor: stop` and list blockers
 
 ## Retro: Advisory Report
 

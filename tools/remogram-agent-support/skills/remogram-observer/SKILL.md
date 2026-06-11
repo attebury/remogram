@@ -53,8 +53,14 @@ you used in the handoff block.
 
 ### next_actor enum
 
-`plan_lane` | `implement_lane` | `review_gate` | `merge_lane` | `integration_lane` |
-`proof_gate` | `closeout_gate` | `retro_lane` | `open_issue` | `stop`
+`plan_lane` | `implement_lane` | `review_lane` | `verify_lane` | `merge_lane` |
+`integration_lane` | `retro_lane` | `open_issue` | `stop`
+
+Actors-only per Topogram `decision_lane_canon`: `review_gate` is renamed
+**`review_lane`**, **`verify_lane`** is added, and the former `proof_gate` /
+`closeout_gate` are **edge predicates evaluated during a routing tick**, not
+routing destinations. Each routing tick reads trusted-envelope packet fields
+only and emits exactly one actor or a fail-closed `stop`.
 
 Fail closed to **`stop`** when two lanes are equally valid or required preflight is missing.
 
