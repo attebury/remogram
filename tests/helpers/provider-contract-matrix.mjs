@@ -69,6 +69,9 @@ export function jsonResponse(body, status = 200) {
     ok: status >= 200 && status < 300,
     status,
     statusText: status === 200 ? 'OK' : 'Error',
+    headers: {
+      get: () => null,
+    },
     body: {
       [Symbol.asyncIterator]: async function* () {
         yield Buffer.from(JSON.stringify(body));

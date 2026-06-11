@@ -1,5 +1,7 @@
 import {
   fetchJson,
+  fetchJsonWithMeta,
+  parseLinkHeader,
   sanitizeField,
   sanitizeUrl,
   assertGitRef,
@@ -149,6 +151,24 @@ export async function githubFetch(config, parsed, path, options = {}) {
   });
 }
 
+const MAX_CHECK_PAGES = 50;
+
+export async function githubFetchPaginated(config, parsed, path, slice) {
+  const base = apiBase(config, parsed);
+  const { token } = requireToken();
+  const all = [];
+  let url = `${base}${path}`;
+  for (let page = 0; page < MAX_CHECK_PAGES && url; page += 1) {
+    const { body, headers } = await fetchJsonWithMeta(url, {
+      headers: authHeaders(token),
+    });
+    all.push(...slice(body));
+    const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
+    url = parseLinkHeader(linkHeader).next ?? null;
+  }
+  return all;
+}
+
 export function graphqlEndpoint(config, parsed = {}) {
   const remoteHost = (parsed.host || configuredHost(config) || '').toLowerCase();
   if (remoteHost === PUBLIC_GITHUB_HOST) {
@@ -248,7 +268,7 @@ export function providerCapabilities() {
     check_sources: ['commit_statuses', 'check_runs'],
     mergeability_confidence: 'derived',
     host_binding: 'verified_remote_host',
-    pagination: 'first_page_only',
+    pagination: 'supported',
     write_support: false,
   };
 }
@@ -359,16 +379,20 @@ export async function prChecks(ctx, opts) {
     });
   }
 
-  const [statuses, checkRuns] = await Promise.all([
-    githubFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'commits', sha, 'statuses')),
-    githubFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'commits', sha, 'check-runs')),
+  const statusPath = repoApiPath(ctx.config, 'commits', sha, 'statuses');
+  const checkRunsPath = repoApiPath(ctx.config, 'commits', sha, 'check-runs');
+  const [statusRecords, checkRunRecords] = await Promise.all([
+    githubFetchPaginated(ctx.config, ctx.parsed, statusPath, (body) =>
+      Array.isArray(body) ? body : [],
+    ),
+    githubFetchPaginated(ctx.config, ctx.parsed, checkRunsPath, (body) => body?.check_runs ?? []),
   ]);
-  const mappedStatuses = (statuses || []).map((s) => ({
+  const mappedStatuses = statusRecords.map((s) => ({
     context: sanitizeField(s.context),
     state: normalizeCommitStatusState(s.state),
     description: sanitizeField(s.description),
   }));
-  const mappedCheckRuns = (checkRuns?.check_runs || []).map((run) => ({
+  const mappedCheckRuns = checkRunRecords.map((run) => ({
     context: sanitizeField(run.name),
     state: normalizeCheckRunState(run),
     description: sanitizeField(checkRunDescription(run)),

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { provider, repoApiPath, apiBase } from '@remogram/provider-gitea-api';
+import { provider, repoApiPath, apiBase, normalizeGiteaStatusState, normalizeGiteaPrState } from '@remogram/provider-gitea-api';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const fixtures = join(__dirname, '../fixtures/gitea-api');
@@ -148,5 +148,79 @@ describe('provider-gitea-api fixtures', () => {
     expect(body.check_conclusion).toBe('success');
     expect(body.statuses).toHaveLength(1);
     expect(body.statuses[0].context).toBe('ci/gate');
+  });
+
+  it('normalizes mixed-case Gitea status states before summarizeChecks', async () => {
+    global.fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify(load('pull.json')));
+          },
+        },
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(
+              JSON.stringify([
+                {
+                  context: 'ci/gate',
+                  state: 'Success',
+                  description: 'ok',
+                },
+              ]),
+            );
+          },
+        },
+      });
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.check_conclusion).toBe('success');
+    expect(body.statuses[0].state).toBe('success');
+  });
+
+  it('mergePlan treats Closed PR state as not open', async () => {
+    const closedPull = {
+      ...load('pull.json'),
+      state: 'Closed',
+    };
+    const pullResponse = {
+      ok: true,
+      status: 200,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify(closedPull));
+        },
+      },
+    };
+    global.fetch
+      .mockResolvedValueOnce(pullResponse)
+      .mockResolvedValueOnce(pullResponse)
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify([]));
+          },
+        },
+      });
+    const body = await provider.mergePlan(ctx, { number: 1 });
+    expect(body.blockers).toContain('pr_not_open');
+  });
+
+  it('normalizeGitea helpers map aliases', () => {
+    expect(normalizeGiteaStatusState('Success')).toBe('success');
+    expect(normalizeGiteaStatusState('ERROR')).toBe('failure');
+    expect(normalizeGiteaPrState('Open')).toBe('open');
+    expect(normalizeGiteaPrState('closed')).toBe('closed');
+  });
+
+  it('providerCapabilities reports supported pagination', () => {
+    expect(provider.providerCapabilities().pagination).toBe('supported');
   });
 });
