@@ -119,7 +119,12 @@ topogram query goal-branch-queue ./topo --base origin/remo --branches 'goal/*' -
 
 Done for claim-wave when the named task’s wave is **selectable** or **ready** on
 the queue (or blockers are reported explicitly in the handoff). Do not transition
-task status to claimed — that is Implement Lane.
+task status to claimed — that is Implement Lane. Optional: transition
+`goal_branch` **`approved → active`** at first claim-wave when the Intent Packet
+enters execution (document evidence ref in handoff).
+
+**Intent Packet completion (`active → done`)** is **Integration Lane** goal cluster
+closeout — not Plan Lane. See Topogram `decision_goal_cluster_closeout_integration_lane`.
 
 ## Freshness Preflight
 

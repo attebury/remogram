@@ -135,6 +135,9 @@ Until Worklane tooling is fully automated, use this manual split:
   when another worktree owns it.
 - Serialize planning PRs that touch command-owned sidecars: merge one to `remo`,
   refresh from `origin/remo`, then create or push the next.
+- **Intent Packet completion:** after the last wave integrate PR merges, Integration Lane
+  opens `integrate:<goal-id>-cluster-closeout` with command-owned
+  `goal_branch` `active → done` only (see `decision_goal_cluster_closeout_integration_lane`).
 - Plan lane prompts must include preflight: fetch `origin/remo`; create or refresh
   `goal/*` from `origin/remo`; clean worktree; latest merged planning PR on `remo`;
   refuse stale bases.

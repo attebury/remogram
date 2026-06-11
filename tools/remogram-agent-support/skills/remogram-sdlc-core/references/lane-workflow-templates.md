@@ -351,6 +351,36 @@ After push:
 - Next lane: Proof Gate then Closeout Gate (not Release)
 ```
 
+## Integration: Goal cluster closeout
+
+```text
+You are Integration Lane (remogram dogfood).
+
+Preflight:
+- git fetch origin
+- Confirm all plan-linked cluster tasks are done on origin/remo
+- Confirm final wave integrate PR merged; no open impl/integrate PRs for this goal
+- Confirm goal_branch_<id>.status is still active
+- topogram check . --json — expect goal lifecycle advisory until transition
+- Create integrate/<goal-id>-cluster-closeout from current origin/remo
+
+Task:
+Land command-owned sidecar only: sdlc transition goal_branch_<id> done,
+SDLC prep/history, no product code.
+
+Rules:
+- PR title integrate:<goal-id>-cluster-closeout — authority/integration commitment rung
+- PR base remo; sidecar and lifecycle mutations only
+- topogram sdlc transition goal_branch_<id> done . --actor <actor> --evidence-ref <sha> --write --json
+- topogram sdlc prep commit . --json before commit
+- topogram check . --json must be ok before push/PR
+- Forbidden: goal_branch done before all cluster tasks done; goal_branch transition on wave closeout PR
+
+After push:
+- Report handoff with Artifact_rung: integration_pr
+- Next lane: Observer (expect stop when topogram check green)
+```
+
 ## Observer: Branch Workcycle snapshot
 
 Run proto snapshot (topogram checkout):
@@ -397,8 +427,9 @@ Example `observer_report`:
 1. Merge Lane done → run snapshot with `OBSERVER_BASE=origin/remo`
 2. If queue shows approved goal + selectable task → `next_actor: implement_lane`
 3. If open planning PR needs review → `next_actor: review_gate`
-4. If impl merged but receipt unlinked → `next_actor: integration_lane`
-5. If ambiguous → `next_actor: stop` and list blockers
+4. If impl merged but receipt unlinked → `next_actor: integration_lane` (wave closeout)
+5. If all cluster tasks done and goal_branch still active with check red → `next_actor: integration_lane` (goal cluster closeout)
+6. If ambiguous → `next_actor: stop` and list blockers
 
 ## Retro: Advisory Report
 
