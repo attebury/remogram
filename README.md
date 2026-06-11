@@ -221,6 +221,27 @@ Optional local pre-push gate: `./scripts/install-pre-push-hook.sh`.
 | CLI integration | `tests/cli/` | Read-only commands via `runCli` with mock provider |
 | MCP | `tests/mcp/` | Tool listing, offline `callTool`, packet shaping |
 
+### Coverage policy
+
+`npm test` runs the **full** suite (core, providers, CLI, and MCP).  
+`npm run test:coverage` runs the same tests but emits a **v8 coverage report for `@remogram/core` only** — configured in `vitest.config.js`.
+
+| Package / layer | In `npm test` | In `npm run test:coverage` |
+|-----------------|---------------|----------------------------|
+| `@remogram/core` (`packages/remogram-core/**`) | yes | **included** |
+| `@remogram/cli` | yes (`tests/cli/`) | excluded |
+| `@remogram/mcp` | yes (`tests/mcp/`) | excluded |
+| `@remogram/provider-*` | yes (`tests/provider/`) | excluded |
+
+Policy details (must match `vitest.config.js`):
+
+- **Provider:** `@vitest/coverage-v8` with `coverage.all: false` (instrument only files reached by executing tests).
+- **Include:** `packages/remogram-core/**/*.js` only.
+- **Exclude:** CLI, MCP, all providers, `dx/**`, and test files.
+- **Thresholds:** none — no enforced percentage gates in vitest config or CI for v1.
+
+To change coverage include/exclude lists or add thresholds, update this section, the matching `vitest.config.js` fields, and keep `tests/core/coverage-config.test.mjs` green (see `ac_coverage_no_silent_drift`).
+
 - Tests live under `tests/**/*.test.mjs` only.
 - Coverage (`npm run test:coverage`) reports **`packages/remogram-core`** only.
 - **`ref_compare`** and **`sync_plan`** on API providers use local git only (`auth_class: git_only`); no forge token is required.

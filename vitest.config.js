@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitest/config';
 
+/** Coverage policy: remogram-core only; MCP/CLI/providers tested but not instrumented. See README § Testing. */
 export default defineConfig({
   test: {
     include: ['tests/**/*.test.mjs'],

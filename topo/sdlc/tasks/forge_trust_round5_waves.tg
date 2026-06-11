@@ -85,5 +85,6 @@ task task_forge_trust_round5_wave4 {
   priority medium
   work_type implementation
   bug_discovery no_bug_observed
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  status in-progress
 }
