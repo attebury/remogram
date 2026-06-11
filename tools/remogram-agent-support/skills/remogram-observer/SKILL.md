@@ -48,7 +48,7 @@ you used in the handoff block.
 ## Synthesize
 
 1. Parse `observer_snapshot.packets` (agent brief, work status, goal-branch-queue, sdlc gate, remogram repo status).
-2. Build commitment-rung inventory: open `goal/*`, draft vs approved goals, blocked queue items, dirty worktree, unlinked receipts.
+2. Build commitment-rung inventory: open `goal/*`, draft vs approved goals, blocked queue items, dirty worktree, unlinked receipts, **goal_branch `active` with all cluster tasks `done`**.
 3. Emit **`observer_report`** v1 with singular `next_actor`.
 
 ### next_actor enum
@@ -57,6 +57,14 @@ you used in the handoff block.
 `proof_gate` | `closeout_gate` | `retro_lane` | `open_issue` | `stop`
 
 Fail closed to **`stop`** when two lanes are equally valid or required preflight is missing.
+
+**Goal cluster closeout routing:** when impl merged and receipt unlinked → `integration_lane`
+(wave closeout). When all cluster tasks are `done` on `origin/remo`, `goal_branch.status`
+is still `active`, and `topogram check` reports goal lifecycle advisory →
+`integration_lane` with handoff template **Goal cluster closeout**. When cluster
+closeout merged and `topogram check` is green → `stop`.
+
+Cross-ref Topogram `decision_goal_cluster_closeout_integration_lane`.
 
 ## Delegation (optional)
 
