@@ -64,6 +64,29 @@ only and emits exactly one actor or a fail-closed `stop`.
 
 Fail closed to **`stop`** when two lanes are equally valid or required preflight is missing.
 
+### Routing graph (edges)
+
+Per Topogram `decision_lane_routing_graph`, the Branch Workcycle is a **total graph**
+(every node has an outgoing edge; `stop` is reachable from every node):
+
+```
+open_issue -> plan_lane -> implement_lane -> review_lane
+review_lane -> merge_lane            (review safe)
+review_lane -> implement_lane        (needs changes)
+review_lane -> plan_lane             (stale / superseded)
+merge_lane  -> verify_lane -> integration_lane
+integration_lane -> integration_lane (proof guard: wave closeout)
+integration_lane -> stop             (closeout guard true)
+stop -> retro_lane                   (friction found / TTL tick)
+retro_lane -> open_issue
+<any non-terminal> -> stop           (operational failure -> typed blocker; see Wave 4)
+```
+
+`release_lane` is a deferred terminal boundary (out of scope for v1). Advisory
+per-node tiers (`default_subagent_type` / `model_policy`): plan_lane=plan_high_thinking,
+implement_lane=implement_medium, review_lane=review_balanced, verify_lane/merge_lane=gate_fast,
+integration_lane=implement_medium, observer ticks=gate_fast (synthesis=plan_high_thinking).
+
 **Goal cluster closeout routing:** when impl merged and receipt unlinked → `integration_lane`
 (wave closeout). When all cluster tasks are `done` on `origin/remo`, `goal_branch.status`
 is still `active`, and `topogram check` reports goal lifecycle advisory →
