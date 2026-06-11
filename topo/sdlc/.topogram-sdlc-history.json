@@ -2234,5 +2234,14 @@
       "by": "actor_integration_lane",
       "note": "Merged on remo"
     }
+  ],
+  "req_forge_trust_round2": [
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-11T16:13:51.260Z",
+      "by": "actor_integration_lane",
+      "note": "Archived goal; impl on remo"
+    }
   ]
 }
