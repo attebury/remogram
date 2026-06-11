@@ -5,7 +5,7 @@ plan plan_forge_trust_round5 {
   architecture_patterns [contract_boundary, fail_closed_gate, command_owned_mutation]
   priority critical
   steps {
-    step wave1_stale_head status pending description "STALE_HEAD reconciliation for pr view/checks by number; narrow SHA-bound language; accept decision_stale_head_reconciliation."
+    step wave1_stale_head status done description "STALE_HEAD reconciliation for pr view/checks by number; narrow SHA-bound language; accept decision_stale_head_reconciliation."
     step wave2_config_root status pending description "Bound findConfigPath to git root; regression test for parent walk escape."
     step wave3_capability_matrix status pending description "Per-command auth_class in capabilities; doctor stub warn; accept decision_auth_aware_capability_matrix."
     step wave4_coverage_policy status pending description "README + vitest coverage policy honesty; no silent threshold drift."
