@@ -1,0 +1,72 @@
+verification verification_semantic_diff_fact_inventory_wave1 {
+  name "Semantic diff fact inventory wave 1"
+  description "Fact packet model docs and boundary decision acceptance proof."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [semantic_diff_fact_inventory_wave1]
+  proof_commands {
+    command topogram_check argv ["topogram" "check" "." "--json"]
+  }
+  status active
+}
+
+verification verification_semantic_diff_fact_inventory_wave2 {
+  name "Semantic diff fact inventory wave 2"
+  description "Ref inventory packet contract and git-root binding tests."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [semantic_diff_fact_inventory_wave2]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status active
+}
+
+verification verification_semantic_diff_fact_inventory_wave3 {
+  name "Semantic diff fact inventory wave 3"
+  description "CR/check/merge aggregation contract tests."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [semantic_diff_fact_inventory_wave3]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status active
+}
+
+verification verification_semantic_diff_fact_inventory_wave4 {
+  name "Semantic diff fact inventory wave 4"
+  description "Observer integration and MCP read-only exposure tests."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [semantic_diff_fact_inventory_wave4]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status active
+}
+
+verification verification_semantic_diff_fact_inventory_wave5 {
+  name "Semantic diff fact inventory wave 5"
+  description "Topogram consumer example documentation review proof."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [semantic_diff_fact_inventory_wave5]
+  proof_commands {
+    command topogram_check argv ["topogram" "check" "." "--json"]
+  }
+  status active
+}
+
+verification verification_semantic_diff_fact_inventory_wave6 {
+  name "Semantic diff fact inventory wave 6"
+  description "Full contract test suite, smoke validation, doctor/capabilities honesty."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [semantic_diff_fact_inventory_wave6]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+    command topogram_check argv ["topogram" "check" "." "--json"]
+  }
+  status active
+}
