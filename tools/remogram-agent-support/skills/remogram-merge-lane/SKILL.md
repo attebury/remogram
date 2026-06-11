@@ -72,20 +72,40 @@ Merge Lane is not done until post-merge handoff from **`origin/remo`**:
 
 1. Confirm **`origin/remo`** tip matches merge result.
 2. Confirm worktree clean.
-3. Run read-only queue/status:
+3. **Archive ref move (skills-only closeout):** when the merged PR is not an
+   `integrate:*` PR, archive the PR head branch per Topogram
+   `decision_workcycle_branch_archive`:
+
+```bash
+git fetch origin
+REMO_SHA="$(git rev-parse origin/remo)"
+../topogram/tools/branch-workcycle/archive-goal-branch.sh . \
+  --source <goal-branch-from-pr-head> \
+  --merge-commit "$REMO_SHA" \
+  --integration-ref "origin/remo@${REMO_SHA}" \
+  --run-kind skills_only \
+  --dry-run   # remove for --write after human confirms dry-run ok
+```
+
+Use `--write` to move the remote ref and append a local index line to
+`topo/sdlc/.topogram-workcycle-archive.jsonl`. Land index sidecar via integrate PR
+when batching pilot archives. Skip when PR head is not `goal/*` or when an
+`integrate:*` PR owns closeout (Integration Lane archives instead).
+
+4. Run read-only queue/status:
 
 ```bash
 topogram query goal-branch-queue ./topo --base origin/remo --branches 'goal/*' --json
 topogram work status . --json
 ```
 
-4. Do not start implementation or mutate lifecycle state.
+5. Do not start implementation or mutate lifecycle state.
 
 Do not stop after reporting only the merge commit — include queue/work-next
 from current **`origin/remo`** in the standard handoff block.
 
-Report PR URL, merge commit, **`origin/remo`** SHA, checks performed,
-queue/work-next result, and next safe lane.
+Report PR URL, merge commit, **`origin/remo`** SHA, archive report (if run),
+checks performed, queue/work-next result, and next safe lane.
 
 Post-merge routing: suggest **`/remogram-observer`** when the human asks what lane
 runs next. Observer is advisory only; it does not replace queue or gate packets.
