@@ -1861,6 +1861,13 @@
       "at": "2026-06-10T22:28:52.371Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-11T01:59:54.676Z",
+      "by": "cursor-agent",
+      "note": null
     }
   ]
 }
