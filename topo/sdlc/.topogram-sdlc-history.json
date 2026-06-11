@@ -2243,5 +2243,64 @@
       "by": "actor_integration_lane",
       "note": "Archived goal; impl on remo"
     }
+  ],
+  "plan_test_strategy_followup": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-11T16:13:58.536Z",
+      "by": "actor_integration_lane",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-11T16:13:58.731Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_test_strategy_hardening": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-11T16:13:58.925Z",
+      "by": "actor_integration_lane",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-11T16:13:59.119Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "req_test_strategy_followup": [
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-11T16:13:59.317Z",
+      "by": "actor_integration_lane",
+      "note": "Tests on remo"
+    }
+  ],
+  "req_test_strategy_hardening": [
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-11T16:13:59.541Z",
+      "by": "actor_integration_lane",
+      "note": "Tests on remo"
+    }
+  ],
+  "req_test_strategy_round3": [
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-11T16:13:59.747Z",
+      "by": "actor_integration_lane",
+      "note": "Tests on remo"
+    }
   ]
 }

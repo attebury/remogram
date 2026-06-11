@@ -12,5 +12,5 @@ plan plan_test_strategy_followup {
     step ci_host_docs status done description "L5: Document GitHub Actions vs Gitea in README and/or add .gitea/workflows/test.yml mirror."
     step verify status done description "npm test, test:coverage, topogram check green; refresh from dev/scaffold if PR #8 landed after branch cut."
   }
-  status draft
+  status complete
 }
