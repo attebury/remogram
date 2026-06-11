@@ -1,0 +1,12 @@
+pitch pitch_forge_trust_round5 {
+  name "Forge Trust Round 5 — Deferred Beta Hardening"
+  description "Fifth forge-trust wave deferred from plan_forge_trust_round4 step wave5_deferred after 0.1.0-beta.1: STALE_HEAD reconciliation for PR-by-number paths, git-root config discovery, auth-aware capability matrix, and MCP/core coverage policy honesty."
+  appetite "medium"
+  problem "Round 4 shipped waves 1–4 but deferred four trust gaps: pr view/checks by number still treat forge head_sha as ground truth without local reconciliation; findConfigPath walks parent directories past git root; provider capabilities and doctor overstate token requirements for git-only commands; MCP vs core vitest scope lacks explicit policy."
+  solution_sketch "Four serialized waves plus verify: (1) emit STALE_HEAD when forge PR head diverges from local git, narrow SHA-bound language per decision_packet_trust_doctrine; (2) bound config discovery to repository git root; (3) auth-aware capability matrix and doctor honesty; (4) document or adjust coverage scope with explicit non-goals."
+  rabbit_holes "Raising 8 KiB ingest cap; .remogram.json cap fields; full semantic prompt firewall; per-field forge_sourced schema; npm publish; mutation commands."
+  no_go_areas "Reopening Round 4 satisfied records; rewriting rounds 1–4 archaeology; hand-editing command-owned sidecars."
+  affects [cap_forge_remote_ops]
+  priority critical
+  status draft
+}

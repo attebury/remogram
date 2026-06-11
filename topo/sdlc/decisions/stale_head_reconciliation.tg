@@ -1,0 +1,7 @@
+decision decision_stale_head_reconciliation {
+  name "STALE_HEAD for PR-by-number forge paths"
+  description "When remogram resolves pr view or pr checks by PR number (not by explicit git ref), forge-reported head SHA is forge metadata — not worktree-ground-truth. Compare against locally resolved git state for the PR head ref; emit error_code stale_head and ok:false when they diverge. SHA-bound product language applies to git-resolved refs only."
+  context ["Round 4 deferred wave5; bug_sha_bound_overclaim; decision_packet_trust_doctrine accepted; STALE_HEAD exists in contracts/errors.js but unused"]
+  consequences ["pr view/checks by number include reconciliation signal when local git stale", "README and skills narrow universal SHA-bound claims", "Agents treat stale_head as refresh/fetch signal not forge outage"]
+  status proposed
+}

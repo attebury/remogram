@@ -1,0 +1,10 @@
+requirement req_forge_trust_round5 {
+  name "Remogram post-beta trust wave 5 — STALE_HEAD, config root, capabilities, coverage"
+  description "Remogram must reconcile PR-by-number forge head SHAs against local git and emit stale_head when they diverge; load .remogram.json only within the repository git root; report auth requirements honestly in provider capabilities and doctor; and document MCP vs core vitest coverage policy without silent scope drift."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  pitch pitch_forge_trust_round5
+  priority critical
+  status draft
+}

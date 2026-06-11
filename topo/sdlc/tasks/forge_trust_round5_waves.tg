@@ -1,0 +1,86 @@
+task task_forge_trust_round5_wave1 {
+  name "Wave 1 — STALE_HEAD reconciliation"
+  description "Implement decision_stale_head_reconciliation: compare forge PR head_sha to local git for pr view/checks by number; emit STALE_HEAD; narrow SHA-bound language in README and skills."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Semantic packet schema redesign" "Per-field forge_sourced annotation" "Mutation commands"]
+  entrypoints ["packages/remogram-core/contracts/errors.js" "packages/provider-gitea-api/**" "packages/provider-github-api/**" "packages/remogram-cli/index.js" "README.md" "tools/remogram-agent-support/skills/**"]
+  satisfies [req_forge_trust_round5]
+  acceptance_refs [ac_stale_head_pr_by_number ac_sha_language_narrowed]
+  verification_refs [verification_forge_trust_round5_wave1]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority critical
+  work_type bugfix
+  bug_discovery bug_linked
+  linked_bugs [bug_sha_bound_overclaim]
+  status unclaimed
+}
+
+task task_forge_trust_round5_wave2 {
+  name "Wave 2 — Config discovery bounded to git root"
+  description "Stop findConfigPath at repository git root; reject parent-directory .remogram.json pickup from nested cwd."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Changing trustedHosts policy" "Multi-repo workspace support"]
+  entrypoints ["packages/remogram-core/resolve.js" "tests/core/**"]
+  satisfies [req_forge_trust_round5]
+  acceptance_refs [ac_config_stops_at_git_root]
+  verification_refs [verification_forge_trust_round5_wave2]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round5_wave1]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  bug_discovery bug_linked
+  linked_bugs [bug_config_parent_walk]
+  status unclaimed
+}
+
+task task_forge_trust_round5_wave3 {
+  name "Wave 3 — Auth-aware capability matrix"
+  description "Implement decision_auth_aware_capability_matrix: per-command auth_class in capabilities; doctor stub/misconfig warnings; README auth matrix."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["New provider implementations" "Token storage changes"]
+  entrypoints ["packages/remogram-core/**" "packages/provider-*/index.js" "packages/remogram-cli/index.js" "README.md" "tests/core/**" "tests/provider/**"]
+  satisfies [req_forge_trust_round5]
+  acceptance_refs [ac_capabilities_auth_classes ac_doctor_stub_warn]
+  verification_refs [verification_forge_trust_round5_wave3]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round5_wave2]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type implementation
+  bug_discovery bug_linked
+  linked_bugs [bug_refs_compare_requires_token bug_stub_provider_doctor_clean]
+  status unclaimed
+}
+
+task task_forge_trust_round5_wave4 {
+  name "Wave 4 — MCP/core coverage policy revisit"
+  description "Document vitest coverage scope for MCP vs core; adjust config only where AC requires; avoid drive-by threshold churn."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["100% coverage mandate" "Publishing npm packages" "Expanding MCP integration test suite beyond policy gaps"]
+  entrypoints ["README.md" "vitest.config.*" "package.json" "tests/**"]
+  satisfies [req_forge_trust_round5]
+  acceptance_refs [ac_coverage_policy_documented ac_coverage_no_silent_drift]
+  verification_refs [verification_forge_trust_round5_wave4]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round5_wave3]
+  architecture_patterns [contract_boundary]
+  disposition active
+  priority medium
+  work_type implementation
+  bug_discovery no_bug_observed
+  status unclaimed
+}
