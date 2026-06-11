@@ -48,7 +48,7 @@ you used in the handoff block.
 ## Synthesize
 
 1. Parse `observer_snapshot.packets` (agent brief, work status, goal-branch-queue, sdlc gate, remogram repo status).
-2. Build commitment-rung inventory: open `goal/*`, draft vs approved goals, blocked queue items, dirty worktree, unlinked receipts, **goal_branch `active` with all cluster tasks `done`**.
+2. Build commitment-rung inventory: open `goal/*`, draft vs approved goals, blocked queue items, dirty worktree, unlinked receipts, **goal_branch `active` with all cluster tasks `done`**. **`archive/workcycle/*` refs are excluded** from default `goal-branch-queue` scan (`--branches 'goal/*'`). Optional: read `topo/sdlc/.topogram-workcycle-archive.jsonl` on `origin/remo` for historical branch lookup.
 3. Emit **`observer_report`** v1 with singular `next_actor`.
 
 ### next_actor enum
@@ -149,5 +149,6 @@ Prose-only output is tier-2; Review may classify `missing_packet_envelope` on pr
 ## Cross-refs
 
 - Topogram `decision_observer_routing_advisory`
+- Topogram `decision_workcycle_branch_archive`
 - Topogram `plan_forge_branch_workcycle_observer`
 - Remogram `decision_remogram_observer_routing_advisory` (if present on goal branch)

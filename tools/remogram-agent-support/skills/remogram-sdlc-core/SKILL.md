@@ -149,6 +149,14 @@ Until Worklane tooling is fully automated, use this manual split:
   command-owned workflow.
 - A merged `goal/*` ref is historical evidence. Do not start implementation from it
   or fast-forward it to `remo` to satisfy `base_not_ancestor`.
+- **Branch archive:** active queue scan uses **`goal/*` only** (`--branches 'goal/*'`).
+  Closed branches move to **`archive/workcycle/<slug>`** at closeout (same SHA; old
+  `goal/*` ref deleted). Append-only index:
+  `topo/sdlc/.topogram-workcycle-archive.jsonl` on the integration tip. Cross-ref
+  Topogram `decision_workcycle_branch_archive`. Merge Lane archives skills-only PR
+  heads post-merge; Integration Lane archives `goal_branch.branch_ref` after cluster
+  closeout. Lifecycle `goal_branch.status archived` on `remo` and git ref move are
+  paired but distinct.
 - Implementation starts from current `origin/remo` in a fresh branch after work start.
   Do not implement on a planning `goal/*` branch unless a current packet says so.
 - Merge Lane owns **`remo`**. Plan and Implement lanes do not checkout local `remo`

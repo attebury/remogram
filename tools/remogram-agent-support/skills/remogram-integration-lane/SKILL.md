@@ -15,8 +15,8 @@ bug closeout fields empty), or when all cluster tasks are **`done`** but
 Templates: `remogram-sdlc-core/references/lane-workflow-templates.md`
 (Integration: Sidecar PR, Integration: Goal cluster closeout).
 
-Cross-ref Topogram `decision_goal_cluster_closeout_integration_lane` and
-`term_goal_cluster_closeout`.
+Cross-ref Topogram `decision_goal_cluster_closeout_integration_lane`,
+`decision_workcycle_branch_archive`, and `term_goal_cluster_closeout`.
 
 ## Required boundary output
 
@@ -90,4 +90,26 @@ Stop if implementation not merged or worktree dirty.
 
 Report handoff with `Artifact_rung: integration_pr`. Wave closeout evaluates the
 proof guard, then the closeout guard (edge predicates per Topogram `decision_lane_canon`,
-not routing destinations). Goal cluster closeout → Observer (`stop` when `topogram check` green).
+not routing destinations). Goal cluster closeout → archive + Observer.
+
+### Post-closeout archive (goal cluster closeout only)
+
+After **`integrate:<goal-id>-cluster-closeout`** merges and `goal_branch` is
+`done` or `archived` on `origin/remo`, archive `goal_branch.branch_ref` per
+Topogram `decision_workcycle_branch_archive`:
+
+```bash
+git fetch origin
+REMO_SHA="$(git rev-parse origin/remo)"
+../topogram/tools/branch-workcycle/archive-goal-branch.sh . \
+  --source <goal_branch.branch_ref> \
+  --merge-commit "$REMO_SHA" \
+  --integration-ref "origin/remo@${REMO_SHA}" \
+  --goal-branch-id <goal_branch_id> \
+  --run-kind intent_packet \
+  --dry-run   # --write after dry-run ok
+```
+
+Use `--write` for the remote ref move; land index sidecar via integrate PR when
+batching. Wave closeout integrate PRs do not archive — only cluster closeout or
+Merge Lane (skills-only) paths trigger archive.

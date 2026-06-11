@@ -298,10 +298,41 @@ Merge PR <n> to remo if all invariants hold.
 
 After merge:
 - Confirm origin/remo tip
+- Archive ref move (skills-only): if PR head is goal/<slug> and PR is not integrate:*,
+  run archive-goal-branch.sh per decision_workcycle_branch_archive (--dry-run first)
 - topogram query goal-branch-queue ./topo --base origin/remo --branches 'goal/*' --json
 - Do not start follow-up work
 
-Done = handoff block includes queue/work-next from origin/remo.
+Done = handoff block includes archive report (if run) and queue/work-next from origin/remo.
+```
+
+## Archive: Ref move at closeout
+
+```text
+Archive ref move (Merge Lane skills-only or Integration Lane cluster closeout).
+
+Preflight:
+- git fetch origin
+- Confirm closeout complete (merge commit on origin/remo or cluster-closeout merged)
+- Confirm source ref is goal/<slug> from PR head or goal_branch.branch_ref
+
+Task:
+../topogram/tools/branch-workcycle/archive-goal-branch.sh . \
+  --source goal/<slug> \
+  --merge-commit <origin/remo tip sha> \
+  --integration-ref origin/remo@<sha> \
+  [--goal-branch-id <id>] \
+  --run-kind skills_only|intent_packet \
+  --dry-run
+
+Rules:
+- Cross-ref Topogram decision_workcycle_branch_archive
+- Idempotent: archive/workcycle/<slug> at same SHA → ok no-op
+- --write moves remote ref and appends local index line to topo/sdlc/.topogram-workcycle-archive.jsonl
+- Land index sidecar via integrate PR when batching pilot archives
+- Non-authority: does not replace merge or lifecycle evidence on remo
+
+Report workcycle_archive_report JSON in handoff block.
 ```
 
 ## Verify: Target-Bound Proof
@@ -379,6 +410,7 @@ Rules:
 After push:
 - Report handoff with Artifact_rung: integration_pr
 - Next lane: Observer (expect stop when topogram check green)
+- After cluster-closeout merge: archive goal_branch.branch_ref (archive-goal-branch.sh, decision_workcycle_branch_archive)
 ```
 
 ## Observer: Branch Workcycle snapshot
