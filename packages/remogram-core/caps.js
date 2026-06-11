@@ -38,7 +38,17 @@ export function sanitizeField(value, maxBytes = DEFAULT_FIELD_MAX_BYTES) {
     .replace(/[\x00-\x1f\x7f]/g, ' ')
     .replace(/\r?\n/g, ' ')
     .trim();
-  return capText(singleLine, maxBytes).text;
+  const redacted = redactSecretPatterns(singleLine);
+  return capText(redacted, maxBytes).text;
+}
+
+function redactSecretPatterns(text) {
+  return text
+    .replace(/Bearer\s+\S+/gi, 'Bearer [REDACTED]')
+    .replace(/\bghp_[A-Za-z0-9]+\b/g, '[REDACTED]')
+    .replace(/\bgho_[A-Za-z0-9]+\b/g, '[REDACTED]')
+    .replace(/\bglpat-[A-Za-z0-9_-]+\b/g, '[REDACTED]')
+    .replace(/\b(GITHUB_TOKEN|GH_TOKEN|GITLAB_TOKEN|GITEA_TOKEN)\b/gi, '[REDACTED]');
 }
 
 export function sanitizeUrl(value, maxBytes = DEFAULT_FIELD_MAX_BYTES) {

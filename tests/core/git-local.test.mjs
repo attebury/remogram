@@ -54,4 +54,10 @@ describe('git-local helpers', () => {
     const feature = gitRevParse(dir, 'feature/x');
     expect(gitAheadBehind(dir, main, feature)).toEqual({ ahead_by: 1, behind_by: 0 });
   });
+
+  it('gitAheadBehind rejects option injection refs', () => {
+    const dir = setupRepo();
+    cleanups.push(dir);
+    expect(() => gitAheadBehind(dir, '--show-toplevel', 'main')).toThrow(/must not start with '-'/);
+  });
 });

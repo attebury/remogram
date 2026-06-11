@@ -106,6 +106,37 @@ describe('remogram cli commands', () => {
     );
   });
 
+  it('doctor warns on stub provider', async () => {
+    const config = {
+      version: '1',
+      provider: 'github-gh',
+      owner: 'owner',
+      repo: 'repo',
+      remote: 'origin',
+    };
+    const setup = setupTempForge({
+      config,
+      remoteUrl: 'https://github.com/owner/repo.git',
+    });
+    cleanups.push(setup);
+    const { provider: githubGh } = await import('@remogram/provider-github-gh');
+    const providers = { 'github-gh': githubGh };
+    const { logs } = await captureCliOutput(() =>
+      runCli(['doctor', '--json'], { cwd: setup.dir, providers }),
+    );
+    const packet = JSON.parse(logs[0]);
+    expect(packet.summary).toBe('warn');
+    expect(packet.checks).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: 'provider',
+          status: 'warn',
+          message: expect.stringMatching(/not implemented/i),
+        }),
+      ]),
+    );
+  });
+
   it('doctor fails closed on config mismatch', async () => {
     const config = { ...defaultTestConfig(), owner: 'wrong-owner' };
     const setup = setupTempForge({
