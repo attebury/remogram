@@ -8,5 +8,5 @@ pitch pitch_forge_trust_round3 {
   no_go_areas "Mutation commands; hand-editing command-owned sidecars; live stub providers."
   affects [cap_forge_remote_ops]
   priority high
-  status submitted
+  status rejected
 }

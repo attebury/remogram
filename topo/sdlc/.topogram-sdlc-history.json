@@ -2336,5 +2336,95 @@
       "by": "actor_integration_lane",
       "note": "0.1.0-beta.1 on remo"
     }
+  ],
+  "pitch_forge_trust_round2": [
+    {
+      "from": "submitted",
+      "to": "rejected",
+      "at": "2026-06-11T16:14:48.885Z",
+      "by": "actor_integration_lane",
+      "note": "Superseded by forge trust round 4; req satisfied on remo"
+    }
+  ],
+  "pitch_forge_trust_round3": [
+    {
+      "from": "submitted",
+      "to": "rejected",
+      "at": "2026-06-11T16:14:49.291Z",
+      "by": "actor_integration_lane",
+      "note": "Superseded by forge trust round 4; req satisfied on remo"
+    }
+  ],
+  "pitch_forge_trust_hardening": [
+    {
+      "from": "submitted",
+      "to": "rejected",
+      "at": "2026-06-11T16:14:49.699Z",
+      "by": "actor_integration_lane",
+      "note": "Delivered; req_forge_trust_hardening satisfied on remo"
+    }
+  ],
+  "pitch_forge_trust_round4": [
+    {
+      "from": "submitted",
+      "to": "rejected",
+      "at": "2026-06-11T16:14:50.134Z",
+      "by": "actor_integration_lane",
+      "note": "Delivered; req_forge_trust_round4 satisfied on remo"
+    }
+  ],
+  "pitch_remogram": [
+    {
+      "from": "submitted",
+      "to": "rejected",
+      "at": "2026-06-11T16:14:50.537Z",
+      "by": "actor_integration_lane",
+      "note": "Delivered; req_remogram satisfied on remo"
+    }
+  ],
+  "pitch_smoke_payload_compare_v2": [
+    {
+      "from": "submitted",
+      "to": "rejected",
+      "at": "2026-06-11T16:14:50.942Z",
+      "by": "actor_integration_lane",
+      "note": "Delivered; req_smoke_payload_compare_v2 satisfied on remo"
+    }
+  ],
+  "pitch_smoke_pr_view_payload_compare": [
+    {
+      "from": "submitted",
+      "to": "rejected",
+      "at": "2026-06-11T16:14:51.423Z",
+      "by": "actor_integration_lane",
+      "note": "Delivered; req_smoke_pr_view_payload_compare satisfied on remo"
+    }
+  ],
+  "pitch_test_strategy_followup": [
+    {
+      "from": "submitted",
+      "to": "rejected",
+      "at": "2026-06-11T16:14:51.832Z",
+      "by": "actor_integration_lane",
+      "note": "Delivered; req_test_strategy_followup satisfied on remo"
+    }
+  ],
+  "pitch_test_strategy_hardening": [
+    {
+      "from": "submitted",
+      "to": "rejected",
+      "at": "2026-06-11T16:14:52.236Z",
+      "by": "actor_integration_lane",
+      "note": "Delivered; req_test_strategy_hardening satisfied on remo"
+    }
+  ],
+  "pitch_test_strategy_round3": [
+    {
+      "from": "submitted",
+      "to": "rejected",
+      "at": "2026-06-11T16:14:52.681Z",
+      "by": "actor_integration_lane",
+      "note": "Delivered; req_test_strategy_round3 satisfied on remo"
+    }
   ]
 }
