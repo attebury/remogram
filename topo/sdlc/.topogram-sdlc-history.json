@@ -1884,6 +1884,40 @@
       "at": "2026-06-11T02:02:43.853Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-11T02:26:08.232Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_check_pagination_complete": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T02:26:03.861Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_gitea_state_normalization": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T02:26:04.048Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_merge_plan_page2_failure": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T02:26:04.234Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ]
 }

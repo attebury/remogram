@@ -30,21 +30,21 @@ acceptance_criterion ac_check_pagination_complete {
   name "Check listing paginates until exhausted"
   description "Given mocked forge APIs with failing check on page 2, when pr_checks runs, then check_conclusion is failure and merge_plan includes checks_failed blocker."
   requirement req_forge_trust_round4
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_gitea_state_normalization {
   name "Gitea states normalized to shared enum"
   description "Given Gitea API returns mixed-case or alias states, when pr_checks and pr_view run, then states map to success failure pending error or open closed before summarizeChecks."
   requirement req_forge_trust_round4
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_merge_plan_page2_failure {
   name "Merge plan sees page-2 check failure"
   description "Given GitHub check-runs page 2 contains conclusion failure, when merge plan --number runs, then blockers includes checks_failed."
   requirement req_forge_trust_round4
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_capabilities_ingest_facts {
