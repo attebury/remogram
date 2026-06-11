@@ -2802,5 +2802,23 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "ac_coverage_policy_documented": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T20:07:37.057Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_coverage_no_silent_drift": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T20:07:37.261Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
   ]
 }
