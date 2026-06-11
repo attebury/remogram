@@ -18,6 +18,10 @@ For paste-ready prompts and the standard handoff block, use
 `remogram-sdlc-core/references/lane-workflow-templates.md` and
 `remogram-dogfood/references/lane-prompts.md`.
 
+## Required boundary output
+
+Every lane stop must emit **both** the Standard Handoff Block and the **Standard Packet Envelope** JSON from `lane-workflow-templates.md`. Prose-only output is tier-2; Review may classify `missing_packet_envelope`.
+
 ## Role
 
 Plan Lane creates and refines planning records. It may prepare, approve, or
@@ -32,6 +36,15 @@ Allowed:
 - Classify stale, duplicate, superseded, cleanup, dependency-blocked, or
   conditionally-ready planning state.
 - Open or update planning PRs with base **`remo`** (Gitea `origin`).
+
+## Issue promotion preflight
+
+Before creating a **new** `goal/*` branch:
+
+1. Search `topo/sdlc` for related records (future: `topogram query sdlc-search`).
+2. **Explore-only** → open a Gitea issue (intent rung); no `topo/` commit required.
+3. **Durable design** → refresh an existing goal cluster or open `plan:draft` on `goal/<name>`.
+4. Chat and agent prose are **not** backlog authority (`decision_issue_before_planning_pr` on Topogram).
 
 Forbidden:
 

@@ -12,7 +12,9 @@ tools/remogram-agent-support/skills/
 ├── remogram-implement-lane/ # Implement Lane (internal, experiment)
 ├── remogram-reviewer/       # Review Lane (internal, experiment)
 ├── remogram-verify-lane/    # Verify Lane (internal, experiment)
-└── remogram-merge-lane/     # Merge Lane (internal, experiment)
+├── remogram-merge-lane/     # Merge Lane (internal, experiment)
+├── remogram-integration-lane/ # Integration Lane (internal, experiment)
+└── remogram-observer/       # Read-only Branch Workcycle router (internal)
 ```
 
 **Public:** only `remogram-consumer` and `remogram-core` (via GitHub / `npx skills`).
@@ -47,8 +49,9 @@ Restore when done: `./scripts/park-topogram-skills.sh unpark`
 | Order | Skill |
 |-------|--------|
 | 1 | `remogram-sdlc-core` |
-| 2 | Lane skill (`remogram-plan-lane`, `remogram-implement-lane`, `remogram-reviewer`, `remogram-verify-lane`, `remogram-merge-lane`) |
+| 2 | Lane skill (`remogram-plan-lane`, `remogram-implement-lane`, `remogram-reviewer`, `remogram-verify-lane`, `remogram-merge-lane`, `remogram-integration-lane`) |
 | 3 | `remogram-dogfood` (Gitea forge + merge proof) |
+| + | `remogram-observer` after `remogram-sdlc-core` for routing only — no lane mutations after |
 | + | `remogram-core` when editing `packages/**` |
 
 Do **not** load `topogram-core` or `topogram-*-lane` in this repo while the experiment runs.

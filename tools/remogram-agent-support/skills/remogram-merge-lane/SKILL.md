@@ -16,6 +16,10 @@ merges a reviewed PR to **`remo`**.
 
 Templates: `remogram-sdlc-core/references/lane-workflow-templates.md`.
 
+## Required boundary output
+
+Every lane stop must emit **both** the Standard Handoff Block and the **Standard Packet Envelope** JSON from `lane-workflow-templates.md`. Prose-only output is tier-2; Review may classify `missing_packet_envelope`.
+
 ## Role
 
 Merge Lane owns integration on **`remo`**. It may merge reviewed PRs, update
@@ -82,3 +86,6 @@ from current **`origin/remo`** in the standard handoff block.
 
 Report PR URL, merge commit, **`origin/remo`** SHA, checks performed,
 queue/work-next result, and next safe lane.
+
+Post-merge routing: suggest **`/remogram-observer`** when the human asks what lane
+runs next. Observer is advisory only; it does not replace queue or gate packets.

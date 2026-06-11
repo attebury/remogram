@@ -1,0 +1,7 @@
+decision decision_remogram_retro_promotes_issues {
+  name "Remogram Retro Promotes Issues"
+  description "Retro Lane findings in remogram dogfood must open Gitea issues for backlog authority. Chat threads and handoff prose alone do not satisfy protected gates or replace forge intent artifacts."
+  context ["Retro is advisory and uses the same evidence vocabulary as Proof and Closeout gates", "Topogram plan_forge_release_train_retro specifies retro to issue promotion"]
+  consequences ["Every retro_report finding gets a forge issue with category and suggested action", "Retro never merges PRs or mutates lifecycle", "Process postmortems link to existing engine issues for receipt binding and strict warning semantics"]
+  status accepted
+}

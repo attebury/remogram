@@ -8,16 +8,54 @@ remain authoritative.
 
 ```text
 Lane:
+Role_kind:         lane | gate | advisory
+Artifact_rung:     chat | issue | planning_pr | impl_pr | integration_pr | release
 Branch:
 Base: origin/remo @ <sha>
 Head: <sha>
-PR: <number> (base remo)
+PR: <number> (base remo) | none
 Changed files:
 Lifecycle changes:
 Checks: (remogram + local proof if forge checks missing)
 Queue/work-next: (--base origin/remo)
-Next lane: (Review Lane or Plan Lane from Plan; Merge Lane only after Review classifies safe_for_merge_lane — never combined)
+Evidence_class: authoritative | unlinked | stale | advisory
 Stop condition:
+Next lane: (Review Lane or Plan Lane from Plan; Merge Lane only after Review classifies safe_for_merge_lane — never combined)
+Classification: (Review Gate only)
+```
+
+## Standard Packet Envelope (required at every boundary)
+
+Emit **both** the semi-structured handoff block above **and** this Topogram-shaped JSON block. Gates and queue consume CLI JSON; handoff prose alone is tier-2 only. Cross-ref Topogram `decision_default_lane_packet_envelope` and issue #15.
+
+```json
+{
+  "type": "lane_handoff_packet",
+  "version": 1,
+  "ok": true,
+  "authority_boundary": {
+    "handoff_output": "advisory_only",
+    "cli_packets_required_for_gates": true
+  },
+  "subject": {
+    "lane_role": "lane_plan",
+    "artifact_rung": "planning_pr",
+    "integration_ref": "origin/remo @ <sha>"
+  },
+  "next_commands": ["topogram check . --json"]
+}
+```
+
+When delegating to a subagent, parent lane may also emit `lane_delegation` (advisory; parent retains mutations). Review Gate classifies `missing_packet_envelope` if this JSON block is absent.
+
+## Issue Promotion Preflight (Plan Lane)
+
+```text
+Before opening a new goal/* branch:
+- Search topo/sdlc for related records (future: topogram query sdlc-search).
+- If explore-only: open forge issue (intent rung) — no topo commit yet.
+- If durable design warranted: refresh winning goal cluster or open plan:draft on goal/<name>.
+- Chat is never backlog authority.
 ```
 
 ## Plan: Draft Intent Packet
@@ -285,4 +323,93 @@ Rules:
 - Bind evidence to task, command, base/head, policy hash.
 
 Report proof status, receipt class, blockers, next lane.
+```
+
+## Integration: Sidecar PR
+
+```text
+You are Integration Lane (remogram dogfood).
+
+Preflight:
+- git fetch origin
+- Confirm implementation PR merged to origin/remo
+- Confirm verification receipt unlinked or lifecycle closeout missing on integration tip
+- Create integrate/<slug> from current origin/remo
+
+Task:
+Land command-owned sidecar only: verification runs jsonl, SDLC prep/history, lifecycle mutations required for Closeout Gate.
+
+Rules:
+- PR title integrate:<slug> — authority/integration commitment rung
+- PR base remo; no packages/** product features unless bugfix for sidecar tooling
+- topogram sdlc prep commit . --json before commit
+- topogram check . --json before push/PR
+- Forbidden: declare task done from this PR without Closeout Gate evidence
+
+After push:
+- Report handoff with Artifact_rung: integration_pr
+- Next lane: Proof Gate then Closeout Gate (not Release)
+```
+
+## Observer: Branch Workcycle snapshot
+
+Run proto snapshot (topogram checkout):
+
+```bash
+OBSERVER_BASE=origin/remo ../topogram/tools/branch-workcycle/observer-snapshot.sh . | jq .
+```
+
+Then synthesize **`observer_report`** from `observer_snapshot.packets`. Exactly one `next_actor` or `stop`.
+
+Example `observer_report`:
+
+```json
+{
+  "type": "observer_report",
+  "version": 1,
+  "ok": true,
+  "authority_boundary": {
+    "handoff_output": "advisory_only",
+    "cli_packets_required_for_gates": true
+  },
+  "subject": {
+    "lane_role": "observer",
+    "artifact_rung": "chat",
+    "integration_ref": "origin/remo @ <sha>"
+  },
+  "inventory": {
+    "open_goal_branches": ["goal/remo-forge-ladder-enforcement"],
+    "draft_goals": 1,
+    "queue_blockers": []
+  },
+  "blockers": [],
+  "wip": { "dirty_worktree": false },
+  "next_actor": "review_gate",
+  "next_commands": [
+    "topogram query goal-branch-queue ./topo --base origin/remo --branches 'goal/*' --json"
+  ],
+  "handoff_prompt_id": "review_planning_pr"
+}
+```
+
+**Runbook**
+
+1. Merge Lane done → run snapshot with `OBSERVER_BASE=origin/remo`
+2. If queue shows approved goal + selectable task → `next_actor: implement_lane`
+3. If open planning PR needs review → `next_actor: review_gate`
+4. If impl merged but receipt unlinked → `next_actor: integration_lane`
+5. If ambiguous → `next_actor: stop` and list blockers
+
+## Retro: Advisory Report
+
+```text
+You are Retro Lane (remogram dogfood).
+
+Task:
+Review lane handoffs and CLI packets for friction. Emit advisory retro_report only.
+
+Rules:
+- Every finding promotes to a new forge issue (intent rung) — not chat backlog
+- Same evidence vocabulary: receipt_unlinked, stale_goal_ref, wrong_commitment_rung
+- Never block protected gates; never merge or mutate lifecycle
 ```

@@ -8,8 +8,10 @@ metadata:
 # Remogram SDLC Core
 
 Use this skill first for any `topo/**` or lane work in the **private Gitea dogfood** checkout.
-Then load the remogram lane skill for the role (`remogram-plan-lane`, and later
-implement/review/verify/merge lanes as they are added).
+Then load the remogram lane skill for the role (`remogram-plan-lane`, implement,
+review, verify, merge, integration lanes as needed). Use **`remogram-observer`**
+for read-only routing between lanes (after merge or "what's next?") — it does not
+mutate workflow state.
 
 Also load **`remogram-core`** when editing `packages/**`, providers, or tests.
 

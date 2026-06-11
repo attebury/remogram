@@ -2,7 +2,7 @@ name: test
 
 on:
   push:
-    branches: [remo, 'goal/**', 'plan/**']
+    branches: [remo, 'goal/**', 'plan/**', 'integrate/**']
   pull_request:
 
 jobs:
