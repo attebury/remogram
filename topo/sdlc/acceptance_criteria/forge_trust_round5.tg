@@ -37,12 +37,12 @@ acceptance_criterion ac_coverage_policy_documented {
   name "MCP vs core coverage policy documented"
   description "Given README Testing section and vitest config, when a maintainer reads coverage scope, then MCP package inclusion/exclusion and threshold policy are explicit and match npm run test:coverage behavior."
   requirement req_forge_trust_round5
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_coverage_no_silent_drift {
   name "Coverage config changes require explicit AC proof"
   description "Given wave 4 coverage scope on remo, when wave 5 completes, then vitest coverage include/exclude changes are limited to documented policy and covered by tests or README — no drive-by threshold changes without AC update."
   requirement req_forge_trust_round5
-  status draft
+  status approved
 }
