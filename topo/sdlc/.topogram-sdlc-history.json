@@ -2928,5 +2928,23 @@
         "pr:84"
       ]
     }
+  ],
+  "ac_semantic_diff_fact_packet_model": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T23:40:18.177Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
+  ],
+  "ac_semantic_diff_boundary_decision": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T23:40:18.432Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
   ]
 }

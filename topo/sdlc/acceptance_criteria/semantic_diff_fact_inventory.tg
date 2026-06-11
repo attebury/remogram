@@ -2,14 +2,14 @@ acceptance_criterion ac_semantic_diff_fact_packet_model {
   name "Fact packet model and trust boundaries documented"
   description "Given wave 1 deliverables on remo, when a maintainer reads decision and packet contract docs, then new fact inventory packet types use schema_version 1 envelope discipline, mark forge-sourced string leaves per decision_packet_trust_doctrine, and exclude SDLC/workflow metadata from remogram output."
   requirement req_semantic_diff_fact_inventory
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_semantic_diff_boundary_decision {
   name "Fact-layer vs semantic-layer boundary decision accepted"
   description "Given wave 1, when decision_semantic_diff_fact_layer is accepted on remo, then consequences explicitly assign ref/CR facts to Remogram and lifecycle/queue/proof semantics to Topogram with no overlap."
   requirement req_semantic_diff_fact_inventory
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_semantic_diff_ref_inventory_packet {
