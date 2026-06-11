@@ -30,7 +30,7 @@ Integration Lane owns the **authority commitment rung**. It opens PRs titled
 Allowed:
 
 - Verification run receipts on integration tip jsonl
-- SDLC prep/history commits required for Closeout Gate
+- SDLC prep/history commits required to satisfy the closeout guard
 - Lifecycle sidecar mutations via command-owned workflow
 - **`goal_branch` `active → done`** on goal cluster closeout integrate PR only
 
@@ -38,7 +38,7 @@ Forbidden:
 
 - New product features (Develop Lane / impl PR)
 - Planning-only topo on `goal/*` without impl context
-- Declaring task done without Closeout Gate
+- Declaring task done without closeout-guard evidence
 - Declaring Intent Packet / goal cluster done before **all** cluster tasks are `done` on `remo`
 - Transitioning `goal_branch` on per-wave integrate PRs (wave closeout closes tasks only)
 - Merge without Review classification when required
@@ -88,5 +88,6 @@ Stop if implementation not merged or worktree dirty.
 
 ## After merge
 
-Report handoff with `Artifact_rung: integration_pr`. Wave closeout → Proof Gate,
-then Closeout Gate. Goal cluster closeout → Observer (`stop` when `topogram check` green).
+Report handoff with `Artifact_rung: integration_pr`. Wave closeout evaluates the
+proof guard, then the closeout guard (edge predicates per Topogram `decision_lane_canon`,
+not routing destinations). Goal cluster closeout → Observer (`stop` when `topogram check` green).

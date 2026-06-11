@@ -111,13 +111,13 @@ Operational failures **fail closed to `stop`** with a typed blocker (one of):
 `next_commands`, so a stalled Run is never mistaken for completion. Recovery
 routing is autonomous; only approve, merge, and cluster closeout stay human-gated.
 
-**Goal cluster closeout routing:** when impl merged and receipt unlinked → `integration_lane`
-(wave closeout). When all cluster tasks are `done` on `origin/remo`, `goal_branch.status`
-is still `active`, and `topogram check` reports goal lifecycle advisory →
-`integration_lane` with handoff template **Goal cluster closeout**. When cluster
-closeout merged and `topogram check` is green → `stop`.
-
-Cross-ref Topogram `decision_goal_cluster_closeout_integration_lane`.
+**Closeout predicates** (the concrete guards for the `integration_lane` self-loop
+and `integration_lane → stop` edges above): wave closeout when impl merged and
+receipt unlinked on `origin/remo`; cluster closeout when all cluster tasks are
+`done`, `goal_branch.status` is `active`, and `topogram check` reports the
+goal-lifecycle advisory → `integration_lane` (handoff **Goal cluster closeout**);
+when that closeout is merged and `topogram check` is green → `stop`. Cross-ref
+Topogram `decision_goal_cluster_closeout_integration_lane`.
 
 ## Delegation (optional)
 
