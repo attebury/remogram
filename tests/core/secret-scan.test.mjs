@@ -13,6 +13,7 @@ describe('security:secrets gate', () => {
     expect(script).toMatch(/REMOGRAM_SECRET_SCAN_BASE_REF/);
     expect(script).toMatch(/origin\/remo/);
     expect(script).toMatch(/\.gitleaks\.toml/);
+    expect(script).toMatch(/had no merge base with/);
   });
 
   it('prints help without requiring gitleaks when --help is passed', () => {

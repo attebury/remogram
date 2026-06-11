@@ -149,15 +149,11 @@ function resolveScanPlan(options) {
   const mergeBase = runGit(['merge-base', baseCommit, headCommit]);
   if (mergeBase.status !== 0) {
     const diagnostic = (mergeBase.stderr || mergeBase.stdout || '').trim();
-    if (!explicitBase) {
-      return { mode: 'full-history', reason: `automatic base ref ${baseRef} had no merge base` };
-    }
-
-    fail([
-      `Unable to find a merge base for ${baseRef} and ${options.head}.`,
-      diagnostic,
-      'Fetch the base ref first or run `npm run security:secrets -- --full-history`.',
-    ].filter(Boolean).join('\n'));
+    const refLabel = explicitBase ? baseRef : `automatic base ref ${baseRef}`;
+    return {
+      mode: 'full-history',
+      reason: `${refLabel} had no merge base with ${options.head} (e.g. squashed public export); falling back to full-history scan${diagnostic ? `: ${diagnostic}` : ''}`,
+    };
   }
 
   const mergeBaseCommit = mergeBase.stdout.trim();
