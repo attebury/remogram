@@ -33,6 +33,15 @@ Allowed:
   conditionally-ready planning state.
 - Open or update planning PRs with base **`remo`** (Gitea `origin`).
 
+## Issue promotion preflight
+
+Before creating a **new** `goal/*` branch:
+
+1. Search `topo/sdlc` for related records (future: `topogram query sdlc-search`).
+2. **Explore-only** → open a Gitea issue (intent rung); no `topo/` commit required.
+3. **Durable design** → refresh an existing goal cluster or open `plan:draft` on `goal/<name>`.
+4. Chat and agent prose are **not** backlog authority (`decision_issue_before_planning_pr` on Topogram).
+
 Forbidden:
 
 - Engine/source/script/workflow implementation (except planning records in `topo/`).

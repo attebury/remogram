@@ -102,6 +102,10 @@ Local proof does not override them.
 | `plan:claim-wave` PR but task claimed or ACs still draft | `needs_plan_lane_classification` |
 | `plan:claim-wave` PR without AC `sdlc transition` receipts for named wave | `needs_plan_lane_classification` |
 | `plan:approve` PR that also approves ACs (mixed approve + claim) | `needs_plan_lane_classification` (split PRs) |
+| Impl PR with only topo/** on goal branch | `wrong_commitment_rung` (planning PR expected) |
+| Impl merged but receipt unlinked on origin/remo | `needs_integration_pr` |
+| Forge issue body used as impl scope without plan:approve | `issue_should_not_impl` |
+| Integration PR with product feature scope | `wrong_commitment_rung` (impl PR expected) |
 
 Before `safe_for_merge_lane`, reconfirm head, base, checks, mergeability, scope.
 
@@ -113,6 +117,9 @@ Findings first, by severity. End with exactly one recommendation:
 - `needs_implement_lane_changes`
 - `needs_plan_lane_classification`
 - `needs_refresh_or_reconcile`
+- `wrong_commitment_rung`
+- `needs_integration_pr`
+- `issue_should_not_impl`
 - `stale_or_superseded`
 - `blocked`
 

@@ -8,16 +8,30 @@ remain authoritative.
 
 ```text
 Lane:
+Role_kind:         lane | gate | advisory
+Artifact_rung:     chat | issue | planning_pr | impl_pr | integration_pr | release
 Branch:
 Base: origin/remo @ <sha>
 Head: <sha>
-PR: <number> (base remo)
+PR: <number> (base remo) | none
 Changed files:
 Lifecycle changes:
 Checks: (remogram + local proof if forge checks missing)
 Queue/work-next: (--base origin/remo)
-Next lane: (Review Lane or Plan Lane from Plan; Merge Lane only after Review classifies safe_for_merge_lane — never combined)
+Evidence_class: authoritative | unlinked | stale | advisory
 Stop condition:
+Next lane: (Review Lane or Plan Lane from Plan; Merge Lane only after Review classifies safe_for_merge_lane — never combined)
+Classification: (Review Gate only)
+```
+
+## Issue Promotion Preflight (Plan Lane)
+
+```text
+Before opening a new goal/* branch:
+- Search topo/sdlc for related records (future: topogram query sdlc-search).
+- If explore-only: open forge issue (intent rung) — no topo commit yet.
+- If durable design warranted: refresh winning goal cluster or open plan:draft on goal/<name>.
+- Chat is never backlog authority.
 ```
 
 ## Plan: Draft Intent Packet
@@ -285,4 +299,44 @@ Rules:
 - Bind evidence to task, command, base/head, policy hash.
 
 Report proof status, receipt class, blockers, next lane.
+```
+
+## Integration: Sidecar PR
+
+```text
+You are Integration Lane (remogram dogfood).
+
+Preflight:
+- git fetch origin
+- Confirm implementation PR merged to origin/remo
+- Confirm verification receipt unlinked or lifecycle closeout missing on integration tip
+- Create integrate/<slug> from current origin/remo
+
+Task:
+Land command-owned sidecar only: verification runs jsonl, SDLC prep/history, lifecycle mutations required for Closeout Gate.
+
+Rules:
+- PR title integrate:<slug> — authority/integration commitment rung
+- PR base remo; no packages/** product features unless bugfix for sidecar tooling
+- topogram sdlc prep commit . --json before commit
+- topogram check . --json before push/PR
+- Forbidden: declare task done from this PR without Closeout Gate evidence
+
+After push:
+- Report handoff with Artifact_rung: integration_pr
+- Next lane: Proof Gate then Closeout Gate (not Release)
+```
+
+## Retro: Advisory Report
+
+```text
+You are Retro Lane (remogram dogfood).
+
+Task:
+Review lane handoffs and CLI packets for friction. Emit advisory retro_report only.
+
+Rules:
+- Every finding promotes to a new forge issue (intent rung) — not chat backlog
+- Same evidence vocabulary: receipt_unlinked, stale_goal_ref, wrong_commitment_rung
+- Never block protected gates; never merge or mutate lifecycle
 ```
