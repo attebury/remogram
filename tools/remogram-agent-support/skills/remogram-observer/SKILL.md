@@ -97,6 +97,20 @@ them, but do not gate on them. If `goal-branch-queue` (or any authoritative pack
 returns `command_failed`, **fail closed to `stop`** with a typed blocker — never
 infer an empty queue. Same packets in → same `next_actor` out (deterministic tick).
 
+### Recovery edges + typed blockers
+
+Per Topogram `decision_recovery_edges`, every non-terminal node also has a recovery
+route, so no Run dead-ends:
+
+- review needs changes → `implement_lane`; stale base / superseded goal → `plan_lane`
+- verification fail → `implement_lane`; base advanced (reconcile) → `plan_lane`
+
+Operational failures **fail closed to `stop`** with a typed blocker (one of):
+`forge_unreachable`, `ci_infra_down`, `merge_conflict_requires_human`,
+`command_failed`, `human_gate_unmet`. Every `stop` must name a typed blocker and
+`next_commands`, so a stalled Run is never mistaken for completion. Recovery
+routing is autonomous; only approve, merge, and cluster closeout stay human-gated.
+
 **Goal cluster closeout routing:** when impl merged and receipt unlinked → `integration_lane`
 (wave closeout). When all cluster tasks are `done` on `origin/remo`, `goal_branch.status`
 is still `active`, and `topogram check` reports goal lifecycle advisory →
