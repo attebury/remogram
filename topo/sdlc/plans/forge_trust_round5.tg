@@ -9,7 +9,7 @@ plan plan_forge_trust_round5 {
     step wave2_config_root status done description "Bound findConfigPath to git root; regression test for parent walk escape."
     step wave3_capability_matrix status done description "Per-command auth_class in capabilities; doctor stub warn; accept decision_auth_aware_capability_matrix."
     step wave4_coverage_policy status done description "README + vitest coverage policy honesty; no silent threshold drift."
-    step verify status pending description "npm test, npm run test:coverage, topogram check green; remogram doctor on sample configs."
+    step verify status done description "npm test, npm run test:coverage, topogram check green; remogram doctor on sample configs."
   }
-  status draft
+  status superseded
 }
