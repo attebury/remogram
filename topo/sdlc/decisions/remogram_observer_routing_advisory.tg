@@ -1,0 +1,7 @@
+decision decision_remogram_observer_routing_advisory {
+  name "Remogram Observer Routing Advisory"
+  description "Remogram dogfood uses remogram-observer as read-only Branch Workcycle router after Merge Lane or when user asks what is next. Observer emits observer_report with single next_actor. Integration authority remains remo. Observer never merges or mutates lifecycle."
+  context ["Topogram decision_observer_routing_advisory defines cross-repo Observer law", "Proto observer-snapshot.sh runs with OBSERVER_BASE origin/remo until engine query lands"]
+  consequences ["Load remogram-observer after remogram-sdlc-core for routing only", "Merge Lane may suggest /remogram-observer in post-merge handoff", "CLI packets with ok true override Observer when they conflict", "Engine topogram query observer-report tracked on Topogram Gitea"]
+  status proposed
+}

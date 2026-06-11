@@ -351,6 +351,55 @@ After push:
 - Next lane: Proof Gate then Closeout Gate (not Release)
 ```
 
+## Observer: Branch Workcycle snapshot
+
+Run proto snapshot (topogram checkout):
+
+```bash
+OBSERVER_BASE=origin/remo ../topogram/tools/branch-workcycle/observer-snapshot.sh . | jq .
+```
+
+Then synthesize **`observer_report`** from `observer_snapshot.packets`. Exactly one `next_actor` or `stop`.
+
+Example `observer_report`:
+
+```json
+{
+  "type": "observer_report",
+  "version": 1,
+  "ok": true,
+  "authority_boundary": {
+    "handoff_output": "advisory_only",
+    "cli_packets_required_for_gates": true
+  },
+  "subject": {
+    "lane_role": "observer",
+    "artifact_rung": "chat",
+    "integration_ref": "origin/remo @ <sha>"
+  },
+  "inventory": {
+    "open_goal_branches": ["goal/remo-forge-ladder-enforcement"],
+    "draft_goals": 1,
+    "queue_blockers": []
+  },
+  "blockers": [],
+  "wip": { "dirty_worktree": false },
+  "next_actor": "review_gate",
+  "next_commands": [
+    "topogram query goal-branch-queue ./topo --base origin/remo --branches 'goal/*' --json"
+  ],
+  "handoff_prompt_id": "review_planning_pr"
+}
+```
+
+**Runbook**
+
+1. Merge Lane done → run snapshot with `OBSERVER_BASE=origin/remo`
+2. If queue shows approved goal + selectable task → `next_actor: implement_lane`
+3. If open planning PR needs review → `next_actor: review_gate`
+4. If impl merged but receipt unlinked → `next_actor: integration_lane`
+5. If ambiguous → `next_actor: stop` and list blockers
+
 ## Retro: Advisory Report
 
 ```text

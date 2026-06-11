@@ -86,3 +86,6 @@ from current **`origin/remo`** in the standard handoff block.
 
 Report PR URL, merge commit, **`origin/remo`** SHA, checks performed,
 queue/work-next result, and next safe lane.
+
+Post-merge routing: suggest **`/remogram-observer`** when the human asks what lane
+runs next. Observer is advisory only; it does not replace queue or gate packets.

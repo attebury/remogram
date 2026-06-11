@@ -7,3 +7,5 @@ remogram-implement-lane
 remogram-reviewer
 remogram-verify-lane
 remogram-merge-lane
+remogram-integration-lane
+remogram-observer
