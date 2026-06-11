@@ -2845,6 +2845,22 @@
       "at": "2026-06-11T20:24:48.123Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-11T20:32:46.949Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_forge_trust_round5#wave4_coverage_policy": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-11T20:33:03.767Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ]
 }
