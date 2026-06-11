@@ -5,5 +5,5 @@ requirement req_test_strategy_followup {
   introduces_rules []
   respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
   priority medium
-  status approved
+  status satisfied
 }

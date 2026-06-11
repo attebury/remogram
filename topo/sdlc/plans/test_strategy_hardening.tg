@@ -16,5 +16,5 @@ plan plan_test_strategy_hardening {
     step test_fixture_hygiene status done description "R9: Wire statuses-success.json into prChecks success test or delete orphaned fixture."
     step verify status done description "npm test, coverage run, topogram check green; all nine ACs satisfied."
   }
-  status draft
+  status complete
 }
