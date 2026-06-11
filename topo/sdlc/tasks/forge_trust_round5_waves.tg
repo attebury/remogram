@@ -17,7 +17,8 @@ task task_forge_trust_round5_wave1 {
   work_type bugfix
   bug_discovery bug_linked
   linked_bugs [bug_sha_bound_overclaim]
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  status in-progress
 }
 
 task task_forge_trust_round5_wave2 {

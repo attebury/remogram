@@ -13,6 +13,14 @@ export {
 } from './caps.js';
 export { assertGitRef, assertGitRemote } from './git-args.js';
 export { gitRevParse, gitCurrentBranch, gitAheadBehind } from './git-local.js';
+export {
+  localHeadShaForPr,
+  staleHeadDetails,
+  staleHeadForgeError,
+  staleHeadForgeError as staleHeadError,
+  STALE_HEAD_MESSAGE,
+  throwIfStaleHeadByNumber,
+} from './pr-head-reconcile.js';
 export { parseConfigFile, configSchema } from './config-schema.js';
 export {
   findConfigPath,

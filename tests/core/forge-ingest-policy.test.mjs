@@ -49,8 +49,18 @@ describe('SHA-bound language precision', () => {
     expect(readme).toMatch(/forge-reported/i);
   });
 
+  it('README describes PR-by-number reconciliation and stale_head', () => {
+    expect(readme).toMatch(/reconciliation/i);
+    expect(readme).toMatch(/stale_head/i);
+  });
+
   it('remogram-core skill distinguishes git-resolved refs from forge-reported PR SHAs', () => {
     expect(skill).toMatch(/git-resolved/i);
     expect(skill).toMatch(/forge-reported/i);
+  });
+
+  it('remogram-core skill describes PR-by-number reconciliation', () => {
+    expect(skill).toMatch(/reconciliation/i);
+    expect(skill).toMatch(/stale_head/i);
   });
 });

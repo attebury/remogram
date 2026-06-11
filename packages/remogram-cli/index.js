@@ -18,6 +18,7 @@ import {
   assertGitRemote,
   getEffectiveIngestMaxBytes,
   FORGE_INGEST_MAX_BYTES_ENV,
+  throwIfStaleHeadByNumber,
 } from '@remogram/core';
 import { provider as giteaApi } from '@remogram/provider-gitea-api';
 import { provider as githubApi } from '@remogram/provider-github-api';
@@ -59,6 +60,11 @@ function handleError(err, ctx, asJson) {
     remoteName: 'origin',
     repoId: 'unknown/unknown',
   };
+  if (err.staleHeadPacket) {
+    output(forgePacket(err.staleHeadPacket.type, baseCtx, err.staleHeadPacket.body, fe), asJson);
+    process.exitCode = 1;
+    return;
+  }
   output(forgeErrorPacket(baseCtx, fe), asJson);
   process.exitCode = 1;
 }
@@ -337,7 +343,15 @@ export async function runCli(argv, options = {}) {
           forgeError: forgeError(ERROR_CODES.INVALID_ARGS, '--number required for pr view'),
         });
       }
-      packet = forgePacket(PACKET_TYPES.PR_STATUS, ctx, await provider.prView(ctx, { number }));
+      const body = await provider.prView(ctx, { number });
+      throwIfStaleHeadByNumber(
+        ctx,
+        PACKET_TYPES.PR_STATUS,
+        body,
+        body.head_ref,
+        body.head_sha,
+      );
+      packet = forgePacket(PACKET_TYPES.PR_STATUS, ctx, body);
     } else if (group === 'pr' && sub === 'checks') {
       const number = parsePositiveInt(flags.number, '--number');
       if (number == null && !flags.ref) {
@@ -346,6 +360,16 @@ export async function runCli(argv, options = {}) {
         });
       }
       if (flags.ref) assertGitRef(flags.ref, '--ref');
+      if (number != null && !flags.ref) {
+        const view = await provider.prView(ctx, { number });
+        throwIfStaleHeadByNumber(
+          ctx,
+          PACKET_TYPES.PR_CHECKS,
+          { head_sha: view.head_sha },
+          view.head_ref,
+          view.head_sha,
+        );
+      }
       packet = forgePacket(
         PACKET_TYPES.PR_CHECKS,
         ctx,
