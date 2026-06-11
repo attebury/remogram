@@ -13,6 +13,10 @@ bug closeout fields empty).
 
 Templates: `remogram-sdlc-core/references/lane-workflow-templates.md` (Integration: Sidecar PR).
 
+## Required boundary output
+
+Every lane stop must emit **both** the Standard Handoff Block and the **Standard Packet Envelope** JSON from `lane-workflow-templates.md`. Prose-only output is tier-2; Review may classify `missing_packet_envelope`.
+
 ## Role
 
 Integration Lane owns the **authority commitment rung**. It opens PRs titled

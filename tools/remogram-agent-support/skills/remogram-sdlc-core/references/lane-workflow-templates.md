@@ -24,6 +24,30 @@ Next lane: (Review Lane or Plan Lane from Plan; Merge Lane only after Review cla
 Classification: (Review Gate only)
 ```
 
+## Standard Packet Envelope (required at every boundary)
+
+Emit **both** the semi-structured handoff block above **and** this Topogram-shaped JSON block. Gates and queue consume CLI JSON; handoff prose alone is tier-2 only. Cross-ref Topogram `decision_default_lane_packet_envelope` and issue #15.
+
+```json
+{
+  "type": "lane_handoff_packet",
+  "version": 1,
+  "ok": true,
+  "authority_boundary": {
+    "handoff_output": "advisory_only",
+    "cli_packets_required_for_gates": true
+  },
+  "subject": {
+    "lane_role": "lane_plan",
+    "artifact_rung": "planning_pr",
+    "integration_ref": "origin/remo @ <sha>"
+  },
+  "next_commands": ["topogram check . --json"]
+}
+```
+
+When delegating to a subagent, parent lane may also emit `lane_delegation` (advisory; parent retains mutations). Review Gate classifies `missing_packet_envelope` if this JSON block is absent.
+
 ## Issue Promotion Preflight (Plan Lane)
 
 ```text

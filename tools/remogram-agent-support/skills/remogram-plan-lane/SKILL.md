@@ -18,6 +18,10 @@ For paste-ready prompts and the standard handoff block, use
 `remogram-sdlc-core/references/lane-workflow-templates.md` and
 `remogram-dogfood/references/lane-prompts.md`.
 
+## Required boundary output
+
+Every lane stop must emit **both** the Standard Handoff Block and the **Standard Packet Envelope** JSON from `lane-workflow-templates.md`. Prose-only output is tier-2; Review may classify `missing_packet_envelope`.
+
 ## Role
 
 Plan Lane creates and refines planning records. It may prepare, approve, or

@@ -16,6 +16,10 @@ for Merge Lane on Gitea **`remo`**.
 
 Templates: `remogram-sdlc-core/references/lane-workflow-templates.md`.
 
+## Required boundary output
+
+Review Lane must emit the **Standard Packet Envelope** JSON when stopping, in addition to the classification footer. Classify `missing_packet_envelope` when the reviewed lane's prior handoff lacked required JSON.
+
 ## Review Lane Role
 
 Review Lane is read-mostly. It reviews PRs for scope, architecture, tests,
@@ -106,6 +110,7 @@ Local proof does not override them.
 | Impl merged but receipt unlinked on origin/remo | `needs_integration_pr` |
 | Forge issue body used as impl scope without plan:approve | `issue_should_not_impl` |
 | Integration PR with product feature scope | `wrong_commitment_rung` (impl PR expected) |
+| Lane handoff without `lane_handoff_packet` JSON envelope | `missing_packet_envelope` |
 
 Before `safe_for_merge_lane`, reconfirm head, base, checks, mergeability, scope.
 
@@ -120,6 +125,7 @@ Findings first, by severity. End with exactly one recommendation:
 - `wrong_commitment_rung`
 - `needs_integration_pr`
 - `issue_should_not_impl`
+- `missing_packet_envelope`
 - `stale_or_superseded`
 - `blocked`
 
