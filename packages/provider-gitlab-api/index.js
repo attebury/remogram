@@ -114,6 +114,25 @@ export async function gitlabFetch(config, parsed, path, options = {}) {
   });
 }
 
+const MAX_CHECK_PAGES = 50;
+const GITLAB_PAGE_SIZE = 100;
+
+export async function gitlabFetchPaginated(config, parsed, path) {
+  const all = [];
+  for (let page = 1; page <= MAX_CHECK_PAGES; page += 1) {
+    const separator = path.includes('?') ? '&' : '?';
+    const body = await gitlabFetch(
+      config,
+      parsed,
+      `${path}${separator}per_page=${GITLAB_PAGE_SIZE}&page=${page}`,
+    );
+    const items = Array.isArray(body) ? body : [];
+    all.push(...items);
+    if (items.length < GITLAB_PAGE_SIZE) break;
+  }
+  return all;
+}
+
 export function providerCapabilities() {
   return {
     commands: STRUCTURED_COMMANDS,
@@ -121,7 +140,7 @@ export function providerCapabilities() {
     check_sources: ['commit_statuses', 'pipelines'],
     mergeability_confidence: 'derived',
     host_binding: 'verified_remote_host',
-    pagination: 'first_page_only',
+    pagination: 'supported',
     write_support: false,
   };
 }
@@ -239,20 +258,24 @@ export async function prChecks(ctx, opts) {
     });
   }
 
-  const [statuses, pipelines] = await Promise.all([
-    gitlabFetch(ctx.config, ctx.parsed, projectApiPath(ctx.config, 'repository', 'commits', sha, 'statuses')),
-    gitlabFetch(
+  const [statusRecords, pipelineRecords] = await Promise.all([
+    gitlabFetchPaginated(
+      ctx.config,
+      ctx.parsed,
+      projectApiPath(ctx.config, 'repository', 'commits', sha, 'statuses'),
+    ),
+    gitlabFetchPaginated(
       ctx.config,
       ctx.parsed,
       `${projectApiPath(ctx.config, 'pipelines')}?sha=${encodeURIComponent(sha)}`,
     ),
   ]);
-  const mappedStatuses = (statuses || []).map((status) => ({
+  const mappedStatuses = statusRecords.map((status) => ({
     context: sanitizeField(status.name || status.context),
     state: normalizeStatusState(status.status),
     description: sanitizeField(status.description || status.status),
   }));
-  const mappedPipelines = (pipelines || []).map((pipeline) => ({
+  const mappedPipelines = pipelineRecords.map((pipeline) => ({
     context: sanitizeField(pipeline.name || `pipeline:${pipeline.id}`),
     state: normalizeStatusState(pipeline.status),
     description: sanitizeField(pipeline.status),

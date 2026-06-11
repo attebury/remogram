@@ -56,6 +56,51 @@ export async function fetchJson(
   return body;
 }
 
+export function parseLinkHeader(linkHeader) {
+  if (!linkHeader) return {};
+  const links = {};
+  for (const segment of String(linkHeader).split(',')) {
+    const match = segment.trim().match(/^<([^>]+)>;\s*rel="([^"]+)"/);
+    if (match) links[match[2]] = match[1];
+  }
+  return links;
+}
+
+export async function fetchJsonWithMeta(
+  url,
+  options = {},
+  timeoutMs = DEFAULT_TIMEOUT_MS,
+  maxBytes = DEFAULT_JSON_MAX_BYTES,
+) {
+  const res = await fetchWithTimeout(url, options, timeoutMs);
+  if (res.status >= 300 && res.status < 400) {
+    const message = 'HTTP redirect rejected';
+    throw Object.assign(new Error(message), {
+      forgeError: forgeError(ERROR_CODES.API_ERROR, message, res.status),
+      status: res.status,
+    });
+  }
+  const text = await readResponseTextCapped(res, maxBytes);
+  let body;
+  try {
+    body = text ? JSON.parse(text) : null;
+  } catch {
+    throw Object.assign(new Error('Unparseable JSON from provider'), {
+      forgeError: forgeError(ERROR_CODES.UNPARSEABLE_PROVIDER_OUTPUT, 'Provider returned invalid JSON'),
+      status: res.status,
+    });
+  }
+  if (!res.ok) {
+    const raw = body?.message || body?.error || res.statusText || 'API error';
+    const message = sanitizeField(raw) || 'API error';
+    throw Object.assign(new Error(message), {
+      forgeError: forgeError(ERROR_CODES.API_ERROR, message, res.status),
+      status: res.status,
+    });
+  }
+  return { body, headers: res.headers, status: res.status };
+}
+
 export async function fetchTextCapped(url, options = {}, maxBytes = DEFAULT_MAX_BYTES) {
   const res = await fetchWithTimeout(url, options);
   if (res.status >= 300 && res.status < 400) {

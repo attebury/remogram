@@ -117,6 +117,44 @@ export async function giteaFetch(config, parsed, path, options = {}) {
   });
 }
 
+const MAX_CHECK_PAGES = 50;
+const GITEA_PAGE_SIZE = 100;
+
+export async function giteaFetchPaginated(config, parsed, path) {
+  const all = [];
+  for (let page = 1; page <= MAX_CHECK_PAGES; page += 1) {
+    const separator = path.includes('?') ? '&' : '?';
+    const body = await giteaFetch(
+      config,
+      parsed,
+      `${path}${separator}limit=${GITEA_PAGE_SIZE}&page=${page}`,
+    );
+    const items = Array.isArray(body) ? body : [];
+    all.push(...items);
+    if (items.length < GITEA_PAGE_SIZE) break;
+  }
+  return all;
+}
+
+export function normalizeGiteaStatusState(state) {
+  const normalized = String(state ?? '').toLowerCase();
+  if (normalized === 'success' || normalized === 'pass') return 'success';
+  if (normalized === 'pending' || normalized === 'running' || normalized === 'waiting') {
+    return 'pending';
+  }
+  if (normalized === 'failure' || normalized === 'fail' || normalized === 'error') {
+    return 'failure';
+  }
+  return 'unknown';
+}
+
+export function normalizeGiteaPrState(state) {
+  const normalized = String(state ?? '').toLowerCase();
+  if (normalized === 'open') return 'open';
+  if (normalized === 'closed') return 'closed';
+  return normalized || 'unknown';
+}
+
 export async function repoStatus(ctx) {
   const token = giteaToken();
   let defaultBranch = null;
@@ -139,7 +177,7 @@ export function providerCapabilities() {
     check_sources: ['commit_statuses'],
     mergeability_confidence: 'direct',
     host_binding: 'verified_remote_host',
-    pagination: 'first_page_only',
+    pagination: 'supported',
     write_support: false,
   };
 }
@@ -186,7 +224,7 @@ export async function prView(ctx, opts) {
     pr_number: pr.number,
     url: sanitizeUrl(pr.html_url ?? pr.url),
     title: sanitizeField(pr.title),
-    state: sanitizeField(pr.state),
+    state: normalizeGiteaPrState(pr.state),
     base_ref: sanitizeField(pr.base?.ref),
     base_sha: sanitizeField(pr.base?.sha),
     head_ref: sanitizeField(pr.head?.ref),
@@ -215,21 +253,21 @@ export async function prChecks(ctx, opts) {
       forgeError: forgeError(ERROR_CODES.MISSING_REF, 'Could not determine head SHA for checks'),
     });
   }
-  const statuses = await giteaFetch(
+  const statusRecords = await giteaFetchPaginated(
     ctx.config,
     ctx.parsed,
     repoApiPath(ctx.config, 'commits', sha, 'statuses'),
   );
-  const mapped = (statuses || []).map((s) => ({
+  const mapped = statusRecords.map((s) => ({
     context: sanitizeField(s.context),
-    state: sanitizeField(s.state),
+    state: normalizeGiteaStatusState(s.state),
     description: sanitizeField(s.description),
   }));
   const conclusion = summarizeChecks(mapped);
   return { head_sha: sha, check_conclusion: conclusion, statuses: mapped };
 }
 
-function summarizeChecks(statuses) {
+export function summarizeChecks(statuses) {
   if (!statuses.length) return 'missing';
   if (statuses.some((s) => s.state === 'failure' || s.state === 'error')) return 'failure';
   if (statuses.some((s) => s.state === 'pending')) return 'pending';

@@ -20,11 +20,16 @@ function load(name) {
   return JSON.parse(readFileSync(join(fixtures, name), 'utf8'));
 }
 
-function jsonResponse(body, status = 200) {
+function jsonResponse(body, status = 200, { link } = {}) {
   return {
     ok: status >= 200 && status < 300,
     status,
     statusText: status === 200 ? 'OK' : 'Error',
+    headers: link
+      ? {
+          get: (name) => (String(name).toLowerCase() === 'link' ? link : null),
+        }
+      : undefined,
     body: {
       [Symbol.asyncIterator]: async function* () {
         yield Buffer.from(JSON.stringify(body));
@@ -288,6 +293,50 @@ describe('provider-github-api fixtures', () => {
     expect(body.mergeability).toBe('clean');
     expect(body.checks_conclusion).toBe('success');
     expect(body.blockers).toEqual([]);
+  });
+
+  it('mergePlan includes checks_failed when check-runs fail on page 2', async () => {
+    const page2Url =
+      'https://api.github.com/repos/owner/repo/commits/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/check-runs?page=2';
+    global.fetch
+      .mockResolvedValueOnce(graphqlResponse('pull-graphql-clean.json'))
+      .mockResolvedValueOnce(graphqlResponse('pull-graphql-clean.json'))
+      .mockResolvedValueOnce(jsonResponse([]))
+      .mockResolvedValueOnce(
+        jsonResponse(
+          {
+            check_runs: [
+              {
+                name: 'ci/page1',
+                status: 'completed',
+                conclusion: 'success',
+                output: { title: 'page1 ok' },
+              },
+            ],
+          },
+          200,
+          { link: `<${page2Url}>; rel="next"` },
+        ),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse({
+          check_runs: [
+            {
+              name: 'ci/page2',
+              status: 'completed',
+              conclusion: 'failure',
+              output: { title: 'page2 fail' },
+            },
+          ],
+        }),
+      );
+    const body = await provider.mergePlan(ctx, { number: 42 });
+    expect(body.checks_conclusion).toBe('failure');
+    expect(body.blockers).toContain('checks_failed');
+  });
+
+  it('providerCapabilities reports supported pagination', () => {
+    expect(provider.providerCapabilities().pagination).toBe('supported');
   });
 
   it('syncPlan preserves shared packet body keys', async () => {
