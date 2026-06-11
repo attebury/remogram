@@ -2532,6 +2532,16 @@
       "at": "2026-06-11T19:33:45.546Z",
       "by": "actor_coding_agent",
       "note": null
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-11T19:38:51.625Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "local:wave2-closeout"
+      ]
     }
   ],
   "decision_stale_head_reconciliation": [
@@ -2657,6 +2667,38 @@
       "at": "2026-06-11T19:33:06.664Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-11T19:38:38.428Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_forge_trust_round5#wave2_config_root": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-11T19:38:38.684Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_config_parent_walk": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-11T19:38:51.088Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-11T19:38:55.186Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ]
 }
