@@ -20,7 +20,23 @@ const STATIC_DENYLIST = [
   '.cursor/rules/remogram-maintainer.mdc',
 ];
 
+/** Mirror scripts/dogfood-skills.list when export-public-main.sh strips it before npm test. */
+const DOGFOOD_SKILLS_FALLBACK = [
+  'remogram-dogfood',
+  'remogram-sdlc-core',
+  'remogram-plan-lane',
+  'remogram-implement-lane',
+  'remogram-reviewer',
+  'remogram-verify-lane',
+  'remogram-merge-lane',
+  'remogram-integration-lane',
+  'remogram-observer',
+];
+
 function readDogfoodSkills() {
+  if (!existsSync(dogfoodList)) {
+    return DOGFOOD_SKILLS_FALLBACK;
+  }
   return readFileSync(dogfoodList, 'utf8')
     .split('\n')
     .map((line) => line.replace(/#.*$/, '').trim())
