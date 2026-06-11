@@ -113,6 +113,9 @@ Local proof does not override them.
 | Lane handoff without `lane_handoff_packet` JSON envelope | `missing_packet_envelope` |
 
 Before `safe_for_merge_lane`, reconfirm head, base, checks, mergeability, scope.
+When a PR needs target-bound proof (not just classification), route to
+**`verify_lane`** for a verification receipt before Merge Lane, per Topogram
+`decision_lane_canon`.
 
 ## Output
 
