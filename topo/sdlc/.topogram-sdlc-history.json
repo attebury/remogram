@@ -2501,6 +2501,30 @@
       "evidence_refs": [
         "local:impl-forge-trust-round5-wave1"
       ]
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-11T19:15:03.500Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-11T19:16:44.409Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "local:wave1-closeout"
+      ]
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-11T19:17:00.332Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ],
   "decision_stale_head_reconciliation": [
@@ -2569,6 +2593,38 @@
       "at": "2026-06-11T19:02:12.664Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-11T19:14:32.663Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_forge_trust_round5#wave1_stale_head": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-11T19:14:35.606Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_sha_bound_overclaim": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-11T19:17:15.557Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-11T19:17:15.757Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ]
 }

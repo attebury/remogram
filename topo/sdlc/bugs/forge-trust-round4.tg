@@ -118,7 +118,8 @@ bug bug_forge_ingest_oversize_checks {
 bug bug_sha_bound_overclaim {
   name "Product claims SHA-bound for all packets"
   description "README and skills imply universal SHA-bound facts; PR-number paths use forge-reported SHAs without local reconciliation; STALE_HEAD unused."
-  status open
+  fixed_in [task_forge_trust_round5_wave1]
+  status fixed
   severity medium
   priority medium
   affects [cap_forge_remote_ops]
