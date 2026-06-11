@@ -24,6 +24,14 @@ export function gitCurrentBranch(cwd) {
   }
 }
 
+export function gitRepoRoot(cwd) {
+  try {
+    return gitExec(cwd, ['rev-parse', '--show-toplevel']);
+  } catch {
+    return null;
+  }
+}
+
 export function gitAheadBehind(cwd, base, head) {
   assertGitRef(base, 'base');
   assertGitRef(head, 'head');
