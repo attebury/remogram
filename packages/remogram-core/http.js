@@ -1,8 +1,8 @@
 import { ERROR_CODES, forgeError } from './contracts/errors.js';
-import { readStreamCapped, DEFAULT_MAX_BYTES, sanitizeField } from './caps.js';
+import { readStreamCapped, getEffectiveIngestMaxBytes, sanitizeField } from './caps.js';
 
 const DEFAULT_TIMEOUT_MS = 30_000;
-const DEFAULT_JSON_MAX_BYTES = DEFAULT_MAX_BYTES;
+const DEFAULT_JSON_MAX_BYTES = () => getEffectiveIngestMaxBytes().bytes;
 
 export async function fetchWithTimeout(url, options = {}, timeoutMs = DEFAULT_TIMEOUT_MS) {
   const signal = AbortSignal.timeout(timeoutMs);
@@ -25,7 +25,7 @@ export async function fetchJson(
   url,
   options = {},
   timeoutMs = DEFAULT_TIMEOUT_MS,
-  maxBytes = DEFAULT_JSON_MAX_BYTES,
+  maxBytes = DEFAULT_JSON_MAX_BYTES(),
 ) {
   const res = await fetchWithTimeout(url, options, timeoutMs);
   if (res.status >= 300 && res.status < 400) {
@@ -70,7 +70,7 @@ export async function fetchJsonWithMeta(
   url,
   options = {},
   timeoutMs = DEFAULT_TIMEOUT_MS,
-  maxBytes = DEFAULT_JSON_MAX_BYTES,
+  maxBytes = DEFAULT_JSON_MAX_BYTES(),
 ) {
   const res = await fetchWithTimeout(url, options, timeoutMs);
   if (res.status >= 300 && res.status < 400) {
@@ -101,7 +101,7 @@ export async function fetchJsonWithMeta(
   return { body, headers: res.headers, status: res.status };
 }
 
-export async function fetchTextCapped(url, options = {}, maxBytes = DEFAULT_MAX_BYTES) {
+export async function fetchTextCapped(url, options = {}, maxBytes = getEffectiveIngestMaxBytes().bytes) {
   const res = await fetchWithTimeout(url, options);
   if (res.status >= 300 && res.status < 400) {
     const message = 'HTTP redirect rejected';

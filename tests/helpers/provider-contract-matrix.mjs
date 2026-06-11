@@ -39,6 +39,7 @@ const BODY_KEYS = {
     'auth_envs',
     'check_sources',
     'commands',
+    'forge_ingest_cap_bytes',
     'host_binding',
     'mergeability_confidence',
     'pagination',

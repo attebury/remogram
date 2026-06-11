@@ -149,6 +149,23 @@ describe('parseConfigFile trustedHosts removal', () => {
   });
 });
 
+describe('parseConfigFile ingest_max_bytes rejection', () => {
+  it('rejects ingest_max_bytes in config', () => {
+    expect(() =>
+      parseConfigFile(
+        JSON.stringify({
+          version: '1',
+          provider: 'gitea-api',
+          owner: 'o',
+          repo: 'r',
+          baseUrl: 'http://localhost:3000',
+          ingest_max_bytes: 16384,
+        }),
+      ),
+    ).toThrow();
+  });
+});
+
 describe('assertConfigMatchesRemote', () => {
   it('throws on owner/repo mismatch', () => {
     expect(() =>

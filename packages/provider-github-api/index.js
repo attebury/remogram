@@ -11,6 +11,7 @@ import {
   gitAheadBehind,
   ERROR_CODES,
   forgeError,
+  forgeIngestCapabilityFacts,
 } from '@remogram/core';
 
 const PUBLIC_GITHUB_HOST = 'github.com';
@@ -270,6 +271,7 @@ export function providerCapabilities() {
     host_binding: 'verified_remote_host',
     pagination: 'supported',
     write_support: false,
+    ...forgeIngestCapabilityFacts(),
   };
 }
 

@@ -16,6 +16,8 @@ import {
   sanitizeField,
   assertGitRef,
   assertGitRemote,
+  getEffectiveIngestMaxBytes,
+  FORGE_INGEST_MAX_BYTES_ENV,
 } from '@remogram/core';
 import { provider as giteaApi } from '@remogram/provider-gitea-api';
 import { provider as githubApi } from '@remogram/provider-github-api';
@@ -197,6 +199,37 @@ async function buildDoctorPacket(cwd, providers) {
         sources: providerCapabilities.check_sources,
       }));
     }
+  }
+
+  const { bytes: ingestCapBytes, envOverride: ingestEnvOverride, invalidEnv: ingestInvalidEnv } =
+    getEffectiveIngestMaxBytes();
+  if (ingestInvalidEnv) {
+    checks.push(
+      doctorCheck(
+        'forge_ingest_cap',
+        'warn',
+        `${FORGE_INGEST_MAX_BYTES_ENV} is invalid; using default 8192 bytes`,
+        { effective_bytes: ingestCapBytes, env_override: false },
+      ),
+    );
+  } else if (ingestEnvOverride) {
+    checks.push(
+      doctorCheck(
+        'forge_ingest_cap',
+        'warn',
+        `${FORGE_INGEST_MAX_BYTES_ENV} overrides default ingest cap; agent-safe guarantee is weakened`,
+        { effective_bytes: ingestCapBytes, env_override: true },
+      ),
+    );
+  } else {
+    checks.push(
+      doctorCheck(
+        'forge_ingest_cap',
+        'pass',
+        'Forge HTTP ingest cap is default 8192 bytes',
+        { effective_bytes: ingestCapBytes, env_override: false },
+      ),
+    );
   }
 
   checks.push(doctorCheck('api_reachability', 'skipped', 'Live API reachability is not checked by default'));

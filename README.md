@@ -1,6 +1,6 @@
 # Remogram
 
-Generic SCM/forge boundary CLI and MCP server. Emits provider-attributed, SHA-bound JSON facts only — no workflow or planning-tool concepts in output.
+Generic SCM/forge boundary CLI and MCP server. Emits provider-attributed JSON facts with SHA fields where applicable — **git-resolved** refs from local git (`refs compare`, `sync plan`) vs **forge-reported** PR SHAs from forge APIs (`pr view`, `pr checks`) — and no workflow or planning-tool concepts in output.
 
 Remogram was developed by and for [Topogram](https://topogram.dev). Topogram is not required to install or use Remogram.
 
@@ -238,7 +238,9 @@ Optional local pre-push gate: `./scripts/install-pre-push-hook.sh`.
 
 ## Provider capabilities
 
-`remogram provider capabilities --json` returns structured provider facts: which commands are implemented, auth env names, check source support, mergeability confidence, host-binding mode, and `write_support: false` for v1.
+`remogram provider capabilities --json` returns structured provider facts: which commands are implemented, auth env names, check source support, mergeability confidence, host-binding mode, `pagination` (check listing behavior), `forge_ingest_cap_bytes` (effective raw HTTP ingest cap, default **8192**), and `write_support: false` for v1.
+
+Forge HTTP ingest is capped at **8192 bytes** by default (pre-parse). This is a product invariant — not a `.remogram.json` field. Operators may set undocumented `REMOGRAM_FORGE_INGEST_MAX_BYTES` for local debugging only; `remogram doctor --json` warns when that override weakens the agent-safe guarantee and reports the effective cap.
 
 For stub providers (`github-gh`, `gitea-tea`), every command shows `"implemented": false`. GitLab has no wrapper stub yet — use `gitlab-api`.
 

@@ -336,7 +336,9 @@ describe('provider-github-api fixtures', () => {
   });
 
   it('providerCapabilities reports supported pagination', () => {
-    expect(provider.providerCapabilities().pagination).toBe('supported');
+    const caps = provider.providerCapabilities();
+    expect(caps.pagination).toBe('supported');
+    expect(caps.forge_ingest_cap_bytes).toBe(8192);
   });
 
   it('syncPlan preserves shared packet body keys', async () => {
