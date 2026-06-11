@@ -119,6 +119,8 @@ describe('provider-gitlab-api fixtures', () => {
     expect(body.auth_envs).toEqual(['GITLAB_TOKEN']);
     expect(body.check_sources).toEqual(['commit_statuses', 'pipelines']);
     expect(body.write_support).toBe(false);
+    expect(body.forge_ingest_cap_bytes).toBe(8192);
+    expect(body.pagination).toBe('supported');
   });
 
   it('repoStatus returns gated capabilities without token', async () => {

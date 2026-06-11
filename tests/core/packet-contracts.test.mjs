@@ -102,12 +102,14 @@ describe('packet contracts', () => {
       host_binding: 'trusted_base_url',
       pagination: 'first_page_only',
       write_support: false,
+      forge_ingest_cap_bytes: 8192,
     });
     expect(p.type).toBe('provider_capabilities');
     expect(bodyKeys(p)).toEqual([
       'auth_envs',
       'check_sources',
       'commands',
+      'forge_ingest_cap_bytes',
       'host_binding',
       'mergeability_confidence',
       'pagination',

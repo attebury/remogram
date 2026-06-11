@@ -9,6 +9,7 @@ import {
   gitAheadBehind,
   ERROR_CODES,
   forgeError,
+  forgeIngestCapabilityFacts,
 } from '@remogram/core';
 
 const PUBLIC_GITLAB_HOST = 'gitlab.com';
@@ -142,6 +143,7 @@ export function providerCapabilities() {
     host_binding: 'verified_remote_host',
     pagination: 'supported',
     write_support: false,
+    ...forgeIngestCapabilityFacts(),
   };
 }
 

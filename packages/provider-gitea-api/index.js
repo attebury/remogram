@@ -9,6 +9,7 @@ import {
   gitAheadBehind,
   ERROR_CODES,
   forgeError,
+  forgeIngestCapabilityFacts,
 } from '@remogram/core';
 const PUBLIC_GITEA_HOST = 'gitea.com';
 const PUBLIC_GITEA_API = 'https://gitea.com/api/v1';
@@ -179,6 +180,7 @@ export function providerCapabilities() {
     host_binding: 'verified_remote_host',
     pagination: 'supported',
     write_support: false,
+    ...forgeIngestCapabilityFacts(),
   };
 }
 

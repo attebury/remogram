@@ -13,6 +13,7 @@ describe('remogram cli commands', () => {
     delete process.env.GITEA_TOKEN;
     delete process.env.GITHUB_TOKEN;
     delete process.env.GH_TOKEN;
+    delete process.env.REMOGRAM_FORGE_INGEST_MAX_BYTES;
   });
 
   function env() {
@@ -64,6 +65,7 @@ describe('remogram cli commands', () => {
     expect(packet.host_binding).toBe('trusted_base_url');
     expect(packet.pagination).toBe('first_page_only');
     expect(packet.write_support).toBe(false);
+    expect(packet.forge_ingest_cap_bytes).toBe(8192);
   });
 
   it('doctor reports readiness without secrets', async () => {
@@ -85,6 +87,23 @@ describe('remogram cli commands', () => {
       ]),
     );
     expect(JSON.stringify(packet)).not.toContain('test-token');
+  });
+
+  it('doctor warns when forge ingest cap env override is set', async () => {
+    process.env.REMOGRAM_FORGE_INGEST_MAX_BYTES = '16384';
+    const { cli } = env();
+    const { logs } = await cli(['doctor']);
+    const packet = JSON.parse(logs[0]);
+    expect(packet.summary).toBe('warn');
+    expect(packet.checks).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: 'forge_ingest_cap',
+          status: 'warn',
+          details: expect.objectContaining({ effective_bytes: 16384, env_override: true }),
+        }),
+      ]),
+    );
   });
 
   it('doctor fails closed on config mismatch', async () => {

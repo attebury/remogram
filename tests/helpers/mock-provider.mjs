@@ -16,6 +16,7 @@ export function createMockProvider(overrides = {}) {
       host_binding: 'trusted_base_url',
       pagination: 'first_page_only',
       write_support: false,
+      forge_ingest_cap_bytes: 8192,
     }),
     repoStatus: async () => ({
       auth_present: true,

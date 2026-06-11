@@ -1,5 +1,24 @@
 export const DEFAULT_MAX_BYTES = 8192;
 export const DEFAULT_FIELD_MAX_BYTES = 512;
+export const FORGE_INGEST_MAX_BYTES_ENV = 'REMOGRAM_FORGE_INGEST_MAX_BYTES';
+
+export function getEffectiveIngestMaxBytes() {
+  const raw = process.env[FORGE_INGEST_MAX_BYTES_ENV];
+  if (raw == null || raw === '') {
+    return { bytes: DEFAULT_MAX_BYTES, envOverride: false };
+  }
+  const parsed = Number.parseInt(String(raw), 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return { bytes: DEFAULT_MAX_BYTES, envOverride: false, invalidEnv: true };
+  }
+  return { bytes: parsed, envOverride: true };
+}
+
+/** Facts for provider capabilities packets (forge ingest policy). */
+export function forgeIngestCapabilityFacts() {
+  const { bytes } = getEffectiveIngestMaxBytes();
+  return { forge_ingest_cap_bytes: bytes };
+}
 
 export function capText(text, maxBytes = DEFAULT_MAX_BYTES) {
   if (!text) return { text: '', truncated: false, bytes: 0 };

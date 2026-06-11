@@ -63,7 +63,8 @@ task task_forge_trust_round4_wave3 {
   work_type implementation
   bug_discovery bug_linked
   linked_bugs [bug_forge_ingest_oversize_checks bug_sha_bound_overclaim]
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  status in-progress
 }
 
 task task_forge_trust_round4_wave4 {
