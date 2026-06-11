@@ -2906,5 +2906,27 @@
       "by": "actor_coding_agent",
       "note": "Delivered via goal_branch_forge_trust_round5; req_forge_trust_round5 satisfied"
     }
+  ],
+  "goal_branch_semantic_diff_fact_inventory": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-11T23:35:02.835Z",
+      "by": "actor_planning_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:84"
+      ]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-11T23:35:11.413Z",
+      "by": "actor_planning_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:84"
+      ]
+    }
   ]
 }
