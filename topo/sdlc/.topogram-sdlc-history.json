@@ -2183,5 +2183,56 @@
       "by": "actor_integration_lane",
       "note": "Merged on remo"
     }
+  ],
+  "goal_branch_forge_trust_hardening": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-11T16:13:41.662Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "c55a4a6248624c27ff982a17c4356dd62a764017"
+      ]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-11T16:13:41.861Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "c55a4a6248624c27ff982a17c4356dd62a764017"
+      ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-11T16:13:42.058Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "c55a4a6248624c27ff982a17c4356dd62a764017"
+      ]
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-11T16:13:42.254Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "c55a4a6248624c27ff982a17c4356dd62a764017"
+      ]
+    }
+  ],
+  "req_forge_trust_hardening": [
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-11T16:13:42.458Z",
+      "by": "actor_integration_lane",
+      "note": "Merged on remo"
+    }
   ]
 }
