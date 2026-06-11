@@ -1,0 +1,48 @@
+acceptance_criterion ac_stale_head_pr_by_number {
+  name "STALE_HEAD when forge PR head diverges from local git"
+  description "Given a PR resolved by number whose forge head_sha differs from locally resolved git rev for that PR head ref, when remogram pr view or pr checks runs, then packet ok is false and error_code is stale_head with portable head refs in the body."
+  requirement req_forge_trust_round5
+  status draft
+}
+
+acceptance_criterion ac_sha_language_narrowed {
+  name "SHA-bound language scoped to git-resolved refs"
+  description "Given README and remogram agent skills, when Trust or capability prose is read, then SHA-bound claims apply to git-resolved refs only and PR-by-number paths are described as forge metadata subject to reconciliation."
+  requirement req_forge_trust_round5
+  status draft
+}
+
+acceptance_criterion ac_config_stops_at_git_root {
+  name "Config discovery stops at git root"
+  description "Given a nested working directory without .remogram.json but a parent directory outside the repo git root has .remogram.json, when remogram loads config, then it does not bind to the parent config and returns CONFIG_NOT_FOUND or uses only in-repo config."
+  requirement req_forge_trust_round5
+  status draft
+}
+
+acceptance_criterion ac_capabilities_auth_classes {
+  name "Capabilities report per-command auth class"
+  description "Given provider capabilities --json for gitea-api and github-api, when the packet is parsed, then each command lists auth_class none git_only or token_required matching actual runtime requirements."
+  requirement req_forge_trust_round5
+  status draft
+}
+
+acceptance_criterion ac_doctor_stub_warn {
+  name "Doctor warns on stub or misconfigured providers"
+  description "Given config with stub provider id github-gh or gitea-tea, when remogram doctor --json runs, then summary includes warn or fail for provider not fully supported before first forge command."
+  requirement req_forge_trust_round5
+  status draft
+}
+
+acceptance_criterion ac_coverage_policy_documented {
+  name "MCP vs core coverage policy documented"
+  description "Given README Testing section and vitest config, when a maintainer reads coverage scope, then MCP package inclusion/exclusion and threshold policy are explicit and match npm run test:coverage behavior."
+  requirement req_forge_trust_round5
+  status draft
+}
+
+acceptance_criterion ac_coverage_no_silent_drift {
+  name "Coverage config changes require explicit AC proof"
+  description "Given wave 4 coverage scope on remo, when wave 5 completes, then vitest coverage include/exclude changes are limited to documented policy and covered by tests or README — no drive-by threshold changes without AC update."
+  requirement req_forge_trust_round5
+  status draft
+}

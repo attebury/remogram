@@ -1,0 +1,15 @@
+plan plan_forge_trust_round5 {
+  name "Forge Trust Round 5 — Wave Plan"
+  description "Deferred wave 5 from plan_forge_trust_round4. Serialize: STALE_HEAD before config root; config root before capability matrix; matrix before coverage policy revisit."
+  task task_forge_trust_round5_wave1
+  architecture_patterns [contract_boundary, fail_closed_gate, command_owned_mutation]
+  priority critical
+  steps {
+    step wave1_stale_head status pending description "STALE_HEAD reconciliation for pr view/checks by number; narrow SHA-bound language; accept decision_stale_head_reconciliation."
+    step wave2_config_root status pending description "Bound findConfigPath to git root; regression test for parent walk escape."
+    step wave3_capability_matrix status pending description "Per-command auth_class in capabilities; doctor stub warn; accept decision_auth_aware_capability_matrix."
+    step wave4_coverage_policy status pending description "README + vitest coverage policy honesty; no silent threshold drift."
+    step verify status pending description "npm test, npm run test:coverage, topogram check green; remogram doctor on sample configs."
+  }
+  status draft
+}
