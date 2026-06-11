@@ -2,6 +2,8 @@
 
 Generic SCM/forge boundary CLI and MCP server. Emits provider-attributed JSON facts with SHA fields where applicable — **git-resolved** refs from local git (`refs compare`, `sync plan`) vs **forge-reported** PR SHAs from forge APIs (`pr view`, `pr checks`) — and no workflow or planning-tool concepts in output.
 
+**PR-by-number reconciliation:** When `pr view` or `pr checks` is invoked with `--number`, Remogram compares the forge-reported `head_sha` to the locally resolved git rev for `head_ref` (typically `<remote>/<head_ref>`). If they diverge, the packet is `ok: false` with `error_code: stale_head` and portable head refs — treat that as a signal to `git fetch`, not a forge outage.
+
 Remogram was developed by and for [Topogram](https://topogram.dev). Topogram is not required to install or use Remogram.
 
 ## Install (beta)

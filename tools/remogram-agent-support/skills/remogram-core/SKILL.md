@@ -31,7 +31,7 @@ remogram merge plan --number <n> --json
 Remogram emits **provider-attributed JSON facts** with SHA fields where applicable:
 
 - **Git-resolved SHAs** — `refs compare` and `sync plan` resolve refs via local git; SHAs come from the checkout, not forge HTTP.
-- **Forge-reported PR SHAs** — `pr view` / `pr checks` / `merge plan` include `base_sha` and `head_sha` as reported by the forge API for that PR/MR snapshot.
+- **Forge-reported PR SHAs** — `pr view` / `pr checks` / `merge plan` include `base_sha` and `head_sha` as reported by the forge API for that PR/MR snapshot. **PR-by-number paths** (`--number`) are forge metadata subject to **local git reconciliation**: when forge `head_sha` diverges from the locally resolved rev for `head_ref`, packets emit `error_code: stale_head` (`ok: false`) with portable head refs — refresh with `git fetch`, not a forge outage.
 
 **Never** add workflow or planning-tool metadata to Remogram output: no `goal_branch`, `lane`, `sdlc_task`, or similar lifecycle fields.
 
