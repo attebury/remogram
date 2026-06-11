@@ -2453,5 +2453,45 @@
       "by": "actor_integration_lane",
       "note": "Trust canon on remo@cf6e18e; topogram decision SM"
     }
+  ],
+  "goal_branch_forge_trust_round5": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-11T17:04:31.042Z",
+      "by": "actor_planning_lane",
+      "note": null,
+      "evidence_refs": [
+        "origin/remo@0d27812"
+      ]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-11T17:04:31.241Z",
+      "by": "actor_planning_lane",
+      "note": null,
+      "evidence_refs": [
+        "origin/remo@0d27812"
+      ]
+    }
+  ],
+  "decision_stale_head_reconciliation": [
+    {
+      "from": "proposed",
+      "to": "accepted",
+      "at": "2026-06-11T17:04:31.439Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
+  ],
+  "decision_auth_aware_capability_matrix": [
+    {
+      "from": "proposed",
+      "to": "accepted",
+      "at": "2026-06-11T17:04:31.651Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
   ]
 }
