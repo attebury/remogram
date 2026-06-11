@@ -2135,5 +2135,53 @@
       "by": "actor_integration_lane",
       "note": "0.1.0-beta.1"
     }
+  ],
+  "goal_branch_forge_trust_round3": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-11T16:13:22.738Z",
+      "by": "actor_integration_lane",
+      "note": null
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-11T16:13:28.119Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "48ee6a6"
+      ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-11T16:13:32.810Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "48ee6a6"
+      ]
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-11T16:13:33.015Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "48ee6a6"
+      ]
+    }
+  ],
+  "req_forge_trust_round3": [
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-11T16:13:33.219Z",
+      "by": "actor_integration_lane",
+      "note": "Merged on remo"
+    }
   ]
 }
