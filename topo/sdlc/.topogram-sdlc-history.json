@@ -2700,5 +2700,23 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "ac_capabilities_auth_classes": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T19:44:19.436Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_doctor_stub_warn": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-11T19:44:19.644Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
   ]
 }
