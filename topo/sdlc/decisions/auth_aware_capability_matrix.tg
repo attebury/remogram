@@ -3,5 +3,5 @@ decision decision_auth_aware_capability_matrix {
   description "Provider capabilities and doctor must distinguish git-only commands (refs compare, local explain paths) from token-required forge API commands. Capabilities list per-command auth_class: none, git_only, token_required. Doctor warns on stub providers and misconfigured provider IDs; does not claim full forge support when runtime throws."
   context ["Round 4 wave 4 partially addressed refs compare and stub doctor; wave 5 completes honest matrix across providers", "Agents use capabilities before invoking commands in automation"]
   consequences ["provider capabilities packet includes per-command auth requirements", "README documents which commands work without tokens when git suffices", "doctor summary reflects stub/misconfig before first command failure"]
-  status proposed
+  status accepted
 }
