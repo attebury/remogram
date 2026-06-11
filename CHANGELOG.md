@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [0.1.0-beta.2] - 2026-06-11
+
+### Changed
+
+- **Forge trust round 5 (waves 1–4):** `stale_head` when PR-by-number forge `head_sha` diverges from local git; `.remogram.json` discovery bounded to repository git root; per-command `auth_class` in `provider capabilities` and README auth matrix; doctor honesty for stub/misconfig; documented MCP vs core vitest coverage policy with drift guards in `tests/core/coverage-config.test.mjs`
+
+### Fixed
+
+- Overclaimed SHA-bound language in README and skills (wave 1)
+- Parent-directory `.remogram.json` pickup from nested cwd (wave 2)
+- Capabilities implying token required for git-only commands; stub providers passing doctor clean (wave 3)
+
 ## [0.1.0-beta.1] - 2026-06-11
 
 ### Changed
@@ -33,5 +45,6 @@ All notable changes to this project will be documented in this file.
 - `github-gh` and `gitea-tea` provider IDs are reserved CLI-wrapper placeholders (not implemented); use `*-api` providers — GitLab's CLI is `glab` but has no wrapper ID yet (see README)
 - Payload-size smoke compare is not packaged in npm beta (monorepo dev tooling only)
 
+[0.1.0-beta.2]: https://github.com/attebury/remogram/releases/tag/v0.1.0-beta.2
 [0.1.0-beta.1]: https://github.com/attebury/remogram/releases/tag/v0.1.0-beta.1
 [0.1.0-beta.0]: https://github.com/attebury/remogram/releases/tag/v0.1.0-beta.0

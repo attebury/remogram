@@ -1,6 +1,6 @@
 {
   "name": "@remogram/provider-github-gh",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0-beta.2",
   "description": "GitHub gh wrapper provider stub for remogram",
   "type": "module",
   "license": "MIT",
@@ -22,6 +22,6 @@
     "node": ">=20"
   },
   "dependencies": {
-    "@remogram/core": "0.1.0-beta.1"
+    "@remogram/core": "0.1.0-beta.2"
   }
 }
