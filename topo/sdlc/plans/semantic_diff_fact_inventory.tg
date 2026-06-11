@@ -1,0 +1,16 @@
+plan plan_semantic_diff_fact_inventory {
+  name "Semantic Diff Fact Inventory — Wave Plan"
+  description "Serialize contracts before code: fact model and trust boundaries, ref inventory core, CR/check/merge aggregation, observer integration, Topogram consumer examples, then verify."
+  task task_semantic_diff_fact_inventory_wave1
+  architecture_patterns [contract_boundary, fail_closed_gate, command_owned_mutation]
+  priority high
+  steps {
+    step wave1_fact_model status pending description "Fact packet model and trust boundaries: shapes, forge_sourced vs trusted envelope, non-goals vs six read/plan commands; decision record for fact-layer boundary."
+    step wave2_ref_inventory status pending description "Git/ref inventory provider core: refs, SHAs, ancestry hints as provider-neutral packets; git-root binding; reuse remogram-core trust primitives."
+    step wave3_cr_aggregation status pending description "Change-request/check/merge-plan aggregation into semantic-diff-oriented inventory slices without Topogram SDLC fields."
+    step wave4_observer_integration status pending description "Observer snapshot / branch-workcycle proto fact needs; read-only CLI/MCP exposure plan."
+    step wave5_topogram_consumer status pending description "Topogram consumer contract examples and explicit Topogram-interprets / Remogram-does-not documentation."
+    step wave6_verify status pending description "Hermetic fixtures, contract tests, doctor/capabilities updates (read-only), smoke validation; npm test and topogram check green."
+  }
+  status draft
+}

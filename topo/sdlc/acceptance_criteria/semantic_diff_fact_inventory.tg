@@ -1,0 +1,55 @@
+acceptance_criterion ac_semantic_diff_fact_packet_model {
+  name "Fact packet model and trust boundaries documented"
+  description "Given wave 1 deliverables on remo, when a maintainer reads decision and packet contract docs, then new fact inventory packet types use schema_version 1 envelope discipline, mark forge-sourced string leaves per decision_packet_trust_doctrine, and exclude SDLC/workflow metadata from remogram output."
+  requirement req_semantic_diff_fact_inventory
+  status draft
+}
+
+acceptance_criterion ac_semantic_diff_boundary_decision {
+  name "Fact-layer vs semantic-layer boundary decision accepted"
+  description "Given wave 1, when decision_semantic_diff_fact_layer is accepted on remo, then consequences explicitly assign ref/CR facts to Remogram and lifecycle/queue/proof semantics to Topogram with no overlap."
+  requirement req_semantic_diff_fact_inventory
+  status draft
+}
+
+acceptance_criterion ac_semantic_diff_ref_inventory_packet {
+  name "Ref inventory packet is provider-neutral"
+  description "Given a configured repo, when ref inventory command runs with --json, then packet lists refs and SHAs with ancestry hints using trusted envelope fields only and provider-neutral vocabulary shared across gitea-api and github-api."
+  requirement req_semantic_diff_fact_inventory
+  status draft
+}
+
+acceptance_criterion ac_semantic_diff_git_root_binding {
+  name "Ref inventory respects git-root config binding"
+  description "Given nested cwd or out-of-repo config paths, when ref inventory resolves repository context, then config and git operations fail closed at repository git root per existing remogram-core trust rules."
+  requirement req_semantic_diff_fact_inventory
+  status draft
+}
+
+acceptance_criterion ac_semantic_diff_cr_inventory_slice {
+  name "Change-request inventory slice composes existing facts"
+  description "Given open change requests on a repo, when CR inventory aggregation runs, then output composes pr view, pr checks, and merge plan facts into a semantic-diff-oriented slice without embedding Topogram task or goal_branch fields."
+  requirement req_semantic_diff_fact_inventory
+  status draft
+}
+
+acceptance_criterion ac_semantic_diff_observer_facts {
+  name "Observer snapshot fact requirements enumerated"
+  description "Given branch-workcycle observer-snapshot proto, when wave 4 plan artifacts are read, then required remogram fact packets and CLI/MCP tools are listed with read-only annotations and no lifecycle mutation in remogram output."
+  requirement req_semantic_diff_fact_inventory
+  status draft
+}
+
+acceptance_criterion ac_semantic_diff_topogram_consumer_examples {
+  name "Topogram consumer examples are explicit"
+  description "Given wave 5 documentation, when a Topogram maintainer reads consumer contract examples, then examples show Topogram queries/slices consuming remogram packets and state that Remogram does not interpret SDLC semantics."
+  requirement req_semantic_diff_fact_inventory
+  status draft
+}
+
+acceptance_criterion ac_semantic_diff_contract_tests {
+  name "Contract tests and smoke validation pass"
+  description "Given wave 6 on remo, when npm test and topogram check run on integration tip, then hermetic contract tests cover new fact packets, doctor/capabilities report new read-only commands honestly, and smoke fixtures compare packet shapes."
+  requirement req_semantic_diff_fact_inventory
+  status draft
+}

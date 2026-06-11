@@ -1,0 +1,119 @@
+task task_semantic_diff_fact_inventory_wave1 {
+  name "Wave 1 — Fact packet model and trust boundaries"
+  description "Define semantic-diff fact packet shapes, forge_sourced vs trusted envelope fields, non-goals relative to existing six read/plan commands, and accept decision_semantic_diff_fact_layer on remo."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Mutation commands" "SDLC fields in remogram output" "Topogram runtime dependency in remogram-core" "Implementation before plan approval"]
+  entrypoints ["topo/sdlc/decisions/**" "packages/remogram-core/contracts/**" "tools/remogram-agent-support/skills/remogram-core/**" "README.md"]
+  satisfies [req_semantic_diff_fact_inventory]
+  acceptance_refs [ac_semantic_diff_fact_packet_model ac_semantic_diff_boundary_decision]
+  verification_refs [verification_semantic_diff_fact_inventory_wave1]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type implementation
+  status unclaimed
+}
+
+task task_semantic_diff_fact_inventory_wave2 {
+  name "Wave 2 — Git/ref inventory provider core"
+  description "Implement provider-neutral ref inventory facts: refs, SHAs, ancestry hints; git-root binding; reuse remogram-core trust primitives."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Change-request aggregation" "Observer proto changes" "Mutation commands"]
+  entrypoints ["packages/remogram-core/**" "packages/provider-gitea-api/**" "packages/provider-github-api/**" "packages/remogram-cli/**"]
+  satisfies [req_semantic_diff_fact_inventory]
+  acceptance_refs [ac_semantic_diff_ref_inventory_packet ac_semantic_diff_git_root_binding]
+  verification_refs [verification_semantic_diff_fact_inventory_wave2]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_semantic_diff_fact_inventory_wave1]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type implementation
+  status unclaimed
+}
+
+task task_semantic_diff_fact_inventory_wave3 {
+  name "Wave 3 — Change-request/check/merge-plan aggregation"
+  description "Compose CR + check + merge-plan facts into semantic-diff-oriented inventory slices without Topogram SDLC semantics."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["New forge mutation APIs" "Topogram queue fields in packets" "Pagination beyond first page unless documented"]
+  entrypoints ["packages/remogram-core/**" "packages/provider-gitea-api/**" "packages/provider-github-api/**" "packages/remogram-cli/**" "packages/remogram-mcp/**"]
+  satisfies [req_semantic_diff_fact_inventory]
+  acceptance_refs [ac_semantic_diff_cr_inventory_slice]
+  verification_refs [verification_semantic_diff_fact_inventory_wave3]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_semantic_diff_fact_inventory_wave2]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type implementation
+  status unclaimed
+}
+
+task task_semantic_diff_fact_inventory_wave4 {
+  name "Wave 4 — Observer snapshot integration"
+  description "Plan and expose read-only remogram facts required by observer-snapshot / branch-workcycle proto; MCP/CLI readOnlyHint annotations."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Lifecycle mutation in remogram output" "Observer routing logic in remogram-core" "Merge or approve side effects"]
+  entrypoints ["packages/remogram-mcp/**" "packages/remogram-cli/**" "tools/remogram-agent-support/skills/remogram-observer/**"]
+  satisfies [req_semantic_diff_fact_inventory]
+  acceptance_refs [ac_semantic_diff_observer_facts]
+  verification_refs [verification_semantic_diff_fact_inventory_wave4]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_semantic_diff_fact_inventory_wave3]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type implementation
+  status unclaimed
+}
+
+task task_semantic_diff_fact_inventory_wave5 {
+  name "Wave 5 — Topogram consumer contract examples"
+  description "Document Topogram consumer queries/slices reading remogram facts; explicit Topogram interprets / Remogram does not boundary in plan and README."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Topogram engine changes in remogram repo" "SDLC record mutations via remogram" "Consumer implementation in packages/** beyond docs/examples"]
+  entrypoints ["README.md" "tools/remogram-agent-support/skills/remogram-consumer/**" "topo/sdlc/plans/semantic_diff_fact_inventory.tg"]
+  satisfies [req_semantic_diff_fact_inventory]
+  acceptance_refs [ac_semantic_diff_topogram_consumer_examples]
+  verification_refs [verification_semantic_diff_fact_inventory_wave5]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_semantic_diff_fact_inventory_wave4]
+  architecture_patterns [contract_boundary]
+  disposition active
+  priority medium
+  work_type implementation
+  status unclaimed
+}
+
+task task_semantic_diff_fact_inventory_wave6 {
+  name "Wave 6 — Tests, fixtures, docs, and smoke validation"
+  description "Hermetic fixtures, contract tests, doctor/capabilities honesty for new read-only commands, smoke compare patterns, verify step proof."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Live-network CI dependency" "Coverage threshold drift without AC update" "Mutation command tests"]
+  entrypoints ["tests/**" "packages/remogram-cli/**" "packages/remogram-mcp/**" "README.md"]
+  satisfies [req_semantic_diff_fact_inventory]
+  acceptance_refs [ac_semantic_diff_contract_tests]
+  verification_refs [verification_semantic_diff_fact_inventory_wave6]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_semantic_diff_fact_inventory_wave5]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type implementation
+  status unclaimed
+}

@@ -1,0 +1,12 @@
+pitch pitch_semantic_diff_fact_inventory {
+  name "Remogram Semantic Diff Fact Inventory Foundation"
+  description "Post-beta fact-layer expansion: provider-neutral ref and change-request inventory packets so Topogram can treat Git as a semantic diff database without Remogram owning SDLC semantics."
+  appetite "large"
+  problem "Topogram branch workcycle and semantic diff need stable forge/ref/change-request facts, but Remogram exposes only six read/plan commands. There is no structured ref inventory or semantic-diff-oriented aggregation for observer snapshots or Topogram consumer queries."
+  solution_sketch "Six serialized waves (contracts before code): (1) fact packet model and trust boundaries, (2) git/ref inventory provider core, (3) change-request/check/merge-plan aggregation, (4) observer snapshot integration, (5) Topogram consumer contract examples, (6) tests/fixtures/docs/smoke. Read-only facts first; no mutation commands."
+  rabbit_holes "Mutation/write commands; SDLC fields in remogram output; Topogram runtime in remogram-core; full semantic prompt firewall; rewriting forge-trust archaeology; live-network default tests."
+  no_go_areas "packages implementation in draft PR; approving goal or ACs in draft PR; duplicating Topogram queue/lifecycle semantics in remogram packets; hand-editing command-owned sidecar status."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}

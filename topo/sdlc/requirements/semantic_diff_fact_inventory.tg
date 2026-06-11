@@ -1,0 +1,10 @@
+requirement req_semantic_diff_fact_inventory {
+  name "Remogram semantic diff fact inventory (read-only)"
+  description "Remogram must expose provider-neutral, schema_version 1 read-only packets for ref inventory and change-request fact aggregation so Topogram can compose semantic diff and branch-workcycle views. Remogram owns forge/git facts only; Topogram owns SDLC lifecycle, queue, and proof semantics. No mutation commands in this Intent Packet."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  pitch pitch_semantic_diff_fact_inventory
+  priority high
+  status draft
+}
