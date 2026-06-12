@@ -3579,5 +3579,24 @@
       "by": "actor_integration_lane",
       "note": null
     }
+  ],
+  "goal_branch_cr_inventory_test_coverage": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-12T05:33:55.853Z",
+      "by": "actor_plan_lane",
+      "note": null
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-12T05:34:04.924Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:113"
+      ]
+    }
   ]
 }
