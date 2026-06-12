@@ -1,6 +1,7 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { runCli } from '@remogram/cli';
 import { PACKET_TYPES, SCHEMA_VERSION } from '@remogram/core';
+import { provider as giteaProvider } from '@remogram/provider-gitea-api';
 import { setupTempForge, captureCliOutput } from '../helpers/temp-forge.mjs';
 import { createMockProvider, defaultTestConfig } from '../helpers/mock-provider.mjs';
 
@@ -66,6 +67,31 @@ describe('remogram cli commands', () => {
     expect(packet.pagination).toBe('first_page_only');
     expect(packet.write_support).toBe(false);
     expect(packet.forge_ingest_cap_bytes).toBe(8192);
+  });
+
+  it('provider capabilities reports fact inventory commands honestly', async () => {
+    const config = defaultTestConfig();
+    const setup = setupTempForge({
+      config,
+      remoteUrl: 'https://localhost:3000/owner/repo.git',
+    });
+    cleanups.push(setup);
+    const { logs } = await captureCliOutput(() =>
+      runCli(['provider', 'capabilities', '--json'], {
+        cwd: setup.dir,
+        providers: { 'gitea-api': giteaProvider },
+      }),
+    );
+    const packet = JSON.parse(logs[0]);
+    const byName = Object.fromEntries(packet.commands.map((command) => [command.name, command]));
+    expect(byName.ref_inventory).toMatchObject({
+      implemented: true,
+      auth_class: 'git_only',
+    });
+    expect(byName.cr_inventory).toMatchObject({
+      implemented: true,
+      auth_class: 'token_required',
+    });
   });
 
   it('doctor reports readiness without secrets', async () => {
