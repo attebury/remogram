@@ -1,0 +1,83 @@
+task task_cr_inventory_test_coverage_wave1 {
+  name "Wave 1 — Core unit and contract gates"
+  description "Add stale head_reconcile, FORBIDDEN_PACKET_KEYS cr_inventory_slice loop, prChecks partial failure, and unit list_truncated tests. Tests only."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Product behavior changes" "Provider HTTP mocks" "CLI integration"]
+  entrypoints ["tests/core/**" "packages/remogram-core/contracts/**"]
+  satisfies [req_cr_inventory_test_coverage]
+  acceptance_refs [ac_cr_inventory_test_coverage_wave1]
+  verification_refs [verification_cr_inventory_test_coverage_wave1]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type implementation
+  claimed_by [actor_coding_agent]
+  status unclaimed
+}
+
+task task_cr_inventory_test_coverage_wave2 {
+  name "Wave 2 — Non-open skip semantics"
+  description "Record pr_not_open in entries_skipped; contract and consumer docs; mixed open/closed tests."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Mutation commands" "Full ingest cap fix"]
+  entrypoints ["packages/remogram-core/**" "packages/remogram-core/contracts/**" "tools/remogram-agent-support/skills/remogram-consumer/**" "tests/**"]
+  satisfies [req_cr_inventory_test_coverage]
+  acceptance_refs [ac_cr_inventory_test_coverage_wave2]
+  verification_refs [verification_cr_inventory_test_coverage_wave2]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_cr_inventory_test_coverage_wave1]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type implementation
+  claimed_by [actor_coding_agent]
+  status unclaimed
+}
+
+task task_cr_inventory_test_coverage_wave3 {
+  name "Wave 3 — CLI integration path"
+  description "Hook provider helper; cr-inventory.integration tests for real aggregation, --limit, forbidden keys; optional MCP smoke."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Live network" "Provider matrix pagination"]
+  entrypoints ["tests/cli/**" "tests/helpers/**" "tests/mcp/**"]
+  satisfies [req_cr_inventory_test_coverage]
+  acceptance_refs [ac_cr_inventory_test_coverage_wave3]
+  verification_refs [verification_cr_inventory_test_coverage_wave3]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_cr_inventory_test_coverage_wave2]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type implementation
+  claimed_by [actor_coding_agent]
+  status unclaimed
+}
+
+task task_cr_inventory_test_coverage_wave4 {
+  name "Wave 4 — Provider matrix and pagination"
+  description "Extend provider contract matrix assertions; trim mockCrInventory fetch sequences; gitea list_truncated HTTP test."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["GitLab live network" "Parallel forge calls"]
+  entrypoints ["tests/helpers/provider-contract-matrix.mjs" "tests/provider/**" "tests/**"]
+  satisfies [req_cr_inventory_test_coverage]
+  acceptance_refs [ac_cr_inventory_test_coverage_wave4]
+  verification_refs [verification_cr_inventory_test_coverage_wave4]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_cr_inventory_test_coverage_wave3]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type implementation
+  claimed_by [actor_coding_agent]
+  status unclaimed
+}

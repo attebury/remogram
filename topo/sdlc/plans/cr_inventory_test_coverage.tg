@@ -1,0 +1,14 @@
+plan plan_cr_inventory_test_coverage {
+  name "CR Inventory Test Coverage — Wave Plan"
+  description "Four serialized waves closing code-review test gaps for cr inventory after hardening cluster."
+  task task_cr_inventory_test_coverage_wave1
+  architecture_patterns [contract_boundary, fail_closed_gate, command_owned_mutation]
+  priority medium
+  steps {
+    step wave1_core_unit_tests status pending description "Stale head_reconcile, forbidden keys loop, prChecks partial fail, unit list_truncated."
+    step wave2_skip_semantics status pending description "entries_skipped pr_not_open product fix, tests, consumer doc."
+    step wave3_cli_integration status pending description "Hook provider CLI tests, --limit, forbidden keys path."
+    step wave4_provider_matrix status pending description "Provider matrix metadata, mockCrInventory trim, gitea list_truncated HTTP."
+  }
+  status draft
+}

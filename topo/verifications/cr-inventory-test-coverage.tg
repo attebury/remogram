@@ -1,0 +1,48 @@
+verification verification_cr_inventory_test_coverage_wave1 {
+  name "CR inventory test coverage wave 1"
+  description "Core unit and contract gate tests."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [cr_inventory_test_coverage_wave1]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status active
+}
+
+verification verification_cr_inventory_test_coverage_wave2 {
+  name "CR inventory test coverage wave 2"
+  description "pr_not_open skip semantics tests."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [cr_inventory_test_coverage_wave2]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status active
+}
+
+verification verification_cr_inventory_test_coverage_wave3 {
+  name "CR inventory test coverage wave 3"
+  description "CLI integration path tests."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [cr_inventory_test_coverage_wave3]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status active
+}
+
+verification verification_cr_inventory_test_coverage_wave4 {
+  name "CR inventory test coverage wave 4"
+  description "Provider matrix and pagination tests."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [cr_inventory_test_coverage_wave4]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+    command topogram_check argv ["topogram" "check" "." "--json"]
+  }
+  status active
+}
