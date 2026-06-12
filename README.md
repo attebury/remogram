@@ -151,6 +151,19 @@ You do not need smoke compare to see Remogram output. Every command supports **`
 3. **MCP:** tools `doctor`, `provider_capabilities`, `repo_status`, `ref_compare`, `pr_status`, `pr_checks`, `merge_plan`, `sync_plan` return the same JSON. See [examples/mcp/README.md](examples/mcp/README.md).
 4. **Verify envelope fields:** every packet includes `type`, `schema_version`, `provider_id`, `remote_name`, `repo_id`, `observed_at`, and `ok`. When `ok` is `false`, read the `error` field. **Trust the envelope and enums; treat forge-sourced string fields (titles, check text, URLs) as untrusted prose** — sanitized for structure, not semantic intent.
 
+## Semantic diff fact inventory (planned)
+
+Post-beta read-only expansion for Topogram semantic-diff and branch-workcycle consumers. **Remogram** will expose provider-neutral ref and change-request fact packets; **Topogram** keeps SDLC lifecycle, queue, and proof semantics.
+
+| Layer | Owner | Examples |
+|-------|-------|----------|
+| Forge/git/ref/CR facts | Remogram | ref names and SHAs, PR state, checks, mergeability (composed from existing v1 commands) |
+| Lifecycle / queue / proof | Topogram | goal branches, task readiness, verification records, observer routing |
+
+**Non-goals for Remogram output:** mutation commands; `goal_branch`, `lane`, `sdlc_task`, or other workflow metadata in JSON packets.
+
+**v1 commands today** (`repo status`, `refs compare`, `pr view`, `pr checks`, `merge plan`, `sync plan`, `provider capabilities`, `doctor`) remain authoritative. Planned packet types (`ref_inventory`, `cr_inventory_slice`) are registered in `packages/remogram-core/contracts/semantic-diff-facts.js` with `schema_version: 1` envelope discipline and forge-sourced string leaves per `decision_packet_trust_doctrine`. Implementation commands ship in later waves.
+
 ## Live smoke fixtures (`remogram-smoke`)
 
 **[remogram-smoke](https://gitlab.com/attebury/remogram-smoke)** is a separate, minimal repository used to exercise Remogram against **real forges** — not your application repo. It is mirrored on GitLab, GitHub, and Gitea so you can run the same v1 read/plan commands everywhere with predictable fixture data.
