@@ -1,0 +1,27 @@
+acceptance_criterion ac_cr_inventory_single_pass {
+  name "CR inventory single-pass aggregation"
+  description "Given open change requests, when cr inventory runs, then each entry uses one pr view and one pr checks fetch and derives blockers from the same checks snapshot via shared mergeBlockersFromFacts without calling mergePlan per entry."
+  requirement req_cr_inventory_hardening
+  status draft
+}
+
+acceptance_criterion ac_cr_inventory_semantic_fields {
+  name "CR inventory semantic-diff fields and stale-head hints"
+  description "Given cr inventory output, when entries are emitted, then each includes base_sha and head_sha when available and per-entry head_reconcile stale hints without failing the whole slice on stale local refs."
+  requirement req_cr_inventory_hardening
+  status draft
+}
+
+acceptance_criterion ac_cr_inventory_bounds {
+  name "CR inventory bounds and truncation metadata"
+  description "Given many open change requests, when cr inventory runs with default or explicit limit, then the slice reports entry_count, truncated, and list_truncated honestly and respects MCP-safe entry caps."
+  requirement req_cr_inventory_hardening
+  status draft
+}
+
+acceptance_criterion ac_cr_inventory_resilience {
+  name "CR inventory partial failure resilience"
+  description "Given a per-PR forge error during aggregation, when cr inventory runs, then the slice returns partial entries and documents skipped PRs without failing the entire command; bug_gitea_pr_state_case is fixed via normalized open-state checks."
+  requirement req_cr_inventory_hardening
+  status draft
+}
