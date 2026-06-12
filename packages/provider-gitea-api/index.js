@@ -219,21 +219,37 @@ export async function getPull(ctx, { number }) {
   return giteaFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'pulls', number));
 }
 
-export async function listOpenPulls(ctx) {
+export async function listOpenPullsWithMeta(ctx) {
   requireToken();
-  const pulls = await giteaFetchPaginated(
-    ctx.config,
-    ctx.parsed,
-    `${repoApiPath(ctx.config, 'pulls')}?state=open`,
-  );
-  return pulls
+  const all = [];
+  let listTruncated = false;
+  const path = `${repoApiPath(ctx.config, 'pulls')}?state=open`;
+  const pageSep = path.includes('?') ? '&' : '?';
+  for (let page = 1; page <= MAX_CHECK_PAGES; page += 1) {
+    const body = await giteaFetch(
+      ctx.config,
+      ctx.parsed,
+      `${path}${pageSep}limit=${GITEA_PAGE_SIZE}&page=${page}`,
+    );
+    const items = Array.isArray(body) ? body : [];
+    all.push(...items);
+    if (items.length < GITEA_PAGE_SIZE) break;
+    if (page === MAX_CHECK_PAGES) listTruncated = true;
+  }
+  const numbers = all
     .map((pr) => pr.number)
     .filter((number) => Number.isInteger(number))
     .sort((a, b) => a - b);
+  return { numbers, list_truncated: listTruncated };
+}
+
+export async function listOpenPulls(ctx) {
+  const meta = await listOpenPullsWithMeta(ctx);
+  return meta.numbers;
 }
 
 export async function crInventorySlice(ctx, opts = {}) {
-  return crInventory(ctx, { listOpenPulls, prView, prChecks }, opts);
+  return crInventory(ctx, { listOpenPulls, listOpenPullsWithMeta, prView, prChecks }, opts);
 }
 
 function mergeability(pr) {

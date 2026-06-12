@@ -1,6 +1,28 @@
 import { sanitizeField } from './caps.js';
+import { ERROR_CODES, forgeError } from './contracts/errors.js';
 import { mergeBlockersFromFacts } from './merge-blockers.js';
 import { staleHeadDetails } from './pr-head-reconcile.js';
+
+export const DEFAULT_CR_INVENTORY_LIMIT = 50;
+
+export function normalizeCrInventoryLimit(value) {
+  if (value == null || value === '') return DEFAULT_CR_INVENTORY_LIMIT;
+  const n = Number(value);
+  if (!Number.isInteger(n) || n <= 0) {
+    throw Object.assign(new Error('Invalid cr inventory limit'), {
+      forgeError: forgeError(ERROR_CODES.INVALID_ARGS, '--limit must be a positive integer'),
+    });
+  }
+  return n;
+}
+
+async function resolveOpenPullList(provider, ctx) {
+  if (typeof provider.listOpenPullsWithMeta === 'function') {
+    return provider.listOpenPullsWithMeta(ctx);
+  }
+  const numbers = await provider.listOpenPulls(ctx);
+  return { numbers, list_truncated: false };
+}
 
 export function buildHeadReconcile(ctx, view) {
   const details = staleHeadDetails(
@@ -42,12 +64,15 @@ export function buildCrInventoryEntry(ctx, view, checks) {
  * Aggregate open change requests into a semantic-diff-oriented inventory slice.
  * @param {object} ctx forge context
  * @param {object} provider must expose listOpenPulls, prView, prChecks
- * @param {{ slice_ref?: string }} [opts]
+ * @param {{ slice_ref?: string, limit?: number }} [opts]
  */
 export async function crInventory(ctx, provider, opts = {}) {
-  const numbers = await provider.listOpenPulls(ctx);
+  const limit = normalizeCrInventoryLimit(opts.limit);
+  const { numbers, list_truncated: listTruncated } = await resolveOpenPullList(provider, ctx);
+  const entryCount = numbers.length;
+  const selected = numbers.slice(0, limit);
   const entries = [];
-  for (const number of numbers) {
+  for (const number of selected) {
     const view = await provider.prView(ctx, { number });
     if (view.state !== 'open') continue;
     const checks = await provider.prChecks(ctx, { number });
@@ -55,6 +80,9 @@ export async function crInventory(ctx, provider, opts = {}) {
   }
   return {
     entries,
+    entry_count: entryCount,
+    truncated: entryCount > selected.length,
+    list_truncated: listTruncated,
     ...(opts.slice_ref ? { slice_ref: sanitizeField(opts.slice_ref) } : {}),
   };
 }

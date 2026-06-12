@@ -303,22 +303,38 @@ export async function mergePlan(ctx, opts) {
   };
 }
 
-export async function listOpenPulls(ctx) {
+export async function listOpenPullsWithMeta(ctx) {
   apiBase(ctx.config, ctx.parsed);
   requireToken();
-  const mrs = await gitlabFetchPaginated(
-    ctx.config,
-    ctx.parsed,
-    `${projectApiPath(ctx.config, 'merge_requests')}?state=opened`,
-  );
-  return mrs
+  const path = `${projectApiPath(ctx.config, 'merge_requests')}?state=opened`;
+  const all = [];
+  let listTruncated = false;
+  for (let page = 1; page <= MAX_CHECK_PAGES; page += 1) {
+    const separator = path.includes('?') ? '&' : '?';
+    const body = await gitlabFetch(
+      ctx.config,
+      ctx.parsed,
+      `${path}${separator}per_page=${GITLAB_PAGE_SIZE}&page=${page}`,
+    );
+    const items = Array.isArray(body) ? body : [];
+    all.push(...items);
+    if (items.length < GITLAB_PAGE_SIZE) break;
+    if (page === MAX_CHECK_PAGES) listTruncated = true;
+  }
+  const numbers = all
     .map((mr) => mr.iid)
     .filter((number) => Number.isInteger(number))
     .sort((a, b) => a - b);
+  return { numbers, list_truncated: listTruncated };
+}
+
+export async function listOpenPulls(ctx) {
+  const meta = await listOpenPullsWithMeta(ctx);
+  return meta.numbers;
 }
 
 export async function crInventorySlice(ctx, opts = {}) {
-  return crInventory(ctx, { listOpenPulls, prView, prChecks }, opts);
+  return crInventory(ctx, { listOpenPulls, listOpenPullsWithMeta, prView, prChecks }, opts);
 }
 
 export async function syncPlan(ctx, remoteName = 'origin') {

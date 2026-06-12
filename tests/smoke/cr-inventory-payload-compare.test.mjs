@@ -18,6 +18,9 @@ describe('cr_inventory_slice payload compare fixtures', () => {
           blockers: ['checks_missing'],
         },
       ],
+      entry_count: 1,
+      truncated: false,
+      list_truncated: false,
     };
 
     const packet = forgeFactInventoryPacket(FACT_INVENTORY_PACKET_TYPES.CR_INVENTORY_SLICE, {
@@ -37,5 +40,8 @@ describe('cr_inventory_slice payload compare fixtures', () => {
     expect(report.remogram_ingest_cap_bytes).toBe(DEFAULT_MAX_BYTES);
     expect(report.remogram_packet.bytes).toBe(byteSize(packet));
     expect(packet.entries[0].blockers).toEqual(['checks_missing']);
+    expect(packet.entry_count).toBe(1);
+    expect(packet.truncated).toBe(false);
+    expect(packet.list_truncated).toBe(false);
   });
 });

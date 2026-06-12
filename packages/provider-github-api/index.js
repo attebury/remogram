@@ -420,23 +420,38 @@ export async function mergePlan(ctx, opts) {
   };
 }
 
-export async function listOpenPulls(ctx) {
+export async function listOpenPullsWithMeta(ctx) {
   apiBase(ctx.config, ctx.parsed);
   requireToken();
-  const pulls = await githubFetchPaginated(
-    ctx.config,
-    ctx.parsed,
-    `${repoApiPath(ctx.config, 'pulls')}?state=open`,
-    (body) => (Array.isArray(body) ? body : []),
-  );
-  return pulls
+  const base = apiBase(ctx.config, ctx.parsed);
+  const { token } = requireToken();
+  const all = [];
+  let listTruncated = false;
+  let url = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open`;
+  for (let page = 0; page < MAX_CHECK_PAGES && url; page += 1) {
+    const { body, headers } = await fetchJsonWithMeta(url, {
+      headers: authHeaders(token),
+    });
+    const items = Array.isArray(body) ? body : [];
+    all.push(...items);
+    const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
+    url = parseLinkHeader(linkHeader).next ?? null;
+    if (page === MAX_CHECK_PAGES - 1 && url) listTruncated = true;
+  }
+  const numbers = all
     .map((pr) => pr.number)
     .filter((number) => Number.isInteger(number))
     .sort((a, b) => a - b);
+  return { numbers, list_truncated: listTruncated };
+}
+
+export async function listOpenPulls(ctx) {
+  const meta = await listOpenPullsWithMeta(ctx);
+  return meta.numbers;
 }
 
 export async function crInventorySlice(ctx, opts = {}) {
-  return crInventory(ctx, { listOpenPulls, prView, prChecks }, opts);
+  return crInventory(ctx, { listOpenPulls, listOpenPullsWithMeta, prView, prChecks }, opts);
 }
 
 export async function syncPlan(ctx, remoteName = 'origin') {

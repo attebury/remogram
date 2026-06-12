@@ -364,7 +364,10 @@ export async function runCli(argv, options = {}) {
       packet = forgeFactInventoryPacket(
         FACT_INVENTORY_PACKET_TYPES.CR_INVENTORY_SLICE,
         ctx,
-        await provider.crInventory(ctx, { slice_ref: flags.slice_ref }),
+        await provider.crInventory(ctx, {
+          slice_ref: flags.slice_ref,
+          limit: parsePositiveInt(flags.limit, '--limit'),
+        }),
       );
     } else if (group === 'pr' && sub === 'view') {
       const number = parsePositiveInt(flags.number, '--number');

@@ -75,6 +75,24 @@ describe('cr inventory', () => {
     expect(checksCalls).toBe(2);
   });
 
+  it('crInventory caps entries and reports truncation metadata', async () => {
+    const numbers = Array.from({ length: 60 }, (_, i) => i + 1);
+    const provider = {
+      listOpenPulls: async () => numbers,
+      prView: async (_ctx, { number }) => ({
+        pr_number: number,
+        state: 'open',
+        mergeability: 'clean',
+      }),
+      prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
+    };
+    const body = await crInventory(ctx, provider, { limit: 50 });
+    expect(body.entry_count).toBe(60);
+    expect(body.truncated).toBe(true);
+    expect(body.list_truncated).toBe(false);
+    expect(body.entries).toHaveLength(50);
+  });
+
   it('cli cr inventory emits cr_inventory_slice packet', async () => {
     const config = defaultTestConfig();
     const setup = setupTempForge({
