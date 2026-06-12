@@ -5,9 +5,12 @@ import { createMockProvider } from '../helpers/mock-provider.mjs';
 import { setupTempForge, captureCliOutput } from '../helpers/temp-forge.mjs';
 import { defaultTestConfig } from '../helpers/mock-provider.mjs';
 
+const ctx = { cwd: process.cwd(), config: { remote: 'origin' }, remoteName: 'origin' };
+
 describe('cr inventory', () => {
   it('buildCrInventoryEntry composes view and checks facts', () => {
     const entry = buildCrInventoryEntry(
+      ctx,
       {
         pr_number: 7,
         url: 'http://localhost:3000/o/r/pulls/7',
@@ -15,6 +18,8 @@ describe('cr inventory', () => {
         state: 'open',
         base_ref: 'main',
         head_ref: 'feat',
+        base_sha: 'aaa111',
+        head_sha: 'bbb222',
         mergeability: 'clean',
       },
       { check_conclusion: 'success', head_sha: 'bbb222', statuses: [] },
@@ -22,9 +27,12 @@ describe('cr inventory', () => {
     expect(entry).toMatchObject({
       pr_number: 7,
       state: 'open',
+      base_sha: 'aaa111',
+      head_sha: 'bbb222',
       mergeability: 'clean',
       checks_conclusion: 'success',
       blockers: [],
+      head_reconcile: { stale: false },
     });
     expect(entry).not.toHaveProperty('goal_branch');
     expect(entry).not.toHaveProperty('lane');
@@ -44,6 +52,8 @@ describe('cr inventory', () => {
           state: 'open',
           base_ref: 'main',
           head_ref: 'feat',
+          base_sha: 'aaa111',
+          head_sha: 'bbb222',
           mergeability: 'clean',
         };
       },
@@ -56,9 +66,10 @@ describe('cr inventory', () => {
         };
       },
     };
-    const body = await crInventory({}, provider, { slice_ref: 'origin/remo' });
+    const body = await crInventory(ctx, provider, { slice_ref: 'origin/remo' });
     expect(body.entries).toHaveLength(2);
     expect(body.entries[0].blockers).toEqual(['checks_missing']);
+    expect(body.entries[0].base_sha).toBe('aaa111');
     expect(body.slice_ref).toBe('origin/remo');
     expect(viewCalls).toBe(2);
     expect(checksCalls).toBe(2);
@@ -84,6 +95,7 @@ describe('cr inventory', () => {
     expect(packet.ok).toBe(true);
     expect(Array.isArray(packet.entries)).toBe(true);
     expect(packet.entries[0].pr_number).toBe(1);
+    expect(packet.entries[0].head_reconcile).toEqual({ stale: false });
     expect(packet).not.toHaveProperty('goal_branch');
     expect(packet).not.toHaveProperty('sdlc_task');
   });

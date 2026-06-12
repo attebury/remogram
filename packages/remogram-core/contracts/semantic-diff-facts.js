@@ -75,6 +75,10 @@ export const FORGE_SOURCED_STRING_LEAVES = Object.freeze({
     'entries[].title',
     'entries[].base_ref',
     'entries[].head_ref',
+    'entries[].base_sha',
+    'entries[].head_sha',
+    'entries[].head_reconcile.local_head_sha',
+    'entries[].head_reconcile.head_sha',
     'entries[].checks[].context',
     'entries[].checks[].description',
   ],
@@ -95,7 +99,7 @@ export const FACT_INVENTORY_BODY_SHAPES = Object.freeze({
   },
   [FACT_INVENTORY_PACKET_TYPES.CR_INVENTORY_SLICE]: {
     entries:
-      'array<{ pr_number: number, url?: string, title?: string, state?: string, base_ref?: string, head_ref?: string, mergeability?: string, checks_conclusion?: string, blockers?: array }>',
+      'array<{ pr_number: number, url?: string, title?: string, state?: string, base_ref?: string, head_ref?: string, base_sha?: string, head_sha?: string, mergeability?: string, checks_conclusion?: string, blockers?: array, head_reconcile?: { stale: boolean, local_head_sha?: string, head_sha?: string } }>',
     slice_ref: 'string optional',
   },
 });

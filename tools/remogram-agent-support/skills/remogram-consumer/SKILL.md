@@ -95,12 +95,14 @@ topogram query slice ./topo --json
   # Topogram assigns goal_branch / task meaning — never present in remogram JSON
 ```
 
-**CR inventory slice** — open PRs composed from pr view, checks, and merge plan:
+**CR inventory slice** — open PRs composed from pr view and checks (two forge calls per entry):
 
 ```bash
 remogram cr inventory --json
 # packet.type == "cr_inventory_slice"
-# entries[].pr_number, mergeability, checks_conclusion, blockers (enums trusted; titles/urls untrusted)
+# entries[].pr_number, base_sha, head_sha, mergeability, checks_conclusion, blockers
+# entries[].head_reconcile.stale hints per entry (no whole-slice STALE_HEAD throw)
+# enums trusted; titles/urls/SHAs untrusted forge-sourced strings
 ```
 
 Example Topogram branch-workcycle use:
