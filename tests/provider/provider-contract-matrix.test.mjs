@@ -53,6 +53,17 @@ function giteaCase() {
         .mockResolvedValueOnce(jsonResponse(load('gitea-api', 'pull.json')))
         .mockResolvedValueOnce(jsonResponse([]));
     },
+    mockCrInventory() {
+      const pull = load('gitea-api', 'pull.json');
+      global.fetch
+        .mockResolvedValueOnce(jsonResponse([pull]))
+        .mockResolvedValueOnce(jsonResponse(pull))
+        .mockResolvedValueOnce(jsonResponse(pull))
+        .mockResolvedValueOnce(jsonResponse([]))
+        .mockResolvedValueOnce(jsonResponse(pull))
+        .mockResolvedValueOnce(jsonResponse(pull))
+        .mockResolvedValueOnce(jsonResponse([]));
+    },
   };
 }
 
@@ -98,6 +109,19 @@ function githubCase() {
         .mockResolvedValueOnce(jsonResponse([]))
         .mockResolvedValueOnce(jsonResponse({ check_runs: [] }));
     },
+    mockCrInventory() {
+      const pull = load('github-api', 'pull-graphql-clean.json');
+      global.fetch
+        .mockResolvedValueOnce(jsonResponse([{ number: 42, state: 'open' }]))
+        .mockResolvedValueOnce(jsonResponse(pull))
+        .mockResolvedValueOnce(jsonResponse(pull))
+        .mockResolvedValueOnce(jsonResponse(load('github-api', 'statuses-success.json')))
+        .mockResolvedValueOnce(jsonResponse(load('github-api', 'check-runs-success.json')))
+        .mockResolvedValueOnce(jsonResponse(pull))
+        .mockResolvedValueOnce(jsonResponse(pull))
+        .mockResolvedValueOnce(jsonResponse(load('github-api', 'statuses-success.json')))
+        .mockResolvedValueOnce(jsonResponse(load('github-api', 'check-runs-success.json')));
+    },
   };
 }
 
@@ -141,6 +165,19 @@ function gitlabCase() {
         .mockResolvedValueOnce(jsonResponse(load('gitlab-api', 'merge-request-clean.json')))
         .mockResolvedValueOnce(jsonResponse([]))
         .mockResolvedValueOnce(jsonResponse([]));
+    },
+    mockCrInventory() {
+      const mr = load('gitlab-api', 'merge-request-clean.json');
+      global.fetch
+        .mockResolvedValueOnce(jsonResponse([mr]))
+        .mockResolvedValueOnce(jsonResponse(mr))
+        .mockResolvedValueOnce(jsonResponse(mr))
+        .mockResolvedValueOnce(jsonResponse(load('gitlab-api', 'statuses-success.json')))
+        .mockResolvedValueOnce(jsonResponse(load('gitlab-api', 'pipelines-success.json')))
+        .mockResolvedValueOnce(jsonResponse(mr))
+        .mockResolvedValueOnce(jsonResponse(mr))
+        .mockResolvedValueOnce(jsonResponse(load('gitlab-api', 'statuses-success.json')))
+        .mockResolvedValueOnce(jsonResponse(load('gitlab-api', 'pipelines-success.json')));
     },
   };
 }

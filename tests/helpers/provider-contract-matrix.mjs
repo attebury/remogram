@@ -146,6 +146,7 @@ export function runProviderContractMatrix(cases) {
               'repo_status',
               'ref_compare',
               'ref_inventory',
+              'cr_inventory',
               'pr_status',
               'pr_checks',
               'merge_plan',
@@ -182,6 +183,27 @@ export function runProviderContractMatrix(cases) {
           expect(Array.isArray(body.refs)).toBe(true);
           expect(body.refs.length).toBeGreaterThan(0);
           expect(body.refs[0].sha).toMatch(/^[0-9a-f]{40}$/);
+        });
+
+        it('gates cr_inventory without forge auth', async () => {
+          testCase.clearAuth();
+
+          await expect(testCase.provider.crInventory(testCase.ctx)).rejects.toMatchObject({
+            forgeError: { code: 'unauthenticated_provider' },
+          });
+        });
+
+        it('emits cr_inventory_slice body when authenticated', async () => {
+          if (typeof testCase.mockCrInventory !== 'function') return;
+          testCase.useAuth();
+          testCase.mockCrInventory();
+
+          const body = await testCase.provider.crInventory(testCase.ctx);
+
+          expect(Array.isArray(body.entries)).toBe(true);
+          expect(body.entries[0].pr_number).toBe(testCase.prOpts.number);
+          expect(body.entries[0].checks_conclusion).toBeDefined();
+          expect(Array.isArray(body.entries[0].blockers)).toBe(true);
         });
 
         it('rejects option-looking refs with the shared invalid_args code', async () => {
