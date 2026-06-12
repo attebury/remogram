@@ -2955,6 +2955,13 @@
       "at": "2026-06-12T01:18:45.942Z",
       "by": "actor_coding_agent",
       "note": "Wave 1 complete; advance task pointer to wave2 for inter-wave lifecycle."
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-12T01:47:55.772Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ],
   "ac_semantic_diff_fact_packet_model": [
@@ -3051,6 +3058,22 @@
       "evidence_refs": [
         "goal:semantic-diff-fact-inventory/wave2"
       ]
+    }
+  ],
+  "task_semantic_diff_fact_inventory_wave2": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-12T01:47:55.732Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-12T01:47:55.752Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ]
 }

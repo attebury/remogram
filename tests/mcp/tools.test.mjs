@@ -63,6 +63,7 @@ describe('remogram-mcp callTool', () => {
         'pr_status',
         'provider_capabilities',
         'ref_compare',
+        'ref_inventory',
         'repo_status',
         'sync_plan',
       ]);

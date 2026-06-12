@@ -12,6 +12,7 @@ import { forgePacket, FORBIDDEN_PACKET_KEYS, SCHEMA_VERSION } from './envelope.j
 export const V1_READ_PLAN_COMMANDS = Object.freeze([
   'repo status',
   'refs compare',
+  'refs inventory',
   'pr view',
   'pr checks',
   'merge plan',

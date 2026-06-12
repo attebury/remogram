@@ -22,6 +22,7 @@ export {
 } from './caps.js';
 export { assertGitRef, assertGitRemote } from './git-args.js';
 export { gitRevParse, gitCurrentBranch, gitAheadBehind, gitRepoRoot } from './git-local.js';
+export { buildRefInventoryBody, refsInventory } from './ref-inventory.js';
 export {
   localHeadShaForPr,
   staleHeadDetails,

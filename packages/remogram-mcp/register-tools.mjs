@@ -31,6 +31,12 @@ export function registerTools(server) {
       args: (input) => ['refs', 'compare', '--base', input.base, '--head', input.head],
     },
     {
+      name: 'ref_inventory',
+      description: 'List repository refs with SHAs, default branch hint, and optional ancestry hints.',
+      inputSchema: z.object({}),
+      args: ['refs', 'inventory'],
+    },
+    {
       name: 'pr_status',
       description: 'PR metadata and mergeability facts.',
       inputSchema: z.object({

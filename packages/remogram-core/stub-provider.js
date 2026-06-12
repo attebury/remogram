@@ -23,6 +23,7 @@ export function createStubProvider(id) {
     providerCapabilities,
     repoStatus: unsupported,
     refsCompare: unsupported,
+    refsInventory: unsupported,
     prView: unsupported,
     prChecks: unsupported,
     mergePlan: unsupported,
