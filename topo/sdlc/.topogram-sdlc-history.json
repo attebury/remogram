@@ -3597,6 +3597,20 @@
       "evidence_refs": [
         "pr:113"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-12T05:36:59.809Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-12T05:37:06.946Z",
+      "by": "actor_integration_lane",
+      "note": null
     }
   ],
   "ac_cr_inventory_test_coverage_wave1": [
@@ -3632,6 +3646,38 @@
       "to": "approved",
       "at": "2026-06-12T05:34:57.808Z",
       "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "task_cr_inventory_test_coverage_wave1": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-12T05:36:59.758Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-12T05:36:59.784Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-12T05:37:03.028Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_cr_inventory_test_coverage#wave1_core_unit_tests": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-12T05:37:03.282Z",
+      "by": "actor_integration_lane",
       "note": null
     }
   ]

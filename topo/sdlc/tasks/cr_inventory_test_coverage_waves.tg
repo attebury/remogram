@@ -16,7 +16,9 @@ task task_cr_inventory_test_coverage_wave1 {
   priority medium
   work_type implementation
   claimed_by [actor_coding_agent]
-  status unclaimed
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Wave 1 core unit tests merged in PR #116."
+  status done
 }
 
 task task_cr_inventory_test_coverage_wave2 {
