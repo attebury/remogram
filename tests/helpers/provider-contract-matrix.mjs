@@ -204,6 +204,16 @@ export function runProviderContractMatrix(cases) {
           expect(body.entries[0].pr_number).toBe(testCase.prOpts.number);
           expect(body.entries[0].checks_conclusion).toBeDefined();
           expect(Array.isArray(body.entries[0].blockers)).toBe(true);
+          expect(typeof body.entry_count).toBe('number');
+          expect(typeof body.truncated).toBe('boolean');
+          expect(typeof body.list_truncated).toBe('boolean');
+          expect(body.entries[0].head_reconcile).toBeDefined();
+          if (body.entries[0].base_sha) {
+            expect(body.entries[0].base_sha).toMatch(/^[0-9a-f]+$/i);
+          }
+          if (body.entries[0].head_sha) {
+            expect(body.entries[0].head_sha).toMatch(/^[0-9a-f]+$/i);
+          }
         });
 
         it('rejects option-looking refs with the shared invalid_args code', async () => {
