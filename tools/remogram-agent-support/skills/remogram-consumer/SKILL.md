@@ -102,6 +102,8 @@ remogram cr inventory --json
 # packet.type == "cr_inventory_slice"
 # entries[].pr_number, base_sha, head_sha, mergeability, checks_conclusion, blockers
 # entries[].head_reconcile.stale hints per entry (no whole-slice STALE_HEAD throw)
+# entry_count may exceed entries.length — check entries_skipped for pr_not_open or forge errors
+# truncated: true means list cap applied (entry_count > limit), not missing entries
 # enums trusted; titles/urls/SHAs untrusted forge-sourced strings
 ```
 

@@ -145,6 +145,42 @@ describe('cr inventory', () => {
     expect(body.entries[0].blockers).toEqual([]);
   });
 
+  it('crInventory records pr_not_open when prView returns closed state', async () => {
+    const provider = {
+      listOpenPulls: async () => [1],
+      prView: async (_ctx, { number }) => ({
+        pr_number: number,
+        state: 'closed',
+        mergeability: 'clean',
+      }),
+      prChecks: async () => {
+        throw new Error('should not fetch checks for closed PR');
+      },
+    };
+    const body = await crInventory(ctx, provider);
+    expect(body.entries).toEqual([]);
+    expect(body.entries_skipped).toEqual([{ pr_number: 1, error_code: 'pr_not_open' }]);
+  });
+
+  it('crInventory mixes open entries with pr_not_open skips', async () => {
+    const provider = {
+      listOpenPulls: async () => [1, 2],
+      prView: async (_ctx, { number }) => ({
+        pr_number: number,
+        state: number === 1 ? 'open' : 'closed',
+        mergeability: 'clean',
+      }),
+      prChecks: async (_ctx, { number }) => {
+        if (number !== 1) throw new Error('should not fetch checks for closed PR');
+        return { check_conclusion: 'success', statuses: [] };
+      },
+    };
+    const body = await crInventory(ctx, provider);
+    expect(body.entries).toHaveLength(1);
+    expect(body.entries[0].pr_number).toBe(1);
+    expect(body.entries_skipped).toEqual([{ pr_number: 2, error_code: 'pr_not_open' }]);
+  });
+
   it('crInventory annotates stale head_reconcile per entry without failing slice', async () => {
     const repo = setupRepoWithRemoteBranch();
     try {

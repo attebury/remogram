@@ -11,6 +11,7 @@ export const ERROR_CODES = {
   CONFIG_NOT_FOUND: 'config_not_found',
   INVALID_ARGS: 'invalid_args',
   API_ERROR: 'api_error',
+  PR_NOT_OPEN: 'pr_not_open',
   REMOTE_INFER_FAILED: 'remote_infer_failed',
 };
 
