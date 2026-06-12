@@ -3340,5 +3340,41 @@
         "pr:102"
       ]
     }
+  ],
+  "ac_cr_inventory_single_pass": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-12T03:04:43.741Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_cr_inventory_semantic_fields": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-12T03:04:43.941Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_cr_inventory_bounds": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-12T03:04:44.158Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_cr_inventory_resilience": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-12T03:04:44.361Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
   ]
 }
