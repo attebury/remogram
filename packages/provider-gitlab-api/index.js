@@ -9,6 +9,7 @@ import {
   gitAheadBehind,
   refsInventory,
   crInventory,
+  mergeBlockersFromFacts,
   ERROR_CODES,
   forgeError,
   forgeIngestCapabilityFacts,
@@ -293,12 +294,7 @@ export async function prChecks(ctx, opts) {
 export async function mergePlan(ctx, opts) {
   const view = await prView(ctx, opts);
   const checks = await prChecks(ctx, { number: view.pr_number });
-  const blockers = [];
-  if (view.mergeability === 'conflicted') blockers.push('merge_conflict');
-  if (view.state !== 'open') blockers.push('pr_not_open');
-  if (checks.check_conclusion === 'failure') blockers.push('checks_failed');
-  if (checks.check_conclusion === 'missing') blockers.push('checks_missing');
-  if (checks.check_conclusion === 'pending') blockers.push('checks_pending');
+  const blockers = mergeBlockersFromFacts(view, checks);
   return {
     pr_number: view.pr_number,
     mergeability: view.mergeability,
@@ -322,7 +318,7 @@ export async function listOpenPulls(ctx) {
 }
 
 export async function crInventorySlice(ctx, opts = {}) {
-  return crInventory(ctx, { listOpenPulls, prView, prChecks, mergePlan }, opts);
+  return crInventory(ctx, { listOpenPulls, prView, prChecks }, opts);
 }
 
 export async function syncPlan(ctx, remoteName = 'origin') {

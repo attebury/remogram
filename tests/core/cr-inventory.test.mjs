@@ -6,7 +6,7 @@ import { setupTempForge, captureCliOutput } from '../helpers/temp-forge.mjs';
 import { defaultTestConfig } from '../helpers/mock-provider.mjs';
 
 describe('cr inventory', () => {
-  it('buildCrInventoryEntry composes view, checks, and merge plan facts', () => {
+  it('buildCrInventoryEntry composes view and checks facts', () => {
     const entry = buildCrInventoryEntry(
       {
         pr_number: 7,
@@ -18,12 +18,6 @@ describe('cr inventory', () => {
         mergeability: 'clean',
       },
       { check_conclusion: 'success', head_sha: 'bbb222', statuses: [] },
-      {
-        pr_number: 7,
-        mergeability: 'clean',
-        checks_conclusion: 'success',
-        blockers: [],
-      },
     );
     expect(entry).toMatchObject({
       pr_number: 7,
@@ -36,34 +30,38 @@ describe('cr inventory', () => {
     expect(entry).not.toHaveProperty('lane');
   });
 
-  it('crInventory aggregates open pulls via provider hooks', async () => {
+  it('crInventory aggregates open pulls with two provider calls per entry', async () => {
+    let viewCalls = 0;
+    let checksCalls = 0;
     const provider = {
-      listOpenPulls: async () => [1],
-      prView: async (_ctx, { number }) => ({
-        pr_number: number,
-        url: 'http://localhost:3000/o/r/pulls/1',
-        title: 'One',
-        state: 'open',
-        base_ref: 'main',
-        head_ref: 'feat',
-        mergeability: 'clean',
-      }),
-      prChecks: async () => ({
-        head_sha: 'bbb222',
-        check_conclusion: 'missing',
-        statuses: [],
-      }),
-      mergePlan: async (_ctx, { number }) => ({
-        pr_number: number,
-        mergeability: 'clean',
-        checks_conclusion: 'missing',
-        blockers: ['checks_missing'],
-      }),
+      listOpenPulls: async () => [1, 2],
+      prView: async (_ctx, { number }) => {
+        viewCalls += 1;
+        return {
+          pr_number: number,
+          url: `http://localhost:3000/o/r/pulls/${number}`,
+          title: 'One',
+          state: 'open',
+          base_ref: 'main',
+          head_ref: 'feat',
+          mergeability: 'clean',
+        };
+      },
+      prChecks: async () => {
+        checksCalls += 1;
+        return {
+          head_sha: 'bbb222',
+          check_conclusion: 'missing',
+          statuses: [],
+        };
+      },
     };
     const body = await crInventory({}, provider, { slice_ref: 'origin/remo' });
-    expect(body.entries).toHaveLength(1);
+    expect(body.entries).toHaveLength(2);
     expect(body.entries[0].blockers).toEqual(['checks_missing']);
     expect(body.slice_ref).toBe('origin/remo');
+    expect(viewCalls).toBe(2);
+    expect(checksCalls).toBe(2);
   });
 
   it('cli cr inventory emits cr_inventory_slice packet', async () => {

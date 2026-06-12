@@ -1,9 +1,10 @@
 import { sanitizeField } from './caps.js';
+import { mergeBlockersFromFacts } from './merge-blockers.js';
 
 /**
- * Compose one CR inventory entry from existing pr view, checks, and merge plan facts.
+ * Compose one CR inventory entry from pr view and checks facts.
  */
-export function buildCrInventoryEntry(view, checks, mergePlan) {
+export function buildCrInventoryEntry(view, checks) {
   return {
     pr_number: view.pr_number,
     url: view.url,
@@ -13,14 +14,14 @@ export function buildCrInventoryEntry(view, checks, mergePlan) {
     head_ref: view.head_ref,
     mergeability: view.mergeability,
     checks_conclusion: checks.check_conclusion,
-    blockers: mergePlan.blockers,
+    blockers: mergeBlockersFromFacts(view, checks),
   };
 }
 
 /**
  * Aggregate open change requests into a semantic-diff-oriented inventory slice.
  * @param {object} ctx forge context
- * @param {object} provider must expose listOpenPulls, prView, prChecks, mergePlan
+ * @param {object} provider must expose listOpenPulls, prView, prChecks
  * @param {{ slice_ref?: string }} [opts]
  */
 export async function crInventory(ctx, provider, opts = {}) {
@@ -30,8 +31,7 @@ export async function crInventory(ctx, provider, opts = {}) {
     const view = await provider.prView(ctx, { number });
     if (view.state !== 'open') continue;
     const checks = await provider.prChecks(ctx, { number });
-    const plan = await provider.mergePlan(ctx, { number });
-    entries.push(buildCrInventoryEntry(view, checks, plan));
+    entries.push(buildCrInventoryEntry(view, checks));
   }
   return {
     entries,
