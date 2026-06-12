@@ -85,6 +85,8 @@ task task_cr_inventory_hardening_wave4 {
   priority medium
   work_type implementation
   claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
   linked_bugs [bug_gitea_pr_state_case]
-  status in-progress
+  bug_discovery_rationale "Fixed via isOpenPrState in mergeBlockersFromFacts."
+  status done
 }

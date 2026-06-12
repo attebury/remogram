@@ -8,7 +8,7 @@ plan plan_cr_inventory_hardening {
     step wave1_single_pass status done description "Shared mergeBlockersFromFacts; crInventory two-call aggregation; provider mergePlan refactor."
     step wave2_semantic_fields status done description "base_sha/head_sha and per-entry head_reconcile in cr_inventory_slice; contract and consumer docs."
     step wave3_bounds status done description "Entry limit default 50, truncation metadata, CLI --limit and MCP limit."
-    step wave4_resilience status pending description "Partial per-PR failure, Gitea open-state fix, test and topogram check closeout."
+    step wave4_resilience status done description "Partial per-PR failure, Gitea open-state fix, test and topogram check closeout."
   }
   status draft
 }
