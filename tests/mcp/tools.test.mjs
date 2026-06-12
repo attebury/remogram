@@ -57,6 +57,7 @@ describe('remogram-mcp callTool', () => {
     await withMcpClient(setup.dir, async (client) => {
       const { tools } = await client.listTools();
       expect(tools.map((t) => t.name).sort()).toEqual([
+        'cr_inventory',
         'doctor',
         'merge_plan',
         'pr_checks',

@@ -37,11 +37,15 @@ describe('auth-aware provider capabilities', () => {
         implemented: true,
         auth_class: AUTH_CLASS.GIT_ONLY,
       });
+      expect(byName.cr_inventory).toMatchObject({
+        implemented: true,
+        auth_class: AUTH_CLASS.TOKEN_REQUIRED,
+      });
       expect(byName.sync_plan).toMatchObject({
         implemented: true,
         auth_class: AUTH_CLASS.GIT_ONLY,
       });
-      for (const name of ['pr_status', 'pr_checks', 'merge_plan']) {
+      for (const name of ['cr_inventory', 'pr_status', 'pr_checks', 'merge_plan']) {
         expect(byName[name]).toMatchObject({
           implemented: true,
           auth_class: AUTH_CLASS.TOKEN_REQUIRED,

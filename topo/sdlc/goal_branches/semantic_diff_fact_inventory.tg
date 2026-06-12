@@ -5,5 +5,5 @@ goal_branch goal_branch_semantic_diff_fact_inventory {
   task task_semantic_diff_fact_inventory_wave3
   evidence_refs [local:topo/sdlc/pitches/semantic_diff_fact_inventory.tg, local:topo/sdlc/requirements/semantic_diff_fact_inventory.tg, local:topo/sdlc/plans/semantic_diff_fact_inventory.tg, local:topo/sdlc/acceptance_criteria/semantic_diff_fact_inventory.tg, local:topo/sdlc/tasks/semantic_diff_fact_inventory_waves.tg, local:topo/sdlc/decisions/packet_trust_doctrine.tg, local:topo/sdlc/decisions/remogram_integration_authority_remo.tg, local:topo/sdlc/decisions/semantic_diff_fact_layer.tg, local:topo/verifications/semantic-diff-fact-inventory.tg]
   witness_refs []
-  status approved
+  status active
 }

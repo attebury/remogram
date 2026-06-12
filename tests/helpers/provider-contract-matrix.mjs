@@ -60,6 +60,7 @@ const COMMANDS = new Set([
   'repo_status',
   'ref_compare',
   'ref_inventory',
+  'cr_inventory',
   'pr_status',
   'pr_checks',
   'merge_plan',
