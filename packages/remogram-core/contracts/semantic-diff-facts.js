@@ -52,6 +52,9 @@ export const TRUSTED_NORMALIZED_BODY_FIELDS = Object.freeze({
   check_conclusion: true,
   checks_conclusion: true,
   state: true,
+  truncated: true,
+  list_truncated: true,
+  entry_count: true,
   mergeability_confidence: true,
   write_support: true,
   diverged: true,
@@ -100,6 +103,9 @@ export const FACT_INVENTORY_BODY_SHAPES = Object.freeze({
   [FACT_INVENTORY_PACKET_TYPES.CR_INVENTORY_SLICE]: {
     entries:
       'array<{ pr_number: number, url?: string, title?: string, state?: string, base_ref?: string, head_ref?: string, base_sha?: string, head_sha?: string, mergeability?: string, checks_conclusion?: string, blockers?: array, head_reconcile?: { stale: boolean, local_head_sha?: string, head_sha?: string } }>',
+    entry_count: 'number',
+    truncated: 'boolean',
+    list_truncated: 'boolean',
     slice_ref: 'string optional',
   },
 });

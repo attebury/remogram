@@ -205,6 +205,18 @@ describe('remogram-mcp callTool', () => {
     });
   }, 15_000);
 
+  it('cr_inventory without auth returns forge_error via MCP', async () => {
+    const setup = setupGithubForge();
+    cleanups.push(setup);
+    await withMcpClient(setup.dir, async (client) => {
+      const result = await client.callTool({ name: 'cr_inventory', arguments: {} });
+      expect(result.isError).toBe(true);
+      const packet = parseMcpPacket(result);
+      expect(packet.ok).toBe(false);
+      expect(packet.type).toBe('forge_error');
+    });
+  }, 15_000);
+
   it('merge_plan without auth returns forge_error via MCP', async () => {
     const setup = setupGithubForge();
     cleanups.push(setup);

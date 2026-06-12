@@ -56,6 +56,9 @@ export function createMockProvider(overrides = {}) {
           head_reconcile: { stale: false },
         },
       ],
+      entry_count: 1,
+      truncated: false,
+      list_truncated: false,
       ...(opts.slice_ref ? { slice_ref: opts.slice_ref } : {}),
     }),
     prView: async (_ctx, { number }) => ({
