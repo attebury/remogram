@@ -225,6 +225,37 @@ describe('remogram cli commands', () => {
     expect(packet.head_ref).toBe('feat/x');
   });
 
+  it('cr inventory', async () => {
+    const { cli } = env();
+    const { logs } = await cli(['cr', 'inventory']);
+    const packet = JSON.parse(logs[0]);
+    expectEnvelope(packet);
+    expect(packet.type).toBe('cr_inventory_slice');
+    expect(packet.entry_count).toBe(1);
+    expect(packet).not.toHaveProperty('goal_branch');
+    expect(packet).not.toHaveProperty('sdlc_task');
+  });
+
+  it('cr inventory without auth returns unauthenticated_provider', async () => {
+    const config = defaultTestConfig();
+    const setup = setupTempForge({
+      config,
+      remoteUrl: 'https://localhost:3000/owner/repo.git',
+    });
+    cleanups.push(setup);
+    delete process.env.GITEA_TOKEN;
+    const { logs } = await captureCliOutput(() =>
+      runCli(['cr', 'inventory', '--json'], {
+        cwd: setup.dir,
+        providers: { 'gitea-api': giteaProvider },
+      }),
+    );
+    const packet = JSON.parse(logs[0]);
+    expect(packet.ok).toBe(false);
+    expect(packet.type).toBe('forge_error');
+    expect(packet.error_code).toBe('unauthenticated_provider');
+  });
+
   it('pr view', async () => {
     const { cli } = env();
     const { logs } = await cli(['pr', 'view', '--number', '1']);

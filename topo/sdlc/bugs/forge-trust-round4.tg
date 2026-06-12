@@ -92,7 +92,8 @@ bug bug_gitea_check_state_passthrough {
 bug bug_gitea_pr_state_case {
   name "Gitea mergePlan case-sensitive open check"
   description "mergePlan uses view.state !== open without lowercasing; Open from API skips pr_not_open blocker."
-  status open
+  fixed_in [task_cr_inventory_hardening_wave4]
+  status fixed
   severity medium
   priority medium
   affects [cap_forge_remote_ops]

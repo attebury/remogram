@@ -25,5 +25,9 @@ describe('mergeBlockersFromFacts', () => {
     expect(mergeBlockersFromFacts({ mergeability: 'clean', state: 'closed' }, checksSuccess)).toEqual(
       ['pr_not_open'],
     );
+    expect(mergeBlockersFromFacts({ mergeability: 'clean', state: 'Open' }, checksSuccess)).toEqual([]);
+    expect(mergeBlockersFromFacts({ mergeability: 'clean', state: 'Closed' }, checksSuccess)).toEqual([
+      'pr_not_open',
+    ]);
   });
 });

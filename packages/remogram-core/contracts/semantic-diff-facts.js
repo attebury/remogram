@@ -106,6 +106,7 @@ export const FACT_INVENTORY_BODY_SHAPES = Object.freeze({
     entry_count: 'number',
     truncated: 'boolean',
     list_truncated: 'boolean',
+    entries_skipped: 'array<{ pr_number: number, error_code: string }> optional',
     slice_ref: 'string optional',
   },
 });
