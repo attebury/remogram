@@ -3339,6 +3339,20 @@
       "evidence_refs": [
         "pr:102"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-12T03:05:03.438Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-12T03:05:50.399Z",
+      "by": "actor_integration_lane",
+      "note": null
     }
   ],
   "ac_cr_inventory_single_pass": [
@@ -3374,6 +3388,38 @@
       "to": "approved",
       "at": "2026-06-12T03:04:44.361Z",
       "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "task_cr_inventory_hardening_wave1": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-12T03:05:03.389Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-12T03:05:03.411Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-12T03:05:45.351Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_cr_inventory_hardening#wave1_single_pass": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-12T03:05:45.603Z",
+      "by": "actor_integration_lane",
       "note": null
     }
   ]
