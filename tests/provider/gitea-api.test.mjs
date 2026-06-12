@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { provider, repoApiPath, apiBase, normalizeGiteaStatusState, normalizeGiteaPrState } from '@remogram/provider-gitea-api';
+import { provider, repoApiPath, apiBase, normalizeGiteaStatusState, normalizeGiteaPrState, listOpenPullsWithMeta, crInventorySlice } from '@remogram/provider-gitea-api';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const fixtures = join(__dirname, '../fixtures/gitea-api');
@@ -224,5 +224,44 @@ describe('provider-gitea-api fixtures', () => {
     const caps = provider.providerCapabilities();
     expect(caps.pagination).toBe('supported');
     expect(caps.forge_ingest_cap_bytes).toBe(8192);
+  });
+
+  function jsonPageResponse(body) {
+    return {
+      ok: true,
+      status: 200,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify(body));
+        },
+      },
+    };
+  }
+
+  function openPullPage(start) {
+    return Array.from({ length: 100 }, (_, i) => ({ number: start + i, state: 'open' }));
+  }
+
+  it('listOpenPullsWithMeta sets list_truncated after max list pages', async () => {
+    for (let page = 1; page <= 50; page += 1) {
+      global.fetch.mockResolvedValueOnce(jsonPageResponse(openPullPage((page - 1) * 100 + 1)));
+    }
+    const meta = await listOpenPullsWithMeta(ctx);
+    expect(meta.list_truncated).toBe(true);
+    expect(meta.numbers).toHaveLength(5000);
+  });
+
+  it('crInventorySlice propagates list_truncated from paginated list', async () => {
+    const pull = load('pull.json');
+    for (let page = 1; page <= 50; page += 1) {
+      global.fetch.mockResolvedValueOnce(jsonPageResponse(openPullPage((page - 1) * 100 + 1)));
+    }
+    global.fetch
+      .mockResolvedValueOnce(jsonPageResponse(pull))
+      .mockResolvedValueOnce(jsonPageResponse(pull))
+      .mockResolvedValueOnce(jsonPageResponse([]));
+    const body = await crInventorySlice(ctx, { limit: 1 });
+    expect(body.list_truncated).toBe(true);
+    expect(body.entries).toHaveLength(1);
   });
 });

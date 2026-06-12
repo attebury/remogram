@@ -59,9 +59,6 @@ function giteaCase() {
         .mockResolvedValueOnce(jsonResponse([pull]))
         .mockResolvedValueOnce(jsonResponse(pull))
         .mockResolvedValueOnce(jsonResponse(pull))
-        .mockResolvedValueOnce(jsonResponse([]))
-        .mockResolvedValueOnce(jsonResponse(pull))
-        .mockResolvedValueOnce(jsonResponse(pull))
         .mockResolvedValueOnce(jsonResponse([]));
     },
   };
@@ -116,10 +113,6 @@ function githubCase() {
         .mockResolvedValueOnce(jsonResponse(pull))
         .mockResolvedValueOnce(jsonResponse(pull))
         .mockResolvedValueOnce(jsonResponse(load('github-api', 'statuses-success.json')))
-        .mockResolvedValueOnce(jsonResponse(load('github-api', 'check-runs-success.json')))
-        .mockResolvedValueOnce(jsonResponse(pull))
-        .mockResolvedValueOnce(jsonResponse(pull))
-        .mockResolvedValueOnce(jsonResponse(load('github-api', 'statuses-success.json')))
         .mockResolvedValueOnce(jsonResponse(load('github-api', 'check-runs-success.json')));
     },
   };
@@ -170,10 +163,6 @@ function gitlabCase() {
       const mr = load('gitlab-api', 'merge-request-clean.json');
       global.fetch
         .mockResolvedValueOnce(jsonResponse([mr]))
-        .mockResolvedValueOnce(jsonResponse(mr))
-        .mockResolvedValueOnce(jsonResponse(mr))
-        .mockResolvedValueOnce(jsonResponse(load('gitlab-api', 'statuses-success.json')))
-        .mockResolvedValueOnce(jsonResponse(load('gitlab-api', 'pipelines-success.json')))
         .mockResolvedValueOnce(jsonResponse(mr))
         .mockResolvedValueOnce(jsonResponse(mr))
         .mockResolvedValueOnce(jsonResponse(load('gitlab-api', 'statuses-success.json')))
