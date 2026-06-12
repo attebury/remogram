@@ -3011,6 +3011,23 @@
       "at": "2026-06-12T02:15:43.757Z",
       "by": "actor_integration_lane",
       "note": null
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-12T02:17:56.761Z",
+      "by": "actor_integration_lane",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-12T02:18:01.535Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "ef63832"
+      ]
     }
   ],
   "ac_semantic_diff_fact_packet_model": [
@@ -3269,6 +3286,38 @@
       "from": "pending",
       "to": "done",
       "at": "2026-06-12T02:15:43.529Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "task_semantic_diff_fact_inventory_wave6": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-12T02:17:56.993Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-12T02:17:57.017Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-12T02:18:01.072Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_semantic_diff_fact_inventory#wave6_verify": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-12T02:18:01.331Z",
       "by": "actor_integration_lane",
       "note": null
     }
