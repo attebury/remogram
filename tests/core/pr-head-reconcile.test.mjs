@@ -7,7 +7,7 @@ import {
 } from '@remogram/core';
 import { runCli } from '@remogram/cli';
 import { setupTempForge, captureCliOutput } from '../helpers/temp-forge.mjs';
-import { createMockProvider } from '../helpers/mock-provider.mjs';
+import { createMockProvider, defaultTestConfig } from '../helpers/mock-provider.mjs';
 import { setupRepoWithRemoteBranch } from '../helpers/stale-head-repo.mjs';
 
 describe('pr head reconciliation', () => {

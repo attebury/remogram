@@ -81,7 +81,10 @@ export async function crInventory(ctx, provider, opts = {}) {
   for (const number of selected) {
     try {
       const view = await provider.prView(ctx, { number });
-      if (!isOpenPrState(view.state)) continue;
+      if (!isOpenPrState(view.state)) {
+        entries_skipped.push({ pr_number: number, error_code: ERROR_CODES.PR_NOT_OPEN });
+        continue;
+      }
       const checks = await provider.prChecks(ctx, { number });
       entries.push(buildCrInventoryEntry(ctx, view, checks));
     } catch (err) {
