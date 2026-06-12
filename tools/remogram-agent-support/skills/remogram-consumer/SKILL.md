@@ -75,11 +75,51 @@ remogram refs compare --base <ref> --head <ref> --json
 remogram sync plan --remote origin --json
 ```
 
+## Semantic diff queries (Topogram consumers)
+
+Topogram queries and branch-workcycle slices **consume** remogram packets; they do not re-derive forge facts from HTML or branch names alone. Remogram returns normalized packets only — **Topogram interprets** queue, lifecycle, and proof semantics; **Remogram does not**.
+
+**Ref inventory** — list refs and SHAs for semantic-diff database views:
+
+```bash
+remogram refs inventory --json
+# packet.type == "ref_inventory"
+# trusted: refs[].name, refs[].sha, default_ref, ancestry_hints (envelope + enums)
+```
+
+Example Topogram slice intent (pseudo-query, not remogram CLI):
+
+```text
+topogram query slice ./topo --json
+  # consumer reads remogram ref_inventory packet refs[] to diff branch SHAs
+  # Topogram assigns goal_branch / task meaning — never present in remogram JSON
+```
+
+**CR inventory slice** — open PRs composed from pr view, checks, and merge plan:
+
+```bash
+remogram cr inventory --json
+# packet.type == "cr_inventory_slice"
+# entries[].pr_number, mergeability, checks_conclusion, blockers (enums trusted; titles/urls untrusted)
+```
+
+Example Topogram branch-workcycle use:
+
+```text
+# Observer or planner composes:
+# 1. remogram repo status (forge readiness)
+# 2. remogram cr inventory (open CR facts)
+# 3. topogram query goal-branch-queue (SDLC queue — Topogram authority)
+# Never merge lifecycle fields into remogram output or infer queue from PR titles.
+```
+
+Registry of observer-eligible commands: `packages/remogram-core/contracts/observer-fact-inventory.js`.
+
 ## MCP
 
 When MCP is configured, tools mirror CLI JSON packets:
 
-`doctor`, `provider_capabilities`, `repo_status`, `ref_compare`, `pr_status`, `pr_checks`, `merge_plan`, `sync_plan`
+`doctor`, `provider_capabilities`, `repo_status`, `ref_compare`, `ref_inventory`, `cr_inventory`, `pr_status`, `pr_checks`, `merge_plan`, `sync_plan`
 
 Host-specific config examples (Cursor, Claude Desktop, Codex, Claude Code): `examples/mcp/README.md` in the Remogram repo.
 

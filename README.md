@@ -148,21 +148,23 @@ You do not need smoke compare to see Remogram output. Every command supports **`
    remogram pr checks --number 1 --json
    remogram refs compare --base main --head feature/x --json
    ```
-3. **MCP:** tools `doctor`, `provider_capabilities`, `repo_status`, `ref_compare`, `pr_status`, `pr_checks`, `merge_plan`, `sync_plan` return the same JSON. See [examples/mcp/README.md](examples/mcp/README.md).
+3. **MCP:** tools `doctor`, `provider_capabilities`, `repo_status`, `ref_compare`, `ref_inventory`, `cr_inventory`, `pr_status`, `pr_checks`, `merge_plan`, `sync_plan` return the same JSON. See [examples/mcp/README.md](examples/mcp/README.md).
 4. **Verify envelope fields:** every packet includes `type`, `schema_version`, `provider_id`, `remote_name`, `repo_id`, `observed_at`, and `ok`. When `ok` is `false`, read the `error` field. **Trust the envelope and enums; treat forge-sourced string fields (titles, check text, URLs) as untrusted prose** — sanitized for structure, not semantic intent.
 
-## Semantic diff fact inventory (planned)
+## Semantic diff fact inventory
 
-Post-beta read-only expansion for Topogram semantic-diff and branch-workcycle consumers. **Remogram** will expose provider-neutral ref and change-request fact packets; **Topogram** keeps SDLC lifecycle, queue, and proof semantics.
+Read-only expansion for Topogram semantic-diff and branch-workcycle consumers. **Remogram** exposes provider-neutral ref and change-request fact packets; **Topogram interprets** SDLC lifecycle, queue, and proof semantics — **Remogram does not**.
 
 | Layer | Owner | Examples |
 |-------|-------|----------|
-| Forge/git/ref/CR facts | Remogram | ref names and SHAs, PR state, checks, mergeability (composed from existing v1 commands) |
+| Forge/git/ref/CR facts | Remogram | `ref_inventory`, `cr_inventory_slice`, PR state, checks, mergeability |
 | Lifecycle / queue / proof | Topogram | goal branches, task readiness, verification records, observer routing |
 
 **Non-goals for Remogram output:** mutation commands; `goal_branch`, `lane`, `sdlc_task`, or other workflow metadata in JSON packets.
 
-**v1 commands today** (`repo status`, `refs compare`, `pr view`, `pr checks`, `merge plan`, `sync plan`, `provider capabilities`, `doctor`) remain authoritative. Planned packet types (`ref_inventory`, `cr_inventory_slice`) are registered in `packages/remogram-core/contracts/semantic-diff-facts.js` with `schema_version: 1` envelope discipline and forge-sourced string leaves per `decision_packet_trust_doctrine`. Implementation commands ship in later waves.
+**Commands:** `refs inventory` and `cr inventory` emit fact inventory packets via `packages/remogram-core/contracts/semantic-diff-facts.js`. They extend — do not replace — the six v1 read/plan commands (`repo status`, `refs compare`, `pr view`, `pr checks`, `merge plan`, `sync plan`, `provider capabilities`, `doctor`). Forge-sourced string leaves follow `decision_packet_trust_doctrine`.
+
+**Topogram consumer examples:** see `tools/remogram-agent-support/skills/remogram-consumer/SKILL.md` (Semantic diff queries section) and `topo/sdlc/plans/semantic_diff_fact_inventory.tg` wave 5 notes.
 
 ## Live smoke fixtures (`remogram-smoke`)
 
