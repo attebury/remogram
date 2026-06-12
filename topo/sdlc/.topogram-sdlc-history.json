@@ -2946,5 +2946,27 @@
       "by": "actor_planning_lane",
       "note": null
     }
+  ],
+  "req_semantic_diff_fact_inventory": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-12T01:10:53.574Z",
+      "by": "actor_planning_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:87"
+      ]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-12T01:10:53.775Z",
+      "by": "actor_planning_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:87"
+      ]
+    }
   ]
 }
