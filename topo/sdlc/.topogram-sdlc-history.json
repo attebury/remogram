@@ -3098,5 +3098,41 @@
       "by": "actor_integration_lane",
       "note": null
     }
+  ],
+  "ac_semantic_diff_cr_inventory_slice": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-12T02:11:44.530Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
+  ],
+  "ac_semantic_diff_observer_facts": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-12T02:11:44.720Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
+  ],
+  "ac_semantic_diff_topogram_consumer_examples": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-12T02:11:44.912Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
+  ],
+  "ac_semantic_diff_contract_tests": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-12T02:11:45.103Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
   ]
 }

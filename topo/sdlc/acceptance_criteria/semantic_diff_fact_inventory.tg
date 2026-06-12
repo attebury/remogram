@@ -30,26 +30,26 @@ acceptance_criterion ac_semantic_diff_cr_inventory_slice {
   name "Change-request inventory slice composes existing facts"
   description "Given open change requests on a repo, when CR inventory aggregation runs, then output composes pr view, pr checks, and merge plan facts into a semantic-diff-oriented slice without embedding Topogram task or goal_branch fields."
   requirement req_semantic_diff_fact_inventory
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_semantic_diff_observer_facts {
   name "Observer snapshot fact requirements enumerated"
   description "Given branch-workcycle observer-snapshot proto, when wave 4 plan artifacts are read, then required remogram fact packets and CLI/MCP tools are listed with read-only annotations and no lifecycle mutation in remogram output."
   requirement req_semantic_diff_fact_inventory
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_semantic_diff_topogram_consumer_examples {
   name "Topogram consumer examples are explicit"
   description "Given wave 5 documentation, when a Topogram maintainer reads consumer contract examples, then examples show Topogram queries/slices consuming remogram packets and state that Remogram does not interpret SDLC semantics."
   requirement req_semantic_diff_fact_inventory
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_semantic_diff_contract_tests {
   name "Contract tests and smoke validation pass"
   description "Given wave 6 on remo, when npm test and topogram check run on integration tip, then hermetic contract tests cover new fact packets, doctor/capabilities report new read-only commands honestly, and smoke fixtures compare packet shapes."
   requirement req_semantic_diff_fact_inventory
-  status draft
+  status approved
 }
