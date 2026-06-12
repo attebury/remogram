@@ -3639,6 +3639,23 @@
       "at": "2026-06-12T05:39:00.068Z",
       "by": "actor_integration_lane",
       "note": null
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-12T05:39:25.137Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-12T05:40:47.278Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "origin/remo@c1500a2b280ec4616d0610fec832ff4a6612fa36"
+      ]
     }
   ],
   "ac_cr_inventory_test_coverage_wave1": [
@@ -3769,6 +3786,38 @@
       "from": "pending",
       "to": "done",
       "at": "2026-06-12T05:38:59.860Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "task_cr_inventory_test_coverage_wave4": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-12T05:39:25.077Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-12T05:39:25.104Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-12T05:40:46.784Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_cr_inventory_test_coverage#wave4_provider_matrix": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-12T05:40:47.054Z",
       "by": "actor_integration_lane",
       "note": null
     }
