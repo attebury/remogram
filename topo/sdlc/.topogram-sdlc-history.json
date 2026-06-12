@@ -3598,5 +3598,41 @@
         "pr:113"
       ]
     }
+  ],
+  "ac_cr_inventory_test_coverage_wave1": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-12T05:34:57.175Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_cr_inventory_test_coverage_wave2": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-12T05:34:57.395Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_cr_inventory_test_coverage_wave3": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-12T05:34:57.603Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_cr_inventory_test_coverage_wave4": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-12T05:34:57.808Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
   ]
 }

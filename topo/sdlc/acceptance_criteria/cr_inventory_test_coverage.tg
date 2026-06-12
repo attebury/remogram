@@ -2,26 +2,26 @@ acceptance_criterion ac_cr_inventory_test_coverage_wave1 {
   name "CR inventory test coverage wave 1 — core unit"
   description "Given cr inventory core, when tests run, then stale head_reconcile, forbidden keys on cr_inventory_slice, prChecks partial failure, and unit list_truncated are covered."
   requirement req_cr_inventory_test_coverage
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_cr_inventory_test_coverage_wave2 {
   name "CR inventory test coverage wave 2 — skip semantics"
   description "Given a listed PR with non-open prView state, when cr inventory runs, then entries_skipped records pr_not_open and consumer docs describe entry_count reconciliation."
   requirement req_cr_inventory_test_coverage
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_cr_inventory_test_coverage_wave3 {
   name "CR inventory test coverage wave 3 — CLI integration"
   description "Given CLI cr inventory with hook provider, when tests run, then real aggregation path, --limit, and forbidden output keys are exercised without mock crInventory body stub."
   requirement req_cr_inventory_test_coverage
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_cr_inventory_test_coverage_wave4 {
   name "CR inventory test coverage wave 4 — provider matrix"
   description "Given provider contract matrix and gitea pagination, when tests run, then slice metadata fields are asserted and list_truncated true is covered at HTTP level."
   requirement req_cr_inventory_test_coverage
-  status draft
+  status approved
 }
