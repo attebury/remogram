@@ -16,14 +16,14 @@ acceptance_criterion ac_semantic_diff_ref_inventory_packet {
   name "Ref inventory packet is provider-neutral"
   description "Given a configured repo, when ref inventory command runs with --json, then packet lists refs and SHAs with ancestry hints using trusted envelope fields only and provider-neutral vocabulary shared across gitea-api and github-api."
   requirement req_semantic_diff_fact_inventory
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_semantic_diff_git_root_binding {
   name "Ref inventory respects git-root config binding"
   description "Given nested cwd or out-of-repo config paths, when ref inventory resolves repository context, then config and git operations fail closed at repository git root per existing remogram-core trust rules."
   requirement req_semantic_diff_fact_inventory
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_semantic_diff_cr_inventory_slice {
