@@ -3353,6 +3353,20 @@
       "at": "2026-06-12T03:05:50.399Z",
       "by": "actor_integration_lane",
       "note": null
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-12T03:06:03.370Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-12T03:07:12.801Z",
+      "by": "actor_integration_lane",
+      "note": null
     }
   ],
   "ac_cr_inventory_single_pass": [
@@ -3419,6 +3433,38 @@
       "from": "pending",
       "to": "done",
       "at": "2026-06-12T03:05:45.603Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "task_cr_inventory_hardening_wave2": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-12T03:06:03.317Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-12T03:06:03.343Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-12T03:07:07.018Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_cr_inventory_hardening#wave2_semantic_fields": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-12T03:07:07.305Z",
       "by": "actor_integration_lane",
       "note": null
     }
