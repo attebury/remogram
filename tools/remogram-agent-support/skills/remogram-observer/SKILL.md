@@ -45,6 +45,31 @@ Dogfood layout: topogram checkout is typically a sibling directory
 (`../topogram/tools/branch-workcycle/observer-snapshot.sh`). Document the path
 you used in the handoff block.
 
+## Remogram fact packets (wave 4+)
+
+The observer proto script captures **`remogram repo status`** only. Semantic-diff
+and branch-workcycle consumers may compose additional **read-only** remogram facts
+without lifecycle fields:
+
+| CLI command | MCP tool | Packet type | In proto script |
+|-------------|----------|-------------|-----------------|
+| `repo status` | `repo_status` | `repo_status` | yes |
+| `refs inventory` | `ref_inventory` | `ref_inventory` | no |
+| `cr inventory` | `cr_inventory` | `cr_inventory_slice` | no |
+| `refs compare` | `ref_compare` | `ref_compare` | no |
+| `pr view` | `pr_status` | `pr_status` | no |
+| `pr checks` | `pr_checks` | `pr_checks` | no |
+| `merge plan` | `merge_plan` | `merge_plan` | no |
+| `sync plan` | `sync_plan` | `sync_plan` | no |
+
+Authoritative registry: `packages/remogram-core/contracts/observer-fact-inventory.js`.
+All MCP tools register `readOnlyHint: true` and must not emit SDLC/workflow keys.
+
+When synthesizing observer reports that need semantic-diff inventory, cite trusted
+envelope fields only (`type`, `schema_version`, `provider_id`, `remote_name`,
+`repo_id`, `observed_at`, `ok`, normalized enums). Forge-sourced string leaves
+remain semantically untrusted per `decision_packet_trust_doctrine`.
+
 ## Synthesize
 
 1. Parse `observer_snapshot.packets` (agent brief, work status, goal-branch-queue, sdlc gate, remogram repo status).

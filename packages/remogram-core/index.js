@@ -8,6 +8,13 @@ export {
   FACT_INVENTORY_BODY_SHAPES,
   forgeFactInventoryPacket,
 } from './contracts/semantic-diff-facts.js';
+export {
+  OBSERVER_REMOGRAM_COMMANDS,
+  OBSERVER_FACT_INVENTORY_PACKETS,
+  observerProtoRemogramCommands,
+  semanticDiffFactCommands,
+  allObserverEligibleCommands,
+} from './contracts/observer-fact-inventory.js';
 export { ERROR_CODES, forgeError } from './contracts/errors.js';
 export {
   capText,
