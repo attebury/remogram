@@ -3028,5 +3028,29 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "ac_semantic_diff_ref_inventory_packet": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-12T01:47:04.036Z",
+      "by": "actor_planning_lane",
+      "note": null,
+      "evidence_refs": [
+        "goal:semantic-diff-fact-inventory/wave2"
+      ]
+    }
+  ],
+  "ac_semantic_diff_git_root_binding": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-12T01:47:06.740Z",
+      "by": "actor_planning_lane",
+      "note": null,
+      "evidence_refs": [
+        "goal:semantic-diff-fact-inventory/wave2"
+      ]
+    }
   ]
 }
