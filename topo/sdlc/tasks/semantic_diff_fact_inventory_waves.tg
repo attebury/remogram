@@ -62,7 +62,9 @@ task task_semantic_diff_fact_inventory_wave3 {
   priority high
   work_type implementation
   claimed_by [actor_coding_agent]
-  status in-progress
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Wave 3 cr inventory merged in PR #94; npm test green."
+  status done
 }
 
 task task_semantic_diff_fact_inventory_wave4 {
