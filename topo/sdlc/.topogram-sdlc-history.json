@@ -3321,5 +3321,24 @@
       "by": "actor_integration_lane",
       "note": null
     }
+  ],
+  "goal_branch_cr_inventory_hardening": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-12T03:04:18.942Z",
+      "by": "actor_plan_lane",
+      "note": null
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-12T03:04:19.138Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:102"
+      ]
+    }
   ]
 }
