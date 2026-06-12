@@ -2,8 +2,8 @@ goal_branch goal_branch_semantic_diff_fact_inventory {
   name "Remogram Semantic Diff Fact Inventory Foundation"
   description "Draft Intent Packet for post-beta read-only fact-layer expansion supporting Topogram Git-as-semantic-diff-database ref inventory. Remogram owns forge/ref/CR facts; Topogram owns SDLC semantics. Planning-only until explicit approval."
   branch_ref "goal/semantic-diff-fact-inventory"
-  task task_semantic_diff_fact_inventory_wave1
-  evidence_refs [local:topo/sdlc/pitches/semantic_diff_fact_inventory.tg, local:topo/sdlc/requirements/semantic_diff_fact_inventory.tg, local:topo/sdlc/plans/semantic_diff_fact_inventory.tg, local:topo/sdlc/acceptance_criteria/semantic_diff_fact_inventory.tg, local:topo/sdlc/tasks/semantic_diff_fact_inventory_waves.tg, local:topo/sdlc/decisions/packet_trust_doctrine.tg, local:topo/sdlc/decisions/remogram_integration_authority_remo.tg, local:topo/verifications/semantic-diff-fact-inventory.tg]
+  task task_semantic_diff_fact_inventory_wave2
+  evidence_refs [local:topo/sdlc/pitches/semantic_diff_fact_inventory.tg, local:topo/sdlc/requirements/semantic_diff_fact_inventory.tg, local:topo/sdlc/plans/semantic_diff_fact_inventory.tg, local:topo/sdlc/acceptance_criteria/semantic_diff_fact_inventory.tg, local:topo/sdlc/tasks/semantic_diff_fact_inventory_waves.tg, local:topo/sdlc/decisions/packet_trust_doctrine.tg, local:topo/sdlc/decisions/remogram_integration_authority_remo.tg, local:topo/sdlc/decisions/semantic_diff_fact_layer.tg, local:topo/verifications/semantic-diff-fact-inventory.tg]
   witness_refs []
   status approved
 }

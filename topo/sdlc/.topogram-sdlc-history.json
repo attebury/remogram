@@ -2927,6 +2927,34 @@
       "evidence_refs": [
         "pr:84"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-12T01:16:36.899Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-12T01:17:57.204Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-12T01:18:29.142Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-12T01:18:45.942Z",
+      "by": "actor_coding_agent",
+      "note": "Wave 1 complete; advance task pointer to wave2 for inter-wave lifecycle."
     }
   ],
   "ac_semantic_diff_fact_packet_model": [
@@ -2967,6 +2995,38 @@
       "evidence_refs": [
         "pr:87"
       ]
+    }
+  ],
+  "task_semantic_diff_fact_inventory_wave1": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-12T01:16:36.856Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-12T01:16:36.879Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-12T01:17:20.339Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_semantic_diff_fact_inventory#wave1_fact_model": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-12T01:18:15.710Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ]
 }

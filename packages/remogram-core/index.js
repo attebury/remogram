@@ -1,4 +1,13 @@
 export { SCHEMA_VERSION, PACKET_TYPES, forgePacket, forgeErrorPacket, unknownForgeContext, FORBIDDEN_PACKET_KEYS } from './contracts/envelope.js';
+export {
+  V1_READ_PLAN_COMMANDS,
+  FACT_INVENTORY_PACKET_TYPES,
+  TRUSTED_ENVELOPE_FIELDS,
+  TRUSTED_NORMALIZED_BODY_FIELDS,
+  FORGE_SOURCED_STRING_LEAVES,
+  FACT_INVENTORY_BODY_SHAPES,
+  forgeFactInventoryPacket,
+} from './contracts/semantic-diff-facts.js';
 export { ERROR_CODES, forgeError } from './contracts/errors.js';
 export {
   capText,

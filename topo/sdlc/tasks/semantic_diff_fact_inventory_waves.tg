@@ -15,7 +15,10 @@ task task_semantic_diff_fact_inventory_wave1 {
   disposition active
   priority high
   work_type implementation
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Wave 1 documentation-only deliverables; no defects observed during contract and decision authoring."
+  status done
 }
 
 task task_semantic_diff_fact_inventory_wave2 {
