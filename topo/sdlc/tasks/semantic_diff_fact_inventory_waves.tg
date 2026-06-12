@@ -108,7 +108,9 @@ task task_semantic_diff_fact_inventory_wave5 {
   priority medium
   work_type implementation
   claimed_by [actor_coding_agent]
-  status in-progress
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Wave 5 consumer docs merged PR #98."
+  status done
 }
 
 task task_semantic_diff_fact_inventory_wave6 {
