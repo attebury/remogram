@@ -25,6 +25,18 @@ describe('semantic diff fact inventory contracts', () => {
         }),
       ).toThrow(/forbidden/i);
     });
+
+    it(`rejects forbidden key ${forbidden} in cr_inventory_slice packets`, () => {
+      expect(() =>
+        forgeFactInventoryPacket(FACT_INVENTORY_PACKET_TYPES.CR_INVENTORY_SLICE, ctx, {
+          entries: [],
+          entry_count: 0,
+          truncated: false,
+          list_truncated: false,
+          [forbidden]: 'must-not-emit',
+        }),
+      ).toThrow(/forbidden/i);
+    });
   }
 
   it('registers ref_inventory and cr_inventory_slice packet types', () => {

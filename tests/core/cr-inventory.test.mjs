@@ -4,6 +4,7 @@ import { runCli } from '@remogram/cli';
 import { createMockProvider } from '../helpers/mock-provider.mjs';
 import { setupTempForge, captureCliOutput } from '../helpers/temp-forge.mjs';
 import { defaultTestConfig } from '../helpers/mock-provider.mjs';
+import { setupRepoWithRemoteBranch } from '../helpers/stale-head-repo.mjs';
 
 const ctx = { cwd: process.cwd(), config: { remote: 'origin' }, remoteName: 'origin' };
 
@@ -142,6 +143,72 @@ describe('cr inventory', () => {
     const body = await crInventory(ctx, provider);
     expect(body.entries).toHaveLength(1);
     expect(body.entries[0].blockers).toEqual([]);
+  });
+
+  it('crInventory annotates stale head_reconcile per entry without failing slice', async () => {
+    const repo = setupRepoWithRemoteBranch();
+    try {
+      const sliceCtx = { cwd: repo.dir, config: { remote: 'origin' }, remoteName: 'origin' };
+      const provider = {
+        listOpenPulls: async () => [1],
+        prView: async (_ctx, { number }) => ({
+          pr_number: number,
+          state: 'open',
+          head_ref: 'feat',
+          head_sha: repo.staleForgeSha,
+          mergeability: 'clean',
+        }),
+        prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
+      };
+      const body = await crInventory(sliceCtx, provider);
+      expect(body.entries).toHaveLength(1);
+      expect(body.entries[0].head_reconcile).toEqual({
+        stale: true,
+        local_head_sha: repo.localSha,
+        head_sha: repo.staleForgeSha,
+      });
+    } finally {
+      repo.cleanup();
+    }
+  });
+
+  it('crInventory records prChecks failure in entries_skipped', async () => {
+    const provider = {
+      listOpenPulls: async () => [1, 2],
+      prView: async (_ctx, { number }) => ({
+        pr_number: number,
+        state: 'open',
+        mergeability: 'clean',
+      }),
+      prChecks: async (_ctx, { number }) => {
+        if (number === 2) {
+          const err = new Error('checks failed');
+          err.forgeError = { code: 'oversized_raw_output', message: 'too big' };
+          throw err;
+        }
+        return { check_conclusion: 'success', statuses: [] };
+      },
+    };
+    const body = await crInventory(ctx, provider);
+    expect(body.entries).toHaveLength(1);
+    expect(body.entries_skipped).toEqual([
+      { pr_number: 2, error_code: 'oversized_raw_output' },
+    ]);
+  });
+
+  it('crInventory propagates list_truncated from listOpenPullsWithMeta', async () => {
+    const provider = {
+      listOpenPullsWithMeta: async () => ({ numbers: [1], list_truncated: true }),
+      prView: async (_ctx, { number }) => ({
+        pr_number: number,
+        state: 'open',
+        mergeability: 'clean',
+      }),
+      prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
+    };
+    const body = await crInventory(ctx, provider);
+    expect(body.list_truncated).toBe(true);
+    expect(body.entry_count).toBe(1);
   });
 
   it('cli cr inventory emits cr_inventory_slice packet', async () => {
