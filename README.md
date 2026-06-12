@@ -260,7 +260,8 @@ To change coverage include/exclude lists or add thresholds, update this section,
 - Tests live under `tests/**/*.test.mjs` only.
 - Coverage (`npm run test:coverage`) reports **`packages/remogram-core`** only.
 - **`ref_compare`** and **`sync_plan`** on API providers use local git only (`auth_class: git_only`); no forge token is required.
-- **CI:** GitHub Actions on push/PR to `main` (`.github/workflows/`).
+- **CI (GitHub):** GitHub Actions on push/PR to `main` (`.github/workflows/`).
+- **CI (local Gitea):** hybrid Actions via `.gitea/workflows/ci-gate.yml` → `scripts/run-gitea-gate.sh`. Host install: [tools/gitea/README.md](tools/gitea/README.md) (points at Topogram `tools/gitea/HYBRID-CI.md`).
 
 ## Packages
 
