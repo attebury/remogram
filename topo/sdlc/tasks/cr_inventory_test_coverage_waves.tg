@@ -39,7 +39,9 @@ task task_cr_inventory_test_coverage_wave2 {
   priority medium
   work_type implementation
   claimed_by [actor_coding_agent]
-  status unclaimed
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Wave 2 pr_not_open skip merged in PR #118."
+  status done
 }
 
 task task_cr_inventory_test_coverage_wave3 {

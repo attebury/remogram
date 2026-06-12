@@ -2,7 +2,7 @@ goal_branch goal_branch_cr_inventory_test_coverage {
   name "CR Inventory Test Coverage"
   description "Follow-up Intent Packet for cr inventory test coverage and pr_not_open skip semantics after cr-inventory-hardening."
   branch_ref "goal/cr-inventory-test-coverage"
-  task task_cr_inventory_test_coverage_wave2
+  task task_cr_inventory_test_coverage_wave3
   evidence_refs [local:topo/sdlc/pitches/cr_inventory_test_coverage.tg, local:topo/sdlc/requirements/cr_inventory_test_coverage.tg, local:topo/sdlc/plans/cr_inventory_test_coverage.tg, local:topo/sdlc/acceptance_criteria/cr_inventory_test_coverage.tg, local:topo/sdlc/tasks/cr_inventory_test_coverage_waves.tg, local:topo/verifications/cr-inventory-test-coverage.tg]
   witness_refs []
   status approved
