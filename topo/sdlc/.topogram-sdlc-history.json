@@ -3004,6 +3004,13 @@
       "at": "2026-06-12T02:15:24.132Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-12T02:15:43.757Z",
+      "by": "actor_integration_lane",
+      "note": null
     }
   ],
   "ac_semantic_diff_fact_packet_model": [
@@ -3248,6 +3255,22 @@
       "at": "2026-06-12T02:15:24.104Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-12T02:15:43.263Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_semantic_diff_fact_inventory#wave5_topogram_consumer": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-12T02:15:43.529Z",
+      "by": "actor_integration_lane",
+      "note": null
     }
   ]
 }

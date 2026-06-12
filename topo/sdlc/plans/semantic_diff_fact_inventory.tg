@@ -9,7 +9,7 @@ plan plan_semantic_diff_fact_inventory {
     step wave2_ref_inventory status done description "Git/ref inventory provider core: refs, SHAs, ancestry hints as provider-neutral packets; git-root binding; reuse remogram-core trust primitives."
     step wave3_cr_aggregation status done description "Change-request/check/merge-plan aggregation into semantic-diff-oriented inventory slices without Topogram SDLC fields."
     step wave4_observer_integration status done description "Observer snapshot / branch-workcycle proto fact needs; read-only CLI/MCP exposure plan."
-    step wave5_topogram_consumer status pending description "Topogram consumer contract examples and explicit Topogram-interprets / Remogram-does-not documentation. Consumer examples: tools/remogram-agent-support/skills/remogram-consumer/SKILL.md (Semantic diff queries)."
+    step wave5_topogram_consumer status done description "Topogram consumer contract examples and explicit Topogram-interprets / Remogram-does-not documentation. Consumer examples: tools/remogram-agent-support/skills/remogram-consumer/SKILL.md (Semantic diff queries)."
     step wave6_verify status pending description "Hermetic fixtures, contract tests, doctor/capabilities updates (read-only), smoke validation; npm test and topogram check green."
   }
   status draft
