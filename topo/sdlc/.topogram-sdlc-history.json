@@ -2983,6 +2983,13 @@
       "at": "2026-06-12T02:14:20.891Z",
       "by": "actor_integration_lane",
       "note": null
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-12T02:14:44.752Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ],
   "ac_semantic_diff_fact_packet_model": [
@@ -3179,6 +3186,22 @@
       "at": "2026-06-12T02:14:16.119Z",
       "by": "actor_integration_lane",
       "note": null
+    }
+  ],
+  "task_semantic_diff_fact_inventory_wave4": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-12T02:14:44.709Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-12T02:14:44.732Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ]
 }
