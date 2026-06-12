@@ -30,7 +30,7 @@ export {
 export { assertGitRef, assertGitRemote } from './git-args.js';
 export { gitRevParse, gitCurrentBranch, gitAheadBehind, gitRepoRoot } from './git-local.js';
 export { buildRefInventoryBody, refsInventory } from './ref-inventory.js';
-export { buildCrInventoryEntry, crInventory } from './cr-inventory.js';
+export { buildCrInventoryEntry, buildHeadReconcile, crInventory } from './cr-inventory.js';
 export { mergeBlockersFromFacts } from './merge-blockers.js';
 export {
   localHeadShaForPr,
