@@ -352,6 +352,20 @@ export async function runCli(argv, options = {}) {
         ctx,
         await provider.refsInventory(ctx),
       );
+    } else if (group === 'cr' && sub === 'inventory') {
+      if (typeof provider.crInventory !== 'function') {
+        throw Object.assign(new Error('cr inventory not implemented for provider'), {
+          forgeError: forgeError(
+            ERROR_CODES.PROVIDER_UNSUPPORTED,
+            'cr inventory not implemented for provider',
+          ),
+        });
+      }
+      packet = forgeFactInventoryPacket(
+        FACT_INVENTORY_PACKET_TYPES.CR_INVENTORY_SLICE,
+        ctx,
+        await provider.crInventory(ctx, { slice_ref: flags.slice_ref }),
+      );
     } else if (group === 'pr' && sub === 'view') {
       const number = parsePositiveInt(flags.number, '--number');
       if (number == null) {
@@ -411,7 +425,7 @@ export async function runCli(argv, options = {}) {
       throw Object.assign(new Error(`Unknown command: ${positional.join(' ')}`), {
         forgeError: forgeError(
           ERROR_CODES.INVALID_ARGS,
-          'Unknown command. Try: provider capabilities, repo status, refs compare, refs inventory, pr view, pr checks, merge plan, sync plan',
+          'Unknown command. Try: provider capabilities, repo status, refs compare, refs inventory, cr inventory, pr view, pr checks, merge plan, sync plan',
         ),
       });
     }

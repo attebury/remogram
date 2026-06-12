@@ -19,6 +19,7 @@ describe('remogram-mcp server', () => {
     const { tools } = await client.listTools();
     const names = tools.map((t) => t.name).sort();
     expect(names).toEqual([
+      'cr_inventory',
       'doctor',
       'merge_plan',
       'pr_checks',

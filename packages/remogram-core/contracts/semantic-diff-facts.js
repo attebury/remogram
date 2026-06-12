@@ -13,6 +13,7 @@ export const V1_READ_PLAN_COMMANDS = Object.freeze([
   'repo status',
   'refs compare',
   'refs inventory',
+  'cr inventory',
   'pr view',
   'pr checks',
   'merge plan',

@@ -6,6 +6,7 @@ export function createMockProvider(overrides = {}) {
         { name: 'repo_status', implemented: true },
         { name: 'ref_compare', implemented: true },
         { name: 'ref_inventory', implemented: true },
+        { name: 'cr_inventory', implemented: true },
         { name: 'pr_status', implemented: true },
         { name: 'pr_checks', implemented: true },
         { name: 'merge_plan', implemented: true },
@@ -22,7 +23,7 @@ export function createMockProvider(overrides = {}) {
     repoStatus: async () => ({
       auth_present: true,
       auth_env: 'GITEA_TOKEN',
-      capabilities: ['repo_status', 'ref_compare', 'ref_inventory', 'pr_status', 'pr_checks', 'merge_plan', 'sync_plan'],
+      capabilities: ['repo_status', 'ref_compare', 'ref_inventory', 'cr_inventory', 'pr_status', 'pr_checks', 'merge_plan', 'sync_plan'],
       default_branch: 'main',
     }),
     refsCompare: async (_ctx, base, head) => ({
@@ -36,6 +37,23 @@ export function createMockProvider(overrides = {}) {
     refsInventory: async () => ({
       refs: [{ name: 'main', sha: 'aaa111', kind: 'branch', is_default: true }],
       default_ref: 'main',
+    }),
+    listOpenPulls: async () => [1, 2],
+    crInventory: async (_ctx, opts = {}) => ({
+      entries: [
+        {
+          pr_number: 1,
+          url: 'http://localhost:3000/o/r/pulls/1',
+          title: 'Test PR',
+          state: 'open',
+          base_ref: 'main',
+          head_ref: 'feat',
+          mergeability: 'clean',
+          checks_conclusion: 'success',
+          blockers: [],
+        },
+      ],
+      ...(opts.slice_ref ? { slice_ref: opts.slice_ref } : {}),
     }),
     prView: async (_ctx, { number }) => ({
       pr_number: number,

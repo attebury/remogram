@@ -8,6 +8,7 @@ import {
   gitCurrentBranch,
   gitAheadBehind,
   refsInventory,
+  crInventory,
   ERROR_CODES,
   forgeError,
   forgeIngestCapabilityFacts,
@@ -20,6 +21,7 @@ const AUTH_CAPABILITIES = [
   'repo_status',
   'ref_compare',
   'ref_inventory',
+  'cr_inventory',
   'pr_status',
   'pr_checks',
   'merge_plan',
@@ -305,6 +307,24 @@ export async function mergePlan(ctx, opts) {
   };
 }
 
+export async function listOpenPulls(ctx) {
+  apiBase(ctx.config, ctx.parsed);
+  requireToken();
+  const mrs = await gitlabFetchPaginated(
+    ctx.config,
+    ctx.parsed,
+    `${projectApiPath(ctx.config, 'merge_requests')}?state=opened`,
+  );
+  return mrs
+    .map((mr) => mr.iid)
+    .filter((number) => Number.isInteger(number))
+    .sort((a, b) => a - b);
+}
+
+export async function crInventorySlice(ctx, opts = {}) {
+  return crInventory(ctx, { listOpenPulls, prView, prChecks, mergePlan }, opts);
+}
+
 export async function syncPlan(ctx, remoteName = 'origin') {
   assertGitRemote(remoteName, 'remote');
   apiBase(ctx.config, ctx.parsed);
@@ -339,6 +359,8 @@ export const provider = {
   repoStatus,
   refsCompare,
   refsInventory,
+  listOpenPulls,
+  crInventory: crInventorySlice,
   prView,
   prChecks,
   mergePlan,

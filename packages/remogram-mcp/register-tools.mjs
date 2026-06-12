@@ -37,6 +37,18 @@ export function registerTools(server) {
       args: ['refs', 'inventory'],
     },
     {
+      name: 'cr_inventory',
+      description: 'Aggregate open change requests with checks and merge-plan facts into a semantic-diff slice.',
+      inputSchema: z.object({
+        slice_ref: z.string().optional().describe('Optional slice ref label for consumers'),
+      }),
+      args: (input) => {
+        const a = ['cr', 'inventory'];
+        if (input.slice_ref) a.push('--slice-ref', input.slice_ref);
+        return a;
+      },
+    },
+    {
       name: 'pr_status',
       description: 'PR metadata and mergeability facts.',
       inputSchema: z.object({
