@@ -1,0 +1,12 @@
+pitch pitch_cr_inventory_test_coverage {
+  name "CR Inventory Test Coverage"
+  description "Follow-up Intent Packet to close code-review test gaps for cr inventory / cr_inventory_slice after cr-inventory-hardening cluster completion."
+  appetite "small"
+  problem "Hardening shipped on remo but review found missing tests: stale head_reconcile, forbidden-key gate for cr_inventory_slice, partial prChecks failure, list_truncated, CLI bypassing real aggregation, provider matrix metadata gaps, and silent non-open skip without entries_skipped reconciliation."
+  solution_sketch "Four serialized waves: (1) core unit and contract tests, (2) pr_not_open entries_skipped product fix, (3) CLI hook integration and --limit, (4) provider matrix and HTTP list_truncated."
+  rabbit_holes "Parallel forge calls; full bug_forge_ingest_oversize_checks fix; live-network provider tests; reopening cr-inventory-hardening goal."
+  no_go_areas "Reopening goal_branch_cr_inventory_hardening; hand-editing lifecycle status; product features beyond pr_not_open skip semantics."
+  affects [cap_forge_remote_ops]
+  priority medium
+  status draft
+}
