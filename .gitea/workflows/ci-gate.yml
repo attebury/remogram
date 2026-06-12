@@ -1,0 +1,56 @@
+# Hybrid CI: Gitea Actions runs scripts/run-gitea-gate.sh (test, coverage, secrets).
+# Replaces separate test.yml + secret-scan.yml on local Gitea (macOS host runner).
+# GitHub CI remains in .github/workflows/ for publish.
+
+name: CI Gate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - remo
+      - 'goal/**'
+      - 'plan/**'
+      - 'integrate/**'
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  GITEA_ACTIONS: true
+
+jobs:
+  ci-gate:
+    name: CI gate
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Fetch pull request base
+        if: gitea.event_name == 'pull_request'
+        run: git fetch --no-tags --prune origin "+refs/heads/${{ gitea.base_ref }}:refs/remotes/origin/${{ gitea.base_ref }}"
+
+      - name: Run CI gate (pull request)
+        if: gitea.event_name == 'pull_request'
+        env:
+          DOGFOOD_GATE_BASE: origin/${{ gitea.base_ref }}
+          DOGFOOD_GATE_HEAD: ${{ gitea.sha }}
+        run: bash ./scripts/run-gitea-gate.sh
+
+      - name: Run CI gate (push)
+        if: gitea.event_name == 'push'
+        env:
+          DOGFOOD_GATE_BASE: origin/main
+          DOGFOOD_GATE_HEAD: ${{ gitea.sha }}
+        run: bash ./scripts/run-gitea-gate.sh
+
+      - name: Run CI gate (manual)
+        if: gitea.event_name == 'workflow_dispatch'
+        run: bash ./scripts/run-gitea-gate.sh
