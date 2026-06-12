@@ -3381,6 +3381,13 @@
       "at": "2026-06-12T03:08:32.286Z",
       "by": "actor_integration_lane",
       "note": null
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-12T03:08:40.526Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ],
   "ac_cr_inventory_single_pass": [
@@ -3512,6 +3519,38 @@
       "to": "done",
       "at": "2026-06-12T03:08:21.605Z",
       "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "task_cr_inventory_hardening_wave4": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-12T03:08:40.473Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-12T03:08:40.501Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    }
+  ],
+  "bug_gitea_pr_state_case": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-12T03:09:10.458Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-12T03:09:10.746Z",
+      "by": "actor_coding_agent",
       "note": null
     }
   ]

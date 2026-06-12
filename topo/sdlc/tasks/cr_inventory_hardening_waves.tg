@@ -86,5 +86,5 @@ task task_cr_inventory_hardening_wave4 {
   work_type implementation
   claimed_by [actor_coding_agent]
   linked_bugs [bug_gitea_pr_state_case]
-  status unclaimed
+  status in-progress
 }

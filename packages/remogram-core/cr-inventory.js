@@ -1,6 +1,6 @@
 import { sanitizeField } from './caps.js';
 import { ERROR_CODES, forgeError } from './contracts/errors.js';
-import { mergeBlockersFromFacts } from './merge-blockers.js';
+import { mergeBlockersFromFacts, isOpenPrState } from './merge-blockers.js';
 import { staleHeadDetails } from './pr-head-reconcile.js';
 
 export const DEFAULT_CR_INVENTORY_LIMIT = 50;
@@ -22,6 +22,11 @@ async function resolveOpenPullList(provider, ctx) {
   }
   const numbers = await provider.listOpenPulls(ctx);
   return { numbers, list_truncated: false };
+}
+
+function skipErrorCode(err) {
+  if (err?.forgeError?.code) return err.forgeError.code;
+  return ERROR_CODES.API_ERROR;
 }
 
 export function buildHeadReconcile(ctx, view) {
@@ -72,14 +77,23 @@ export async function crInventory(ctx, provider, opts = {}) {
   const entryCount = numbers.length;
   const selected = numbers.slice(0, limit);
   const entries = [];
+  const entries_skipped = [];
   for (const number of selected) {
-    const view = await provider.prView(ctx, { number });
-    if (view.state !== 'open') continue;
-    const checks = await provider.prChecks(ctx, { number });
-    entries.push(buildCrInventoryEntry(ctx, view, checks));
+    try {
+      const view = await provider.prView(ctx, { number });
+      if (!isOpenPrState(view.state)) continue;
+      const checks = await provider.prChecks(ctx, { number });
+      entries.push(buildCrInventoryEntry(ctx, view, checks));
+    } catch (err) {
+      entries_skipped.push({
+        pr_number: number,
+        error_code: skipErrorCode(err),
+      });
+    }
   }
   return {
     entries,
+    ...(entries_skipped.length ? { entries_skipped } : {}),
     entry_count: entryCount,
     truncated: entryCount > selected.length,
     list_truncated: listTruncated,

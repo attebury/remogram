@@ -93,6 +93,57 @@ describe('cr inventory', () => {
     expect(body.entries).toHaveLength(50);
   });
 
+  it('crInventory returns empty entries when no open pulls are listed', async () => {
+    const provider = {
+      listOpenPulls: async () => [],
+      prView: async () => {
+        throw new Error('should not fetch');
+      },
+      prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
+    };
+    const body = await crInventory(ctx, provider);
+    expect(body.entries).toEqual([]);
+    expect(body.entry_count).toBe(0);
+    expect(body.truncated).toBe(false);
+  });
+
+  it('crInventory records per-PR forge errors without failing the slice', async () => {
+    const provider = {
+      listOpenPulls: async () => [1, 2],
+      prView: async (_ctx, { number }) => {
+        if (number === 2) {
+          const err = new Error('forge down');
+          err.forgeError = { code: 'api_error', message: 'forge down' };
+          throw err;
+        }
+        return {
+          pr_number: number,
+          state: 'open',
+          mergeability: 'clean',
+        };
+      },
+      prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
+    };
+    const body = await crInventory(ctx, provider);
+    expect(body.entries).toHaveLength(1);
+    expect(body.entries_skipped).toEqual([{ pr_number: 2, error_code: 'api_error' }]);
+  });
+
+  it('crInventory treats mixed-case Open state as open', async () => {
+    const provider = {
+      listOpenPulls: async () => [1],
+      prView: async (_ctx, { number }) => ({
+        pr_number: number,
+        state: 'Open',
+        mergeability: 'clean',
+      }),
+      prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
+    };
+    const body = await crInventory(ctx, provider);
+    expect(body.entries).toHaveLength(1);
+    expect(body.entries[0].blockers).toEqual([]);
+  });
+
   it('cli cr inventory emits cr_inventory_slice packet', async () => {
     const config = defaultTestConfig();
     const setup = setupTempForge({
