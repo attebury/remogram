@@ -1,0 +1,14 @@
+plan plan_cr_inventory_hardening {
+  name "CR Inventory Hardening — Wave Plan"
+  description "Four serialized waves hardening cr inventory after code review: single-pass aggregation, semantic fields, bounds, resilience."
+  task task_cr_inventory_hardening_wave1
+  architecture_patterns [contract_boundary, fail_closed_gate, command_owned_mutation]
+  priority high
+  steps {
+    step wave1_single_pass status pending description "Shared mergeBlockersFromFacts; crInventory two-call aggregation; provider mergePlan refactor."
+    step wave2_semantic_fields status pending description "base_sha/head_sha and per-entry head_reconcile in cr_inventory_slice; contract and consumer docs."
+    step wave3_bounds status pending description "Entry limit default 50, truncation metadata, CLI --limit and MCP limit."
+    step wave4_resilience status pending description "Partial per-PR failure, Gitea open-state fix, test and topogram check closeout."
+  }
+  status draft
+}

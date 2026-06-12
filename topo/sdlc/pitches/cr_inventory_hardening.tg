@@ -1,0 +1,12 @@
+pitch pitch_cr_inventory_hardening {
+  name "CR Inventory Hardening"
+  description "Follow-up Intent Packet to harden cr inventory / cr_inventory_slice after code review: single-pass aggregation, SHAs and stale-head hints, bounds and truncation metadata, partial failure resilience."
+  appetite "medium"
+  problem "Wave 3 shipped cr inventory with redundant forge calls per PR, inconsistent composed fields, unbounded entries arrays, missing SHAs and stale-head hints, and all-or-nothing failure on partial forge errors. Related open bugs: bug_gitea_pr_state_case, bug_forge_ingest_oversize_checks (partial mitigation only)."
+  solution_sketch "Four serialized waves: (1) single-pass aggregation with shared mergeBlockersFromFacts, (2) base_sha/head_sha and per-entry head_reconcile, (3) entry limits and truncation metadata, (4) partial failure resilience, Gitea state fix, and test gaps."
+  rabbit_holes "Full bug_forge_ingest_oversize_checks fix; observer proto auto-capture; mutation commands; SDLC fields in packets."
+  no_go_areas "Reopening semantic-diff-fact-inventory cluster; hand-editing lifecycle status; implementation in draft PR."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}

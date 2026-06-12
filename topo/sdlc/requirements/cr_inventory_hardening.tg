@@ -1,0 +1,10 @@
+requirement req_cr_inventory_hardening {
+  name "CR inventory hardening (read-only)"
+  description "Remogram must harden cr inventory / cr_inventory_slice for agent-safe batch use: single observation pass per PR, consistent composed fields, semantic-diff SHAs and stale-head hints, bounded entry counts with truncation metadata, and partial failure resilience without SDLC fields in output."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  pitch pitch_cr_inventory_hardening
+  priority high
+  status draft
+}

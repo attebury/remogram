@@ -1,0 +1,84 @@
+task task_cr_inventory_hardening_wave1 {
+  name "Wave 1 — Single-pass aggregation"
+  description "Extract mergeBlockersFromFacts to remogram-core; refactor crInventory to two forge calls per PR; providers mergePlan uses shared blocker derivation."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Mutation commands" "SDLC fields in output" "Changing merge plan packet shape"]
+  entrypoints ["packages/remogram-core/**" "packages/provider-gitea-api/**" "packages/provider-github-api/**" "packages/provider-gitlab-api/**" "tests/**"]
+  satisfies [req_cr_inventory_hardening]
+  acceptance_refs [ac_cr_inventory_single_pass]
+  verification_refs [verification_cr_inventory_hardening_wave1]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type implementation
+  claimed_by [actor_coding_agent]
+  status unclaimed
+}
+
+task task_cr_inventory_hardening_wave2 {
+  name "Wave 2 — Semantic-diff fields and stale-head hints"
+  description "Add base_sha, head_sha, and per-entry head_reconcile to cr_inventory_slice entries; update contracts and consumer docs."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Fail-whole-slice STALE_HEAD throw" "Observer proto changes" "Mutation commands"]
+  entrypoints ["packages/remogram-core/**" "packages/remogram-core/contracts/**" "tools/remogram-agent-support/skills/remogram-consumer/**" "tests/**"]
+  satisfies [req_cr_inventory_hardening]
+  acceptance_refs [ac_cr_inventory_semantic_fields]
+  verification_refs [verification_cr_inventory_hardening_wave2]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_cr_inventory_hardening_wave1]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type implementation
+  claimed_by [actor_coding_agent]
+  status unclaimed
+}
+
+task task_cr_inventory_hardening_wave3 {
+  name "Wave 3 — Bounds and truncation metadata"
+  description "Cap cr inventory entries with default limit 50, expose entry_count/truncated/list_truncated, add CLI --limit and MCP limit param."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Raising global forge ingest cap" "Mutation commands"]
+  entrypoints ["packages/remogram-core/**" "packages/remogram-cli/**" "packages/remogram-mcp/**" "README.md" "tests/**"]
+  satisfies [req_cr_inventory_hardening]
+  acceptance_refs [ac_cr_inventory_bounds]
+  verification_refs [verification_cr_inventory_hardening_wave3]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_cr_inventory_hardening_wave2]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type implementation
+  claimed_by [actor_coding_agent]
+  status unclaimed
+}
+
+task task_cr_inventory_hardening_wave4 {
+  name "Wave 4 — Resilience, Gitea state fix, tests"
+  description "Per-PR partial failure with entries_skipped; fix bug_gitea_pr_state_case; MCP/CLI test gaps and topogram check proof."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Full bug_forge_ingest_oversize_checks fix" "GitLab live-network tests"]
+  entrypoints ["packages/remogram-core/**" "packages/provider-gitea-api/**" "packages/remogram-cli/**" "packages/remogram-mcp/**" "tests/**" "topo/sdlc/bugs/forge-trust-round4.tg"]
+  satisfies [req_cr_inventory_hardening]
+  acceptance_refs [ac_cr_inventory_resilience]
+  verification_refs [verification_cr_inventory_hardening_wave4]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_cr_inventory_hardening_wave3]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type implementation
+  claimed_by [actor_coding_agent]
+  linked_bugs [bug_gitea_pr_state_case]
+  status unclaimed
+}

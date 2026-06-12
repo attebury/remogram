@@ -1,0 +1,48 @@
+verification verification_cr_inventory_hardening_wave1 {
+  name "CR inventory hardening wave 1"
+  description "Single-pass aggregation and mergeBlockersFromFacts tests."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [cr_inventory_hardening_wave1]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status active
+}
+
+verification verification_cr_inventory_hardening_wave2 {
+  name "CR inventory hardening wave 2"
+  description "Semantic-diff SHAs and head_reconcile contract tests."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [cr_inventory_hardening_wave2]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status active
+}
+
+verification verification_cr_inventory_hardening_wave3 {
+  name "CR inventory hardening wave 3"
+  description "Entry limit and truncation metadata tests."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [cr_inventory_hardening_wave3]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status active
+}
+
+verification verification_cr_inventory_hardening_wave4 {
+  name "CR inventory hardening wave 4"
+  description "Partial failure resilience, Gitea state fix, and full test suite."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [cr_inventory_hardening_wave4]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+    command topogram_check argv ["topogram" "check" "." "--json"]
+  }
+  status active
+}
