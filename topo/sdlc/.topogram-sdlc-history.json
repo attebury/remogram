@@ -2962,6 +2962,13 @@
       "at": "2026-06-12T01:47:55.772Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-12T02:11:15.037Z",
+      "by": "actor_integration_lane",
+      "note": null
     }
   ],
   "ac_semantic_diff_fact_packet_model": [
@@ -3074,6 +3081,22 @@
       "at": "2026-06-12T01:47:55.752Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-12T02:11:05.891Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_semantic_diff_fact_inventory#wave2_ref_inventory": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-12T02:11:09.509Z",
+      "by": "actor_integration_lane",
+      "note": null
     }
   ]
 }
