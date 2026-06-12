@@ -9,6 +9,7 @@ import {
   gitRevParse,
   gitCurrentBranch,
   gitAheadBehind,
+  refsInventory,
   ERROR_CODES,
   forgeError,
   forgeIngestCapabilityFacts,
@@ -40,6 +41,7 @@ query RemogramPrView($owner: String!, $repo: String!, $number: Int!) {
 const AUTH_CAPABILITIES = [
   'repo_status',
   'ref_compare',
+  'ref_inventory',
   'pr_status',
   'pr_checks',
   'merge_plan',
@@ -453,6 +455,7 @@ export const provider = {
   providerCapabilities,
   repoStatus,
   refsCompare,
+  refsInventory,
   prView,
   prChecks,
   mergePlan,

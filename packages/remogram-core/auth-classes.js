@@ -11,6 +11,7 @@ const AUTH_CLASS_VALUES = new Set(Object.values(AUTH_CLASS));
 export const API_PROVIDER_COMMAND_AUTH = {
   repo_status: AUTH_CLASS.NONE,
   ref_compare: AUTH_CLASS.GIT_ONLY,
+  ref_inventory: AUTH_CLASS.GIT_ONLY,
   pr_status: AUTH_CLASS.TOKEN_REQUIRED,
   pr_checks: AUTH_CLASS.TOKEN_REQUIRED,
   merge_plan: AUTH_CLASS.TOKEN_REQUIRED,

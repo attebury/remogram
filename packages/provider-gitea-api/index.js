@@ -7,6 +7,7 @@ import {
   gitRevParse,
   gitCurrentBranch,
   gitAheadBehind,
+  refsInventory,
   ERROR_CODES,
   forgeError,
   forgeIngestCapabilityFacts,
@@ -17,6 +18,7 @@ const PUBLIC_GITEA_API = 'https://gitea.com/api/v1';
 const AUTH_CAPABILITIES = [
   'repo_status',
   'ref_compare',
+  'ref_inventory',
   'pr_status',
   'pr_checks',
   'merge_plan',
@@ -326,6 +328,7 @@ export const provider = {
   providerCapabilities,
   repoStatus,
   refsCompare,
+  refsInventory,
   prView,
   prChecks,
   mergePlan,

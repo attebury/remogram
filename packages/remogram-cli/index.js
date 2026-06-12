@@ -19,6 +19,8 @@ import {
   getEffectiveIngestMaxBytes,
   FORGE_INGEST_MAX_BYTES_ENV,
   throwIfStaleHeadByNumber,
+  FACT_INVENTORY_PACKET_TYPES,
+  forgeFactInventoryPacket,
 } from '@remogram/core';
 import { provider as giteaApi } from '@remogram/provider-gitea-api';
 import { provider as githubApi } from '@remogram/provider-github-api';
@@ -336,6 +338,20 @@ export async function runCli(argv, options = {}) {
         ctx,
         await provider.refsCompare(ctx, flags.base, flags.head),
       );
+    } else if (group === 'refs' && sub === 'inventory') {
+      if (typeof provider.refsInventory !== 'function') {
+        throw Object.assign(new Error('refs inventory not implemented for provider'), {
+          forgeError: forgeError(
+            ERROR_CODES.PROVIDER_UNSUPPORTED,
+            'refs inventory not implemented for provider',
+          ),
+        });
+      }
+      packet = forgeFactInventoryPacket(
+        FACT_INVENTORY_PACKET_TYPES.REF_INVENTORY,
+        ctx,
+        await provider.refsInventory(ctx),
+      );
     } else if (group === 'pr' && sub === 'view') {
       const number = parsePositiveInt(flags.number, '--number');
       if (number == null) {
@@ -395,7 +411,7 @@ export async function runCli(argv, options = {}) {
       throw Object.assign(new Error(`Unknown command: ${positional.join(' ')}`), {
         forgeError: forgeError(
           ERROR_CODES.INVALID_ARGS,
-          'Unknown command. Try: provider capabilities, repo status, refs compare, pr view, pr checks, merge plan, sync plan',
+          'Unknown command. Try: provider capabilities, repo status, refs compare, refs inventory, pr view, pr checks, merge plan, sync plan',
         ),
       });
     }

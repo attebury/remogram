@@ -33,6 +33,10 @@ describe('auth-aware provider capabilities', () => {
         implemented: true,
         auth_class: AUTH_CLASS.GIT_ONLY,
       });
+      expect(byName.ref_inventory).toMatchObject({
+        implemented: true,
+        auth_class: AUTH_CLASS.GIT_ONLY,
+      });
       expect(byName.sync_plan).toMatchObject({
         implemented: true,
         auth_class: AUTH_CLASS.GIT_ONLY,

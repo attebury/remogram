@@ -38,7 +38,8 @@ task task_semantic_diff_fact_inventory_wave2 {
   disposition active
   priority high
   work_type implementation
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  status in-progress
 }
 
 task task_semantic_diff_fact_inventory_wave3 {

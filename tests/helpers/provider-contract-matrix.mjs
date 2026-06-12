@@ -59,6 +59,7 @@ const MERGE_BLOCKERS = new Set([
 const COMMANDS = new Set([
   'repo_status',
   'ref_compare',
+  'ref_inventory',
   'pr_status',
   'pr_checks',
   'merge_plan',
@@ -143,6 +144,7 @@ export function runProviderContractMatrix(cases) {
             expect.arrayContaining([
               'repo_status',
               'ref_compare',
+              'ref_inventory',
               'pr_status',
               'pr_checks',
               'merge_plan',
@@ -169,6 +171,16 @@ export function runProviderContractMatrix(cases) {
           expect(body.base_sha).toMatch(/^[0-9a-f]{40}$/);
           expect(body.head_sha).toBe(body.base_sha);
           expectBodyKeys(PACKET_TYPES.REF_COMPARE, testCase, body);
+        });
+
+        it('emits ref_inventory body without forge auth', async () => {
+          testCase.clearAuth();
+
+          const body = await testCase.provider.refsInventory(testCase.ctx);
+
+          expect(Array.isArray(body.refs)).toBe(true);
+          expect(body.refs.length).toBeGreaterThan(0);
+          expect(body.refs[0].sha).toMatch(/^[0-9a-f]{40}$/);
         });
 
         it('rejects option-looking refs with the shared invalid_args code', async () => {
