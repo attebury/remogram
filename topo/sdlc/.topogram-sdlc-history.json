@@ -5664,6 +5664,26 @@
       "evidence_refs": [
         "pr:189"
       ]
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-14T04:06:45.705Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "local:cluster-closeout"
+      ]
+    },
+    {
+      "from": "done",
+      "to": "archived",
+      "at": "2026-06-14T04:06:45.939Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "local:cluster-closeout"
+      ]
     }
   ],
   "ac_offset_backoff_carry_forward_round10": [
@@ -5802,6 +5822,26 @@
       "evidence_refs": [
         "pr:189"
       ]
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T04:05:54.986Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:195"
+      ]
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T04:05:55.214Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:195"
+      ]
     }
   ],
   "task_forge_trust_round10_wave3": [
@@ -5814,6 +5854,26 @@
       "evidence_refs": [
         "pr:189"
       ]
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T04:05:55.434Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:196"
+      ]
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T04:05:55.653Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:196"
+      ]
     }
   ],
   "task_forge_trust_round10_wave4": [
@@ -5825,6 +5885,26 @@
       "note": null,
       "evidence_refs": [
         "pr:189"
+      ]
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T04:05:55.891Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:197"
+      ]
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T04:05:56.141Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:197"
       ]
     }
   ]
