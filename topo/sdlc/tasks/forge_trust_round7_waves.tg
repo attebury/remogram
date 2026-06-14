@@ -1,0 +1,87 @@
+task task_forge_trust_round7_wave1 {
+  name "Wave 1 — Capabilities and shared pagination constants"
+  description "Centralize DEFAULT_CHECK_STATUS_PAGE_SIZE and MAX_CHECK_STATUS_PAGES in remogram-core. Emit structured check_pagination facts from providerCapabilities. Update README and tests."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Raising DEFAULT_MAX_BYTES globally" "Adaptive page retry"]
+  entrypoints ["packages/remogram-core/caps.js" "packages/remogram-core/index.js" "packages/provider-github-api/**" "packages/provider-gitlab-api/**" "packages/provider-gitea-api/**" "tests/core/forge-ingest-policy.test.mjs" "tests/provider/**" "README.md"]
+  satisfies [req_forge_trust_round7]
+  acceptance_refs [ac_capabilities_check_pagination_round7, ac_shared_pagination_constants_round7]
+  verification_refs [verification_forge_trust_round7_wave1]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  bug_discovery bug_linked
+  linked_bugs [bug_check_pagination_capability_missing bug_pagination_constants_triplicated]
+  status unclaimed
+}
+
+task task_forge_trust_round7_wave2 {
+  name "Wave 2 — Ingest bound proof (oversize mocks)"
+  description "TDD: add provider tests mocking single paginated page over 8192 bytes. Fix via page size tuning or adaptive retry without raising DEFAULT_MAX_BYTES."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Raising DEFAULT_MAX_BYTES" "ingest_max_bytes in .remogram.json"]
+  entrypoints ["packages/remogram-core/http.js" "packages/remogram-core/caps.js" "packages/provider-*/index.js" "tests/provider/**" "tests/core/http.test.mjs"]
+  satisfies [req_forge_trust_round7]
+  acceptance_refs [ac_non_list_ingest_oversize_mock_round7]
+  verification_refs [verification_forge_trust_round7_wave2]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round7_wave1]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  bug_discovery bug_linked
+  linked_bugs [bug_forge_ingest_single_page_unbounded]
+  status unclaimed
+}
+
+task task_forge_trust_round7_wave3 {
+  name "Wave 3 — Pagination regression hardening"
+  description "Add prChecks page-2 tests, 100-item page-1 decoupled cases, fetch URL param assertions for Gitea GitLab GitHub."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Changing DEFAULT_MAX_BYTES" "Live-network provider tests"]
+  entrypoints ["tests/provider/gitea-api.test.mjs" "tests/provider/gitlab-api.test.mjs" "tests/provider/github-api.test.mjs"]
+  satisfies [req_forge_trust_round7]
+  acceptance_refs [ac_check_pagination_pr_checks_page2_round7, ac_merge_plan_page2_decoupled_round7]
+  verification_refs [verification_forge_trust_round7_wave3]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round7_wave2]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  bug_discovery bug_linked
+  linked_bugs [bug_pagination_tests_coupled_to_page_size bug_pr_checks_page2_untested]
+  status unclaimed
+}
+
+task task_forge_trust_round7_wave4 {
+  name "Wave 4 — Public script behavioral tests"
+  description "Behavioral secret-scan base ref resolution in temp git repo; install-pre-push-hook default test; optional doctor remote-fail path."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Changing script behavior beyond test coverage"]
+  entrypoints ["scripts/run-secret-scan.mjs" "scripts/install-pre-push-hook.sh" "tests/core/secret-scan.test.mjs" "tests/core/pre-push-hook.test.mjs" "tests/cli/commands.test.mjs"]
+  satisfies [req_forge_trust_round7]
+  acceptance_refs [ac_public_scripts_behavioral_round7]
+  verification_refs [verification_forge_trust_round7_wave4]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round7_wave3]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type bugfix
+  bug_discovery bug_linked
+  linked_bugs [bug_secret_scan_test_static_only bug_pre_push_hook_untested]
+  status unclaimed
+}

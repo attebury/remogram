@@ -1,0 +1,90 @@
+bug bug_check_pagination_capability_missing {
+  name "Provider capabilities omit check_pagination facts"
+  description "decision_forge_ingest_cap_policy requires check_pagination in provider capabilities; round 6 only emits forge_ingest_cap_bytes and generic pagination supported string."
+  status open
+  severity high
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Agents cannot discover check listing page size or strategy from capabilities packet."
+  linked_task task_forge_trust_round7_wave1
+  reproduction "remogram provider capabilities --json; packet lacks check_pagination object."
+  boundary_test_added false
+}
+
+bug bug_pagination_constants_triplicated {
+  name "CHECK_STATUS_PAGE_SIZE duplicated across providers"
+  description "Three provider packages define identical CHECK_STATUS_PAGE_SIZE and MAX_CHECK_PAGES locally instead of importing from remogram-core."
+  status open
+  severity medium
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Page size drift between providers; wave 2 tuning requires three edits."
+  linked_task task_forge_trust_round7_wave1
+  reproduction "grep CHECK_STATUS_PAGE_SIZE packages/provider-*; three separate definitions."
+  boundary_test_added false
+}
+
+bug bug_forge_ingest_single_page_unbounded {
+  name "Single-page check ingest can exceed 8192 bytes"
+  description "Round 6 reduced page size to 25 heuristically but no test proves raw ingest stays under DEFAULT_MAX_BYTES for large per-status payloads; OVERSIZED_RAW_OUTPUT still possible on one page."
+  status open
+  severity high
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "pr_checks and merge_plan fail on busy repos despite pagination loop."
+  linked_task task_forge_trust_round7_wave2
+  reproduction "Mock one page of check statuses with padded descriptions totaling over 8192 bytes; pr_checks throws oversized_raw_output."
+  boundary_test_added false
+}
+
+bug bug_pagination_tests_coupled_to_page_size {
+  name "Page-2 regression tests coupled to page size 25"
+  description "Gitea and GitLab mergePlan page-2 tests use exactly 25 page-1 items; they only pass because CHECK_STATUS_PAGE_SIZE is 25 not because pagination handles 100-item pages."
+  status open
+  severity medium
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Regression if page size changes without updating test item counts."
+  linked_task task_forge_trust_round7_wave3
+  reproduction "Set CHECK_STATUS_PAGE_SIZE to 100; page-2 failure tests stop fetching page 2."
+  boundary_test_added false
+}
+
+bug bug_pr_checks_page2_untested {
+  name "pr_checks page-2 failure untested on Gitea and GitLab"
+  description "Round 6 added mergePlan page-2 tests only; ac_check_pagination_complete requires pr_checks path; no URL param assertions on paginated fetches."
+  status open
+  severity medium
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "pr_checks could miss page-2 failures while merge_plan delegate appears covered."
+  linked_task task_forge_trust_round7_wave3
+  reproduction "Inspect tests/provider/gitea-api.test.mjs; no prChecks page-2 test."
+  boundary_test_added false
+}
+
+bug bug_secret_scan_test_static_only {
+  name "Secret scan test is static source grep only"
+  description "secret-scan.test.mjs asserts script source lacks origin/remo but does not run resolveAutomaticBaseRef in a temp git repo."
+  status open
+  severity medium
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Runtime base ref regression undetected if string grep still passes."
+  linked_task task_forge_trust_round7_wave4
+  reproduction "Read tests/core/secret-scan.test.mjs; only readFileSync and toMatch on script text."
+  boundary_test_added false
+}
+
+bug bug_pre_push_hook_untested {
+  name "install-pre-push-hook.sh has no automated test"
+  description "ac_public_scripts_no_remo_default covers two scripts but only run-secret-scan.mjs has any test; hook default BASE_REF untested."
+  status open
+  severity low
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Public export could reintroduce origin/remo default in hook script unnoticed."
+  linked_task task_forge_trust_round7_wave4
+  reproduction "grep install-pre-push-hook tests/; no matches."
+  boundary_test_added false
+}

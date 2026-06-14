@@ -1,0 +1,12 @@
+pitch pitch_forge_trust_round7 {
+  name "Forge Trust Round 7 — Review Remediation"
+  description "Seventh forge-trust Intent Packet to close code-review gaps from Forge Trust Round 6: capabilities check_pagination facts, shared pagination constants, oversize ingest proof, pagination regression hardening, and behavioral public-script tests."
+  appetite "medium"
+  problem "Round 6 merged fixes but left proof gaps: CHECK_STATUS_PAGE_SIZE=25 is an unproven heuristic with no oversize mock tests; check_pagination missing from provider capabilities per decision_forge_ingest_cap_policy; page-2 tests coupled to page size 25; pr_checks page-2 untested on Gitea/GitLab; secret-scan and pre-push-hook tests are static source grep only; pagination constants triplicated across providers."
+  solution_sketch "Four serialized waves: (1) shared pagination constants and check_pagination capability facts, (2) TDD oversize ingest mocks with fix if needed, (3) pagination and prChecks regression hardening, (4) behavioral public-script tests. Close each linked bug with boundary_test_added true."
+  rabbit_holes "Raising DEFAULT_MAX_BYTES globally; .remogram.json ingest cap fields; reopening archived round 6 goal cluster; mutation commands; npm publish."
+  no_go_areas "Hand-editing lifecycle status; rewriting round 6 archaeology; re-scoping cr-inventory list-limit work."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}
