@@ -1,0 +1,19 @@
+task task_gitleaks_local_runner_install {
+  name "Gitleaks local runner install (wave 1)"
+  description "Fix .github/workflows/secret-scan.yml for passwordless local Gitea Actions runners; add workflow guard tests. Forge issue 289."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Secret findings remediation" "Package changes" "Changing security:secrets script behavior"]
+  entrypoints [".github/workflows/**" "tests/**" "README.md"]
+  satisfies [req_gitleaks_local_runner_install]
+  acceptance_refs [ac_gitleaks_no_sudo_install ac_gitleaks_reuse_path ac_gitleaks_runner_temp_path ac_gitleaks_workflow_guard_tests ac_gitleaks_scan_steps_unchanged]
+  verification_refs [verification_gitleaks_local_runner_install]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [fail_closed_gate]
+  disposition backlog
+  priority high
+  work_type implementation
+  status unclaimed
+}

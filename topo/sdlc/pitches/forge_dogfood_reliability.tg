@@ -1,0 +1,12 @@
+pitch pitch_forge_dogfood_reliability {
+  name "Forge dogfood reliability"
+  description "Unblock local Gitea CI and trustworthy cr inventory for Observer dogfood: Gitleaks workflow install without sudo, then Gitea open-PR list completion for cr inventory."
+  appetite "small"
+  problem "Local Gitea Actions Secret Scan fails at sudo gitleaks install before scan runs. cr inventory returns list_truncated true on Gitea even when open PR set is small, blocking Observer routing."
+  solution_sketch "Wave 1: port Topogram secret-scan.yml temp-bin install pattern and workflow guard tests (forge issue 289). Wave 2: Gitea list pagination to provable completion with ingest backoff and fail-closed semantics (forge issue 281)."
+  rabbit_holes "Secret findings remediation; Topogram observer-snapshot changes; write commands."
+  no_go_areas "Hand-editing lifecycle status; implementation in draft planning PR; envelope schema changes."
+  affects [cap_forge_remote_ops]
+  priority high
+  status approved
+}

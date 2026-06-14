@@ -1,0 +1,19 @@
+task task_cr_inventory_list_complete {
+  name "Cr inventory list complete (wave 2)"
+  description "Fix Gitea cr inventory list_truncated on complete open-PR sets; ingest backoff regression and fail-closed semantics. Forge issue 281."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Workflow changes" "Write commands" "Envelope schema changes" "Other providers beyond gitea-api list path"]
+  entrypoints ["packages/**" "tests/**" "README.md" "CHANGELOG.md"]
+  satisfies [req_cr_inventory_list_complete]
+  acceptance_refs [ac_cr_inventory_list_backoff ac_cr_inventory_list_truncated_false ac_cr_inventory_fail_closed_incomplete ac_cr_inventory_gitea_regression_fixture]
+  verification_refs [verification_cr_inventory_list_complete]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_gitleaks_local_runner_install]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition backlog
+  priority high
+  work_type implementation
+  status unclaimed
+}

@@ -1,0 +1,10 @@
+requirement req_cr_inventory_list_complete {
+  name "Gitea cr inventory open-PR list completion"
+  description "remogram cr inventory must paginate Gitea open PR lists to provable completion with ingest backoff on oversized pages, set list_truncated false only at end-of-list, and fail closed when completion cannot be proved."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  pitch pitch_forge_dogfood_reliability
+  priority high
+  status draft
+}

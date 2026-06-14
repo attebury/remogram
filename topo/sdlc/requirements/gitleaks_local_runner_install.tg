@@ -1,0 +1,10 @@
+requirement req_gitleaks_local_runner_install {
+  name "Gitleaks workflow install on passwordless local runners"
+  description "Secret Scan workflow must install gitleaks without sudo or /usr/local/bin writes, reusing PATH gitleaks when present and downloading to RUNNER_TEMP with GITHUB_PATH otherwise. Guard tests prevent regression."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  pitch pitch_forge_dogfood_reliability
+  priority high
+  status draft
+}
