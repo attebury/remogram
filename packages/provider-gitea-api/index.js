@@ -32,6 +32,9 @@ import {
   DEFAULT_CR_INVENTORY_SLICE_SORT,
   parseTotalCountHeader,
   isCrInventoryFastPathEligible,
+  validateFastPathPageLength,
+  isNumberSortFastPathEligible,
+  prepareGiteaOpenPullPageItems,
   orderOpenPullNumbers,
   buildOpenPullListMeta,
   giteaOpenPullSortQuery,
@@ -410,15 +413,23 @@ async function tryGiteaOpenPullFastPath(ctx, opts) {
 
   const totalCount = parseTotalCountHeader(headers, 'X-Total-Count', { maxTrusted });
   if (totalCount == null) return null;
-  if (totalCount <= requestLimit && body.length !== totalCount) return null;
 
-  let numbers = orderOpenPullNumbers(body, (pr) => pr?.number, sliceSort);
+  const listTruncated = totalCount > GITEA_OPEN_PULL_COMPLIANT_MAX;
+  if (!listTruncated) {
+    if (!isNumberSortFastPathEligible(totalCount, retainMax, sliceSort)) return null;
+    if (!validateFastPathPageLength(totalCount, requestLimit, body.length)) return null;
+  } else if (body.length === 0) {
+    return null;
+  }
+
+  const pageItems = prepareGiteaOpenPullPageItems(body, sliceSort);
+  let numbers = orderOpenPullNumbers(pageItems, (pr) => pr?.number, sliceSort);
   if (numbers.length > retainMax) numbers = numbers.slice(0, retainMax);
 
   return buildOpenPullListMeta({
     totalCount,
     numbers,
-    listTruncated: totalCount > GITEA_OPEN_PULL_COMPLIANT_MAX,
+    listTruncated,
     sliceSort,
   });
 }
@@ -455,7 +466,11 @@ async function paginateGiteaOpenPullList(ctx, opts, sliceSort) {
         return Array.isArray(body) ? body : [];
       },
     });
-  let numbers = orderOpenPullNumbers(all, (pr) => pr?.number, sliceSort);
+  let numbers = orderOpenPullNumbers(
+    prepareGiteaOpenPullPageItems(all, sliceSort),
+    (pr) => pr?.number,
+    sliceSort,
+  );
   if (listLimit != null && numbers.length > listLimit) {
     numbers = numbers.slice(0, listLimit);
   }

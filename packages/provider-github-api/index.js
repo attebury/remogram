@@ -29,6 +29,8 @@ import {
   normalizeCrInventorySort,
   DEFAULT_CR_INVENTORY_SLICE_SORT,
   isCrInventoryFastPathEligible,
+  validateFastPathPageLength,
+  isNumberSortFastPathEligible,
   orderOpenPullNumbers,
   buildOpenPullListMeta,
   githubOpenPullSortQuery,
@@ -551,7 +553,14 @@ async function tryGitHubOpenPullFastPath(ctx, opts) {
     return null;
   }
   if (!Array.isArray(body)) return null;
-  if (totalCount <= requestLimit && body.length !== totalCount) return null;
+
+  const listTruncated = totalCount > GITHUB_OPEN_PULL_COMPLIANT_MAX;
+  if (!listTruncated) {
+    if (!isNumberSortFastPathEligible(totalCount, retainMax, sliceSort)) return null;
+    if (!validateFastPathPageLength(totalCount, requestLimit, body.length)) return null;
+  } else if (body.length === 0) {
+    return null;
+  }
 
   let numbers = orderOpenPullNumbers(body, (pr) => pr?.number, sliceSort);
   if (numbers.length > retainMax) numbers = numbers.slice(0, retainMax);
@@ -559,7 +568,7 @@ async function tryGitHubOpenPullFastPath(ctx, opts) {
   return buildOpenPullListMeta({
     totalCount,
     numbers,
-    listTruncated: totalCount > GITHUB_OPEN_PULL_COMPLIANT_MAX,
+    listTruncated,
     sliceSort,
   });
 }

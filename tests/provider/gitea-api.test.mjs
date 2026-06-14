@@ -937,6 +937,70 @@ describe('provider-gitea-api fixtures', () => {
     expect(meta.slice_sort).toBe('number_asc');
   });
 
+  it('listOpenPullsWithMeta recent_created uses sort=oldest and reverses page order', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(
+        [
+          { number: 10, state: 'open' },
+          { number: 20, state: 'open' },
+          { number: 30, state: 'open' },
+        ],
+        { 'X-Total-Count': '3' },
+      ),
+    );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'recent_created' });
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(String(global.fetch.mock.calls[0][0])).toContain('sort=oldest');
+    expect(meta.numbers).toEqual([30, 20, 10]);
+    expect(meta.slice_sort).toBe('recent_created');
+  });
+
+  it('listOpenPullsWithMeta recent_created order differs from recent_update', async () => {
+    const oldestFirst = [
+      { number: 10, state: 'open' },
+      { number: 20, state: 'open' },
+      { number: 30, state: 'open' },
+    ];
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(oldestFirst, { 'X-Total-Count': '3' }),
+    );
+    const created = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'recent_created' });
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(oldestFirst, { 'X-Total-Count': '3' }),
+    );
+    const updated = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'recent_update' });
+    expect(created.numbers).toEqual([30, 20, 10]);
+    expect(updated.numbers).toEqual([10, 20, 30]);
+  });
+
+  it('listOpenPullsWithMeta falls back when body shorter than min(total, limit)', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse([{ number: 1, state: 'open' }], { 'X-Total-Count': '5' }),
+    );
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([{ number: 1, state: 'open' }]));
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([]));
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3 });
+    expect(global.fetch.mock.calls.length).toBeGreaterThan(1);
+    expect(meta.numbers).toEqual([1]);
+  });
+
+  it('listOpenPullsWithMeta skips fast path for number_asc when total exceeds retain_max', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(
+        [
+          { number: 30, state: 'open' },
+          { number: 10, state: 'open' },
+          { number: 20, state: 'open' },
+        ],
+        { 'X-Total-Count': '10' },
+      ),
+    );
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([]));
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'number_asc' });
+    expect(global.fetch.mock.calls.length).toBeGreaterThan(1);
+    expect(meta.slice_sort).toBe('number_asc');
+  });
+
   it('providerCapabilities reports write_support for cr_open', async () => {
     const body = await provider.providerCapabilities();
     expect(body.write_support).toBe(true);

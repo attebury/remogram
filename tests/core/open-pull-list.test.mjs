@@ -6,6 +6,9 @@ import {
   parseTotalCountHeader,
   isCrInventoryFastPathEligible,
   forgeOrderAuthoritative,
+  validateFastPathPageLength,
+  isNumberSortFastPathEligible,
+  prepareGiteaOpenPullPageItems,
   orderOpenPullNumbers,
   buildOpenPullListMeta,
   giteaOpenPullSortQuery,
@@ -83,8 +86,30 @@ describe('open-pull-list', () => {
     });
   });
 
-  it('giteaOpenPullSortQuery maps recent_update', () => {
+  it('giteaOpenPullSortQuery maps recent_update and recent_created', () => {
     expect(giteaOpenPullSortQuery('recent_update')).toEqual({ sort: 'recentupdate' });
+    expect(giteaOpenPullSortQuery('recent_created')).toEqual({ sort: 'oldest' });
     expect(giteaOpenPullSortQuery('number_asc')).toEqual({});
+  });
+
+  it('validateFastPathPageLength requires min(total, limit) items', () => {
+    expect(validateFastPathPageLength(3, 3, 3)).toBe(true);
+    expect(validateFastPathPageLength(10, 3, 3)).toBe(true);
+    expect(validateFastPathPageLength(10, 3, 2)).toBe(false);
+  });
+
+  it('isNumberSortFastPathEligible rejects number sorts when total exceeds retain_max', () => {
+    expect(isNumberSortFastPathEligible(3, 3, 'number_asc')).toBe(true);
+    expect(isNumberSortFastPathEligible(10, 3, 'number_asc')).toBe(false);
+    expect(isNumberSortFastPathEligible(10, 3, 'number_desc')).toBe(false);
+    expect(isNumberSortFastPathEligible(10, 3, 'recent_update')).toBe(true);
+  });
+
+  it('prepareGiteaOpenPullPageItems reverses oldest-first page for recent_created', () => {
+    const items = [{ number: 1 }, { number: 2 }, { number: 3 }];
+    expect(prepareGiteaOpenPullPageItems(items, 'recent_created').map((pr) => pr.number)).toEqual([
+      3, 2, 1,
+    ]);
+    expect(prepareGiteaOpenPullPageItems(items, 'recent_update')).toBe(items);
   });
 });

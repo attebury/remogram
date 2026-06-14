@@ -1109,6 +1109,36 @@ describe('provider-github-api fixtures', () => {
     expect(meta.numbers).toEqual([1]);
   });
 
+  it('listOpenPullsWithMeta falls back when list body shorter than min(total, limit)', async () => {
+    global.fetch
+      .mockResolvedValueOnce(
+        jsonResponse({ total_count: 5, incomplete_results: false, items: [] }),
+      )
+      .mockResolvedValueOnce(jsonResponse([{ number: 1, state: 'open' }]))
+      .mockResolvedValueOnce(jsonResponse([]));
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3 });
+    expect(global.fetch.mock.calls.length).toBeGreaterThan(2);
+    expect(meta.numbers.length).toBeGreaterThanOrEqual(0);
+  });
+
+  it('listOpenPullsWithMeta skips fast path for number_asc when search total exceeds retain_max', async () => {
+    global.fetch
+      .mockResolvedValueOnce(
+        jsonResponse({ total_count: 10, incomplete_results: false, items: [] }),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse([
+          { number: 30, state: 'open' },
+          { number: 10, state: 'open' },
+          { number: 20, state: 'open' },
+        ]),
+      )
+      .mockResolvedValueOnce(jsonResponse([]));
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'number_asc' });
+    expect(global.fetch.mock.calls.length).toBeGreaterThan(2);
+    expect(meta.slice_sort).toBe('number_asc');
+  });
+
   it('providerCapabilities reports supported pagination', () => {
     const caps = provider.providerCapabilities();
     expect(caps.pagination).toBe('supported');
