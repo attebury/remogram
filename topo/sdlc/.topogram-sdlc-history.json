@@ -3970,5 +3970,27 @@
         "archive/workcycle/cr-inventory-test-coverage"
       ]
     }
+  ],
+  "goal_branch_cr_inventory_provider_list_limit": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T01:11:06.553Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:134"
+      ]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T01:11:06.832Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:134"
+      ]
+    }
   ]
 }

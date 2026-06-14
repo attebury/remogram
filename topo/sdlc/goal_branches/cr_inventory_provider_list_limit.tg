@@ -5,5 +5,5 @@ goal_branch goal_branch_cr_inventory_provider_list_limit {
   task task_cr_inventory_provider_list_limit
   evidence_refs [local:topo/sdlc/pitches/cr_inventory_provider_list_limit.tg, local:topo/sdlc/requirements/cr_inventory_provider_list_limit.tg, local:topo/sdlc/acceptance_criteria/cr_inventory_provider_list_limit.tg, local:topo/sdlc/tasks/cr_inventory_provider_list_limit.tg, local:topo/sdlc/plans/cr_inventory_provider_list_limit.tg, local:topo/verifications/cr-inventory-provider-list-limit.tg]
   witness_refs []
-  status draft
+  status approved
 }
