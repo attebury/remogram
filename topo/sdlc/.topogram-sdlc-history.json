@@ -4102,5 +4102,27 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "goal_branch_forge_trust_round6": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T02:03:17.760Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:140"
+      ]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T02:03:17.995Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:140"
+      ]
+    }
   ]
 }
