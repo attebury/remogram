@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   ERROR_CODES,
   paginateCheckStatusPages,
@@ -224,6 +224,58 @@ describe('paginateOffsetListPages', () => {
     });
     expect(result.items).toHaveLength(1);
     expect(result.entry_count).toBe(5);
+    expect(result.walked_count).toBe(1);
+  });
+
+  it('seededFirstPage skips re-fetch of page 1 and continues from page 2', async () => {
+    const requests = [];
+    const result = await paginateOffsetListPages({
+      pageSize: 3,
+      seededFirstPage: {
+        items: [{ number: 1 }, { number: 2 }, { number: 3 }],
+        usedLimit: 3,
+      },
+      fetchPage: async ({ page, limit }) => {
+        requests.push({ page, limit });
+        if (page === 2) return [{ number: 4 }];
+        return [];
+      },
+    });
+    expect(requests).toEqual([{ page: 2, limit: 3 }]);
+    expect(result.items).toHaveLength(4);
+    expect(result.walked_count).toBe(4);
+  });
+
+  it('seededFirstPage partial page stops without further fetches', async () => {
+    const fetchPage = vi.fn(async () => [{ number: 99 }]);
+    const result = await paginateOffsetListPages({
+      pageSize: 3,
+      seededFirstPage: {
+        items: [{ number: 1 }],
+        usedLimit: 3,
+      },
+      fetchPage,
+    });
+    expect(fetchPage).not.toHaveBeenCalled();
+    expect(result.items).toEqual([{ number: 1 }]);
+    expect(result.walked_count).toBe(1);
+  });
+
+  it('startPage fetches only from the requested page', async () => {
+    const requests = [];
+    const result = await paginateOffsetListPages({
+      pageSize: 2,
+      startPage: 3,
+      maxPages: 3,
+      suppressFinalPageProbe: true,
+      fetchPage: async ({ page, limit }) => {
+        requests.push({ page, limit });
+        if (page === 3) return [{ number: 5 }, { number: 6 }];
+        return [];
+      },
+    });
+    expect(requests).toEqual([{ page: 3, limit: 2 }]);
+    expect(result.items).toEqual([{ number: 5 }, { number: 6 }]);
   });
 
   it('listLimit exact cap at maxPages with empty probe is complete', async () => {
