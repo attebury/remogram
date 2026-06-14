@@ -4040,5 +4040,27 @@
         "pr:135"
       ]
     }
+  ],
+  "req_cr_inventory_provider_list_limit": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T01:21:19.486Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:135"
+      ]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T01:21:19.689Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:135"
+      ]
+    }
   ]
 }
