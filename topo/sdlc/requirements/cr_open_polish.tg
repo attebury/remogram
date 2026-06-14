@@ -1,0 +1,10 @@
+requirement req_cr_open_polish {
+  name "CR open idempotency polish and contract hygiene"
+  description "Dedicated open-pull idempotency pagination caps decoupled from check-status pages; idempotency_scan structured metadata on idempotency_scan_incomplete forge_error; reused_existing in packet contract registry; CLI and MCP truncated-scan integration tests; Observer retry docs for idempotency_scan_incomplete and TOCTOU."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  pitch pitch_cr_open_polish
+  priority high
+  status draft
+}

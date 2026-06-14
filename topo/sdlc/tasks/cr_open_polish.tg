@@ -1,0 +1,22 @@
+task task_cr_open_polish {
+  name "CR open polish"
+  description "Dedicated idempotency pagination caps, idempotency_scan error metadata, contract registry for reused_existing, CLI/MCP truncated-scan tests, Observer retry docs."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Provider-level write gate" "Distributed locking" "Changing fail-closed policy" "merge execute" "new write commands beyond cr_open"]
+  entrypoints ["packages/**" "tests/**" "README.md" "CHANGELOG.md" "AGENTS.md" "tools/remogram-agent-support/skills/**" "topo/sdlc/**" "topo/verifications/**"]
+  satisfies [req_cr_open_polish]
+  acceptance_refs [ac_idempotency_pagination_constant, ac_idempotency_error_metadata, ac_contract_reused_existing, ac_cli_mcp_truncated_scan_tests, ac_observer_retry_docs]
+  verification_refs [verification_cr_open_polish]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type implementation
+  claimed_by []
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Code review polish after merged impl PR #293; contract and test gaps not a forge bug."
+  status unclaimed
+}

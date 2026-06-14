@@ -1,0 +1,12 @@
+pitch pitch_cr_open_polish {
+  name "CR open polish"
+  description "Close post-review-followup code review gaps: dedicated idempotency pagination caps, structured idempotency_scan error metadata, packet contract hygiene, CLI/MCP truncated-scan tests, Observer retry docs."
+  appetite "small"
+  problem "Post follow-up merge review found MAX_CHECK_STATUS_PAGES reused for open-pull scan, idempotency_scan_incomplete lacks structured context, reused_existing missing from contract registry, no CLI/MCP truncated-scan integration tests, and incomplete Observer retry guidance."
+  solution_sketch "Single wave: MAX_OPEN_PULL_IDEMPOTENCY_PAGES decoupling; idempotency_scan trusted fields on forge_error; packet-contracts and semantic-diff for reused_existing; CLI/MCP subprocess truncated-scan tests; README/AGENTS/skills Observer retry via cr inventory."
+  rabbit_holes "Provider-level write gate; distributed locking; changing fail-closed policy."
+  no_go_areas "Hand-editing lifecycle status; implementation in draft planning PR."
+  affects [cap_forge_remote_ops]
+  priority high
+  status covered
+}
