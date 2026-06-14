@@ -18,5 +18,5 @@ task task_cr_open_hardening {
   claimed_by [actor_coding_agent]
   bug_discovery no_bug_observed
   bug_discovery_rationale "Code review follow-up from merged impl PR #278; hardening not a forge bug."
-  status in-progress
+  status done
 }
