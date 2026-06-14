@@ -6483,6 +6483,16 @@
       "evidence_refs": [
         "pr:approve-r14"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T05:45:20.358Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:claim-wave-r14"
+      ]
     }
   ],
   "req_forge_trust_round14": [
@@ -6516,6 +6526,42 @@
       "note": null,
       "evidence_refs": [
         "pr:approve-r14"
+      ]
+    }
+  ],
+  "ac_github_fetch_paginated_userinfo_link_round14": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T05:45:19.495Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:claim-wave-r14"
+      ]
+    }
+  ],
+  "ac_max_pages_truncates_with_limit_doc_round14": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T05:45:19.748Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:claim-wave-r14"
+      ]
+    }
+  ],
+  "ac_password_only_resolve_base_round14": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T05:45:20.017Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:claim-wave-r14"
       ]
     }
   ]
