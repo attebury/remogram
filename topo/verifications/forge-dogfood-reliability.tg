@@ -7,7 +7,7 @@ verification verification_gitleaks_local_runner_install {
   proof_commands {
     command npm_test argv ["npm" "test"]
   }
-  status draft
+  status active
 }
 
 verification verification_cr_inventory_list_complete {
