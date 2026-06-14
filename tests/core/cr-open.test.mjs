@@ -27,6 +27,16 @@ describe('cr open packet', () => {
     });
   });
 
+  it('buildChangeRequestOpenedBody rejects invalid pull number with forgeError', () => {
+    expect(() =>
+      buildChangeRequestOpenedBody({ number: 0 }, { head: 'h', base: 'b', title: 'T' }),
+    ).toThrow(
+      expect.objectContaining({
+        forgeError: expect.objectContaining({ code: 'unparseable_provider_output' }),
+      }),
+    );
+  });
+
   it('change_request_opened packet excludes forbidden keys', () => {
     const packet = forgePacket(PACKET_TYPES.CHANGE_REQUEST_OPENED, ctx, {
       pr_number: 1,

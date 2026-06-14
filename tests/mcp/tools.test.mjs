@@ -1,10 +1,52 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { execFileSync } from 'node:child_process';
+import { createServer } from 'node:http';
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { PACKET_TYPES, SCHEMA_VERSION } from '@remogram/core';
 import { setupTempForge } from '../helpers/temp-forge.mjs';
 import { withMcpClient, parseMcpPacket } from '../helpers/mcp-client.mjs';
+
+function startMockGiteaApi() {
+  return new Promise((resolve, reject) => {
+    const server = createServer((req, res) => {
+      const url = req.url ?? '';
+      if (req.method === 'GET' && url.includes('/pulls')) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end('[]');
+        return;
+      }
+      if (req.method === 'POST' && url.includes('/pulls')) {
+        res.writeHead(201, { 'Content-Type': 'application/json' });
+        res.end(
+          JSON.stringify({
+            number: 55,
+            html_url: 'http://127.0.0.1/owner/repo/pulls/55',
+            title: 'MCP CR',
+          }),
+        );
+        return;
+      }
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end('{}');
+    });
+    server.on('error', reject);
+    server.listen(0, '127.0.0.1', () => {
+      const address = server.address();
+      if (!address || typeof address === 'string') {
+        reject(new Error('mock Gitea server failed to bind'));
+        return;
+      }
+      resolve({
+        server,
+        baseUrl: `http://127.0.0.1:${address.port}`,
+        close() {
+          return new Promise((done, err) => server.close((e) => (e ? err(e) : done())));
+        },
+      });
+    });
+  });
+}
 
 function git(dir, args) {
   execFileSync('git', args, { cwd: dir, encoding: 'utf8', stdio: 'pipe' });
@@ -71,6 +113,36 @@ describe('remogram-mcp callTool', () => {
       ]);
       const crOpen = tools.find((tool) => tool.name === 'cr_open');
       expect(crOpen?.annotations?.readOnlyHint).toBe(false);
+      expect(crOpen?.annotations?.destructiveHint).toBe(true);
+    });
+  }, 15_000);
+
+  it('cr_open returns change_request_opened via MCP with write_commands configured', async () => {
+    const mockApi = await startMockGiteaApi();
+    const setup = setupTempForge({
+      config: {
+        version: '1',
+        provider: 'gitea-api',
+        owner: 'owner',
+        repo: 'repo',
+        remote: 'origin',
+        baseUrl: mockApi.baseUrl,
+        write_commands: ['cr_open'],
+      },
+      remoteUrl: `${mockApi.baseUrl}/owner/repo.git`,
+    });
+    cleanups.push(setup);
+    cleanups.push({ cleanup: () => mockApi.server.close() });
+    process.env.GITEA_TOKEN = 'test-token';
+    await withMcpClient(setup.dir, async (client) => {
+      const result = await client.callTool({
+        name: 'cr_open',
+        arguments: { head: 'feat/x', base: 'remo', title: 'MCP CR' },
+      });
+      const packet = parseMcpPacket(result);
+      expect(packet.type).toBe(PACKET_TYPES.CHANGE_REQUEST_OPENED);
+      expect(packet.ok).toBe(true);
+      expect(packet.pr_number).toBe(55);
     });
   }, 15_000);
 

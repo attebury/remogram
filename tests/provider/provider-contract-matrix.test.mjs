@@ -63,13 +63,15 @@ function giteaCase() {
         .mockResolvedValueOnce(jsonResponse([]));
     },
     mockCrOpen() {
-      global.fetch.mockResolvedValueOnce(
-        jsonResponse({
-          number: 99,
-          html_url: 'http://localhost:3000/attebury/remogram/pulls/99',
-          title: 'Test CR',
-        }),
-      );
+      global.fetch
+        .mockResolvedValueOnce(jsonResponse([]))
+        .mockResolvedValueOnce(
+          jsonResponse({
+            number: 99,
+            html_url: 'http://localhost:3000/attebury/remogram/pulls/99',
+            title: 'Test CR',
+          }),
+        );
     },
   };
 }

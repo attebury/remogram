@@ -37,7 +37,7 @@ Remogram emits **provider-attributed JSON facts** with SHA fields where applicab
 
 **Every** successful packet includes: `type`, `schema_version`, `provider_id`, `remote_name`, `repo_id`, `observed_at`, `ok`.
 
-**v1 scope:** read and plan only. No `pr create`, merge execute, or write paths. `write_support: false` in capabilities/doctor.
+**v1 scope:** Through **0.1.0-beta.3**, read/plan only by default. Write commands require **`write_commands`** in `.remogram.json` plus provider support. **`cr open`** on **`gitea-api`** is the first write command. Use **`remogram provider capabilities --json`** for authoritative `write_support` / `write_commands`. Merge execute remains out of scope.
 
 Keep Remogram packages free of imports from external planning or workflow tooling.
 

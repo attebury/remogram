@@ -43,6 +43,11 @@ export { gitRevParse, gitCurrentBranch, gitAheadBehind, gitRepoRoot, gitDiffName
 export { buildRefInventoryBody, refsInventory } from './ref-inventory.js';
 export { buildCrInventoryEntry, buildHeadReconcile, crInventory, DEFAULT_CR_INVENTORY_LIMIT, DEFAULT_CR_INVENTORY_SAFE_LIMIT, normalizeCrInventoryLimit } from './cr-inventory.js';
 export { buildChangeRequestOpenedBody } from './cr-open.js';
+export {
+  CONFIGURED_WRITE_COMMANDS,
+  assertWriteCommandConfigured,
+  isWriteCommandConfigured,
+} from './write-config.js';
 export { mergeBlockersFromFacts, isOpenPrState } from './merge-blockers.js';
 export {
   resolveMergePlanPathScope,

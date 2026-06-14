@@ -24,7 +24,7 @@ remogram provider capabilities --json
 
 1. Remogram output must never include `goal_branch`, `lane`, `sdlc_task`, or other workflow/planning-tool metadata.
 2. Every packet includes `type`, `schema_version`, `provider_id`, `remote_name`, `repo_id`, `observed_at`, `ok`.
-3. v1 commands are read/plan only — no `pr create` or merge execute.
+3. Through **0.1.0-beta.3**, Remogram was read/plan only by default. Write commands are wired incrementally; consumers opt in via `.remogram.json` **`write_commands`**. **`cr open`** on **`gitea-api`** is the first write command. Merge execute remains out of scope.
 4. No imports from external planning or workflow tooling in `packages/remogram-*` or provider packages.
 
 ## Trust

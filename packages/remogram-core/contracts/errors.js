@@ -13,6 +13,7 @@ export const ERROR_CODES = {
   API_ERROR: 'api_error',
   PR_NOT_OPEN: 'pr_not_open',
   REMOTE_INFER_FAILED: 'remote_infer_failed',
+  WRITE_NOT_CONFIGURED: 'write_not_configured',
 };
 
 export function forgeError(code, message, status = null) {

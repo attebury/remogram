@@ -119,11 +119,16 @@ Example for self-hosted Gitea:
   "remote": "origin",
   "owner": "your-org",
   "repo": "your-repo",
-  "baseUrl": "https://forge.example.com"
+  "baseUrl": "https://forge.example.com",
+  "write_commands": ["cr_open"]
 }
 ```
 
-## Commands (v1 — read/plan only)
+**Write opt-in:** Through **0.1.0-beta.3**, Remogram was read/plan only by default. To enable **`remogram cr open`** (Gitea first), add `"write_commands": ["cr_open"]`. Without it, write commands fail closed with `write_not_configured`. Check `remogram provider capabilities --json` for provider-side `write_support` and `write_commands`.
+
+**Opt-out bridges (not Remogram packets):** Gitea dogfood may use the control-plane `open-gitea-change-request.mjs` script; GitHub/GitLab use `gh pr create` / `glab mr create` manually when writes are not configured.
+
+## Commands (beta — read/plan default; incremental writes)
 
 ```bash
 remogram provider capabilities --json
@@ -134,6 +139,8 @@ remogram pr view --number 1 --json
 remogram pr checks --number 1 --json
 remogram merge plan --number 1 --json
 remogram sync plan --remote origin --json
+# Gitea only, requires write_commands in .remogram.json:
+remogram cr open --head feature/x --base main --title "My change" --json
 ```
 
 ## Inspect and verify packets
@@ -277,7 +284,7 @@ To change coverage include/exclude lists or add thresholds, update this section,
 
 ## Provider capabilities
 
-`remogram provider capabilities --json` returns structured provider facts: which commands are implemented, per-command **`auth_class`** (`none`, `git_only`, or `token_required`), auth env names, check source support, mergeability confidence, host-binding mode, `pagination` (check listing behavior), **`check_pagination`** (structured page size, max pages, ingest backoff, and truncation semantics for check/status endpoints), `forge_ingest_cap_bytes` (effective raw HTTP ingest cap, default **8192**), and `write_support: false` for v1.
+`remogram provider capabilities --json` returns structured provider facts: which commands are implemented, per-command **`auth_class`**, auth env names, check sources, mergeability confidence, host binding, pagination, **`check_pagination`**, `forge_ingest_cap_bytes`, **`write_support`** (provider capability), and optional **`write_commands`**. Consumer **`.remogram.json`** must list **`write_commands`** to enable writes (fail closed otherwise).
 
 **`pr checks`** / MCP **`pr_checks`** include **`checks_truncated`** when check enumeration stops at the provider page cap (conservative fail-closed: true when exactly `page_size × max_pages` items were returned, even if no further forge pages exist). **`merge plan`** adds blocker **`checks_incomplete`** when truncation occurred, even if visible checks look successful. **`cr inventory`** entries include **`checks_truncated`** for the same signal per PR.
 

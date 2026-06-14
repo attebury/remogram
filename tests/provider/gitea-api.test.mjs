@@ -619,6 +619,15 @@ describe('provider-gitea-api fixtures', () => {
   it('crOpen POSTs pull create and maps response', async () => {
     global.fetch.mockResolvedValueOnce({
       ok: true,
+      status: 200,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify([]));
+        },
+      },
+    });
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
       status: 201,
       body: {
         [Symbol.asyncIterator]: async function* () {
@@ -638,15 +647,74 @@ describe('provider-gitea-api fixtures', () => {
       title: 'impl: cr open',
     });
     expect(body.pr_number).toBe(278);
-    expect(body.head).toBe('impl/cr-open-lane-autonomy');
-    expect(body.base).toBe('remo');
-    expect(global.fetch.mock.calls[0][0]).toContain('/pulls');
-    expect(global.fetch.mock.calls[0][1]?.method).toBe('POST');
+    expect(global.fetch.mock.calls[1][1]?.method).toBe('POST');
+    const postBody = JSON.parse(global.fetch.mock.calls[1][1]?.body);
+    expect(postBody).toMatchObject({
+      title: 'impl: cr open',
+      head: 'impl/cr-open-lane-autonomy',
+      base: 'remo',
+    });
+  });
+
+  it('crOpen returns existing open PR without POST when head and base match', async () => {
+    const existing = {
+      number: 42,
+      state: 'open',
+      html_url: 'http://localhost:3000/attebury/remogram/pulls/42',
+      title: 'Existing',
+      head: { ref: 'feat/x' },
+      base: { ref: 'remo' },
+    };
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify([existing]));
+        },
+      },
+    });
+    const body = await provider.crOpen(ctx, {
+      head: 'feat/x',
+      base: 'remo',
+      title: 'New title',
+    });
+    expect(body.pr_number).toBe(42);
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch.mock.calls[0][1]?.method).toBeUndefined();
+  });
+
+  it('crOpen maps API failure to forge error', async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify([]));
+        },
+      },
+    });
+    global.fetch.mockResolvedValueOnce({
+      ok: false,
+      status: 422,
+      statusText: 'Unprocessable Entity',
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify({ message: 'branch does not exist' }));
+        },
+      },
+    });
+    await expect(
+      provider.crOpen(ctx, { head: 'missing', base: 'remo', title: 'T' }),
+    ).rejects.toMatchObject({
+      forgeError: expect.objectContaining({ code: 'api_error', status: 422 }),
+    });
   });
 
   it('providerCapabilities reports write_support for cr_open', async () => {
     const body = await provider.providerCapabilities();
     expect(body.write_support).toBe(true);
+    expect(body.write_commands).toEqual(['cr_open']);
     const crOpen = body.commands.find((c) => c.name === 'cr_open');
     expect(crOpen).toMatchObject({ implemented: true, auth_class: 'token_required' });
   });

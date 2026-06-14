@@ -45,6 +45,7 @@ const BODY_KEYS = {
     'mergeability_confidence',
     'pagination',
     'write_support',
+    'write_commands',
   ],
 };
 
@@ -102,11 +103,15 @@ function bodyKeys(packet) {
 }
 
 function expectBodyKeys(type, testCase, body) {
+  let expected = BODY_KEYS[type];
+  if (type === PACKET_TYPES.PROVIDER_CAPABILITIES && !testCase.writeSupport) {
+    expected = expected.filter((key) => key !== 'write_commands');
+  }
   const packet = forgePacket(type, packetCtx(testCase), body);
   expect(packet.type).toBe(type);
   expect(packet.provider_id).toBe(testCase.provider.id);
   expect(packet.ok).toBe(true);
-  expect(bodyKeys(packet)).toEqual(BODY_KEYS[type]);
+  expect(bodyKeys(packet)).toEqual([...expected].sort());
 }
 
 function expectStatusRows(statuses) {
