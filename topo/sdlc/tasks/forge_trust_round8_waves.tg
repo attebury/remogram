@@ -15,10 +15,10 @@ task task_forge_trust_round8_wave1 {
   disposition active
   priority high
   work_type bugfix
-  claimed_by []
-  bug_discovery unlinked
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
   linked_bugs [bug_check_pagination_under_reports_bounds]
-  status unclaimed
+  status done
 }
 
 task task_forge_trust_round8_wave2 {
@@ -38,10 +38,10 @@ task task_forge_trust_round8_wave2 {
   disposition active
   priority high
   work_type bugfix
-  claimed_by []
-  bug_discovery unlinked
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
   linked_bugs [bug_checks_truncation_silent]
-  status unclaimed
+  status done
 }
 
 task task_forge_trust_round8_wave3 {
@@ -61,10 +61,10 @@ task task_forge_trust_round8_wave3 {
   disposition active
   priority high
   work_type bugfix
-  claimed_by []
-  bug_discovery unlinked
-  linked_bugs [bug_github_gitlab_oversize_untested, bug_github_statuses_page2_untested]
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
+  linked_bugs [bug_github_gitlab_oversize_untested bug_github_statuses_page2_untested]
+  status done
 }
 
 task task_forge_trust_round8_wave4 {
@@ -84,8 +84,8 @@ task task_forge_trust_round8_wave4 {
   disposition active
   priority medium
   work_type bugfix
-  claimed_by []
-  bug_discovery unlinked
-  linked_bugs [bug_secret_scan_remo_only_untested, bug_github_link_next_unvalidated]
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
+  linked_bugs [bug_secret_scan_remo_only_untested bug_github_link_next_unvalidated]
+  status done
 }
