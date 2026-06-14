@@ -17,6 +17,6 @@ task task_forge_trust_round14_wave1 {
   work_type bugfix
   claimed_by [actor_coding_agent]
   bug_discovery bug_linked
-  linked_bugs [bug_github_fetch_paginated_userinfo_link_untested, bug_max_pages_truncates_with_limit_undocumented, bug_password_only_resolve_base_untested]
-  status unclaimed
+  linked_bugs [bug_github_fetch_paginated_userinfo_link_untested bug_max_pages_truncates_with_limit_undocumented bug_password_only_resolve_base_untested]
+  status done
 }

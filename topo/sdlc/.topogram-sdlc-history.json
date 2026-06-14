@@ -6493,6 +6493,16 @@
       "evidence_refs": [
         "pr:claim-wave-r14"
       ]
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-14T05:47:20.112Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:240"
+      ]
     }
   ],
   "req_forge_trust_round14": [
@@ -6562,6 +6572,86 @@
       "note": null,
       "evidence_refs": [
         "pr:claim-wave-r14"
+      ]
+    }
+  ],
+  "task_forge_trust_round14_wave1": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T05:46:24.990Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T05:46:25.050Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T05:46:44.646Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_github_fetch_paginated_userinfo_link_untested": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T05:46:48.416Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T05:47:04.554Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "verification:verification_forge_trust_round14_wave1"
+      ]
+    }
+  ],
+  "bug_max_pages_truncates_with_limit_undocumented": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T05:47:07.245Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T05:47:07.492Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "verification:verification_forge_trust_round14_wave1"
+      ]
+    }
+  ],
+  "bug_password_only_resolve_base_untested": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T05:47:07.739Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T05:47:07.980Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "verification:verification_forge_trust_round14_wave1"
       ]
     }
   ]
