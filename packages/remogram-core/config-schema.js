@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { writeCommandSchema } from './write-config.js';
 
 const providerSchema = z.enum([
   'gitea-api',
@@ -7,8 +8,6 @@ const providerSchema = z.enum([
   'gitea-tea',
   'github-gh',
 ]);
-
-const writeCommandSchema = z.enum(['cr_open']);
 
 const repoSegmentSchema = z
   .string()

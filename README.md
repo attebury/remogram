@@ -124,7 +124,7 @@ Example for self-hosted Gitea:
 }
 ```
 
-**Write opt-in:** Through **0.1.0-beta.3**, Remogram was read/plan only by default. To enable **`remogram cr open`** (Gitea first), add `"write_commands": ["cr_open"]`. Without it, write commands fail closed with `write_not_configured`. Check `remogram provider capabilities --json` for provider-side `write_support` and `write_commands`.
+**Write opt-in:** Through **0.1.0-beta.3**, Remogram was read/plan only by default. To enable **`remogram cr open`** (Gitea first), add `"write_commands": ["cr_open"]`. Without it, write commands fail closed with `write_not_configured`. **Use CLI or MCP for writes** — direct provider package imports bypass the consumer gate (maintainer/tests only). **`cr open`** paginates open pulls for idempotency; when the scan cap cannot prove absence of a duplicate, it fails closed with `idempotency_scan_incomplete` (use `cr inventory` or open manually). A residual race window exists under concurrent opens. Reused pulls return `reused_existing: true` with the forge title. Check `remogram provider capabilities --json` for provider-side `write_support` and `write_commands`.
 
 **Opt-out bridges (not Remogram packets):** Gitea dogfood may use the control-plane `open-gitea-change-request.mjs` script; GitHub/GitLab use `gh pr create` / `glab mr create` manually when writes are not configured.
 

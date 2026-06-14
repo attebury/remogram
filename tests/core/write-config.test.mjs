@@ -51,4 +51,19 @@ describe('write config gate', () => {
       ),
     ).toThrow();
   });
+
+  it('assertWriteCommandConfigured rejects unknown command names before config check', () => {
+    const config = {
+      version: '1',
+      provider: 'gitea-api',
+      owner: 'o',
+      repo: 'r',
+      write_commands: ['cr_open'],
+    };
+    expect(() => assertWriteCommandConfigured(config, 'merge_execute')).toThrow(
+      expect.objectContaining({
+        forgeError: expect.objectContaining({ code: ERROR_CODES.INVALID_ARGS }),
+      }),
+    );
+  });
 });

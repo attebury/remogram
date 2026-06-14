@@ -146,6 +146,32 @@ describe('remogram-mcp callTool', () => {
     });
   }, 15_000);
 
+  it('cr_open returns write_not_configured via MCP without write_commands', async () => {
+    const setup = setupTempForge({
+      config: {
+        version: '1',
+        provider: 'gitea-api',
+        owner: 'owner',
+        repo: 'repo',
+        remote: 'origin',
+        baseUrl: 'http://localhost:3000',
+      },
+      remoteUrl: 'http://localhost:3000/owner/repo.git',
+    });
+    cleanups.push(setup);
+    process.env.GITEA_TOKEN = 'test-token';
+    await withMcpClient(setup.dir, async (client) => {
+      const result = await client.callTool({
+        name: 'cr_open',
+        arguments: { head: 'feat/x', base: 'remo', title: 'MCP CR' },
+      });
+      const packet = parseMcpPacket(result);
+      expect(result.isError).toBe(true);
+      expect(packet.type).toBe('forge_error');
+      expect(packet.error_code).toBe('write_not_configured');
+    });
+  }, 15_000);
+
   it('doctor returns provider_doctor packet via MCP', async () => {
     const setup = setupGithubForge();
     cleanups.push(setup);

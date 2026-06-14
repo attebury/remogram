@@ -141,7 +141,7 @@ Do **not** rewrite forge refs to match your team's integration branch naming unl
 
 **Never expect** workflow metadata in Remogram output (for example `goal_branch`, `lane`, or `sdlc_task`).
 
-**v1 scope:** Through **0.1.0-beta.3**, read/plan by default. Writes need **`write_commands`** in `.remogram.json`. **`provider capabilities --json`** reports provider `write_support` / `write_commands`.
+**v1 scope:** Through **0.1.0-beta.3**, read/plan by default. Writes need **`write_commands`** in `.remogram.json`. **Use CLI/MCP only** for writes. **`provider capabilities --json`** reports provider `write_support` / `write_commands`.
 
 ## Interpreting checks
 

@@ -264,20 +264,45 @@ export async function getPull(ctx, { number }) {
   return giteaFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'pulls', number));
 }
 
-/** Scan first page of open pulls for idempotent cr open (dogfood-scale repos). */
+/** Paginated open-pull scan for idempotent cr open; fail-closed when scan cap prevents proof of absence. */
 export async function findOpenPullByHeadBase(ctx, head, base) {
   requireToken();
-  const path = `${repoApiPath(ctx.config, 'pulls')}?state=open&limit=50&page=1`;
-  const items = await giteaFetch(ctx.config, ctx.parsed, path);
-  if (!Array.isArray(items)) return null;
-  return (
-    items.find(
-      (pr) =>
-        String(pr?.state ?? '').toLowerCase() === 'open' &&
-        pr?.head?.ref === head &&
-        pr?.base?.ref === base,
-    ) ?? null
-  );
+  const path = `${repoApiPath(ctx.config, 'pulls')}?state=open`;
+  const pageSep = path.includes('?') ? '&' : '?';
+
+  for (let page = 1; page <= MAX_CHECK_STATUS_PAGES; page += 1) {
+    const items = await giteaFetch(
+      ctx.config,
+      ctx.parsed,
+      `${path}${pageSep}limit=${GITEA_PAGE_SIZE}&page=${page}`,
+    );
+    if (!Array.isArray(items)) {
+      throw Object.assign(new Error('Provider returned non-array open pull list'), {
+        forgeError: forgeError(
+          ERROR_CODES.UNPARSEABLE_PROVIDER_OUTPUT,
+          'Provider returned non-array open pull list',
+        ),
+      });
+    }
+    const match =
+      items.find(
+        (pr) =>
+          String(pr?.state ?? '').toLowerCase() === 'open' &&
+          pr?.head?.ref === head &&
+          pr?.base?.ref === base,
+      ) ?? null;
+    if (match) return match;
+    if (items.length < GITEA_PAGE_SIZE) return null;
+    if (page === MAX_CHECK_STATUS_PAGES) {
+      throw Object.assign(new Error('Open pull idempotency scan incomplete'), {
+        forgeError: forgeError(
+          ERROR_CODES.IDEMPOTENCY_SCAN_INCOMPLETE,
+          'Cannot prove no open pull exists for head+base within scan limit; use cr inventory or open manually',
+        ),
+      });
+    }
+  }
+  return null;
 }
 
 export async function crOpen(ctx, { head, base, title, body: prBody }) {
@@ -298,7 +323,7 @@ export async function crOpen(ctx, { head, base, title, body: prBody }) {
   }
   const existing = await findOpenPullByHeadBase(ctx, payload.head, payload.base);
   if (existing) {
-    return buildChangeRequestOpenedBody(existing, { head, base, title });
+    return buildChangeRequestOpenedBody(existing, { head, base, title }, { reusedExisting: true });
   }
   const pull = await giteaFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'pulls'), {
     method: 'POST',
