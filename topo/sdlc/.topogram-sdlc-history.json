@@ -7583,5 +7583,27 @@
       "by": "actor_integration_lane",
       "note": null
     }
+  ],
+  "goal_branch_cr_open_lane_autonomy": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T18:57:56.780Z",
+      "by": "plan-lane",
+      "note": null,
+      "evidence_refs": [
+        "forge:issue/272"
+      ]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T18:57:57.044Z",
+      "by": "plan-lane",
+      "note": null,
+      "evidence_refs": [
+        "forge:issue/272"
+      ]
+    }
   ]
 }
