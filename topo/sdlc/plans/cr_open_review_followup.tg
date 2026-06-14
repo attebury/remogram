@@ -10,5 +10,5 @@ plan plan_cr_open_review_followup {
     step docs status pending description "Idempotency limits, consumer CLI/MCP write boundary in AGENTS README skills."
     step tests status pending description "Page-2 match, truncated scan, MCP negative, doctor write_config warn."
   }
-  status draft
+  status active
 }
