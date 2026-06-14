@@ -649,6 +649,29 @@ describe('provider-gitlab-api fixtures', () => {
     const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3 });
     expect(global.fetch.mock.calls.length).toBeGreaterThan(1);
     expect(meta.numbers).toEqual([1]);
+    expect(meta.entry_count).toBe(5);
+  });
+
+  it('listOpenPullsWithMeta number_asc full-collects when total exceeds retain_max', async () => {
+    const allMrs = [
+      { iid: 30, state: 'opened' },
+      { iid: 10, state: 'opened' },
+      { iid: 20, state: 'opened' },
+      { iid: 5, state: 'opened' },
+      { iid: 1, state: 'opened' },
+      { iid: 7, state: 'opened' },
+      { iid: 8, state: 'opened' },
+      { iid: 9, state: 'opened' },
+      { iid: 2, state: 'opened' },
+      { iid: 3, state: 'opened' },
+    ];
+    global.fetch.mockResolvedValueOnce(
+      jsonResponse(allMrs.slice(0, 3), 200, { headers: { 'X-Total': '10' } }),
+    );
+    global.fetch.mockResolvedValueOnce(jsonResponse(allMrs));
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'number_asc' });
+    expect(meta.entry_count).toBe(10);
+    expect(meta.numbers).toEqual([1, 2, 3]);
   });
 
   it('listOpenPullsWithMeta skips fast path for number_asc when total exceeds retain_max', async () => {

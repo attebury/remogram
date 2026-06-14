@@ -91,6 +91,52 @@ export function isNumberSortFastPathEligible(totalCount, retainMax, sliceSort) {
 }
 
 /**
+ * Prefer forge header/search total over summed pagination lengths on fallback.
+ * @param {number | null | undefined} trustedTotal
+ * @param {number} summedCount
+ */
+export function resolvePaginatedEntryCount(trustedTotal, summedCount) {
+  if (trustedTotal != null && Number.isInteger(trustedTotal) && trustedTotal > 0) {
+    return trustedTotal;
+  }
+  return summedCount;
+}
+
+/**
+ * Gitea recent_created uses oldest sort; fast path only when total fits retain_max.
+ * @param {number} totalCount
+ * @param {number} retainMax
+ * @param {string} sliceSort
+ * @param {string} providerId
+ */
+export function isRecentCreatedFastPathEligible(totalCount, retainMax, sliceSort, providerId) {
+  if (sliceSort !== 'recent_created' || providerId !== 'gitea-api') return true;
+  return totalCount <= retainMax;
+}
+
+/**
+ * Last page index for Gitea sort=oldest when fetching globally newest-created slice.
+ * @param {number} totalCount
+ * @param {number} pageSize
+ */
+export function giteaRecentCreatedTailPage(totalCount, pageSize) {
+  if (!Number.isInteger(totalCount) || totalCount <= 0) return 1;
+  if (!Number.isInteger(pageSize) || pageSize <= 0) return 1;
+  return Math.max(1, Math.ceil(totalCount / pageSize));
+}
+
+/**
+ * Number sorts need full local reorder when total exceeds retain_max.
+ * @param {number} totalCount
+ * @param {number} retainMax
+ * @param {string} sliceSort
+ */
+export function isNumberSortFullCollectRequired(totalCount, retainMax, sliceSort) {
+  if (forgeOrderAuthoritative(sliceSort)) return false;
+  return !isNumberSortFastPathEligible(totalCount, retainMax, sliceSort);
+}
+
+/**
  * Gitea sort=oldest returns oldest-first; recent_created needs newest-first.
  * @param {unknown[]} items
  * @param {string} sliceSort

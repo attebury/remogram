@@ -1118,7 +1118,31 @@ describe('provider-github-api fixtures', () => {
       .mockResolvedValueOnce(jsonResponse([]));
     const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3 });
     expect(global.fetch.mock.calls.length).toBeGreaterThan(2);
-    expect(meta.numbers.length).toBeGreaterThanOrEqual(0);
+    expect(meta.entry_count).toBe(5);
+  });
+
+  it('listOpenPullsWithMeta preserves search total_count on number_asc fallback', async () => {
+    const allMrs = [
+      { number: 30, state: 'open' },
+      { number: 10, state: 'open' },
+      { number: 20, state: 'open' },
+      { number: 5, state: 'open' },
+      { number: 1, state: 'open' },
+      { number: 7, state: 'open' },
+      { number: 8, state: 'open' },
+      { number: 9, state: 'open' },
+      { number: 2, state: 'open' },
+      { number: 3, state: 'open' },
+    ];
+    global.fetch
+      .mockResolvedValueOnce(
+        jsonResponse({ total_count: 10, incomplete_results: false, items: [] }),
+      )
+      .mockResolvedValueOnce(jsonResponse(allMrs.slice(0, 3)))
+      .mockResolvedValueOnce(jsonResponse(allMrs));
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'number_asc' });
+    expect(meta.entry_count).toBe(10);
+    expect(meta.numbers).toEqual([1, 2, 3]);
   });
 
   it('listOpenPullsWithMeta skips fast path for number_asc when search total exceeds retain_max', async () => {

@@ -68,6 +68,7 @@ export function idempotencyScanCapabilityFacts() {
 export function openPullListCapabilityFacts({
   totalCountSource = null,
   totalCountHeader = null,
+  sliceSortNotes = null,
 } = {}) {
   const compliantMaxItems = DEFAULT_OPEN_PULL_LIST_PAGE_SIZE * MAX_CHECK_STATUS_PAGES;
   return {
@@ -87,6 +88,7 @@ export function openPullListCapabilityFacts({
       ],
       ...(totalCountSource ? { total_count_source: totalCountSource } : {}),
       ...(totalCountHeader ? { total_count_header: totalCountHeader } : {}),
+      ...(sliceSortNotes ? { slice_sort_notes: sliceSortNotes } : {}),
     },
   };
 }
