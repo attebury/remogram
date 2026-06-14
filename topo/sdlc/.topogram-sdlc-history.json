@@ -6220,6 +6220,16 @@
       "evidence_refs": [
         "bd546c4"
       ]
+    },
+    {
+      "from": "done",
+      "to": "archived",
+      "at": "2026-06-14T05:15:53.877Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "f3a0c82"
+      ]
     }
   ]
 }
