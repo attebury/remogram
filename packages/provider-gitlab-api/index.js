@@ -145,10 +145,11 @@ export async function gitlabFetchPaginated(config, parsed, path) {
 }
 
 export function providerCapabilities() {
+  const check_sources = ['commit_statuses', 'pipelines'];
   return {
     commands: STRUCTURED_COMMANDS,
     auth_envs: ['GITLAB_TOKEN'],
-    check_sources: ['commit_statuses', 'pipelines'],
+    check_sources,
     mergeability_confidence: 'derived',
     host_binding: 'verified_remote_host',
     pagination: 'supported',
@@ -157,7 +158,7 @@ export function providerCapabilities() {
     ...checkPaginationCapabilityFacts({
       strategy: 'offset_limit',
       pageSizeParam: 'per_page',
-      sourceCount: 2,
+      sourceCount: check_sources.length,
     }),
   };
 }
