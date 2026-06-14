@@ -1,0 +1,12 @@
+pitch pitch_forge_trust_round12 {
+  name "Forge Trust Round 12 — List Carry-Forward and Trust Hardening"
+  description "Twelfth forge-trust Intent Packet closing Round 11 code-review follow-ups: list ingest backoff activeLimit carry-forward, fail-closed Link trust without resolveBase, pathname trailing-slash normalization, and parseLinkHeader adversarial tests."
+  appetite "medium"
+  problem "List fetchWithIngestPageBackoff resets page size each page causing silent skip; isTrustedPaginationUrl trusts same-origin absolute URLs without resolveBase; trailing-slash pathname mismatch fails closed; parseLinkHeader adversarial cases untested."
+  solution_sketch "Four serialized waves: (1) activeLimit carry-forward on Gitea/GitLab/GitHub list paths, (2) require resolveBase fail-closed, (3) pathname trailing-slash normalize, (4) parseLinkHeader adversarial tests. All four claim-wave PRs on remo. Autonomous Observer-routed execution."
+  rabbit_holes "Raising DEFAULT_MAX_BYTES globally; .remogram.json ingest cap fields; reopening archived round 8/9/10/11 clusters; GitHub Link-mode per_page carry-forward; npm publish."
+  no_go_areas "Hand-editing lifecycle status; changing conservative max_pages semantics."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}

@@ -1,0 +1,9 @@
+requirement req_forge_trust_round12 {
+  name "Remogram forge trust round 12 — list carry-forward and trust hardening"
+  description "Remogram must carry reduced ingest backoff page size across open-PR list pages; fail closed on Link trust without resolveBase; normalize trailing-slash pathnames; and prove parseLinkHeader adversarial behavior."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority high
+  status draft
+}
