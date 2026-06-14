@@ -15,6 +15,9 @@ import {
   ERROR_CODES,
   forgeError,
   forgeIngestCapabilityFacts,
+  checkPaginationCapabilityFacts,
+  DEFAULT_CHECK_STATUS_PAGE_SIZE,
+  MAX_CHECK_STATUS_PAGES,
   apiProviderCommands,
 } from '@remogram/core';
 
@@ -158,14 +161,13 @@ export async function githubFetch(config, parsed, path, options = {}) {
   });
 }
 
-const MAX_CHECK_PAGES = 50;
-const CHECK_STATUS_PAGE_SIZE = 25;
+const MAX_CHECK_PAGES = MAX_CHECK_STATUS_PAGES;
 
 export async function githubFetchPaginated(config, parsed, path, slice) {
   const base = apiBase(config, parsed);
   const { token } = requireToken();
   const all = [];
-  const pageQuery = `${path.includes('?') ? '&' : '?'}per_page=${CHECK_STATUS_PAGE_SIZE}`;
+  const pageQuery = `${path.includes('?') ? '&' : '?'}per_page=${DEFAULT_CHECK_STATUS_PAGE_SIZE}`;
   let url = `${base}${path}${pageQuery}`;
   for (let page = 0; page < MAX_CHECK_PAGES && url; page += 1) {
     const { body, headers } = await fetchJsonWithMeta(url, {
@@ -280,6 +282,7 @@ export function providerCapabilities() {
     pagination: 'supported',
     write_support: false,
     ...forgeIngestCapabilityFacts(),
+    ...checkPaginationCapabilityFacts({ strategy: 'link_header', pageSizeParam: 'per_page' }),
   };
 }
 

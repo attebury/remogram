@@ -24,8 +24,11 @@ export {
   DEFAULT_MAX_BYTES,
   DEFAULT_FIELD_MAX_BYTES,
   FORGE_INGEST_MAX_BYTES_ENV,
+  DEFAULT_CHECK_STATUS_PAGE_SIZE,
+  MAX_CHECK_STATUS_PAGES,
   getEffectiveIngestMaxBytes,
   forgeIngestCapabilityFacts,
+  checkPaginationCapabilityFacts,
 } from './caps.js';
 export { assertGitRef, assertGitRemote } from './git-args.js';
 export { gitRevParse, gitCurrentBranch, gitAheadBehind, gitRepoRoot } from './git-local.js';

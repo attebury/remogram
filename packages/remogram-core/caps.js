@@ -2,6 +2,10 @@ export const DEFAULT_MAX_BYTES = 8192;
 export const DEFAULT_FIELD_MAX_BYTES = 512;
 export const FORGE_INGEST_MAX_BYTES_ENV = 'REMOGRAM_FORGE_INGEST_MAX_BYTES';
 
+/** Conservative check/status page size vs DEFAULT_MAX_BYTES raw ingest cap (pre-parse). */
+export const DEFAULT_CHECK_STATUS_PAGE_SIZE = 25;
+export const MAX_CHECK_STATUS_PAGES = 50;
+
 export function getEffectiveIngestMaxBytes() {
   const raw = process.env[FORGE_INGEST_MAX_BYTES_ENV];
   if (raw == null || raw === '') {
@@ -18,6 +22,21 @@ export function getEffectiveIngestMaxBytes() {
 export function forgeIngestCapabilityFacts() {
   const { bytes } = getEffectiveIngestMaxBytes();
   return { forge_ingest_cap_bytes: bytes };
+}
+
+/**
+ * Structured check-list pagination facts for provider capabilities.
+ * @param {{ strategy: 'offset_limit' | 'link_header', pageSizeParam: 'limit' | 'per_page' | null }} opts
+ */
+export function checkPaginationCapabilityFacts({ strategy, pageSizeParam }) {
+  return {
+    check_pagination: {
+      strategy,
+      page_size: DEFAULT_CHECK_STATUS_PAGE_SIZE,
+      max_pages: MAX_CHECK_STATUS_PAGES,
+      page_size_param: pageSizeParam,
+    },
+  };
 }
 
 export function capText(text, maxBytes = DEFAULT_MAX_BYTES) {

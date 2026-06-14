@@ -13,6 +13,9 @@ import {
   ERROR_CODES,
   forgeError,
   forgeIngestCapabilityFacts,
+  checkPaginationCapabilityFacts,
+  DEFAULT_CHECK_STATUS_PAGE_SIZE,
+  MAX_CHECK_STATUS_PAGES,
   apiProviderCommands,
 } from '@remogram/core';
 
@@ -121,9 +124,8 @@ export async function gitlabFetch(config, parsed, path, options = {}) {
   });
 }
 
-const MAX_CHECK_PAGES = 50;
+const MAX_CHECK_PAGES = MAX_CHECK_STATUS_PAGES;
 const GITLAB_PAGE_SIZE = 100;
-const CHECK_STATUS_PAGE_SIZE = 25;
 
 export async function gitlabFetchPaginated(config, parsed, path) {
   const all = [];
@@ -132,11 +134,11 @@ export async function gitlabFetchPaginated(config, parsed, path) {
     const body = await gitlabFetch(
       config,
       parsed,
-      `${path}${separator}per_page=${CHECK_STATUS_PAGE_SIZE}&page=${page}`,
+      `${path}${separator}per_page=${DEFAULT_CHECK_STATUS_PAGE_SIZE}&page=${page}`,
     );
     const items = Array.isArray(body) ? body : [];
     all.push(...items);
-    if (items.length < CHECK_STATUS_PAGE_SIZE) break;
+    if (items.length < DEFAULT_CHECK_STATUS_PAGE_SIZE) break;
   }
   return all;
 }
@@ -151,6 +153,7 @@ export function providerCapabilities() {
     pagination: 'supported',
     write_support: false,
     ...forgeIngestCapabilityFacts(),
+    ...checkPaginationCapabilityFacts({ strategy: 'offset_limit', pageSizeParam: 'per_page' }),
   };
 }
 
