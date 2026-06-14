@@ -1,0 +1,13 @@
+acceptance_criterion ac_merge_plan_path_scope_blocker {
+  name "Merge plan emits path_scope_violation"
+  description "Given allowed_paths [packages/**, tests/**], when changed paths include packages/foo.js then no path blocker; when changed paths include topo/sdlc/foo.tg then blockers includes path_scope_violation."
+  requirement req_merge_plan_path_allowlist
+  status approved
+}
+
+acceptance_criterion ac_merge_plan_path_scope_tests {
+  name "Merge plan path scope unit tests"
+  description "Given merge-blockers and merge-plan-path-scope tests, when npm test runs, then path_scope_violation and changed_paths_unavailable cases pass."
+  requirement req_merge_plan_path_allowlist
+  status approved
+}

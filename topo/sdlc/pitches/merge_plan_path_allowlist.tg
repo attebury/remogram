@@ -1,0 +1,12 @@
+pitch pitch_merge_plan_path_allowlist {
+  name "Wire path allowlist into merge plan"
+  description "Extend merge plan to evaluate changed paths against configured glob allowlists and emit path_scope_violation blockers."
+  appetite "small"
+  problem "path-allowlist.js shipped but merge plan does not evaluate PR changed paths against globs; auto-merge scope relies on Review Lane only."
+  solution_sketch "git diff base_sha..head_sha locally; extend mergeBlockersFromFacts with optional allowed_paths; CLI --allowed-path repeatable flag; shared buildMergePlanBody for API providers."
+  rabbit_holes "Forge file list APIs; widening merge_plan packet body fields; auto-merge execution."
+  no_go_areas "SDLC fields in remogram output; Gitea merge API mutations."
+  affects [cap_forge_remote_ops]
+  priority medium
+  status draft
+}

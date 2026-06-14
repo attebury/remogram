@@ -1,0 +1,8 @@
+goal_branch goal_branch_merge_plan_path_allowlist {
+  name "Merge plan path allowlist Intent Packet"
+  description "Intent Packet wiring path-allowlist into merge plan path_scope_violation blockers."
+  branch_ref "goal/merge-plan-path-allowlist"
+  task task_merge_plan_path_allowlist
+  evidence_refs [local:topo/sdlc/pitches/merge_plan_path_allowlist.tg, local:topo/sdlc/requirements/merge_plan_path_allowlist.tg, local:topo/sdlc/tasks/merge_plan_path_allowlist.tg, local:topo/sdlc/plans/merge_plan_path_allowlist.tg]
+  status draft
+}

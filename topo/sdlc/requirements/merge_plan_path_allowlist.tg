@@ -1,0 +1,10 @@
+requirement req_merge_plan_path_allowlist {
+  name "Merge plan path scope blockers"
+  description "When merge plan receives allowed path globs, it must diff forge-reported base_sha..head_sha locally and surface path_scope_violation when any changed path fails all globs."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  pitch pitch_merge_plan_path_allowlist
+  priority medium
+  status draft
+}
