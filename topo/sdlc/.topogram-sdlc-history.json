@@ -7753,6 +7753,16 @@
       "at": "2026-06-14T19:29:05.462Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-14T19:36:00.134Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "b8a93c4"
+      ]
     }
   ],
   "ac_docs_beta_readonly": [
