@@ -1,0 +1,21 @@
+task task_merge_plan_path_allowlist {
+  name "Wire path allowlist into merge plan"
+  description "Add gitDiffNameOnly, extend mergeBlockersFromFacts for path scope, buildMergePlanBody helper, CLI --allowed-path, provider mergePlan opts; unit tests."
+  feature feature_merge_plan_path_allowlist
+  phase implementation
+  scope current_feature
+  non_goals ["Auto-merge execution" "Forge file-list APIs" "merge_plan envelope field changes"]
+  entrypoints ["packages/remogram-core/git-local.js" "packages/remogram-core/merge-blockers.js" "packages/remogram-core/merge-plan.js" "packages/remogram-cli/index.js" "packages/provider-gitea-api/index.js" "tests/core/merge-blockers.test.mjs" "tests/core/merge-plan-path-scope.test.mjs"]
+  satisfies [req_merge_plan_path_allowlist]
+  acceptance_refs [ac_merge_plan_path_scope_blocker ac_merge_plan_path_scope_tests]
+  verification_refs [verification_merge_plan_path_allowlist]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type implementation
+  status unclaimed
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Follow-on to satisfied path-allowlist helper; no pre-existing defect."
+}
