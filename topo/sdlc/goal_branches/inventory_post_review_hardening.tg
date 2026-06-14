@@ -1,0 +1,8 @@
+goal_branch goal_branch_inventory_post_review_hardening {
+  name "Inventory post-review hardening Intent Packet"
+  description "Wave 1 pagination maxPages probe (317); wave 2 fail-closed and streaming (318); wave 3 Gitleaks arm64 guards (319)."
+  branch_ref "goal/cr-inventory-hardening"
+  task task_pagination_boundary_probe
+  evidence_refs [local:topo/sdlc/pitches/inventory_post_review_hardening.tg, local:topo/sdlc/requirements/pagination_boundary_probe.tg, local:topo/sdlc/requirements/cr_inventory_fail_closed.tg, local:topo/sdlc/requirements/cr_inventory_list_efficiency.tg, local:topo/sdlc/requirements/gitleaks_arm64_guards.tg, local:topo/sdlc/plans/pagination_boundary_probe.tg, local:topo/sdlc/plans/cr_inventory_fail_closed.tg, local:topo/sdlc/plans/gitleaks_arm64_guards.tg, local:topo/sdlc/tasks/inventory_post_review_hardening.tg, local:topo/sdlc/acceptance_criteria/inventory_post_review_hardening.tg, local:topo/verifications/inventory-post-review-hardening.tg, forge:issue/317, forge:issue/318, forge:issue/319]
+  status draft
+}

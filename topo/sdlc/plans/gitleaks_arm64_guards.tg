@@ -1,0 +1,12 @@
+plan plan_gitleaks_arm64_guards {
+  name "Gitleaks arm64 and workflow guards — wave 3"
+  description "Add Linux arm64 asset mapping and Topogram-parity static workflow guard tests."
+  task task_gitleaks_arm64_guards
+  architecture_patterns [fail_closed_gate]
+  steps {
+    step arm64_asset status pending description "Linux:arm64 maps to linux_arm64 gitleaks release asset."
+    step guard_tests status pending description "Extend secret-scan.test.mjs with push-range and token/action guards."
+    step verify status pending description "npm test green."
+  }
+  status draft
+}

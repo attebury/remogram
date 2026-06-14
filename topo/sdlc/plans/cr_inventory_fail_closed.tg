@@ -1,0 +1,13 @@
+plan plan_cr_inventory_fail_closed {
+  name "CR inventory fail-closed and streaming — wave 2"
+  description "inventory_list_incomplete error code, CLI fail-closed, streaming pagination, open_pull_list capabilities, Gitea regression fixture."
+  task task_cr_inventory_fail_closed
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  steps {
+    step fail_closed status pending description "CLI throws inventory_list_incomplete when list_truncated true."
+    step streaming status pending description "Streaming pagination retains entry slice only; document open_pull_list capabilities."
+    step regression_fixture status pending description "Gitea oversized first page backoff fixture."
+    step verify status pending description "npm test green."
+  }
+  status draft
+}
