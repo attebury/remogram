@@ -1,0 +1,13 @@
+plan plan_cr_inventory_provider_list_limit {
+  name "CR inventory provider list limit — implementation plan"
+  description "Single-wave plan to honor cr inventory --limit on provider open-PR list fetches and add regression tests."
+  task task_cr_inventory_provider_list_limit
+  architecture_patterns [contract_boundary, fail_closed_gate, command_owned_mutation]
+  steps {
+    step core_limit_wire status pending description "Pass opts.limit from cr-inventory.js into resolveOpenPullList and provider.listOpenPullsWithMeta."
+    step gitea_bounded_list status pending description "Gitea listOpenPullsWithMeta: accept list options; use min(limit, GITEA_PAGE_SIZE); preserve list_truncated."
+    step provider_parity status pending description "Plumb list limit options through GitHub/GitLab providers; document or test parity."
+    step regression_tests status pending description "Add tests proving cr inventory --limit 1 bounds provider list HTTP before ingest (Gitea-focused)."
+  }
+  status draft
+}
