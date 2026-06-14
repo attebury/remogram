@@ -65,26 +65,26 @@ acceptance_criterion ac_mcp_pr_checks_schema_round6 {
   name "MCP pr_checks requires number or ref"
   description "Given MCP pr_checks with empty input, when schema validation runs, then request is rejected before CLI spawn."
   requirement req_forge_trust_round6
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_export_denylist_test_round6 {
   name "Export denylist regression test"
   description "Given export-public-main.sh denylist, when test runs against exported tree fixture, then topo .gitea remogram-dogfood and sidecar scripts are absent."
   requirement req_forge_trust_round6
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_core_secret_redaction_round6 {
   name "Core sanitizeField redacts token patterns"
   description "Given error message containing ghp_ or Bearer token pattern, when sanitizeField runs in core, then pattern is redacted consistently with MCP policy."
   requirement req_forge_trust_round6
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_git_ahead_behind_validated_round6 {
   name "gitAheadBehind validates refs before compare"
   description "Given invalid or ambiguous ref strings, when gitAheadBehind runs, then assertGitRef rejects them before git subprocess invocation."
   requirement req_forge_trust_round6
-  status draft
+  status approved
 }
