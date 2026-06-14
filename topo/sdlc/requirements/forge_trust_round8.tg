@@ -1,0 +1,9 @@
+requirement req_forge_trust_round8 {
+  name "Remogram forge trust round 8 — honest bounds signaling"
+  description "Remogram must expose check enumeration truncation in pr_checks packets and merge blockers; extend check_pagination capabilities with ingest backoff and page-cap semantics per decision_forge_ingest_cap_policy; close GitHub/GitLab oversize and dual-stream proof gaps; harden Link-header pagination URLs against off-origin next links."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority high
+  status draft
+}

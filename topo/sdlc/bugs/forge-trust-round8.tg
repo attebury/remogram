@@ -1,0 +1,77 @@
+bug bug_checks_truncation_silent {
+  name "Check list truncation is silent at max_pages"
+  description "paginateCheckStatusPages and githubFetchPaginated stop at MAX_CHECK_STATUS_PAGES without checks_truncated on pr_checks or checks_incomplete merge blocker; merge_plan may report success on partial enumeration."
+  status open
+  severity high
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Agents treat check_conclusion success as complete when checks on later pages were never fetched."
+  linked_task task_forge_trust_round8_wave2
+  reproduction "Mock forge returning full pages through page 50 with failure on page 51; pr_checks returns success without truncation signal."
+  boundary_test_added false
+}
+
+bug bug_check_pagination_under_reports_bounds {
+  name "check_pagination omits backoff and truncation semantics"
+  description "Provider capabilities report static page_size and max_pages but not ingest_backoff halve_until_fit or on_page_cap set_checks_truncated behavior per decision_forge_ingest_cap_policy honest description requirement."
+  status open
+  severity medium
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Agents cannot discover adaptive page halving or truncation field from capabilities packet alone."
+  linked_task task_forge_trust_round8_wave1
+  reproduction "remogram provider capabilities --json; check_pagination lacks ingest_backoff and truncation_packet_field."
+  boundary_test_added false
+}
+
+bug bug_github_gitlab_oversize_untested {
+  name "Oversize ingest mocks missing on GitHub and GitLab"
+  description "Round 7 added Gitea-only prChecks oversize integration test; GitHub fetchWithIngestPageBackoff and GitLab paginateCheckStatusPages backoff paths lack provider-level oversize mocks."
+  status open
+  severity high
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Regression in per_page URL rewriting or backoff on GitHub/GitLab goes undetected."
+  linked_task task_forge_trust_round8_wave3
+  reproduction "grep oversized tests/provider/github-api.test.mjs tests/provider/gitlab-api.test.mjs; no oversize ingest test."
+  boundary_test_added false
+}
+
+bug bug_github_statuses_page2_untested {
+  name "GitHub prChecks commit statuses page-2 untested"
+  description "GitHub prChecks paginates statuses and check-runs in parallel; page-2 failure tests cover check-runs only, not commit statuses stream."
+  status open
+  severity medium
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Failure only on legacy commit statuses page 2 is missed while check-runs path appears covered."
+  linked_task task_forge_trust_round8_wave3
+  reproduction "Read tests/provider/github-api.test.mjs; prChecks page-2 test mocks check-runs Link header only."
+  boundary_test_added false
+}
+
+bug bug_secret_scan_remo_only_untested {
+  name "Secret-scan remo-only base ref path untested"
+  description "Behavioral secret-scan tests cover origin/main selection but not repo with only origin/remo where resolveAutomaticBaseRef should return null and trigger full-history fallback."
+  status open
+  severity medium
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Dogfood-shaped repo could regress to wrong base ref without test failure."
+  linked_task task_forge_trust_round8_wave4
+  reproduction "Read tests/core/secret-scan.test.mjs; no temp repo with remo-only remote ref."
+  boundary_test_added false
+}
+
+bug bug_github_link_next_unvalidated {
+  name "GitHub Link rel=next URL not same-origin validated"
+  description "githubFetchPaginated follows Link header next URLs with forge token without verifying origin matches configured API base; adversarial forge could exfiltrate token."
+  status open
+  severity high
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Compromised self-hosted forge points next to off-host URL; Remogram fetches with Bearer token."
+  linked_task task_forge_trust_round8_wave4
+  reproduction "Inspect githubFetchPaginated; parseLinkHeader next URL fetched without host check."
+  boundary_test_added false
+}
