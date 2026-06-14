@@ -12,5 +12,5 @@ plan plan_semantic_diff_fact_inventory {
     step wave5_topogram_consumer status done description "Topogram consumer contract examples and explicit Topogram-interprets / Remogram-does-not documentation. Consumer examples: tools/remogram-agent-support/skills/remogram-consumer/SKILL.md (Semantic diff queries)."
     step wave6_verify status done description "Hermetic fixtures, contract tests, doctor/capabilities updates (read-only), smoke validation; npm test and topogram check green."
   }
-  status draft
+  status complete
 }

@@ -8,5 +8,5 @@ pitch pitch_cr_inventory_test_coverage {
   no_go_areas "Reopening goal_branch_cr_inventory_hardening; hand-editing lifecycle status; product features beyond pr_not_open skip semantics."
   affects [cap_forge_remote_ops]
   priority medium
-  status draft
+  status rejected
 }

@@ -10,5 +10,5 @@ plan plan_cr_inventory_hardening {
     step wave3_bounds status done description "Entry limit default 50, truncation metadata, CLI --limit and MCP limit."
     step wave4_resilience status done description "Partial per-PR failure, Gitea open-state fix, test and topogram check closeout."
   }
-  status draft
+  status complete
 }
