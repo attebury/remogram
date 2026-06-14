@@ -220,6 +220,45 @@ describe('provider-gitea-api fixtures', () => {
     expect(normalizeGiteaPrState('closed')).toBe('closed');
   });
 
+  it('prChecks survives oversized status page via ingest backoff', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    const paddedStatuses = Array.from({ length: 25 }, (_, i) => ({
+      context: `ci/pad-${i}`,
+      state: 'success',
+      description: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedStatuses);
+    expect(Buffer.byteLength(oversizedJson, 'utf8')).toBeGreaterThan(8192);
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('/pulls/1')) {
+        return Promise.resolve(pullResponse);
+      }
+      const limitMatch = href.match(/[?&]limit=(\d+)/);
+      const limit = limitMatch ? Number(limitMatch[1]) : 25;
+      if (limit > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      return Promise.resolve(
+        jsonPageResponse([{ context: 'ci/ok', state: 'success', description: 'ok' }]),
+      );
+    });
+
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.check_conclusion).toBe('success');
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('limit=12'))).toBe(true);
+  });
+
   it('mergePlan includes checks_failed when commit statuses fail on page 2', async () => {
     const pull = load('pull.json');
     const pullResponse = jsonPageResponse(pull);

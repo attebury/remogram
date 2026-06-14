@@ -18,6 +18,8 @@ import {
   checkPaginationCapabilityFacts,
   DEFAULT_CHECK_STATUS_PAGE_SIZE,
   MAX_CHECK_STATUS_PAGES,
+  fetchWithIngestPageBackoff,
+  withPerPageParam,
   apiProviderCommands,
 } from '@remogram/core';
 
@@ -170,9 +172,14 @@ export async function githubFetchPaginated(config, parsed, path, slice) {
   const pageQuery = `${path.includes('?') ? '&' : '?'}per_page=${DEFAULT_CHECK_STATUS_PAGE_SIZE}`;
   let url = `${base}${path}${pageQuery}`;
   for (let page = 0; page < MAX_CHECK_PAGES && url; page += 1) {
-    const { body, headers } = await fetchJsonWithMeta(url, {
-      headers: authHeaders(token),
-    });
+    const currentUrl = url;
+    const { body, headers } = await fetchWithIngestPageBackoff(
+      (attemptUrl) =>
+        fetchJsonWithMeta(attemptUrl, {
+          headers: authHeaders(token),
+        }),
+      (limit) => withPerPageParam(currentUrl, limit),
+    );
     all.push(...slice(body));
     const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
     url = parseLinkHeader(linkHeader).next ?? null;
