@@ -168,7 +168,7 @@ export async function githubFetch(config, parsed, path, options = {}) {
 
 const MAX_CHECK_PAGES = MAX_CHECK_STATUS_PAGES;
 
-function resolveGitHubLinkNextPage({ trustedOrigin, currentUrl, linkHeader, pageIndex, maxPages }) {
+export function resolveGitHubLinkNextPage({ trustedOrigin, currentUrl, linkHeader, pageIndex, maxPages }) {
   const nextRaw = parseLinkHeader(linkHeader).next ?? null;
   if (!nextRaw) {
     return { nextUrl: null, truncated: false };
