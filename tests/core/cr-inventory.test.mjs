@@ -105,6 +105,21 @@ describe('cr inventory', () => {
     expect(receivedRetainMax).toBe(7);
   });
 
+  it('crInventory emits slice_sort on success packets', async () => {
+    const provider = {
+      listOpenPullsWithMeta: async () => ({
+        numbers: [1],
+        list_truncated: false,
+        entry_count: 1,
+        slice_sort: 'recent_update',
+      }),
+      prView: async () => ({ pr_number: 1, state: 'open', mergeability: 'clean' }),
+      prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
+    };
+    const body = await crInventory(ctx, provider, { sort: 'recent_update' });
+    expect(body.slice_sort).toBe('recent_update');
+  });
+
   it('crInventory uses provider entry_count when streaming list pagination', async () => {
     const provider = {
       listOpenPullsWithMeta: async () => ({

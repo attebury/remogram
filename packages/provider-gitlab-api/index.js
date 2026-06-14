@@ -29,6 +29,8 @@ import {
   DEFAULT_CR_INVENTORY_SLICE_SORT,
   parseTotalCountHeader,
   isCrInventoryFastPathEligible,
+  validateFastPathPageLength,
+  isNumberSortFastPathEligible,
   orderOpenPullNumbers,
   buildOpenPullListMeta,
   gitlabOpenPullSortQuery,
@@ -370,7 +372,14 @@ async function tryGitlabOpenPullFastPath(ctx, opts) {
 
   const totalCount = parseTotalCountHeader(headers, 'X-Total', { maxTrusted });
   if (totalCount == null) return null;
-  if (totalCount <= requestLimit && body.length !== totalCount) return null;
+
+  const listTruncated = totalCount > GITLAB_OPEN_PULL_COMPLIANT_MAX;
+  if (!listTruncated) {
+    if (!isNumberSortFastPathEligible(totalCount, retainMax, sliceSort)) return null;
+    if (!validateFastPathPageLength(totalCount, requestLimit, body.length)) return null;
+  } else if (body.length === 0) {
+    return null;
+  }
 
   let numbers = orderOpenPullNumbers(body, (mr) => mr?.iid, sliceSort);
   if (numbers.length > retainMax) numbers = numbers.slice(0, retainMax);
@@ -378,7 +387,7 @@ async function tryGitlabOpenPullFastPath(ctx, opts) {
   return buildOpenPullListMeta({
     totalCount,
     numbers,
-    listTruncated: totalCount > GITLAB_OPEN_PULL_COMPLIANT_MAX,
+    listTruncated,
     sliceSort,
   });
 }

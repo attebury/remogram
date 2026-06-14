@@ -640,6 +640,35 @@ describe('provider-gitlab-api fixtures', () => {
     expect(meta.slice_sort).toBe('recent_update');
   });
 
+  it('listOpenPullsWithMeta falls back when body shorter than min(total, limit)', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonResponse([{ iid: 1, state: 'opened' }], 200, { headers: { 'X-Total': '5' } }),
+    );
+    global.fetch.mockResolvedValueOnce(jsonResponse([{ iid: 1, state: 'opened' }]));
+    global.fetch.mockResolvedValueOnce(jsonResponse([]));
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3 });
+    expect(global.fetch.mock.calls.length).toBeGreaterThan(1);
+    expect(meta.numbers).toEqual([1]);
+  });
+
+  it('listOpenPullsWithMeta skips fast path for number_asc when total exceeds retain_max', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonResponse(
+        [
+          { iid: 30, state: 'opened' },
+          { iid: 10, state: 'opened' },
+          { iid: 20, state: 'opened' },
+        ],
+        200,
+        { headers: { 'X-Total': '10' } },
+      ),
+    );
+    global.fetch.mockResolvedValueOnce(jsonResponse([]));
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'number_asc' });
+    expect(global.fetch.mock.calls.length).toBeGreaterThan(1);
+    expect(meta.slice_sort).toBe('number_asc');
+  });
+
   it('listOpenPullsWithMeta sets list_truncated at maxPages when limit exceeds fetch window', async () => {
     for (let page = 1; page <= MAX_CHECK_STATUS_PAGES; page += 1) {
       const start = (page - 1) * 100 + 1;

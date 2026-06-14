@@ -69,6 +69,38 @@ export function forgeOrderAuthoritative(sliceSort) {
 }
 
 /**
+ * Fast path requires the first page to contain the expected item count.
+ * @param {number} totalCount
+ * @param {number} requestLimit
+ * @param {number} bodyLength
+ */
+export function validateFastPathPageLength(totalCount, requestLimit, bodyLength) {
+  const expected = Math.min(totalCount, requestLimit);
+  return bodyLength === expected;
+}
+
+/**
+ * Number sorts need full local reorder; skip fast path when total exceeds retain_max.
+ * @param {number} totalCount
+ * @param {number} retainMax
+ * @param {string} sliceSort
+ */
+export function isNumberSortFastPathEligible(totalCount, retainMax, sliceSort) {
+  if (sliceSort !== 'number_asc' && sliceSort !== 'number_desc') return true;
+  return totalCount <= retainMax;
+}
+
+/**
+ * Gitea sort=oldest returns oldest-first; recent_created needs newest-first.
+ * @param {unknown[]} items
+ * @param {string} sliceSort
+ */
+export function prepareGiteaOpenPullPageItems(items, sliceSort) {
+  if (sliceSort !== 'recent_created' || !Array.isArray(items)) return items;
+  return items.slice().reverse();
+}
+
+/**
  * @param {unknown[]} items
  * @param {(item: unknown) => number | null | undefined} getNumber
  * @param {string} sliceSort
@@ -104,7 +136,7 @@ export function giteaOpenPullSortQuery(sliceSort) {
     case 'recent_update':
       return { sort: 'recentupdate' };
     case 'recent_created':
-      return { sort: 'recentupdate' };
+      return { sort: 'oldest' };
     default:
       return {};
   }
