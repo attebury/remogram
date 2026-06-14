@@ -40,6 +40,19 @@ describe('isTrustedPaginationUrl', () => {
     expect(isTrustedPaginationUrl(TRUSTED, '/repos/o/r/pulls?page=2')).toBe(false);
   });
 
+  it('rejects empty-string resolveBase', () => {
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/repos/o/r/pulls?page=2', ''),
+    ).toBe(false);
+  });
+
+  it('rejects userinfo in same-origin pagination URLs', () => {
+    const base = 'https://api.github.com/repos/o/r/pulls?state=open';
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://evil@api.github.com/repos/o/r/pulls?page=2', base),
+    ).toBe(false);
+  });
+
   it('accepts same-origin URLs with matching pathname', () => {
     const base = 'https://api.github.com/repos/o/r/pulls?state=open&per_page=100';
     expect(
