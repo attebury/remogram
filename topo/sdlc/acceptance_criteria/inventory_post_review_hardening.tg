@@ -2,21 +2,21 @@ acceptance_criterion ac_pagination_maxpages_probe_empty {
   name "Exact maxPages cap with empty probe is complete"
   description "Given listLimit null and exactly maxPages times pageSize items with empty page+1 probe, when paginateOffsetListPages runs, then list_truncated is false."
   requirement req_pagination_boundary_probe
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_pagination_maxpages_probe_more {
   name "Exact maxPages cap with probe item is truncated"
   description "Given listLimit null and full maxPages with non-empty page+1 probe, when paginateOffsetListPages runs, then list_truncated is true."
   requirement req_pagination_boundary_probe
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_pagination_dead_branch_removed {
   name "No unreachable pagination branch"
   description "Given paginateOffsetListPages source, when reviewed, then duplicate items.length less than usedLimit break inside listLimit block is removed."
   requirement req_pagination_boundary_probe
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_inventory_list_incomplete_fail_closed {
