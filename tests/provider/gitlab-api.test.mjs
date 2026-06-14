@@ -10,6 +10,7 @@ import {
   projectId,
   summarizeChecks,
   mergeability,
+  listOpenPullsWithMeta,
 } from '@remogram/provider-gitlab-api';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -538,5 +539,39 @@ describe('provider-gitlab-api fixtures', () => {
     await expect(provider.repoStatus(ctx)).rejects.toMatchObject({
       forgeError: { code: 'api_error', message: 'HTTP redirect rejected' },
     });
+  });
+
+  it('listOpenPullsWithMeta survives oversized open MR list via ingest backoff', async () => {
+    const paddedMrs = Array.from({ length: 25 }, (_, i) => ({
+      iid: i + 1,
+      title: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedMrs);
+    expect(Buffer.byteLength(oversizedJson, 'utf8')).toBeGreaterThan(8192);
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (!href.includes('/merge_requests')) {
+        return Promise.reject(new Error(`unexpected fetch: ${href}`));
+      }
+      const perPage = Number(new URL(href).searchParams.get('per_page') || '25');
+      if (perPage > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      return Promise.resolve(jsonResponse([{ iid: 1 }]));
+    });
+
+    const meta = await listOpenPullsWithMeta(ctx, {});
+    expect(meta.numbers).toEqual([1]);
+    expect(meta.list_truncated).toBe(false);
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('per_page=12'))).toBe(true);
   });
 });

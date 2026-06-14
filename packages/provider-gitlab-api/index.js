@@ -337,10 +337,15 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
     const requestSize =
       listLimit != null ? Math.min(GITLAB_PAGE_SIZE, remaining) : GITLAB_PAGE_SIZE;
     const separator = path.includes('?') ? '&' : '?';
-    const body = await gitlabFetch(
-      ctx.config,
-      ctx.parsed,
-      `${path}${separator}per_page=${requestSize}&page=${page}`,
+    const body = await fetchWithIngestPageBackoff(
+      (limit) =>
+        gitlabFetch(
+          ctx.config,
+          ctx.parsed,
+          `${path}${separator}per_page=${limit}&page=${page}`,
+        ),
+      (limit) => limit,
+      requestSize,
     );
     const items = Array.isArray(body) ? body : [];
     all.push(...items);
