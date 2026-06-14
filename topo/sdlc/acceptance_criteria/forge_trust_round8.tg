@@ -16,14 +16,14 @@ acceptance_criterion ac_checks_truncated_packet_round8 {
   name "pr_checks exposes checks_truncated"
   description "Given mocked APIs hitting page cap with more data available, when pr_checks runs, then checks_truncated is true and statuses reflect fetched pages only."
   requirement req_forge_trust_round8
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_checks_incomplete_blocker_round8 {
   name "merge_plan blocks on truncated checks"
   description "Given checks_truncated true, when merge_plan runs, then blockers includes checks_incomplete even if visible check_conclusion is success."
   requirement req_forge_trust_round8
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_oversize_github_gitlab_round8 {
