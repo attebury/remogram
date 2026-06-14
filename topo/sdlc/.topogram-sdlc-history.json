@@ -6685,6 +6685,75 @@
       "evidence_refs": [
         "pr:244"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T06:11:04.466Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:claim-wave"
+      ]
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-14T06:11:12.702Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:claim-wave"
+      ]
+    }
+  ],
+  "ac_gitea_status_field_mapping": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T06:11:03.603Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_gitea_status_latest_context_dedupe": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T06:11:03.894Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_gitea_status_fail_closed_unknown": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T06:11:04.179Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "req_gitea_commit_status_normalization": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T06:13:57.874Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:245"
+      ]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T06:13:58.117Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:245"
+      ]
     }
   ]
 }
