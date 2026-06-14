@@ -1,0 +1,12 @@
+pitch pitch_cr_inventory_list_v2_review_followup {
+  name "CR inventory list v2 review follow-up"
+  description "Fix code-review findings from cr-inventory-list-v2 (#333): Gitea recent_created sort, fast-path body sanity, number-sort fast-path skip, missing tests."
+  appetite "small"
+  problem "Gitea recent_created maps to recentupdate; fast path trusts partial headers; number_asc/number_desc fast path only sorts first page when total > limit; slice_sort and sort preset tests incomplete."
+  solution_sketch "Single wave: gitea sort=oldest plus reverse for recent_created; shared validateFastPathPageLength and isNumberSortFastPathEligible; provider tests and cr-inventory slice_sort contract tests."
+  rabbit_holes "Global number sort across all pages; surfacing fast-path fetch errors; envelope schema_version bump."
+  no_go_areas "Hand-editing lifecycle status; implementation in draft planning PR."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}

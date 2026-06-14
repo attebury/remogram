@@ -1,0 +1,8 @@
+requirement req_cr_inventory_gitea_recent_created_sort {
+  name "Gitea recent_created distinct from recent_update"
+  description "Gitea open-PR list must map recent_created to sort=oldest and reverse page order so --sort recent_created differs from recent_update."
+  affects [cap_forge_remote_ops]
+  pitch pitch_cr_inventory_list_v2_review_followup
+  priority high
+  status approved
+}
