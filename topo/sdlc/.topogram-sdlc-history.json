@@ -7605,5 +7605,75 @@
         "forge:issue/272"
       ]
     }
+  ],
+  "ac_cr_open_cli_packet": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T18:58:19.057Z",
+      "by": "plan-lane",
+      "note": null,
+      "evidence_refs": [
+        "forge:issue/272"
+      ]
+    }
+  ],
+  "ac_cr_open_inventory_visible": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T18:58:19.652Z",
+      "by": "plan-lane",
+      "note": null,
+      "evidence_refs": [
+        "forge:issue/272"
+      ]
+    }
+  ],
+  "ac_cr_open_mcp_contract": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T18:58:20.237Z",
+      "by": "plan-lane",
+      "note": null,
+      "evidence_refs": [
+        "forge:issue/272"
+      ]
+    }
+  ],
+  "ac_cr_open_regression_tests": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T18:58:21.021Z",
+      "by": "plan-lane",
+      "note": null,
+      "evidence_refs": [
+        "forge:issue/272"
+      ]
+    }
+  ],
+  "req_cr_open_lane_autonomy": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T18:58:29.129Z",
+      "by": "plan-lane",
+      "note": null,
+      "evidence_refs": [
+        "forge:issue/272"
+      ]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T18:58:29.383Z",
+      "by": "plan-lane",
+      "note": null,
+      "evidence_refs": [
+        "forge:issue/272"
+      ]
+    }
   ]
 }
