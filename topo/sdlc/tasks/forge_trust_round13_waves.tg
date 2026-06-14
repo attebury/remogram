@@ -15,10 +15,10 @@ task task_forge_trust_round13_wave1 {
   disposition active
   priority high
   work_type implementation
-  claimed_by []
+  claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_list_pagination_logic_duplicated]
-  status unclaimed
+  status done
 }
 
 task task_forge_trust_round13_wave2 {
@@ -38,10 +38,10 @@ task task_forge_trust_round13_wave2 {
   disposition active
   priority high
   work_type bugfix
-  claimed_by []
+  claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_pagination_trust_userinfo_accepted]
-  status unclaimed
+  status done
 }
 
 task task_forge_trust_round13_wave3 {
@@ -61,10 +61,10 @@ task task_forge_trust_round13_wave3 {
   disposition active
   priority medium
   work_type bugfix
-  claimed_by []
+  claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_parse_link_header_rel_case_sensitive]
-  status unclaimed
+  status done
 }
 
 task task_forge_trust_round13_wave4 {
@@ -84,8 +84,8 @@ task task_forge_trust_round13_wave4 {
   disposition active
   priority medium
   work_type bugfix
-  claimed_by []
+  claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_github_link_list_per_page_no_carry]
-  status unclaimed
+  status done
 }
