@@ -74,7 +74,7 @@ Integration branch policy is **per consumer repo** — use `repo status` and for
 
 **`merge plan`** adds blocker **`checks_incomplete`** when `checks_truncated` is true — even if visible `check_conclusion` is `success`. Treat blockers + `checks_truncated` as authoritative.
 
-GitHub Link **`rel=next`** pagination uses **`isTrustedPaginationUrl`**: same origin and **strict pathname equality** with the current request; off-path same-origin links are rejected fail-closed (token exfiltration guard).
+GitHub Link **`rel=next`** pagination uses **`isTrustedPaginationUrl`**: **`resolveBase` required** (fail closed when omitted); same origin and **strict pathname equality** with the current request; off-path same-origin links are rejected fail-closed (token exfiltration guard).
 
 ## Trust
 

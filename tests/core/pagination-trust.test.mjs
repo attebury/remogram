@@ -4,10 +4,14 @@ import { isTrustedPaginationUrl } from '@remogram/core';
 const TRUSTED = 'https://api.github.com';
 
 describe('isTrustedPaginationUrl', () => {
-  it('accepts absolute same-origin URLs', () => {
+  it('rejects absolute same-origin URLs without resolveBase', () => {
     expect(
       isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/repos/o/r/pulls?page=2'),
-    ).toBe(true);
+    ).toBe(false);
+  });
+
+  it('rejects off-path absolute URLs without resolveBase', () => {
+    expect(isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/user/emails')).toBe(false);
   });
 
   it('rejects absolute off-origin URLs', () => {
