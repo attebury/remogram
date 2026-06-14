@@ -7859,5 +7859,69 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "goal_branch_cr_open_review_followup": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T19:52:52.336Z",
+      "by": "actor_plan_agent",
+      "note": null
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T19:52:55.384Z",
+      "by": "actor_plan_agent",
+      "note": null
+    }
+  ],
+  "req_cr_open_review_followup": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T19:52:58.504Z",
+      "by": "actor_plan_agent",
+      "note": null
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T19:52:58.757Z",
+      "by": "actor_plan_agent",
+      "note": null
+    }
+  ],
+  "pitch_cr_open_review_followup": [
+    {
+      "from": "draft",
+      "to": "shaped",
+      "at": "2026-06-14T19:53:02.523Z",
+      "by": "actor_plan_agent",
+      "note": null
+    },
+    {
+      "from": "shaped",
+      "to": "submitted",
+      "at": "2026-06-14T19:53:02.855Z",
+      "by": "actor_plan_agent",
+      "note": null
+    },
+    {
+      "from": "submitted",
+      "to": "covered",
+      "at": "2026-06-14T19:53:03.166Z",
+      "by": "actor_plan_agent",
+      "note": null
+    }
+  ],
+  "plan_cr_open_review_followup": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-14T19:53:06.028Z",
+      "by": "actor_plan_agent",
+      "note": null
+    }
   ]
 }
