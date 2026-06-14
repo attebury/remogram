@@ -1,0 +1,51 @@
+verification verification_forge_trust_round9_wave1 {
+  name "Forge trust round 9 wave 1"
+  description "Shared isTrustedPaginationUrl and listOpenPullsWithMeta same-origin hardening."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round9_wave1]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_github_list_link_next_unvalidated]
+  status draft
+}
+
+verification verification_forge_trust_round9_wave2 {
+  name "Forge trust round 9 wave 2"
+  description "GitHub/GitLab truncation proof parity with Gitea."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round9_wave2]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_github_gitlab_truncation_proof_gap]
+  status draft
+}
+
+verification verification_forge_trust_round9_wave3 {
+  name "Forge trust round 9 wave 3"
+  description "Multi-source capability bounds and cr_inventory checks_truncated."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round9_wave3]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_check_pagination_multi_source_opaque, bug_cr_inventory_omits_checks_truncated]
+  status draft
+}
+
+verification verification_forge_trust_round9_wave4 {
+  name "Forge trust round 9 wave 4"
+  description "Strict mergeBlockers and DRY paginateCheckStatusPages backoff."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round9_wave4]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_merge_blockers_truncation_loose, bug_pagination_backoff_duplicated]
+  status draft
+}

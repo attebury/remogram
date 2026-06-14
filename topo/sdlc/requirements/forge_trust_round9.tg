@@ -1,0 +1,9 @@
+requirement req_forge_trust_round9 {
+  name "Remogram forge trust round 9 — review residual hardening"
+  description "Remogram must apply same-origin Link pagination validation to all GitHub paginated list paths; achieve GitHub/GitLab truncation proof parity with Gitea; expose multi-source check enumeration totals in capabilities; emit checks_truncated on cr_inventory entries; tighten mergeBlockers truncation check and DRY paginateCheckStatusPages ingest backoff."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority high
+  status draft
+}
