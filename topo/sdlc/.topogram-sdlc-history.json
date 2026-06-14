@@ -8633,5 +8633,21 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "goal_branch_inventory_post_review_hardening": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T21:11:17.669Z",
+      "by": "actor_planning_lane",
+      "note": null
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T21:11:18.158Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
   ]
 }
