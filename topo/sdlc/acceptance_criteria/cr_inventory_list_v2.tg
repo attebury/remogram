@@ -1,0 +1,62 @@
+acceptance_criterion ac_gitea_fast_path_one_call {
+  name "Gitea fast path uses header-backed count"
+  description "Given mocked Gitea open list with X-Total-Count and retain_max inventory path, when listOpenPullsWithMeta runs, then one list fetch suffices for complete open set within limit."
+  requirement req_open_pull_total_count_header
+  status approved
+}
+
+acceptance_criterion ac_gitea_total_over_cap_fail_closed {
+  name "Total over compliant max fails closed"
+  description "Given X-Total-Count above open_pull_list compliant_max_items, when cr inventory list resolves, then list_truncated is true without full pagination."
+  requirement req_open_pull_total_count_header
+  status approved
+}
+
+acceptance_criterion ac_sort_recent_update_changes_slice {
+  name "recent_update sort changes slice order"
+  description "Given --sort recent_update, when Gitea listOpenPullsWithMeta runs with sort query, then PR numbers follow forge order not number_asc."
+  requirement req_cr_inventory_slice_sort
+  status approved
+}
+
+acceptance_criterion ac_default_sort_backward_compatible {
+  name "Default sort is number_asc"
+  description "Given omitted --sort, when cr inventory runs, then slice_sort is number_asc and lowest PR numbers are selected."
+  requirement req_cr_inventory_slice_sort
+  status approved
+}
+
+acceptance_criterion ac_list_limit_maxpages_probe {
+  name "listLimit exact cap with empty probe is complete"
+  description "Given listLimit equals maxPages times pageSize and empty page+1 probe, when paginateOffsetListPages runs, then list_truncated is false."
+  requirement req_open_pull_list_limit_probe_fix
+  status approved
+}
+
+acceptance_criterion ac_idempotency_scan_unaffected {
+  name "Idempotency scan path unchanged"
+  description "Given findOpenPullByHeadBase scan, when open set within cap, then behavior matches pre-change exhaustive scan."
+  requirement req_open_pull_total_count_header
+  status approved
+}
+
+acceptance_criterion ac_gitlab_x_total_fast_path {
+  name "GitLab X-Total fast path"
+  description "Given mocked GitLab merge request list with X-Total header, when listOpenPullsWithMeta runs with retain_max, then entry_count comes from header with minimal fetches."
+  requirement req_open_pull_total_count_header
+  status approved
+}
+
+acceptance_criterion ac_github_search_total_count {
+  name "GitHub search API total_count"
+  description "Given search API returns total_count with incomplete_results false, when GitHub listOpenPullsWithMeta runs with retain_max, then entry_count uses search total_count."
+  requirement req_open_pull_total_count_header
+  status approved
+}
+
+acceptance_criterion ac_github_search_incomplete_fail_closed {
+  name "GitHub incomplete search fails closed or falls back"
+  description "Given search API incomplete_results true, when GitHub fast path runs, then list resolution does not trust partial total_count."
+  requirement req_open_pull_total_count_header
+  status approved
+}

@@ -1,0 +1,35 @@
+verification verification_cr_inventory_list_v2_wave1 {
+  name "CR inventory list v2 wave 1 proof"
+  description "npm test proof for Gitea fast path, sort, and listLimit probe fix."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [cr_inventory_list_v2_wave1]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status draft
+}
+
+verification verification_cr_inventory_list_v2_wave2 {
+  name "CR inventory list v2 wave 2 proof"
+  description "npm test proof for GitLab X-Total fast path."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [cr_inventory_list_v2_wave2]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status draft
+}
+
+verification verification_cr_inventory_list_v2_wave3 {
+  name "CR inventory list v2 wave 3 proof"
+  description "npm test proof for GitHub search total_count and sort."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [cr_inventory_list_v2_wave3]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status draft
+}

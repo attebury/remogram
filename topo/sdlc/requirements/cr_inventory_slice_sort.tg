@@ -1,0 +1,8 @@
+requirement req_cr_inventory_slice_sort {
+  name "Opt-in CR inventory slice sort"
+  description "cr inventory must accept normalized --sort presets (number_asc default, recent_update, recent_created, number_desc) and emit trusted slice_sort on success packets."
+  affects [cap_forge_remote_ops]
+  pitch pitch_cr_inventory_list_v2
+  priority high
+  status approved
+}

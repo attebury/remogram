@@ -1,0 +1,12 @@
+pitch pitch_cr_inventory_list_v2 {
+  name "CR inventory list v2"
+  description "Trusted forge total-count headers, opt-in slice sort, 1-call dogfood fast path, listLimit probe fix."
+  appetite "small"
+  problem "cr inventory over-fetches open PR lists; no opt-in sort; listLimit branch false-positives at maxPages boundary; GitHub lacks total header."
+  solution_sketch "Wave 1: open-pull-list core, Gitea X-Total-Count fast path and --sort. Wave 2: GitLab X-Total. Wave 3: GitHub Search API total_count and sort passthrough."
+  rabbit_holes "Changing default sort; idempotency scan refactors; envelope schema_version bump."
+  no_go_areas "Hand-editing lifecycle status; implementation in draft planning PR."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}
