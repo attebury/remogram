@@ -23,19 +23,19 @@ acceptance_criterion ac_check_pagination_pr_checks_page2_round7 {
   name "pr_checks sees page-2 check failure"
   description "Given mocked Gitea or GitLab APIs with failing check on page 2, when pr_checks runs, then check_conclusion is failure."
   requirement req_forge_trust_round7
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_merge_plan_page2_decoupled_round7 {
   name "Merge plan page-2 tests decoupled from page size"
   description "Given mocked APIs with 100 successes on page 1 and failure on page 2, when merge_plan runs, then blockers includes checks_failed independent of CHECK_STATUS_PAGE_SIZE value."
   requirement req_forge_trust_round7
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_public_scripts_behavioral_round7 {
   name "Public scripts proven at runtime"
   description "Given temp git repo fixtures, when secret-scan automatic base resolution runs, then origin/main is selected and origin/remo is not; install-pre-push-hook defaults to origin/main."
   requirement req_forge_trust_round7
-  status draft
+  status approved
 }

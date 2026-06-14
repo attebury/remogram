@@ -4702,6 +4702,33 @@
       "evidence_refs": [
         "local:human-approve-round7"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T02:51:13.008Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-14T02:51:21.849Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "local:cluster-closeout"
+      ]
+    },
+    {
+      "from": "done",
+      "to": "archived",
+      "at": "2026-06-14T02:51:26.348Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "local:cluster-archive"
+      ]
     }
   ],
   "ac_capabilities_check_pagination_round7": [
@@ -4727,6 +4754,237 @@
       "from": "draft",
       "to": "approved",
       "at": "2026-06-14T02:45:02.848Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_check_pagination_capability_missing": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:49:02.813Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:49:08.066Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_pagination_constants_triplicated": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:49:15.539Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:49:15.799Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_forge_ingest_single_page_unbounded": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:49:16.621Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:49:17.191Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_pagination_tests_coupled_to_page_size": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:49:18.872Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:49:19.491Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_pr_checks_page2_untested": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:49:20.414Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:49:20.642Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_secret_scan_test_static_only": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:49:21.330Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:49:21.557Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_pre_push_hook_untested": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:49:22.334Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:49:22.653Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "task_forge_trust_round7_wave1": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T02:50:48.803Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T02:50:49.005Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T02:50:49.859Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "task_forge_trust_round7_wave2": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T02:50:53.446Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T02:50:53.484Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T02:50:53.881Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "task_forge_trust_round7_wave3": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T02:50:54.308Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T02:50:54.342Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T02:51:12.626Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_check_pagination_pr_checks_page2_round7": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T02:51:06.828Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_merge_plan_page2_decoupled_round7": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T02:51:07.046Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "ac_public_scripts_behavioral_round7": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T02:51:07.262Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "task_forge_trust_round7_wave4": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T02:51:12.946Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T02:51:12.976Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T02:51:13.356Z",
       "by": "actor_coding_agent",
       "note": null
     }
