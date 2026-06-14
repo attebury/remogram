@@ -5654,6 +5654,16 @@
       "evidence_refs": [
         "pr:188"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T04:01:11.736Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:189"
+      ]
     }
   ],
   "ac_offset_backoff_carry_forward_round10": [
@@ -5747,6 +5757,54 @@
       "note": null,
       "evidence_refs": [
         "pr:188"
+      ]
+    }
+  ],
+  "task_forge_trust_round10_wave1": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T04:01:12.081Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:189"
+      ]
+    }
+  ],
+  "task_forge_trust_round10_wave2": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T04:01:12.378Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:189"
+      ]
+    }
+  ],
+  "task_forge_trust_round10_wave3": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T04:01:12.602Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:189"
+      ]
+    }
+  ],
+  "task_forge_trust_round10_wave4": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T04:01:12.848Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:189"
       ]
     }
   ]
