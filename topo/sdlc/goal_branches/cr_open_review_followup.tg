@@ -1,0 +1,9 @@
+goal_branch goal_branch_cr_open_review_followup {
+  name "CR open review follow-up Intent Packet"
+  description "Follow-on to cr-open-hardening: paginated fail-closed idempotency, packet fidelity, enum DRY, consumer boundary docs, negative tests."
+  branch_ref "goal/cr-open-review-followup"
+  task task_cr_open_review_followup
+  evidence_refs [local:topo/sdlc/pitches/cr_open_review_followup.tg, local:topo/sdlc/requirements/cr_open_review_followup.tg, local:topo/sdlc/plans/cr_open_review_followup.tg, local:topo/sdlc/tasks/cr_open_review_followup.tg, local:topo/sdlc/acceptance_criteria/cr_open_review_followup.tg, local:topo/verifications/cr-open-review-followup.tg, forge:pr/285]
+  witness_refs [forge:pr/285]
+  status draft
+}

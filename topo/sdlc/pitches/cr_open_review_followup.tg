@@ -1,0 +1,12 @@
+pitch pitch_cr_open_review_followup {
+  name "CR open review follow-up"
+  description "Close code-review findings from cr-open-hardening (#285): paginated fail-closed idempotency, honest idempotent packets, write-command enum DRY, consumer boundary docs, negative MCP/doctor tests."
+  appetite "small"
+  problem "Post-hardening review found single-page idempotency scan, idempotent title drift, silent POST on malformed list responses, write-command enum drift, missing MCP/doctor negative tests, and undocumented provider-import bypass of consumer write gate."
+  solution_sketch "Single wave: paginated early-exit scan with idempotency_scan_incomplete fail-closed; reused_existing plus forge title on reuse; shared WRITE_COMMAND_IDS enum; consumer write boundary docs; regression tests for page-2 match, truncated scan, MCP write_not_configured, doctor write_config warn."
+  rabbit_holes "Distributed locking; provider-level write gate refactor; merge execute; new write commands beyond cr_open."
+  no_go_areas "Hand-editing lifecycle status; implementation in draft planning PR."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}
