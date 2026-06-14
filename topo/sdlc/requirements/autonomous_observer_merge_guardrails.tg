@@ -1,0 +1,10 @@
+requirement req_autonomous_observer_merge_guardrails {
+  name "Merge path allowlist helper for auto-merge scope"
+  description "Remogram must expose a pure function that tests changed file paths against configured glob allowlists and returns scope blockers for merge planning. Autonomous Observer consumes lane-registry allowed_paths; merge plan may surface path_scope_violation when any changed path fails all globs."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  pitch pitch_autonomous_observer_merge_guardrails
+  priority medium
+  status draft
+}

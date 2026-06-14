@@ -1,0 +1,19 @@
+task task_autonomous_observer_merge_guardrails {
+  name "Implement merge path allowlist helper"
+  description "Add packages/remogram-core/path-allowlist.js with glob matching for autonomous Observer auto_merge.allowed_paths; export matchPathAllowlist and pathsOutsideAllowlist; add tests/core/path-allowlist.test.mjs."
+  feature feature_autonomous_observer_merge_guardrails
+  phase implementation
+  scope current_feature
+  non_goals ["Auto-merge execution in remogram CLI", "Changing merge_plan schema_version", "Gitea merge API integration"]
+  entrypoints ["packages/remogram-core/path-allowlist.js" "packages/remogram-core/index.js" "tests/core/path-allowlist.test.mjs"]
+  satisfies [req_autonomous_observer_merge_guardrails]
+  acceptance_refs [ac_merge_path_allowlist_match ac_merge_path_allowlist_tests]
+  verification_refs [verification_autonomous_observer_merge_guardrails]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition backlog
+  priority medium
+  work_type implementation
+  status unclaimed
+}
