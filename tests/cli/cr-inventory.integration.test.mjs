@@ -88,6 +88,39 @@ describe('cr inventory CLI integration', () => {
     expect(packet.entries).toHaveLength(10);
   });
 
+  it('cr inventory --limit 1 passes list limit to provider before aggregation', async () => {
+    let listLimit;
+    const setup = setupTempForge({
+      config: defaultTestConfig(),
+      remoteUrl: 'http://localhost:3000/owner/repo.git',
+    });
+    cleanups.push(setup);
+
+    const provider = createCrInventoryHookProvider({
+      listOpenPullsWithMeta: async (_ctx, opts) => {
+        listLimit = opts?.limit;
+        return { numbers: [1], list_truncated: false };
+      },
+      prView: async (_ctx, { number }) => ({
+        pr_number: number,
+        state: 'open',
+        mergeability: 'clean',
+      }),
+      prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
+    });
+
+    const { logs } = await captureCliOutput(() =>
+      runCli(['cr', 'inventory', '--limit', '1', '--json'], {
+        cwd: setup.dir,
+        providers: { 'gitea-api': provider },
+      }),
+    );
+    const packet = JSON.parse(logs[0]);
+    expect(packet.ok).toBe(true);
+    expect(listLimit).toBe(1);
+    expect(packet.entries).toHaveLength(1);
+  });
+
   it('emits no forbidden workflow keys in successful CLI packet', async () => {
     const setup = setupTempForge({
       config: defaultTestConfig(),

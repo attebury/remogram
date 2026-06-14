@@ -76,6 +76,20 @@ describe('cr inventory', () => {
     expect(checksCalls).toBe(2);
   });
 
+  it('crInventory passes inventory limit to listOpenPullsWithMeta', async () => {
+    let receivedLimit;
+    const provider = {
+      listOpenPullsWithMeta: async (_ctx, opts) => {
+        receivedLimit = opts?.limit;
+        return { numbers: [1], list_truncated: false };
+      },
+      prView: async () => ({ pr_number: 1, state: 'open', mergeability: 'clean' }),
+      prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
+    };
+    await crInventory(ctx, provider, { limit: 7 });
+    expect(receivedLimit).toBe(7);
+  });
+
   it('crInventory caps entries and reports truncation metadata', async () => {
     const numbers = Array.from({ length: 60 }, (_, i) => i + 1);
     const provider = {

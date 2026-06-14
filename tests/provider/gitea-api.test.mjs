@@ -242,6 +242,15 @@ describe('provider-gitea-api fixtures', () => {
     return Array.from({ length: 100 }, (_, i) => ({ number: start + i, state: 'open' }));
   }
 
+  it('listOpenPullsWithMeta honors list limit in HTTP query', async () => {
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([{ number: 1, state: 'open' }]));
+    const meta = await listOpenPullsWithMeta(ctx, { limit: 1 });
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch.mock.calls[0][0]).toContain('limit=1');
+    expect(meta.numbers).toEqual([1]);
+    expect(meta.list_truncated).toBe(true);
+  });
+
   it('listOpenPullsWithMeta sets list_truncated after max list pages', async () => {
     for (let page = 1; page <= 50; page += 1) {
       global.fetch.mockResolvedValueOnce(jsonPageResponse(openPullPage((page - 1) * 100 + 1)));
@@ -251,16 +260,15 @@ describe('provider-gitea-api fixtures', () => {
     expect(meta.numbers).toHaveLength(5000);
   });
 
-  it('crInventorySlice propagates list_truncated from paginated list', async () => {
+  it('crInventorySlice bounds open PR list before ingest when limit is 1', async () => {
     const pull = load('pull.json');
-    for (let page = 1; page <= 50; page += 1) {
-      global.fetch.mockResolvedValueOnce(jsonPageResponse(openPullPage((page - 1) * 100 + 1)));
-    }
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([{ number: 1, state: 'open' }]));
     global.fetch
       .mockResolvedValueOnce(jsonPageResponse(pull))
       .mockResolvedValueOnce(jsonPageResponse(pull))
       .mockResolvedValueOnce(jsonPageResponse([]));
     const body = await crInventorySlice(ctx, { limit: 1 });
+    expect(global.fetch.mock.calls[0][0]).toContain('limit=1');
     expect(body.list_truncated).toBe(true);
     expect(body.entries).toHaveLength(1);
   });

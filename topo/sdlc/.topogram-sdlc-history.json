@@ -3991,6 +3991,13 @@
       "evidence_refs": [
         "pr:134"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T01:27:47.386Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ],
   "ac_cr_inventory_core_limit_propagation": [
@@ -4061,6 +4068,22 @@
       "evidence_refs": [
         "pr:135"
       ]
+    }
+  ],
+  "task_cr_inventory_provider_list_limit": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T01:27:47.330Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T01:27:47.357Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ]
 }
