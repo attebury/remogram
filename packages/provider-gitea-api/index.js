@@ -245,10 +245,15 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
     const remaining = listLimit != null ? Math.max(listLimit - all.length, 0) : pageSize;
     if (listLimit != null && remaining === 0) break;
     const requestLimit = listLimit != null ? Math.min(pageSize, remaining) : pageSize;
-    const body = await giteaFetch(
-      ctx.config,
-      ctx.parsed,
-      `${path}${pageSep}limit=${requestLimit}&page=${page}`,
+    const body = await fetchWithIngestPageBackoff(
+      (limit) =>
+        giteaFetch(
+          ctx.config,
+          ctx.parsed,
+          `${path}${pageSep}limit=${limit}&page=${page}`,
+        ),
+      (limit) => limit,
+      requestLimit,
     );
     const items = Array.isArray(body) ? body : [];
     all.push(...items);

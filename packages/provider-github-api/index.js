@@ -517,10 +517,15 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
       const remaining = listLimit - all.length;
       if (remaining <= 0) break;
       const requestSize = Math.min(remaining, GITHUB_PAGE_SIZE);
-      const url = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open&per_page=${requestSize}&page=${page}`;
-      const { body } = await fetchJsonWithMeta(url, {
-        headers: authHeaders(token),
-      });
+      const pageUrl = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open&page=${page}`;
+      const { body } = await fetchWithIngestPageBackoff(
+        (attemptUrl) =>
+          fetchJsonWithMeta(attemptUrl, {
+            headers: authHeaders(token),
+          }),
+        (limit) => withPerPageParam(pageUrl, limit),
+        requestSize,
+      );
       const items = Array.isArray(body) ? body : [];
       all.push(...items);
       if (items.length < requestSize) break;

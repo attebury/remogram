@@ -446,6 +446,38 @@ describe('provider-gitea-api fixtures', () => {
     return Array.from({ length: 100 }, (_, i) => ({ number: start + i, state: 'open' }));
   }
 
+  it('listOpenPullsWithMeta survives oversized open PR list via ingest backoff', async () => {
+    const paddedPulls = Array.from({ length: 25 }, (_, i) => ({
+      number: i + 1,
+      title: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedPulls);
+    expect(Buffer.byteLength(oversizedJson, 'utf8')).toBeGreaterThan(8192);
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      const limitMatch = href.match(/[?&]limit=(\d+)/);
+      const limit = limitMatch ? Number(limitMatch[1]) : 25;
+      if (limit > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      return Promise.resolve(jsonPageResponse([{ number: 1 }]));
+    });
+
+    const meta = await listOpenPullsWithMeta(ctx, {});
+    expect(meta.numbers).toEqual([1]);
+    expect(meta.list_truncated).toBe(false);
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('limit=12'))).toBe(true);
+  });
+
   it('listOpenPullsWithMeta honors list limit in HTTP query', async () => {
     global.fetch.mockResolvedValueOnce(jsonPageResponse([{ number: 1, state: 'open' }]));
     const meta = await listOpenPullsWithMeta(ctx, { limit: 1 });

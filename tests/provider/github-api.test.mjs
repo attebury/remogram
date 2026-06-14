@@ -56,6 +56,8 @@ const ctx = {
   parsed: { owner: 'owner', repo: 'repo', host: 'github.com' },
 };
 
+const FIXTURE_HEAD_SHA = load('pull-graphql-clean.json').data.repository.pullRequest.headRefOid;
+
 const ENVELOPE_KEYS = [
   'type',
   'schema_version',
@@ -464,6 +466,38 @@ describe('provider-github-api fixtures', () => {
     expect(global.fetch.mock.calls.some(([u]) => String(u).includes('per_page=12'))).toBe(true);
   });
 
+  it('listOpenPullsWithMeta limit branch survives oversized list via ingest backoff', async () => {
+    const paddedPulls = Array.from({ length: 50 }, (_, i) => ({
+      number: i + 1,
+      title: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedPulls);
+    expect(Buffer.byteLength(oversizedJson, 'utf8')).toBeGreaterThan(8192);
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      const perPage = Number(new URL(href).searchParams.get('per_page') || '50');
+      if (perPage > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          headers: { get: () => null },
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      return Promise.resolve(jsonResponse(paddedPulls.slice(0, 12)));
+    });
+
+    const meta = await listOpenPullsWithMeta(ctx, { limit: 50 });
+    expect(meta.numbers.length).toBeGreaterThan(0);
+    expect(meta.list_truncated).toBe(false);
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('per_page=12'))).toBe(true);
+  });
+
   it('mergePlan adds checks_incomplete when statuses stream hits off-origin Link next', async () => {
     const evilNext = 'https://evil.example/api/statuses?page=2';
     global.fetch
@@ -717,7 +751,7 @@ describe('provider-github-api fixtures', () => {
       }
       if (href.includes('/statuses')) {
         statusFetchCount += 1;
-        const nextUrl = `https://api.github.com/repos/owner/repo/commits/abc/statuses?page=${statusFetchCount + 1}`;
+        const nextUrl = `https://api.github.com/repos/owner/repo/commits/${FIXTURE_HEAD_SHA}/statuses?page=${statusFetchCount + 1}`;
         const linkHeader =
           statusFetchCount <= MAX_CHECK_STATUS_PAGES
             ? `<${nextUrl}>; rel="next"`
@@ -749,7 +783,7 @@ describe('provider-github-api fixtures', () => {
       }
       if (href.includes('/check-runs')) {
         checkRunFetchCount += 1;
-        const nextUrl = `https://api.github.com/repos/owner/repo/commits/abc/check-runs?page=${checkRunFetchCount + 1}`;
+        const nextUrl = `https://api.github.com/repos/owner/repo/commits/${FIXTURE_HEAD_SHA}/check-runs?page=${checkRunFetchCount + 1}`;
         const linkHeader =
           checkRunFetchCount <= MAX_CHECK_STATUS_PAGES
             ? `<${nextUrl}>; rel="next"`
@@ -786,7 +820,7 @@ describe('provider-github-api fixtures', () => {
       }
       if (href.includes('/statuses')) {
         statusFetchCount += 1;
-        const nextUrl = `https://api.github.com/repos/owner/repo/commits/abc/statuses?page=${statusFetchCount + 1}`;
+        const nextUrl = `https://api.github.com/repos/owner/repo/commits/${FIXTURE_HEAD_SHA}/statuses?page=${statusFetchCount + 1}`;
         const linkHeader =
           statusFetchCount <= MAX_CHECK_STATUS_PAGES
             ? `<${nextUrl}>; rel="next"`
@@ -818,7 +852,7 @@ describe('provider-github-api fixtures', () => {
       }
       if (href.includes('/check-runs')) {
         checkRunFetchCount += 1;
-        const nextUrl = `https://api.github.com/repos/owner/repo/commits/abc/check-runs?page=${checkRunFetchCount + 1}`;
+        const nextUrl = `https://api.github.com/repos/owner/repo/commits/${FIXTURE_HEAD_SHA}/check-runs?page=${checkRunFetchCount + 1}`;
         const linkHeader =
           checkRunFetchCount <= MAX_CHECK_STATUS_PAGES
             ? `<${nextUrl}>; rel="next"`
