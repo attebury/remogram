@@ -7810,5 +7810,14 @@
       "by": "actor_plan_lane",
       "note": null
     }
+  ],
+  "plan_cr_open_hardening": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-14T19:27:19.057Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
   ]
 }
