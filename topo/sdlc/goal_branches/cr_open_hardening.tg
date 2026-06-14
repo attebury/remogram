@@ -5,5 +5,5 @@ goal_branch goal_branch_cr_open_hardening {
   task task_cr_open_hardening
   evidence_refs [local:topo/sdlc/pitches/cr_open_hardening.tg, local:topo/sdlc/requirements/cr_open_hardening.tg, local:topo/sdlc/plans/cr_open_hardening.tg, local:topo/sdlc/tasks/cr_open_hardening.tg, local:topo/sdlc/acceptance_criteria/cr_open_hardening.tg, local:topo/verifications/cr-open-hardening.tg, forge:pr/278]
   witness_refs [forge:pr/278]
-  status draft
+  status approved
 }
