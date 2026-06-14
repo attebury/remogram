@@ -1,0 +1,12 @@
+pitch pitch_autonomous_observer_merge_guardrails {
+  name "Autonomous Observer merge path guardrails"
+  description "Add remogram-core path allowlist matching so Cursor autonomous Observer auto-merge can fail closed when PR diffs touch paths outside lane-registry allowed_paths."
+  appetite "small"
+  problem "Autonomous Observer auto_merge.allowed_paths is documented in lane-registry but Remogram merge plan does not evaluate changed-file paths against globs; scope violations rely on Review Lane prose only."
+  solution_sketch "Single wave: packages/remogram-core/path-allowlist.js with glob matching, mergeBlockersFromFacts extension or merge plan helper, unit tests in tests/core/, export from remogram-core index."
+  rabbit_holes "Wiring into Gitea merge API; changing merge_plan packet schema_version; auto-merge execution in remogram CLI."
+  no_go_areas "SDLC fields in remogram output; hand-editing lifecycle status; widening envelope fields."
+  affects [cap_forge_remote_ops]
+  priority medium
+  status draft
+}

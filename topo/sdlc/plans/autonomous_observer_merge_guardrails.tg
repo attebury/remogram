@@ -1,0 +1,11 @@
+plan plan_autonomous_observer_merge_guardrails {
+  name "Merge path allowlist — single wave"
+  description "One implementation wave for path allowlist helper used by autonomous Observer auto-merge scope checks."
+  task task_autonomous_observer_merge_guardrails
+  steps {
+    step allowlist_module status pending description "path-allowlist.js glob matcher + exports"
+    step unit_tests status pending description "tests/core/path-allowlist.test.mjs"
+    step proof status pending description "npm test + topogram check green"
+  }
+  status draft
+}

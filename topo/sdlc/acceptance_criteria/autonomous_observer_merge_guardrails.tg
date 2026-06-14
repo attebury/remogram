@@ -1,0 +1,13 @@
+acceptance_criterion ac_merge_path_allowlist_match {
+  name "Path allowlist accepts packages and tests globs"
+  description "Given allowed_paths [packages/**, tests/**], when paths include packages/remogram-core/foo.js and tests/core/bar.test.mjs, then all paths match. When paths include topo/sdlc/foo.tg, then scope violation is reported."
+  requirement req_autonomous_observer_merge_guardrails
+  status draft
+}
+
+acceptance_criterion ac_merge_path_allowlist_tests {
+  name "Path allowlist unit tests"
+  description "tests/core/path-allowlist.test.mjs covers match, reject, empty allowlist fail-closed, and root README.md literal glob."
+  requirement req_autonomous_observer_merge_guardrails
+  status draft
+}

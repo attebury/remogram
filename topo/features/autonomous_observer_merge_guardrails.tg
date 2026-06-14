@@ -1,0 +1,11 @@
+feature feature_autonomous_observer_merge_guardrails {
+  name "Autonomous Observer Merge Guardrails"
+  description "Describe the user-visible product capability."
+  intent "Add merge path allowlist helper for autonomous Observer auto-merge scope checks"
+  entities []
+  capabilities []
+  endpoints []
+  seed_data []
+  verification_refs []
+  status draft
+}
