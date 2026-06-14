@@ -1,0 +1,12 @@
+pitch pitch_gitea_commit_status_normalization {
+  name "Gitea commit status field normalization"
+  description "Fix Gitea provider prChecks to read Gitea 1.23.x commit status status field (not only state), dedupe duplicate contexts to the latest row, and preserve fail-closed unknown handling."
+  appetite "small"
+  problem "provider-gitea-api prChecks maps normalizeGiteaStatusState(s.state) but Gitea 1.23.8 /repos/{owner}/{repo}/statuses/{sha} returns status not state. Observed on attebury/runlane PR #4 head 2ba4cdc: raw rows include status success while Remogram emits state unknown and check_conclusion unknown. Duplicate context rows (older pending, newer success) can also leave check_conclusion pending because summarizeChecks scans all rows without per-context latest selection."
+  solution_sketch "Single wave: read status with state fallback in prChecks mapping; collapse commit status rows by context using updated_at then id before summarizeChecks; add fixtures and provider tests for Gitea status field payloads and duplicate-context ordering; npm test proof."
+  rabbit_holes "Changing shared check_conclusion vocabulary; GitHub/GitLab provider refactors; live-network dogfood tests against runlane Gitea; reopening archived forge-trust clusters."
+  no_go_areas "Hand-editing lifecycle status; widening envelope fields; implementation in draft planning PR."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}

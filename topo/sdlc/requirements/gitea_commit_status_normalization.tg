@@ -1,0 +1,9 @@
+requirement req_gitea_commit_status_normalization {
+  name "Gitea commit status normalization for prChecks"
+  description "Remogram gitea-api prChecks must normalize Gitea commit status payloads that use status (Gitea 1.23.x) with state fallback for legacy fixtures; classify each context by its latest status row; map values into existing check_conclusion vocabulary with fail-closed unknown for missing or unrecognized values."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority high
+  status draft
+}

@@ -1,0 +1,29 @@
+bug bug_gitea_commit_status_field_mismatch {
+  name "Gitea prChecks reads state but API returns status"
+  description "prChecks maps normalizeGiteaStatusState(s.state) while Gitea 1.23.8 /statuses/{sha} payloads expose status not state, yielding unknown states and check_conclusion unknown on otherwise successful CI."
+  fixed_in []
+  fixed_in_verification []
+  status open
+  severity high
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Agents and merge planning see check_conclusion unknown despite green Gitea commit statuses on dogfood repos."
+  linked_task task_gitea_commit_status_normalization_wave1
+  reproduction "remogram pr checks against attebury/runlane PR #4 head 2ba4cdc on local Gitea 1.23.8; compare raw /statuses payload keys vs packet statuses[].state."
+  boundary_test_added false
+}
+
+bug bug_gitea_commit_status_duplicate_context_stale {
+  name "Stale pending duplicate contexts override newer success"
+  description "prChecks passes all paginated status rows to summarizeChecks without selecting the latest row per context; older pending duplicates can force check_conclusion pending when newer success rows exist for the same context."
+  fixed_in []
+  fixed_in_verification []
+  status open
+  severity medium
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Merge planning and review treat PR as pending checks when latest per-context status is success."
+  linked_task task_gitea_commit_status_normalization_wave1
+  reproduction "Fetch /statuses/{sha} with duplicate context rows (pending then success); observe check_conclusion pending without dedupe."
+  boundary_test_added false
+}
