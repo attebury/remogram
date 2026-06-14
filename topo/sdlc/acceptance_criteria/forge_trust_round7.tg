@@ -16,7 +16,7 @@ acceptance_criterion ac_non_list_ingest_oversize_mock_round7 {
   name "Oversize single-page ingest mock passes"
   description "Given mocked forge APIs returning one paginated page whose raw JSON exceeds 8192 bytes, when pr_checks or merge_plan runs, then no OVERSIZED_RAW_OUTPUT error occurs under default cap."
   requirement req_forge_trust_round7
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_check_pagination_pr_checks_page2_round7 {
