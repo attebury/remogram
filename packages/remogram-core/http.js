@@ -67,9 +67,11 @@ export function parseLinkHeader(linkHeader) {
 }
 
 /** Reject Link rel=next URLs that leave the configured API origin (token exfiltration guard). */
-export function isTrustedPaginationUrl(trustedOrigin, url) {
+export function isTrustedPaginationUrl(trustedOrigin, url, resolveBase) {
   try {
-    return new URL(url).origin === trustedOrigin;
+    const resolved =
+      resolveBase != null && resolveBase !== '' ? new URL(url, resolveBase) : new URL(url);
+    return resolved.origin === trustedOrigin;
   } catch {
     return false;
   }
