@@ -16,5 +16,5 @@ task task_gitleaks_local_runner_install {
   priority high
   work_type implementation
   claimed_by [actor_coding_agent]
-  status in-progress
+  status done
 }

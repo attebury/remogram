@@ -4,10 +4,10 @@ plan plan_cr_inventory_list_complete {
   task task_cr_inventory_list_complete
   architecture_patterns [contract_boundary, fail_closed_gate]
   steps {
-    step list_pagination status pending description "listOpenPullsWithMeta paginates to end with ingest backoff; list_truncated false only when complete."
-    step inventory_fail_closed status pending description "crInventory fails closed or marks incomplete when list cannot be proved complete."
-    step regression_fixture status pending description "Provider regression fixture: oversized first page recovers to complete list with list_truncated false."
-    step verify status pending description "npm test green; topogram check green."
+    step list_pagination status done description "listOpenPullsWithMeta paginates to end with ingest backoff; list_truncated false only when complete."
+    step inventory_fail_closed status done description "crInventory fails closed or marks incomplete when list cannot be proved complete."
+    step regression_fixture status done description "Provider regression fixture: oversized first page recovers to complete list with list_truncated false."
+    step verify status done description "npm test green; topogram check green."
   }
-  status draft
+  status complete
 }

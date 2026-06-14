@@ -15,5 +15,6 @@ task task_cr_inventory_list_complete {
   disposition backlog
   priority high
   work_type implementation
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  status done
 }

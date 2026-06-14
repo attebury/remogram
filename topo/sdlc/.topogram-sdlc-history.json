@@ -8300,6 +8300,16 @@
       "at": "2026-06-14T20:51:39.530Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-14T20:59:16.704Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "origin/remo@1d1f361"
+      ]
     }
   ],
   "req_gitleaks_local_runner_install": [
@@ -8322,6 +8332,16 @@
       "evidence_refs": [
         "forge:pr/310"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-14T20:59:15.784Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/313"
+      ]
     }
   ],
   "req_cr_inventory_list_complete": [
@@ -8343,6 +8363,16 @@
       "note": null,
       "evidence_refs": [
         "forge:pr/310"
+      ]
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-14T20:59:16.041Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/314"
       ]
     }
   ],
@@ -8416,6 +8446,13 @@
       "evidence_refs": [
         "forge:pr/311"
       ]
+    },
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-14T20:59:10.351Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ],
   "task_gitleaks_local_runner_install": [
@@ -8432,6 +8469,169 @@
       "at": "2026-06-14T20:51:39.437Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T20:58:09.645Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/313"
+      ]
+    }
+  ],
+  "task_cr_inventory_list_complete": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T20:58:22.021Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T20:58:22.093Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T20:58:38.068Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/314"
+      ]
+    }
+  ],
+  "ac_cr_inventory_list_backoff": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:58:35.754Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/314"
+      ]
+    }
+  ],
+  "ac_cr_inventory_list_truncated_false": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:58:36.021Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/314"
+      ]
+    }
+  ],
+  "ac_cr_inventory_fail_closed_incomplete": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:58:36.733Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/314"
+      ]
+    }
+  ],
+  "ac_cr_inventory_gitea_regression_fixture": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:58:37.437Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/314"
+      ]
+    }
+  ],
+  "plan_gitleaks_local_runner_install#workflow_install": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-14T20:58:49.331Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_gitleaks_local_runner_install#guard_tests": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-14T20:58:49.582Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_gitleaks_local_runner_install#verify": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-14T20:58:49.829Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_cr_inventory_list_complete#list_pagination": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-14T20:59:09.347Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_cr_inventory_list_complete#inventory_fail_closed": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-14T20:59:09.601Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_cr_inventory_list_complete#regression_fixture": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-14T20:59:09.850Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_cr_inventory_list_complete#verify": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-14T20:59:10.101Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "plan_cr_inventory_list_complete": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-14T20:59:15.256Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-14T20:59:15.526Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ]
 }

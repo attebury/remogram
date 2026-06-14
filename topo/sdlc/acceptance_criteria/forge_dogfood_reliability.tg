@@ -37,26 +37,26 @@ acceptance_criterion ac_cr_inventory_list_backoff {
   name "Open-PR list uses ingest backoff pagination"
   description "Given Gitea open-pull list where first page exceeds ingest cap, when listOpenPullsWithMeta runs, then fetchPageWithIngestBackoff reduces page size and continues pagination until end-of-list or fail-closed."
   requirement req_cr_inventory_list_complete
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_cr_inventory_list_truncated_false {
   name "Complete list sets list_truncated false"
   description "Given a forge open-PR set that fits within pagination bounds, when cr inventory runs, then list_truncated is false and entry_count matches forge open PR count."
   requirement req_cr_inventory_list_complete
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_cr_inventory_fail_closed_incomplete {
   name "Unprovable completeness fails closed"
   description "Given pagination cannot prove open-PR list completion within bounds, when cr inventory runs, then packet is fail-closed or explicitly incomplete and not ok true with misleading list_truncated false."
   requirement req_cr_inventory_list_complete
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_cr_inventory_gitea_regression_fixture {
   name "Gitea regression fixture for oversized list page"
   description "Given mocked Gitea fixture where first list response exceeds default ingest cap, when remogram cr inventory runs, then it recovers via backoff and returns list_truncated false for the complete open set."
   requirement req_cr_inventory_list_complete
-  status draft
+  status approved
 }
