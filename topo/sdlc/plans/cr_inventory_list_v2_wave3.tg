@@ -4,9 +4,9 @@ plan plan_cr_inventory_list_v2_wave3 {
   task task_cr_inventory_list_v2_wave3
   architecture_patterns [contract_boundary, fail_closed_gate]
   steps {
-    step github_search_count status pending description "Search API total_count when incomplete_results false."
-    step github_sort status pending description "List pulls sort/direction from normalized slice sort."
-    step verify status pending description "github-api tests and npm test green."
+    step github_search_count status done description "Search API total_count when incomplete_results false."
+    step github_sort status done description "List pulls sort/direction from normalized slice sort."
+    step verify status done description "github-api tests and npm test green."
   }
-  status draft
+  status complete
 }

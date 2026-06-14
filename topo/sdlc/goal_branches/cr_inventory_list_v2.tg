@@ -4,5 +4,5 @@ goal_branch goal_branch_cr_inventory_list_v2 {
   branch_ref "goal/cr-inventory-list-v2"
   task task_cr_inventory_list_v2_wave1
   evidence_refs [local:topo/sdlc/pitches/cr_inventory_list_v2.tg, local:topo/sdlc/requirements/open_pull_total_count_header.tg, local:topo/sdlc/requirements/cr_inventory_slice_sort.tg, local:topo/sdlc/requirements/open_pull_list_limit_probe_fix.tg, local:topo/sdlc/plans/cr_inventory_list_v2_wave1.tg, local:topo/sdlc/plans/cr_inventory_list_v2_wave2.tg, local:topo/sdlc/plans/cr_inventory_list_v2_wave3.tg, local:topo/sdlc/tasks/cr_inventory_list_v2.tg, local:topo/sdlc/acceptance_criteria/cr_inventory_list_v2.tg, local:topo/verifications/cr-inventory-list-v2.tg, forge:issue/330, forge:issue/331, forge:issue/332]
-  status draft
+  status done
 }
