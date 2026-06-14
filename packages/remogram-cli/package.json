@@ -1,6 +1,6 @@
 {
   "name": "@remogram/cli",
-  "version": "0.1.0-beta.2",
+  "version": "0.1.0-beta.3",
   "description": "Remogram forge boundary CLI",
   "type": "module",
   "license": "MIT",
@@ -27,11 +27,11 @@
     "node": ">=20"
   },
   "dependencies": {
-    "@remogram/core": "0.1.0-beta.2",
-    "@remogram/provider-gitea-api": "0.1.0-beta.2",
-    "@remogram/provider-github-api": "0.1.0-beta.2",
-    "@remogram/provider-gitlab-api": "0.1.0-beta.2",
-    "@remogram/provider-gitea-tea": "0.1.0-beta.2",
-    "@remogram/provider-github-gh": "0.1.0-beta.2"
+    "@remogram/core": "0.1.0-beta.3",
+    "@remogram/provider-gitea-api": "0.1.0-beta.3",
+    "@remogram/provider-github-api": "0.1.0-beta.3",
+    "@remogram/provider-gitlab-api": "0.1.0-beta.3",
+    "@remogram/provider-gitea-tea": "0.1.0-beta.3",
+    "@remogram/provider-github-gh": "0.1.0-beta.3"
   }
 }
