@@ -79,6 +79,10 @@ export function isTrustedPaginationUrl(trustedOrigin, url, resolveBase) {
     if (resolveBase == null || resolveBase === '') {
       return false;
     }
+    const baseResolved = new URL(resolveBase);
+    if (baseResolved.username !== '' || baseResolved.password !== '') {
+      return false;
+    }
     const resolved = new URL(url, resolveBase);
     if (resolved.username !== '' || resolved.password !== '') {
       return false;

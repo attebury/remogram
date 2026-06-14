@@ -103,6 +103,19 @@ describe('resolveGitHubLinkNextPage', () => {
     expect(result.truncated).toBe(false);
     expect(result.nextUrl).toContain('page=2');
   });
+
+  it('truncates when next URL embeds userinfo', () => {
+    const result = resolveGitHubLinkNextPage({
+      trustedOrigin: TRUSTED,
+      currentUrl,
+      linkHeader:
+        '<https://evil@api.github.com/repos/owner/repo/pulls?page=2>; rel="next"',
+      pageIndex: 0,
+      maxPages: MAX_CHECK_STATUS_PAGES,
+    });
+    expect(result.nextUrl).toBe(null);
+    expect(result.truncated).toBe(true);
+  });
 });
 
 describe('listOpenPullsWithMeta Link boundary chains', () => {

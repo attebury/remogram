@@ -182,15 +182,17 @@ export function resolveGitHubLinkNextPage({ trustedOrigin, currentUrl, linkHeade
   return { nextUrl: new URL(nextRaw, currentUrl).href, truncated: false };
 }
 
-export async function githubFetchPaginated(config, parsed, path, slice) {
-  const base = apiBase(config, parsed);
-  const trustedOrigin = new URL(base).origin;
-  const { token } = requireToken();
+async function paginateGitHubLinkPages({
+  trustedOrigin,
+  startUrl,
+  token,
+  initialLimit = DEFAULT_CHECK_STATUS_PAGE_SIZE,
+  mapPageItems,
+}) {
   const all = [];
   let truncated = false;
-  const pageQuery = `${path.includes('?') ? '&' : '?'}per_page=${DEFAULT_CHECK_STATUS_PAGE_SIZE}`;
-  let url = `${base}${path}${pageQuery}`;
-  let activeLimit = DEFAULT_CHECK_STATUS_PAGE_SIZE;
+  let url = startUrl;
+  let activeLimit = initialLimit;
   for (let page = 0; page < MAX_CHECK_PAGES && url; page += 1) {
     const currentUrl = url;
     let usedLimit = activeLimit;
@@ -206,7 +208,7 @@ export async function githubFetchPaginated(config, parsed, path, slice) {
       activeLimit,
     );
     activeLimit = usedLimit;
-    all.push(...slice(body));
+    all.push(...mapPageItems(body));
     const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
     const linkPage = resolveGitHubLinkNextPage({
       trustedOrigin,
@@ -221,6 +223,20 @@ export async function githubFetchPaginated(config, parsed, path, slice) {
     url = linkPage.nextUrl ? withPerPageParam(linkPage.nextUrl, activeLimit) : null;
   }
   return { items: all, truncated };
+}
+
+export async function githubFetchPaginated(config, parsed, path, slice) {
+  const base = apiBase(config, parsed);
+  const trustedOrigin = new URL(base).origin;
+  const { token } = requireToken();
+  const pageQuery = `${path.includes('?') ? '&' : '?'}per_page=${DEFAULT_CHECK_STATUS_PAGE_SIZE}`;
+  const startUrl = `${base}${path}${pageQuery}`;
+  return paginateGitHubLinkPages({
+    trustedOrigin,
+    startUrl,
+    token,
+    mapPageItems: (body) => slice(body),
+  });
 }
 
 export function graphqlEndpoint(config, parsed = {}) {
@@ -496,38 +512,15 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
 
   if (listLimit == null) {
     const trustedOrigin = new URL(base).origin;
-    let url = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open`;
-    let activeLimit = DEFAULT_CHECK_STATUS_PAGE_SIZE;
-    for (let page = 0; page < MAX_CHECK_PAGES && url; page += 1) {
-      const currentUrl = url;
-      let usedLimit = activeLimit;
-      const { body, headers } = await fetchWithIngestPageBackoff(
-        (attemptUrl) =>
-          fetchJsonWithMeta(attemptUrl, {
-            headers: authHeaders(token),
-          }),
-        (limit) => {
-          usedLimit = limit;
-          return withPerPageParam(currentUrl, limit);
-        },
-        activeLimit,
-      );
-      activeLimit = usedLimit;
-      const items = Array.isArray(body) ? body : [];
-      all.push(...items);
-      const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
-      const linkPage = resolveGitHubLinkNextPage({
-        trustedOrigin,
-        currentUrl,
-        linkHeader,
-        pageIndex: page,
-        maxPages: MAX_CHECK_PAGES,
-      });
-      if (linkPage.truncated) {
-        listTruncated = true;
-      }
-      url = linkPage.nextUrl ? withPerPageParam(linkPage.nextUrl, activeLimit) : null;
-    }
+    const startUrl = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open`;
+    const { items: linkItems, truncated: linkTruncated } = await paginateGitHubLinkPages({
+      trustedOrigin,
+      startUrl,
+      token,
+      mapPageItems: (body) => (Array.isArray(body) ? body : []),
+    });
+    all.push(...linkItems);
+    listTruncated = linkTruncated;
   } else {
     const { items: limitItems, list_truncated: limitTruncated } = await paginateOffsetListPages({
       pageSize: GITHUB_PAGE_SIZE,

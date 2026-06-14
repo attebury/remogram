@@ -413,6 +413,23 @@ describe('provider-github-api fixtures', () => {
     expect(global.fetch.mock.calls.every(([u]) => !String(u).includes('/user/emails'))).toBe(true);
   });
 
+  it('listOpenPullsWithMeta rejects userinfo Link rel=next without fetching', async () => {
+    const userinfoNext = 'https://evil@api.github.com/repos/owner/repo/pulls?page=2';
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('evil@')) {
+        throw new Error('must not fetch untrusted pagination URL');
+      }
+      return Promise.resolve(
+        jsonResponse([{ number: 1 }], 200, { link: `<${userinfoNext}>; rel="next"` }),
+      );
+    });
+    const meta = await listOpenPullsWithMeta(ctx, {});
+    expect(meta.list_truncated).toBe(true);
+    expect(meta.numbers).toEqual([1]);
+    expect(global.fetch.mock.calls.every(([u]) => !String(u).includes('evil@'))).toBe(true);
+  });
+
   it('listOpenPullsWithMeta follows relative same-origin Link rel=next', async () => {
     const relativeNext = '/repos/owner/repo/pulls?state=open&page=2';
     global.fetch.mockImplementation((url) => {
