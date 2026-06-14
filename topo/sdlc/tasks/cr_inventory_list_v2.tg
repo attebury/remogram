@@ -1,0 +1,68 @@
+task task_cr_inventory_list_v2_wave1 {
+  name "CR inventory list v2 wave 1 — Gitea fast path"
+  description "Core open-pull-list module, Gitea X-Total-Count fast path, --sort, listLimit probe fix."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["GitHub search API" "GitLab fast path" "Default sort change"]
+  entrypoints ["packages/remogram-core/open-pull-list.js" "packages/provider-gitea-api/**" "packages/remogram-cli/**" "packages/remogram-mcp/**" "tests/**"]
+  satisfies [req_open_pull_total_count_header req_cr_inventory_slice_sort req_open_pull_list_limit_probe_fix]
+  acceptance_refs [ac_gitea_fast_path_one_call ac_gitea_total_over_cap_fail_closed ac_sort_recent_update_changes_slice ac_default_sort_backward_compatible ac_list_limit_maxpages_probe ac_idempotency_scan_unaffected]
+  verification_refs [verification_cr_inventory_list_v2_wave1]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition backlog
+  priority high
+  work_type implementation
+  claimed_by [actor_coding_agent]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "feature work"
+  status claimed
+}
+
+task task_cr_inventory_list_v2_wave2 {
+  name "CR inventory list v2 wave 2 — GitLab"
+  description "GitLab X-Total fast path and sort mapper."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["GitHub search API" "Envelope schema version bump"]
+  entrypoints ["packages/provider-gitlab-api/**" "tests/provider/gitlab-api.test.mjs"]
+  satisfies [req_open_pull_total_count_header req_cr_inventory_slice_sort]
+  acceptance_refs [ac_gitlab_x_total_fast_path]
+  verification_refs [verification_cr_inventory_list_v2_wave2]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_cr_inventory_list_v2_wave1]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition backlog
+  priority high
+  work_type implementation
+  claimed_by [actor_coding_agent]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "feature work"
+  status claimed
+}
+
+task task_cr_inventory_list_v2_wave3 {
+  name "CR inventory list v2 wave 3 — GitHub"
+  description "GitHub Search API total_count and list sort passthrough."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Write commands" "Idempotency scan changes"]
+  entrypoints ["packages/provider-github-api/**" "tests/provider/github-api.test.mjs"]
+  satisfies [req_open_pull_total_count_header req_cr_inventory_slice_sort]
+  acceptance_refs [ac_github_search_total_count ac_github_search_incomplete_fail_closed]
+  verification_refs [verification_cr_inventory_list_v2_wave3]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_cr_inventory_list_v2_wave2]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition backlog
+  priority high
+  work_type implementation
+  claimed_by [actor_coding_agent]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "feature work"
+  status claimed
+}

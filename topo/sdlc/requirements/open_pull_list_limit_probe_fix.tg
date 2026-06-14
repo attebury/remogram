@@ -1,0 +1,8 @@
+requirement req_open_pull_list_limit_probe_fix {
+  name "listLimit maxPages boundary probe"
+  description "paginateOffsetListPages listLimit branch must probe page+1 at maxPages before setting list_truncated true, matching unbounded path behavior."
+  affects [cap_forge_remote_ops]
+  pitch pitch_cr_inventory_list_v2
+  priority high
+  status approved
+}
