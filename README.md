@@ -283,7 +283,7 @@ To change coverage include/exclude lists or add thresholds, update this section,
 
 Multi-source providers (GitHub, GitLab) expose **`check_source_count`**, **`compliant_max_items_total`**, and **`truncation_combination: any_source_truncated`** in **`check_pagination`** — truncation is true when any source hits the page cap.
 
-GitHub Link **`rel=next`** pagination follows only same-origin URLs whose **pathname matches the current request** (strict equality); off-path same-origin links are rejected fail-closed so bearer tokens are not sent to unrelated API paths.
+GitHub Link **`rel=next`** pagination follows only same-origin URLs whose **pathname matches the current request** (strict equality); callers must pass **`resolveBase`** (current request URL) — omitted base fails closed; off-path same-origin links are rejected so bearer tokens are not sent to unrelated API paths.
 
 ### Auth class matrix (API providers)
 

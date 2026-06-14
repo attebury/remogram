@@ -69,16 +69,16 @@ export function parseLinkHeader(linkHeader) {
 /** Reject Link rel=next URLs that leave the configured API origin (token exfiltration guard). */
 export function isTrustedPaginationUrl(trustedOrigin, url, resolveBase) {
   try {
-    const resolved =
-      resolveBase != null && resolveBase !== '' ? new URL(url, resolveBase) : new URL(url);
+    if (resolveBase == null || resolveBase === '') {
+      return false;
+    }
+    const resolved = new URL(url, resolveBase);
     if (resolved.origin !== trustedOrigin) {
       return false;
     }
-    if (resolveBase != null && resolveBase !== '') {
-      const basePath = new URL(resolveBase).pathname;
-      if (resolved.pathname !== basePath) {
-        return false;
-      }
+    const basePath = new URL(resolveBase).pathname;
+    if (resolved.pathname !== basePath) {
+      return false;
     }
     return true;
   } catch {
