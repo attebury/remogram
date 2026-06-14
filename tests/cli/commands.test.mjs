@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach } from 'vitest';
+import { describe, it, expect, afterEach, vi } from 'vitest';
 import { runCli } from '@remogram/cli';
 import { PACKET_TYPES, SCHEMA_VERSION } from '@remogram/core';
 import { provider as giteaProvider } from '@remogram/provider-gitea-api';
@@ -276,6 +276,25 @@ describe('remogram cli commands', () => {
     expect(packet.error_code).toBe('unauthenticated_provider');
   });
 
+  it('cr open without write_commands returns write_not_configured', async () => {
+    const config = defaultTestConfig();
+    delete config.write_commands;
+    const setup = setupTempForge({
+      config,
+      remoteUrl: 'https://localhost:3000/owner/repo.git',
+    });
+    cleanups.push(setup);
+    const { logs } = await captureCliOutput(() =>
+      runCli(
+        ['cr', 'open', '--head', 'impl/x', '--base', 'remo', '--title', 'Open CR', '--json'],
+        { cwd: setup.dir, providers: { 'gitea-api': createMockProvider() } },
+      ),
+    );
+    const packet = JSON.parse(logs[0]);
+    expect(packet.ok).toBe(false);
+    expect(packet.error_code).toBe('write_not_configured');
+  });
+
   it('cr open returns change_request_opened via mock provider', async () => {
     const { cli } = env();
     const { logs } = await cli([
@@ -294,6 +313,110 @@ describe('remogram cli commands', () => {
     expect(packet.pr_number).toBe(99);
     expect(packet.head).toBe('impl/x');
     expect(packet.base).toBe('remo');
+  });
+
+  it('cr open then cr inventory includes opened pr_number via gitea-api', async () => {
+    const config = defaultTestConfig();
+    const setup = setupTempForge({
+      config,
+      remoteUrl: 'http://localhost:3000/owner/repo.git',
+    });
+    cleanups.push(setup);
+    process.env.GITEA_TOKEN = 'test-token';
+
+    const openedPull = {
+      number: 278,
+      title: 'Open CR',
+      state: 'open',
+      mergeable: true,
+      html_url: 'http://localhost:3000/owner/repo/pulls/278',
+      base: { ref: 'remo', sha: 'aaa111' },
+      head: { ref: 'impl/x', sha: 'bbb222' },
+    };
+
+    vi.stubGlobal('fetch', vi.fn());
+    try {
+      global.fetch
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from('[]');
+            },
+          },
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 201,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(JSON.stringify(openedPull));
+            },
+          },
+        });
+
+      const { logs: openLogs } = await captureCliOutput(() =>
+        runCli(['cr', 'open', '--head', 'impl/x', '--base', 'remo', '--title', 'Open CR', '--json'], {
+          cwd: setup.dir,
+          providers: { 'gitea-api': giteaProvider },
+        }),
+      );
+      const opened = JSON.parse(openLogs[0]);
+      expect(opened.type).toBe(PACKET_TYPES.CHANGE_REQUEST_OPENED);
+      expect(opened.pr_number).toBe(278);
+
+      global.fetch
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(JSON.stringify([{ number: 278, state: 'open' }]));
+            },
+          },
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(JSON.stringify(openedPull));
+            },
+          },
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(JSON.stringify(openedPull));
+            },
+          },
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from('[]');
+            },
+          },
+        });
+
+      const { logs: inventoryLogs } = await captureCliOutput(() =>
+        runCli(['cr', 'inventory', '--json'], {
+          cwd: setup.dir,
+          providers: { 'gitea-api': giteaProvider },
+        }),
+      );
+      const inventory = JSON.parse(inventoryLogs[0]);
+      expect(inventory.type).toBe('cr_inventory_slice');
+      expect(inventory.ok).toBe(true);
+      expect(inventory.entries.some((entry) => entry.pr_number === 278)).toBe(true);
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it('cr open without provider support returns provider_unsupported', async () => {

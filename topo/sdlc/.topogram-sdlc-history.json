@@ -7746,6 +7746,13 @@
       "at": "2026-06-14T19:25:33.636Z",
       "by": "actor_plan_lane",
       "note": null
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T19:29:05.462Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ],
   "ac_docs_beta_readonly": [
@@ -7818,6 +7825,22 @@
       "at": "2026-06-14T19:27:19.057Z",
       "by": "actor_plan_lane",
       "note": null
+    }
+  ],
+  "task_cr_open_hardening": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T19:29:05.262Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T19:29:05.357Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ]
 }

@@ -8,7 +8,14 @@ All notable changes to this project will be documented in this file.
 
 - **`remogram cr open`:** Gitea-first write path to open change requests; emits `change_request_opened` packet with trusted envelope; MCP `cr_open` tool with `readOnlyHint: false`
 
+### Changed
+
+- **Write opt-in:** `write_commands` in `.remogram.json` required for `cr open` (fail closed with `write_not_configured`); doctor warns when provider supports writes but config does not opt in
+- **Docs:** beta.0–beta.3 read/plan by default; incremental write wiring; opt-out bridge table (Gitea shim, gh/glab manual)
+
 ### Fixed
+
+- **CR open hardening:** idempotent open for matching head+base; structured `unparseable_provider_output` for invalid provider pull numbers; MCP `destructiveHint` on `cr_open`; expanded provider/CLI/MCP tests
 
 - **CR inventory default bound:** when `--limit` is omitted, inventory uses `DEFAULT_CR_INVENTORY_SAFE_LIMIT` (3) instead of 50 so default `cr inventory --json` avoids top-level `oversized_raw_output` on repos with large open-PR payloads; explicit `--limit` unchanged up to 50
 

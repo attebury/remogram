@@ -8,6 +8,8 @@ const providerSchema = z.enum([
   'github-gh',
 ]);
 
+const writeCommandSchema = z.enum(['cr_open']);
+
 const repoSegmentSchema = z
   .string()
   .min(1)
@@ -23,6 +25,7 @@ export const configSchema = z
     owner: repoSegmentSchema,
     repo: repoSegmentSchema,
     baseUrl: z.string().url().optional(),
+    write_commands: z.array(writeCommandSchema).optional(),
   })
   .strict();
 

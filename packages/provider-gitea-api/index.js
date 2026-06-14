@@ -225,6 +225,7 @@ export function providerCapabilities() {
     host_binding: 'verified_remote_host',
     pagination: 'supported',
     write_support: true,
+    write_commands: ['cr_open'],
     ...forgeIngestCapabilityFacts(),
     ...checkPaginationCapabilityFacts({
       strategy: 'offset_limit',
@@ -263,6 +264,22 @@ export async function getPull(ctx, { number }) {
   return giteaFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'pulls', number));
 }
 
+/** Scan first page of open pulls for idempotent cr open (dogfood-scale repos). */
+export async function findOpenPullByHeadBase(ctx, head, base) {
+  requireToken();
+  const path = `${repoApiPath(ctx.config, 'pulls')}?state=open&limit=50&page=1`;
+  const items = await giteaFetch(ctx.config, ctx.parsed, path);
+  if (!Array.isArray(items)) return null;
+  return (
+    items.find(
+      (pr) =>
+        String(pr?.state ?? '').toLowerCase() === 'open' &&
+        pr?.head?.ref === head &&
+        pr?.base?.ref === base,
+    ) ?? null
+  );
+}
+
 export async function crOpen(ctx, { head, base, title, body: prBody }) {
   assertGitRef(head, 'head');
   assertGitRef(base, 'base');
@@ -278,6 +295,10 @@ export async function crOpen(ctx, { head, base, title, body: prBody }) {
   };
   if (prBody != null && String(prBody).trim() !== '') {
     payload.body = sanitizeField(String(prBody));
+  }
+  const existing = await findOpenPullByHeadBase(ctx, payload.head, payload.base);
+  if (existing) {
+    return buildChangeRequestOpenedBody(existing, { head, base, title });
   }
   const pull = await giteaFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'pulls'), {
     method: 'POST',

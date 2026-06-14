@@ -111,6 +111,7 @@ export function defaultTestConfig(overrides = {}) {
     repo: 'repo',
     baseUrl: 'http://localhost:3000',
     remote: 'origin',
+    write_commands: ['cr_open'],
     ...overrides,
   };
 }

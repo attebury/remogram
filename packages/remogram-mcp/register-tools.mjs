@@ -65,6 +65,7 @@ export function registerTools(server) {
         return a;
       },
       readOnlyHint: false,
+      destructiveHint: true,
     },
     {
       name: 'pr_status',
@@ -130,7 +131,7 @@ export function registerTools(server) {
         inputSchema: tool.inputSchema,
         annotations: {
           readOnlyHint: tool.readOnlyHint !== false,
-          destructiveHint: false,
+          destructiveHint: tool.destructiveHint === true,
         },
       },
       async (input) => {

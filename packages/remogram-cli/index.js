@@ -21,6 +21,7 @@ import {
   throwIfStaleHeadByNumber,
   FACT_INVENTORY_PACKET_TYPES,
   forgeFactInventoryPacket,
+  assertWriteCommandConfigured,
 } from '@remogram/core';
 import { provider as giteaApi } from '@remogram/provider-gitea-api';
 import { provider as githubApi } from '@remogram/provider-github-api';
@@ -219,6 +220,22 @@ async function buildDoctorPacket(cwd, providers) {
       ),
     );
 
+    if (providerCapabilities.write_support) {
+      const providerWrites = (providerCapabilities.write_commands || []).filter(Boolean);
+      const configuredWrites = Array.isArray(config?.write_commands) ? config.write_commands : [];
+      const missing = providerWrites.filter((name) => !configuredWrites.includes(name));
+      checks.push(
+        doctorCheck(
+          'write_config',
+          missing.length ? 'warn' : 'pass',
+          missing.length
+            ? `Provider supports write commands but .remogram.json write_commands omits: ${missing.join(', ')}`
+            : 'Consumer write_commands matches provider write surface',
+          { provider_write_commands: providerWrites, configured_write_commands: configuredWrites },
+        ),
+      );
+    }
+
     if (!providerCapabilities.check_sources?.length) {
       checks.push(doctorCheck('checks', 'warn', 'Provider does not report forge check sources'));
     } else {
@@ -401,6 +418,7 @@ export async function runCli(argv, options = {}) {
       }
       assertGitRef(flags.head, '--head');
       assertGitRef(flags.base, '--base');
+      assertWriteCommandConfigured(ctx.config, 'cr_open');
       packet = forgePacket(
         PACKET_TYPES.CHANGE_REQUEST_OPENED,
         ctx,
