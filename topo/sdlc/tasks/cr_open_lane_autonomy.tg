@@ -1,0 +1,22 @@
+task task_cr_open_lane_autonomy {
+  name "Implement remogram cr open for Gitea"
+  description "Add remogram cr open CLI and MCP cr_open with Gitea provider; change_request_opened packet; capabilities/doctor scoped write_support; contract tests."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Merge execute or pr merge" "GitHub/GitLab cr open in v1 slice" "Removing lanes/scripts/open-gitea-change-request.mjs in same wave" "SDLC or workflow metadata in Remogram output" "Changing cr inventory default limit"]
+  entrypoints ["packages/remogram-core/**" "packages/remogram-cli/index.js" "packages/provider-gitea-api/index.js" "packages/remogram-mcp/**" "tests/**"]
+  satisfies [req_cr_open_lane_autonomy]
+  acceptance_refs [ac_cr_open_cli_packet, ac_cr_open_inventory_visible, ac_cr_open_mcp_contract, ac_cr_open_regression_tests]
+  verification_refs [verification_cr_open_lane_autonomy]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type implementation
+  claimed_by []
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Forge issue #272: product gap for lane autonomy; control-plane shim exists but is not product boundary."
+  status unclaimed
+}

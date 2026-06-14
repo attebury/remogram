@@ -1,0 +1,27 @@
+acceptance_criterion ac_cr_open_cli_packet {
+  name "cr open returns change_request_opened packet"
+  description "Given GITEA_TOKEN and a pushed head ref, when remogram cr open --head <ref> --base remo --title <t> --json runs against dogfood repo, then the command returns ok with type change_request_opened and pr_number."
+  requirement req_cr_open_lane_autonomy
+  status draft
+}
+
+acceptance_criterion ac_cr_open_inventory_visible {
+  name "Opened CR appears in cr inventory"
+  description "Given a PR opened via remogram cr open, when remogram cr inventory --json runs, then the new pr_number appears in entries without manual forge UI."
+  requirement req_cr_open_lane_autonomy
+  status draft
+}
+
+acceptance_criterion ac_cr_open_mcp_contract {
+  name "MCP cr_open matches CLI contract"
+  description "Given cr_open MCP tool invocation with equivalent args, when the tool returns JSON, then the packet matches CLI change_request_opened envelope and has readOnlyHint false."
+  requirement req_cr_open_lane_autonomy
+  status draft
+}
+
+acceptance_criterion ac_cr_open_regression_tests {
+  name "Contract tests for cr open and forbidden keys"
+  description "Given mocked Gitea API responses, when cr open tests run, then provider matrix and CLI/MCP tests pass and output excludes FORBIDDEN_PACKET_KEYS."
+  requirement req_cr_open_lane_autonomy
+  status draft
+}
