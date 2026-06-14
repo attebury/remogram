@@ -1,0 +1,12 @@
+pitch pitch_inventory_post_review_hardening {
+  name "Inventory post-review hardening"
+  description "Close code-review gaps after forge-dogfood-reliability: pagination maxPages probe, cr inventory fail-closed incomplete, streaming list efficiency, Gitleaks linux arm64 and workflow guards."
+  appetite "small"
+  problem "paginateOffsetListPages false list_truncated at exact maxPages cap; cr inventory returns ok true when list unprovable; default inventory over-fetches open PR lists; Gitleaks workflow lacks linux arm64 and thin guard tests."
+  solution_sketch "Wave 1: maxPages boundary probe in check-pagination. Wave 2: inventory_list_incomplete fail-closed plus streaming pagination and open_pull_list capabilities. Wave 3: linux arm64 asset and Topogram-parity workflow guard tests."
+  rabbit_holes "Envelope schema changes; checksum verification for gitleaks downloads; checkout action version bumps."
+  no_go_areas "Hand-editing lifecycle status; implementation in draft planning PR."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}

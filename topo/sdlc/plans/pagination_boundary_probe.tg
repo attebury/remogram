@@ -1,0 +1,12 @@
+plan plan_pagination_boundary_probe {
+  name "Pagination boundary probe — wave 1"
+  description "Unify maxPages end-of-list probe in paginateOffsetListPages; remove dead branch; regression tests."
+  task task_pagination_boundary_probe
+  architecture_patterns [contract_boundary]
+  steps {
+    step boundary_probe status pending description "Probe page+1 at maxPages before list_truncated true for listLimit null and bounded paths."
+    step tests status pending description "check-pagination tests for exact cap with empty and non-empty probe."
+    step verify status pending description "npm test green."
+  }
+  status draft
+}

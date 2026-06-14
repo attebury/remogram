@@ -1,7 +1,7 @@
 goal_branch goal_branch_cr_inventory_hardening {
   name "CR Inventory Hardening"
   description "Follow-up Intent Packet to harden cr inventory / cr_inventory_slice for Topogram semantic-diff consumers. Planning-only until explicit approval."
-  branch_ref "goal/cr-inventory-hardening"
+  branch_ref "archive/workcycle/cr-inventory-hardening"
   task task_cr_inventory_hardening_wave4
   evidence_refs [local:topo/sdlc/pitches/cr_inventory_hardening.tg, local:topo/sdlc/requirements/cr_inventory_hardening.tg, local:topo/sdlc/plans/cr_inventory_hardening.tg, local:topo/sdlc/acceptance_criteria/cr_inventory_hardening.tg, local:topo/sdlc/tasks/cr_inventory_hardening_waves.tg, local:topo/verifications/cr-inventory-hardening.tg]
   witness_refs []

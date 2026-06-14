@@ -1,0 +1,8 @@
+requirement req_gitleaks_arm64_guards {
+  name "Gitleaks linux arm64 and workflow guard tests"
+  description "secret-scan.yml must install gitleaks on Linux arm64 local runners; guard tests must mirror Topogram release-gates assertions."
+  affects [cap_forge_remote_ops]
+  pitch pitch_inventory_post_review_hardening
+  priority medium
+  status draft
+}

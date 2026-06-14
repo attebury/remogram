@@ -1,0 +1,62 @@
+acceptance_criterion ac_pagination_maxpages_probe_empty {
+  name "Exact maxPages cap with empty probe is complete"
+  description "Given listLimit null and exactly maxPages times pageSize items with empty page+1 probe, when paginateOffsetListPages runs, then list_truncated is false."
+  requirement req_pagination_boundary_probe
+  status draft
+}
+
+acceptance_criterion ac_pagination_maxpages_probe_more {
+  name "Exact maxPages cap with probe item is truncated"
+  description "Given listLimit null and full maxPages with non-empty page+1 probe, when paginateOffsetListPages runs, then list_truncated is true."
+  requirement req_pagination_boundary_probe
+  status draft
+}
+
+acceptance_criterion ac_pagination_dead_branch_removed {
+  name "No unreachable pagination branch"
+  description "Given paginateOffsetListPages source, when reviewed, then duplicate items.length less than usedLimit break inside listLimit block is removed."
+  requirement req_pagination_boundary_probe
+  status draft
+}
+
+acceptance_criterion ac_inventory_list_incomplete_fail_closed {
+  name "Unprovable list fails closed"
+  description "Given list_truncated true after open-PR list resolution, when cr inventory CLI runs, then packet ok is false with error_code inventory_list_incomplete."
+  requirement req_cr_inventory_fail_closed
+  status draft
+}
+
+acceptance_criterion ac_inventory_streaming_pagination {
+  name "Streaming pagination retains entry slice"
+  description "Given large open-PR set and default entry limit, when cr inventory runs, then only entry-limit PR numbers are retained for detail fetch while entry_count reflects full counted set."
+  requirement req_cr_inventory_list_efficiency
+  status draft
+}
+
+acceptance_criterion ac_inventory_open_pull_list_caps {
+  name "open_pull_list capability facts exposed"
+  description "Given provider capabilities packet, when gitea-api provider runs, then open_pull_list documents max_pages page_size ingest_backoff and compliant_max_items."
+  requirement req_cr_inventory_list_efficiency
+  status draft
+}
+
+acceptance_criterion ac_inventory_gitea_backoff_regression {
+  name "Gitea oversized list page backoff regression"
+  description "Given mocked Gitea fixture where first list page exceeds ingest cap, when cr inventory runs, then backoff recovers and returns ok true with list_truncated false for complete open set."
+  requirement req_cr_inventory_fail_closed
+  status draft
+}
+
+acceptance_criterion ac_gitleaks_linux_arm64 {
+  name "Workflow supports Linux arm64"
+  description "Given secret-scan.yml platform case, when parsed, then Linux arm64 maps to linux_arm64 gitleaks asset."
+  requirement req_gitleaks_arm64_guards
+  status draft
+}
+
+acceptance_criterion ac_gitleaks_workflow_guard_parity {
+  name "Workflow guard tests match Topogram parity"
+  description "Given secret-scan.test.mjs, when run, then workflow lacks gitleaks-action and GITHUB_TOKEN patterns and asserts push-range and full-history fallback steps."
+  requirement req_gitleaks_arm64_guards
+  status draft
+}
