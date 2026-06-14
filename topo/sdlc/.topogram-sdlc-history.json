@@ -6733,5 +6733,27 @@
       "by": "actor_plan_lane",
       "note": null
     }
+  ],
+  "req_gitea_commit_status_normalization": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T06:13:57.874Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:245"
+      ]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T06:13:58.117Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:245"
+      ]
+    }
   ]
 }
