@@ -1,0 +1,9 @@
+requirement req_forge_trust_round7 {
+  name "Remogram forge trust round 7 — review remediation"
+  description "Remogram must close round-6 code-review gaps: emit check_pagination in provider capabilities per decision_forge_ingest_cap_policy; centralize pagination constants in remogram-core; prove non-list forge ingest stays under default 8192 via oversize mock tests; harden pagination regression tests for pr_checks and merge_plan including decoupled page-2 cases; replace static secret-scan grep with behavioral runtime tests and cover install-pre-push-hook defaults."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority high
+  status draft
+}
