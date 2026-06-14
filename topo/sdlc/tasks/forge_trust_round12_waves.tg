@@ -1,0 +1,91 @@
+task task_forge_trust_round12_wave1 {
+  name "Wave 1 — List activeLimit carry-forward"
+  description "Carry reduced ingest backoff limit across listOpenPullsWithMeta pages on Gitea, GitLab, and GitHub limit branch."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["GitHub Link-mode list per_page carry-forward" "Raising DEFAULT_MAX_BYTES"]
+  entrypoints ["packages/remogram-core/check-pagination.js" "packages/provider-gitea-api/index.js" "packages/provider-gitlab-api/index.js" "packages/provider-github-api/index.js" "tests/provider/gitea-api.test.mjs" "tests/provider/gitlab-api.test.mjs" "tests/provider/github-api.test.mjs"]
+  satisfies [req_forge_trust_round12]
+  acceptance_refs [ac_list_active_limit_carry_round12]
+  verification_refs [verification_forge_trust_round12_wave1]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
+  linked_bugs [bug_list_backoff_no_active_limit_carry]
+  status unclaimed
+}
+
+task task_forge_trust_round12_wave2 {
+  name "Wave 2 — Require resolveBase fail-closed"
+  description "isTrustedPaginationUrl returns false when resolveBase omitted; update core tests and agent docs."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Repo-scoped prefix allowlists"]
+  entrypoints ["packages/remogram-core/http.js" "tests/core/pagination-trust.test.mjs" "README.md" "tools/remogram-agent-support/skills/remogram-core/SKILL.md"]
+  satisfies [req_forge_trust_round12]
+  acceptance_refs [ac_require_resolve_base_round12]
+  verification_refs [verification_forge_trust_round12_wave2]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round12_wave1]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
+  linked_bugs [bug_pagination_trust_no_resolve_base]
+  status unclaimed
+}
+
+task task_forge_trust_round12_wave3 {
+  name "Wave 3 — Pathname trailing-slash normalization"
+  description "Normalize trailing slashes before pathname equality in isTrustedPaginationUrl."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Prefix allowlists"]
+  entrypoints ["packages/remogram-core/http.js" "tests/core/pagination-trust.test.mjs"]
+  satisfies [req_forge_trust_round12]
+  acceptance_refs [ac_pathname_trailing_slash_round12]
+  verification_refs [verification_forge_trust_round12_wave3]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round12_wave2]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type bugfix
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
+  linked_bugs [bug_pathname_trailing_slash_mismatch]
+  status unclaimed
+}
+
+task task_forge_trust_round12_wave4 {
+  name "Wave 4 — parseLinkHeader adversarial tests"
+  description "Core tests for parseLinkHeader malformed and adversarial Link headers; optional resolveGitHubLinkNextPage unit tests."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Product changes unless tests reveal bugs"]
+  entrypoints ["packages/remogram-core/http.js" "tests/core/link-header.test.mjs"]
+  satisfies [req_forge_trust_round12]
+  acceptance_refs [ac_link_header_adversarial_tests_round12]
+  verification_refs [verification_forge_trust_round12_wave4]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round12_wave3]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority low
+  work_type bugfix
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
+  linked_bugs [bug_parse_link_header_adversarial_untested]
+  status unclaimed
+}

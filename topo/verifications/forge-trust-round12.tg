@@ -1,0 +1,51 @@
+verification verification_forge_trust_round12_wave1 {
+  name "Forge trust round 12 wave 1"
+  description "List activeLimit carry-forward on all provider list paths."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round12_wave1]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_list_backoff_no_active_limit_carry]
+  status draft
+}
+
+verification verification_forge_trust_round12_wave2 {
+  name "Forge trust round 12 wave 2"
+  description "Fail-closed Link trust without resolveBase."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round12_wave2]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_pagination_trust_no_resolve_base]
+  status draft
+}
+
+verification verification_forge_trust_round12_wave3 {
+  name "Forge trust round 12 wave 3"
+  description "Pathname trailing-slash normalization."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round12_wave3]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_pathname_trailing_slash_mismatch]
+  status draft
+}
+
+verification verification_forge_trust_round12_wave4 {
+  name "Forge trust round 12 wave 4"
+  description "parseLinkHeader adversarial tests."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round12_wave4]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_parse_link_header_adversarial_untested]
+  status draft
+}

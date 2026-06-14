@@ -1,0 +1,9 @@
+goal_branch goal_branch_forge_trust_round12 {
+  name "Forge Trust Round 12 Intent Packet"
+  description "Intent Packet for list activeLimit carry-forward, resolveBase fail-closed Link trust, pathname trailing-slash normalization, and parseLinkHeader adversarial proof. Four serialized waves."
+  branch_ref "goal/forge-trust-round12"
+  task task_forge_trust_round12_wave1
+  evidence_refs [local:topo/sdlc/pitches/forge_trust_round12.tg, local:topo/sdlc/requirements/forge_trust_round12.tg, local:topo/sdlc/plans/forge_trust_round12.tg, local:topo/sdlc/tasks/forge_trust_round12_waves.tg, local:topo/sdlc/acceptance_criteria/forge_trust_round12.tg, local:topo/sdlc/bugs/forge-trust-round12.tg, local:topo/sdlc/decisions/forge_ingest_cap_policy.tg, local:topo/verifications/forge-trust-round12.tg]
+  witness_refs []
+  status draft
+}

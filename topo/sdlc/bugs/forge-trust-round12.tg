@@ -1,0 +1,51 @@
+bug bug_list_backoff_no_active_limit_carry {
+  name "List ingest backoff resets limit between offset pages"
+  description "listOpenPullsWithMeta uses fetchWithIngestPageBackoff per page but resets requestLimit each iteration; page 2 uses full limit after page 1 backed off, skipping items."
+  status open
+  severity high
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Silent open-PR loss in cr inventory list phase under ingest pressure."
+  linked_task task_forge_trust_round12_wave1
+  reproduction "Halve page 1 list to limit 12 with full page; observe page 2 uses limit 25."
+  boundary_test_added false
+}
+
+bug bug_pagination_trust_no_resolve_base {
+  name "isTrustedPaginationUrl trusts same-origin URLs without resolveBase"
+  description "When resolveBase omitted, any same-origin absolute URL is trusted including off-path endpoints like /user/emails."
+  status open
+  severity high
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Public API footgun allows off-path trust if caller omits resolveBase."
+  linked_task task_forge_trust_round12_wave2
+  reproduction "Call isTrustedPaginationUrl(trustedOrigin, 'https://api.github.com/user/emails') without resolveBase."
+  boundary_test_added false
+}
+
+bug bug_pathname_trailing_slash_mismatch {
+  name "Trailing-slash pathname mismatch fails closed"
+  description "Strict pathname equality rejects /pulls vs /pulls/ causing false truncation when forge emits trailing-slash Link URLs."
+  status open
+  severity medium
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Legitimate pagination stops early with truncated true."
+  linked_task task_forge_trust_round12_wave3
+  reproduction "Compare pathname /repos/o/r/pulls with /repos/o/r/pulls/?page=2."
+  boundary_test_added false
+}
+
+bug bug_parse_link_header_adversarial_untested {
+  name "parseLinkHeader lacks adversarial and malformed header tests"
+  description "Link header parser only matches rel=\"next\" with double quotes; adversarial forge headers untested."
+  status open
+  severity low
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Regression in Link parsing or injection handling goes undetected."
+  linked_task task_forge_trust_round12_wave4
+  reproduction "grep tests for parseLinkHeader adversarial cases."
+  boundary_test_added false
+}
