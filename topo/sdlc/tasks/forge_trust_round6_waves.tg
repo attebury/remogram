@@ -38,9 +38,10 @@ task task_forge_trust_round6_wave2 {
   disposition active
   priority critical
   work_type bugfix
+  claimed_by [actor_coding_agent]
   bug_discovery bug_linked
-  linked_bugs [bug_check_pagination_first_page_only, bug_gitea_check_state_passthrough]
-  status unclaimed
+  linked_bugs [bug_check_pagination_first_page_only bug_gitea_check_state_passthrough]
+  status done
 }
 
 task task_forge_trust_round6_wave3 {

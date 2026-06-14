@@ -2,7 +2,7 @@ goal_branch goal_branch_forge_trust_round6 {
   name "Forge Trust Round 6 Intent Packet"
   description "Intent Packet to close twelve open forge-trust-round4 bugs whose round-4 wave tasks were marked done without bug closure. Four serialized waves. Planning-only until explicit approval."
   branch_ref "goal/forge-trust-round6"
-  task task_forge_trust_round6_wave2
+  task task_forge_trust_round6_wave3
   evidence_refs [local:topo/sdlc/pitches/forge_trust_round6.tg, local:topo/sdlc/requirements/forge_trust_round6.tg, local:topo/sdlc/plans/forge_trust_round6.tg, local:topo/sdlc/tasks/forge_trust_round6_waves.tg, local:topo/sdlc/acceptance_criteria/forge_trust_round6.tg, local:topo/sdlc/bugs/forge-trust-round4.tg, local:topo/sdlc/decisions/forge_ingest_cap_policy.tg, local:topo/sdlc/decisions/packet_trust_doctrine.tg, local:topo/verifications/forge-trust-round6.tg]
   witness_refs []
   status approved

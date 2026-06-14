@@ -4160,6 +4160,23 @@
       "evidence_refs": [
         "pr:143"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T02:08:27.622Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-14T02:08:46.388Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:146"
+      ]
     }
   ],
   "req_forge_trust_round6": [
@@ -4363,6 +4380,67 @@
       "at": "2026-06-14T02:07:36.941Z",
       "by": "actor_plan_lane",
       "note": null
+    }
+  ],
+  "task_forge_trust_round6_wave2": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T02:08:27.468Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T02:08:27.557Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T02:08:36.504Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_check_pagination_first_page_only": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:08:37.322Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:08:37.551Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "verification:verification_forge_trust_round6_wave2"
+      ]
+    }
+  ],
+  "bug_gitea_check_state_passthrough": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:08:38.541Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:08:39.274Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "verification:verification_forge_trust_round6_wave2"
+      ]
     }
   ]
 }
