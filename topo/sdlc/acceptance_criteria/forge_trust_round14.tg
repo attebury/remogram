@@ -1,0 +1,20 @@
+acceptance_criterion ac_github_fetch_paginated_userinfo_link_round14 {
+  name "githubFetchPaginated rejects userinfo Link rel=next"
+  description "Given check-runs page 1 with userinfo Link rel=next, when githubFetchPaginated runs, then truncated is true, one item returned, and evil@ URL is never fetched."
+  requirement req_forge_trust_round14
+  status draft
+}
+
+acceptance_criterion ac_max_pages_truncates_with_limit_doc_round14 {
+  name "GitHub maxPagesTruncatesWithLimit documented at call site"
+  description "Given listOpenPullsWithMeta limit branch, when reading provider-github-api index.js, then inline comment explains GitHub-only maxPagesTruncatesWithLimit and Gitea/GitLab omission."
+  requirement req_forge_trust_round14
+  status draft
+}
+
+acceptance_criterion ac_password_only_resolve_base_round14 {
+  name "Password-only resolveBase fails Link trust"
+  description "Given resolveBase with password-only userinfo, when isTrustedPaginationUrl evaluates a valid next URL, then result is false fail-closed."
+  requirement req_forge_trust_round14
+  status draft
+}

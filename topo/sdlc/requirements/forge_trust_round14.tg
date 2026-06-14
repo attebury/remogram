@@ -1,0 +1,9 @@
+requirement req_forge_trust_round14 {
+  name "Remogram forge trust round 14 — post-R13 review hygiene"
+  description "Remogram must prove githubFetchPaginated rejects userinfo Link rel=next without fetching; document GitHub-only maxPagesTruncatesWithLimit at listOpenPullsWithMeta limit branch; and assert password-only resolveBase fails isTrustedPaginationUrl."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority low
+  status draft
+}

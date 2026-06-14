@@ -1,0 +1,9 @@
+goal_branch goal_branch_forge_trust_round14 {
+  name "Forge Trust Round 14 Intent Packet"
+  description "Intent Packet for post-R13 review hygiene: githubFetchPaginated userinfo Link test, GitHub maxPagesTruncatesWithLimit documentation, password-only resolveBase trust test. Single wave."
+  branch_ref "goal/forge-trust-round14"
+  task task_forge_trust_round14_wave1
+  evidence_refs [local:topo/sdlc/pitches/forge_trust_round14.tg, local:topo/sdlc/requirements/forge_trust_round14.tg, local:topo/sdlc/plans/forge_trust_round14.tg, local:topo/sdlc/tasks/forge_trust_round14_waves.tg, local:topo/sdlc/acceptance_criteria/forge_trust_round14.tg, local:topo/sdlc/bugs/forge-trust-round14.tg, local:topo/verifications/forge-trust-round14.tg]
+  witness_refs []
+  status draft
+}

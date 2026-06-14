@@ -1,0 +1,12 @@
+verification verification_forge_trust_round14_wave1 {
+  name "Forge trust round 14 wave 1"
+  description "Post-R13 review hygiene: userinfo Link test, maxPagesTruncatesWithLimit comment, password-only resolveBase test."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round14_wave1]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_github_fetch_paginated_userinfo_link_untested, bug_max_pages_truncates_with_limit_undocumented, bug_password_only_resolve_base_untested]
+  status draft
+}
