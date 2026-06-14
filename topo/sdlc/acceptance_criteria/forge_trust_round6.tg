@@ -1,0 +1,90 @@
+acceptance_criterion ac_packet_trust_doctrine_round6 {
+  name "Packet trust doctrine in agent docs"
+  description "Given AGENTS.md and remogram-consumer/core skills, when a maintainer reads Trust sections, then envelope fields are trusted and forge-sourced string fields (title, check context/description) are explicitly untrusted prose."
+  requirement req_forge_trust_round6
+  status draft
+}
+
+acceptance_criterion ac_doctor_fail_closed_round6 {
+  name "Doctor fails closed for shell and packet"
+  description "Given doctor checks with summary fail, when remogram doctor --json runs, then process exit code is 1 and packet ok is false."
+  requirement req_forge_trust_round6
+  status draft
+}
+
+acceptance_criterion ac_sanitize_url_no_credentials_round6 {
+  name "sanitizeUrl strips userinfo"
+  description "Given a URL with embedded user:pass@host, when sanitizeUrl runs, then returned string contains no credentials substring."
+  requirement req_forge_trust_round6
+  status draft
+}
+
+acceptance_criterion ac_public_scripts_no_remo_default_round6 {
+  name "Public scripts default to origin/main not origin/remo"
+  description "Given exported public tree scripts run-secret-scan.mjs and install-pre-push-hook.sh, when help or defaults are read, then origin/remo is not the default base ref."
+  requirement req_forge_trust_round6
+  status draft
+}
+
+acceptance_criterion ac_check_pagination_complete_round6 {
+  name "Check listing paginates until exhausted"
+  description "Given mocked forge APIs with failing check on page 2, when pr_checks runs, then check_conclusion is failure and merge_plan includes checks_failed blocker."
+  requirement req_forge_trust_round6
+  status draft
+}
+
+acceptance_criterion ac_gitea_state_normalization_round6 {
+  name "Gitea states normalized to shared enum"
+  description "Given Gitea API returns mixed-case or alias states, when pr_checks and pr_view run, then states map to success failure pending error or open closed before summarizeChecks."
+  requirement req_forge_trust_round6
+  status draft
+}
+
+acceptance_criterion ac_merge_plan_page2_failure_round6 {
+  name "Merge plan sees page-2 check failure"
+  description "Given GitHub check-runs page 2 contains conclusion failure, when merge plan --number runs, then blockers includes checks_failed."
+  requirement req_forge_trust_round6
+  status draft
+}
+
+acceptance_criterion ac_non_list_ingest_bounded_round6 {
+  name "Non-list forge ingest stays bounded"
+  description "Given a busy repo with large check/status payloads on non-list endpoints, when pr_checks or merge_plan runs, then pagination or chunking keeps raw ingest under default cap without OVERSIZED_RAW_OUTPUT."
+  requirement req_forge_trust_round6
+  status draft
+}
+
+acceptance_criterion ac_capabilities_ingest_facts_round6 {
+  name "Capabilities report ingest and pagination facts"
+  description "Given provider capabilities --json, when packet is returned, then forge_ingest_cap_bytes is 8192 by default and check_pagination describes behavior honestly."
+  requirement req_forge_trust_round6
+  status draft
+}
+
+acceptance_criterion ac_mcp_pr_checks_schema_round6 {
+  name "MCP pr_checks requires number or ref"
+  description "Given MCP pr_checks with empty input, when schema validation runs, then request is rejected before CLI spawn."
+  requirement req_forge_trust_round6
+  status draft
+}
+
+acceptance_criterion ac_export_denylist_test_round6 {
+  name "Export denylist regression test"
+  description "Given export-public-main.sh denylist, when test runs against exported tree fixture, then topo .gitea remogram-dogfood and sidecar scripts are absent."
+  requirement req_forge_trust_round6
+  status draft
+}
+
+acceptance_criterion ac_core_secret_redaction_round6 {
+  name "Core sanitizeField redacts token patterns"
+  description "Given error message containing ghp_ or Bearer token pattern, when sanitizeField runs in core, then pattern is redacted consistently with MCP policy."
+  requirement req_forge_trust_round6
+  status draft
+}
+
+acceptance_criterion ac_git_ahead_behind_validated_round6 {
+  name "gitAheadBehind validates refs before compare"
+  description "Given invalid or ambiguous ref strings, when gitAheadBehind runs, then assertGitRef rejects them before git subprocess invocation."
+  requirement req_forge_trust_round6
+  status draft
+}
