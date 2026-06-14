@@ -166,6 +166,20 @@ export async function githubFetch(config, parsed, path, options = {}) {
 
 const MAX_CHECK_PAGES = MAX_CHECK_STATUS_PAGES;
 
+function resolveGitHubLinkNextPage({ trustedOrigin, currentUrl, linkHeader, pageIndex, maxPages }) {
+  const nextRaw = parseLinkHeader(linkHeader).next ?? null;
+  if (!nextRaw) {
+    return { nextUrl: null, truncated: false };
+  }
+  if (!isTrustedPaginationUrl(trustedOrigin, nextRaw, currentUrl)) {
+    return { nextUrl: null, truncated: true };
+  }
+  if (pageIndex === maxPages - 1) {
+    return { nextUrl: null, truncated: true };
+  }
+  return { nextUrl: new URL(nextRaw, currentUrl).href, truncated: false };
+}
+
 export async function githubFetchPaginated(config, parsed, path, slice) {
   const base = apiBase(config, parsed);
   const trustedOrigin = new URL(base).origin;
@@ -185,16 +199,17 @@ export async function githubFetchPaginated(config, parsed, path, slice) {
     );
     all.push(...slice(body));
     const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
-    const nextUrl = parseLinkHeader(linkHeader).next ?? null;
-    if (nextUrl && !isTrustedPaginationUrl(trustedOrigin, nextUrl, currentUrl)) {
+    const linkPage = resolveGitHubLinkNextPage({
+      trustedOrigin,
+      currentUrl,
+      linkHeader,
+      pageIndex: page,
+      maxPages: MAX_CHECK_PAGES,
+    });
+    if (linkPage.truncated) {
       truncated = true;
-      url = null;
-    } else if (nextUrl && page === MAX_CHECK_PAGES - 1) {
-      truncated = true;
-      url = null;
-    } else {
-      url = nextUrl ? new URL(nextUrl, currentUrl).href : null;
     }
+    url = linkPage.nextUrl;
   }
   return { items: all, truncated };
 }
@@ -485,16 +500,17 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
       const items = Array.isArray(body) ? body : [];
       all.push(...items);
       const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
-      const nextUrl = parseLinkHeader(linkHeader).next ?? null;
-      if (nextUrl && !isTrustedPaginationUrl(trustedOrigin, nextUrl, currentUrl)) {
+      const linkPage = resolveGitHubLinkNextPage({
+        trustedOrigin,
+        currentUrl,
+        linkHeader,
+        pageIndex: page,
+        maxPages: MAX_CHECK_PAGES,
+      });
+      if (linkPage.truncated) {
         listTruncated = true;
-        url = null;
-      } else if (nextUrl && page === MAX_CHECK_PAGES - 1) {
-        listTruncated = true;
-        url = null;
-      } else {
-        url = nextUrl ? new URL(nextUrl, currentUrl).href : null;
       }
+      url = linkPage.nextUrl;
     }
   } else {
     for (let page = 1; page <= MAX_CHECK_PAGES; page += 1) {
