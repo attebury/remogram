@@ -7353,6 +7353,16 @@
       "at": "2026-06-14T16:21:20.489Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-14T16:24:39.099Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:262"
+      ]
     }
   ],
   "pitch_merge_plan_path_allowlist": [
@@ -7403,6 +7413,13 @@
       "at": "2026-06-14T16:21:20.425Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T16:24:41.349Z",
+      "by": "actor_integration_lane",
+      "note": null
     }
   ]
 }
