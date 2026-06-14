@@ -4721,5 +4721,14 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "ac_non_list_ingest_oversize_mock_round7": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T02:45:02.848Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
   ]
 }
