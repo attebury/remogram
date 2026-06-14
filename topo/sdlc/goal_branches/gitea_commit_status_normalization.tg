@@ -5,5 +5,5 @@ goal_branch goal_branch_gitea_commit_status_normalization {
   task task_gitea_commit_status_normalization_wave1
   evidence_refs [local:topo/sdlc/pitches/gitea_commit_status_normalization.tg, local:topo/sdlc/requirements/gitea_commit_status_normalization.tg, local:topo/sdlc/plans/gitea_commit_status_normalization.tg, local:topo/sdlc/tasks/gitea_commit_status_normalization_waves.tg, local:topo/sdlc/acceptance_criteria/gitea_commit_status_normalization.tg, local:topo/sdlc/bugs/gitea-commit-status-normalization.tg, local:topo/verifications/gitea-commit-status-normalization.tg]
   witness_refs [forge:local-gitea/runlane-pr-4-head-2ba4cdc]
-  status active
+  status done
 }
