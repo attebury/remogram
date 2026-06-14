@@ -1,0 +1,10 @@
+requirement req_cr_open_hardening {
+  name "CR open hardened with consumer write opt-in"
+  description "Remogram cr open must require explicit write_commands opt-in in .remogram.json (fail closed). Provider idempotency for same head+base. Structured errors for invalid provider output. Docs state beta.0-beta.3 read/plan by default; capabilities authoritative; opt-out bridge documented (Gitea shim, gh/glab manual). Tests cover config gate, open-to-inventory, MCP callTool, POST failures."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  pitch pitch_cr_open_hardening
+  priority high
+  status draft
+}
