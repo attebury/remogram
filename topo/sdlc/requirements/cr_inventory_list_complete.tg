@@ -6,5 +6,5 @@ requirement req_cr_inventory_list_complete {
   respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
   pitch pitch_forge_dogfood_reliability
   priority high
-  status draft
+  status approved
 }
