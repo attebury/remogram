@@ -57,7 +57,9 @@ function giteaCase() {
     mockCrInventory() {
       const pull = load('gitea-api', 'pull.json');
       global.fetch
-        .mockResolvedValueOnce(jsonResponse([pull]))
+        .mockResolvedValueOnce(
+          jsonResponse([pull], 200, { headers: { 'X-Total-Count': '1' } }),
+        )
         .mockResolvedValueOnce(jsonResponse(pull))
         .mockResolvedValueOnce(jsonResponse(pull))
         .mockResolvedValueOnce(jsonResponse([]));
@@ -121,6 +123,9 @@ function githubCase() {
     mockCrInventory() {
       const pull = load('github-api', 'pull-graphql-clean.json');
       global.fetch
+        .mockResolvedValueOnce(
+          jsonResponse({ total_count: 1, incomplete_results: false, items: [] }),
+        )
         .mockResolvedValueOnce(jsonResponse([{ number: 42, state: 'open' }]))
         .mockResolvedValueOnce(jsonResponse(pull))
         .mockResolvedValueOnce(jsonResponse(pull))
@@ -174,7 +179,9 @@ function gitlabCase() {
     mockCrInventory() {
       const mr = load('gitlab-api', 'merge-request-clean.json');
       global.fetch
-        .mockResolvedValueOnce(jsonResponse([mr]))
+        .mockResolvedValueOnce(
+          jsonResponse([mr], 200, { headers: { 'X-Total': '1' } }),
+        )
         .mockResolvedValueOnce(jsonResponse(mr))
         .mockResolvedValueOnce(jsonResponse(mr))
         .mockResolvedValueOnce(jsonResponse(load('gitlab-api', 'statuses-success.json')))

@@ -65,7 +65,10 @@ export function idempotencyScanCapabilityFacts() {
 }
 
 /** Structured open-pull list pagination facts for provider capabilities (cr inventory). */
-export function openPullListCapabilityFacts() {
+export function openPullListCapabilityFacts({
+  totalCountSource = null,
+  totalCountHeader = null,
+} = {}) {
   const compliantMaxItems = DEFAULT_OPEN_PULL_LIST_PAGE_SIZE * MAX_CHECK_STATUS_PAGES;
   return {
     open_pull_list: {
@@ -75,6 +78,15 @@ export function openPullListCapabilityFacts() {
       compliant_max_items: compliantMaxItems,
       truncation_packet_field: 'list_truncated',
       incomplete_error_code: 'inventory_list_incomplete',
+      default_slice_sort: 'number_asc',
+      supported_slice_sorts: [
+        'number_asc',
+        'number_desc',
+        'recent_update',
+        'recent_created',
+      ],
+      ...(totalCountSource ? { total_count_source: totalCountSource } : {}),
+      ...(totalCountHeader ? { total_count_header: totalCountHeader } : {}),
     },
   };
 }

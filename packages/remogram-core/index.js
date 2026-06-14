@@ -50,6 +50,20 @@ export { assertGitRef, assertGitRemote } from './git-args.js';
 export { gitRevParse, gitCurrentBranch, gitAheadBehind, gitRepoRoot, gitDiffNameOnly } from './git-local.js';
 export { buildRefInventoryBody, refsInventory } from './ref-inventory.js';
 export { buildCrInventoryEntry, buildHeadReconcile, crInventory, DEFAULT_CR_INVENTORY_LIMIT, DEFAULT_CR_INVENTORY_SAFE_LIMIT, normalizeCrInventoryLimit } from './cr-inventory.js';
+export {
+  CR_INVENTORY_SLICE_SORTS,
+  DEFAULT_CR_INVENTORY_SLICE_SORT,
+  normalizeCrInventorySort,
+  parseTotalCountHeader,
+  isCrInventoryFastPathEligible,
+  forgeOrderAuthoritative,
+  orderOpenPullNumbers,
+  buildOpenPullListMeta,
+  giteaOpenPullSortQuery,
+  gitlabOpenPullSortQuery,
+  githubOpenPullSortQuery,
+  appendSortQuery,
+} from './open-pull-list.js';
 export { buildChangeRequestOpenedBody } from './cr-open.js';
 export {
   WRITE_COMMAND_IDS,

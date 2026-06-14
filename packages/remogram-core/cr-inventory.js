@@ -1,6 +1,10 @@
 import { sanitizeField } from './caps.js';
 import { ERROR_CODES, forgeError } from './contracts/errors.js';
 import { mergeBlockersFromFacts, isOpenPrState } from './merge-blockers.js';
+import {
+  DEFAULT_CR_INVENTORY_SLICE_SORT,
+  normalizeCrInventorySort,
+} from './open-pull-list.js';
 import { staleHeadDetails } from './pr-head-reconcile.js';
 
 export const DEFAULT_CR_INVENTORY_LIMIT = 50;
@@ -18,9 +22,9 @@ export function normalizeCrInventoryLimit(value) {
   return n;
 }
 
-async function resolveOpenPullList(provider, ctx, entryLimit) {
+async function resolveOpenPullList(provider, ctx, entryLimit, sliceSort) {
   if (typeof provider.listOpenPullsWithMeta === 'function') {
-    return provider.listOpenPullsWithMeta(ctx, { retain_max: entryLimit });
+    return provider.listOpenPullsWithMeta(ctx, { retain_max: entryLimit, sort: sliceSort });
   }
   const numbers = await provider.listOpenPulls(ctx, {});
   return { numbers, list_truncated: false };
@@ -72,15 +76,16 @@ export function buildCrInventoryEntry(ctx, view, checks) {
  * Aggregate open change requests into a semantic-diff-oriented inventory slice.
  * @param {object} ctx forge context
  * @param {object} provider must expose listOpenPulls, prView, prChecks
- * @param {{ slice_ref?: string, limit?: number }} [opts]
+ * @param {{ slice_ref?: string, limit?: number, sort?: string }} [opts]
  */
 export async function crInventory(ctx, provider, opts = {}) {
   const limit = normalizeCrInventoryLimit(opts.limit);
+  const sliceSort = normalizeCrInventorySort(opts.sort);
   const {
     numbers,
     list_truncated: listTruncated,
     entry_count: providerEntryCount,
-  } = await resolveOpenPullList(provider, ctx, limit);
+  } = await resolveOpenPullList(provider, ctx, limit, sliceSort);
   const entryCount = providerEntryCount ?? numbers.length;
   const selected = numbers.slice(0, limit);
   const entries = [];
@@ -107,6 +112,7 @@ export async function crInventory(ctx, provider, opts = {}) {
     entry_count: entryCount,
     truncated: entryCount > selected.length,
     list_truncated: listTruncated,
+    slice_sort: sliceSort ?? DEFAULT_CR_INVENTORY_SLICE_SORT,
     ...(opts.slice_ref ? { slice_ref: sanitizeField(opts.slice_ref) } : {}),
   };
 }

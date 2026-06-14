@@ -1,5 +1,6 @@
 import {
   fetchJson,
+  fetchJsonWithMeta,
   sanitizeField,
   sanitizeUrl,
   assertGitRef,
@@ -27,6 +28,14 @@ import {
   fetchPageWithIngestBackoff,
   withPerPageParam,
   apiProviderCommands,
+  normalizeCrInventorySort,
+  DEFAULT_CR_INVENTORY_SLICE_SORT,
+  parseTotalCountHeader,
+  isCrInventoryFastPathEligible,
+  orderOpenPullNumbers,
+  buildOpenPullListMeta,
+  giteaOpenPullSortQuery,
+  appendSortQuery,
 } from '@remogram/core';
 const PUBLIC_GITEA_HOST = 'gitea.com';
 const PUBLIC_GITEA_API = 'https://gitea.com/api/v1';
@@ -133,6 +142,15 @@ export async function giteaFetch(config, parsed, path, options = {}) {
   const token = requireToken();
   const url = `${apiBase(config, parsed)}${path}`;
   return fetchJson(url, {
+    ...options,
+    headers: { ...authHeaders(token), ...(options.headers || {}) },
+  });
+}
+
+export async function giteaFetchWithMeta(config, parsed, path, options = {}) {
+  const token = requireToken();
+  const url = `${apiBase(config, parsed)}${path}`;
+  return fetchJsonWithMeta(url, {
     ...options,
     headers: { ...authHeaders(token), ...(options.headers || {}) },
   });
@@ -252,7 +270,10 @@ export function providerCapabilities() {
       sourceCount: check_sources.length,
     }),
     ...idempotencyScanCapabilityFacts(),
-    ...openPullListCapabilityFacts(),
+    ...openPullListCapabilityFacts({
+      totalCountSource: 'response_header',
+      totalCountHeader: 'X-Total-Count',
+    }),
   };
 }
 
@@ -361,8 +382,48 @@ export async function crOpen(ctx, { head, base, title, body: prBody }) {
   return buildChangeRequestOpenedBody(pull, { head, base, title });
 }
 
-export async function listOpenPullsWithMeta(ctx, opts = {}) {
-  requireToken();
+const GITEA_OPEN_PULL_COMPLIANT_MAX =
+  DEFAULT_OPEN_PULL_LIST_PAGE_SIZE * MAX_CHECK_STATUS_PAGES;
+
+async function tryGiteaOpenPullFastPath(ctx, opts) {
+  if (!isCrInventoryFastPathEligible(opts)) return null;
+  const retainMax = Number(opts.retain_max);
+  const sliceSort = normalizeCrInventorySort(opts.sort ?? DEFAULT_CR_INVENTORY_SLICE_SORT);
+  const maxTrusted = GITEA_OPEN_PULL_COMPLIANT_MAX * 2;
+  let path = `${repoApiPath(ctx.config, 'pulls')}?state=open`;
+  path = appendSortQuery(path, giteaOpenPullSortQuery(sliceSort));
+  const pageSep = path.includes('?') ? '&' : '?';
+  const requestLimit = Math.min(retainMax, GITEA_PAGE_SIZE);
+
+  let body;
+  let headers;
+  try {
+    ({ body, headers } = await giteaFetchWithMeta(
+      ctx.config,
+      ctx.parsed,
+      `${path}${pageSep}limit=${requestLimit}&page=1`,
+    ));
+  } catch {
+    return null;
+  }
+  if (!Array.isArray(body)) return null;
+
+  const totalCount = parseTotalCountHeader(headers, 'X-Total-Count', { maxTrusted });
+  if (totalCount == null) return null;
+  if (totalCount <= requestLimit && body.length !== totalCount) return null;
+
+  let numbers = orderOpenPullNumbers(body, (pr) => pr?.number, sliceSort);
+  if (numbers.length > retainMax) numbers = numbers.slice(0, retainMax);
+
+  return buildOpenPullListMeta({
+    totalCount,
+    numbers,
+    listTruncated: totalCount > GITEA_OPEN_PULL_COMPLIANT_MAX,
+    sliceSort,
+  });
+}
+
+async function paginateGiteaOpenPullList(ctx, opts, sliceSort) {
   const listLimit =
     opts.limit != null && Number.isInteger(Number(opts.limit)) && Number(opts.limit) > 0
       ? Number(opts.limit)
@@ -376,27 +437,25 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
       : null;
   const pageSize =
     listLimit != null ? Math.min(listLimit, GITEA_PAGE_SIZE) : GITEA_PAGE_SIZE;
-  const path = `${repoApiPath(ctx.config, 'pulls')}?state=open`;
+  let path = `${repoApiPath(ctx.config, 'pulls')}?state=open`;
+  path = appendSortQuery(path, giteaOpenPullSortQuery(sliceSort));
   const pageSep = path.includes('?') ? '&' : '?';
   const { items: all, list_truncated: listTruncated, entry_count: entryCount } =
     await paginateOffsetListPages({
-    pageSize,
-    listLimit,
-    retainMax,
-    ...(listLimit != null && pageSize < listLimit ? { maxPagesTruncatesWithLimit: true } : {}),
-    fetchPage: async ({ page, limit }) => {
-      const body = await giteaFetch(
-        ctx.config,
-        ctx.parsed,
-        `${path}${pageSep}limit=${limit}&page=${page}`,
-      );
-      return Array.isArray(body) ? body : [];
-    },
-  });
-  let numbers = all
-    .map((pr) => pr.number)
-    .filter((number) => Number.isInteger(number))
-    .sort((a, b) => a - b);
+      pageSize,
+      listLimit,
+      retainMax,
+      ...(listLimit != null && pageSize < listLimit ? { maxPagesTruncatesWithLimit: true } : {}),
+      fetchPage: async ({ page, limit }) => {
+        const body = await giteaFetch(
+          ctx.config,
+          ctx.parsed,
+          `${path}${pageSep}limit=${limit}&page=${page}`,
+        );
+        return Array.isArray(body) ? body : [];
+      },
+    });
+  let numbers = orderOpenPullNumbers(all, (pr) => pr?.number, sliceSort);
   if (listLimit != null && numbers.length > listLimit) {
     numbers = numbers.slice(0, listLimit);
   }
@@ -404,7 +463,16 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
     numbers,
     list_truncated: listTruncated,
     ...(entryCount != null ? { entry_count: entryCount } : {}),
+    slice_sort: sliceSort,
   };
+}
+
+export async function listOpenPullsWithMeta(ctx, opts = {}) {
+  requireToken();
+  const sliceSort = normalizeCrInventorySort(opts.sort ?? DEFAULT_CR_INVENTORY_SLICE_SORT);
+  const fast = await tryGiteaOpenPullFastPath(ctx, { ...opts, sort: sliceSort });
+  if (fast) return fast;
+  return paginateGiteaOpenPullList(ctx, opts, sliceSort);
 }
 
 export async function listOpenPulls(ctx, opts = {}) {

@@ -1,5 +1,6 @@
 import {
   fetchJson,
+  fetchJsonWithMeta,
   sanitizeField,
   sanitizeUrl,
   assertGitRef,
@@ -17,12 +18,21 @@ import {
   openPullListCapabilityFacts,
   DEFAULT_CHECK_STATUS_PAGE_SIZE,
   MAX_CHECK_STATUS_PAGES,
+  DEFAULT_OPEN_PULL_LIST_PAGE_SIZE,
   paginateCheckStatusPages,
   paginateOffsetListPages,
   fetchWithIngestPageBackoff,
   fetchPageWithIngestBackoff,
   withPerPageParam,
   apiProviderCommands,
+  normalizeCrInventorySort,
+  DEFAULT_CR_INVENTORY_SLICE_SORT,
+  parseTotalCountHeader,
+  isCrInventoryFastPathEligible,
+  orderOpenPullNumbers,
+  buildOpenPullListMeta,
+  gitlabOpenPullSortQuery,
+  appendSortQuery,
 } from '@remogram/core';
 
 const PUBLIC_GITLAB_HOST = 'gitlab.com';
@@ -130,6 +140,16 @@ export async function gitlabFetch(config, parsed, path, options = {}) {
   });
 }
 
+export async function gitlabFetchWithMeta(config, parsed, path, options = {}) {
+  const base = apiBase(config, parsed);
+  const token = requireToken();
+  const url = `${base}${path}`;
+  return fetchJsonWithMeta(url, {
+    ...options,
+    headers: { ...authHeaders(token), ...(options.headers || {}) },
+  });
+}
+
 const MAX_CHECK_PAGES = MAX_CHECK_STATUS_PAGES;
 const GITLAB_PAGE_SIZE = 100;
 
@@ -163,7 +183,10 @@ export function providerCapabilities() {
       pageSizeParam: 'per_page',
       sourceCount: check_sources.length,
     }),
-    ...openPullListCapabilityFacts(),
+    ...openPullListCapabilityFacts({
+      totalCountSource: 'response_header',
+      totalCountHeader: 'X-Total',
+    }),
   };
 }
 
@@ -319,9 +342,48 @@ export async function mergePlan(ctx, opts) {
   return buildMergePlanBodyFromFacts(ctx, view, checks, opts);
 }
 
-export async function listOpenPullsWithMeta(ctx, opts = {}) {
-  apiBase(ctx.config, ctx.parsed);
-  requireToken();
+const GITLAB_OPEN_PULL_COMPLIANT_MAX =
+  DEFAULT_OPEN_PULL_LIST_PAGE_SIZE * MAX_CHECK_STATUS_PAGES;
+
+async function tryGitlabOpenPullFastPath(ctx, opts) {
+  if (!isCrInventoryFastPathEligible(opts)) return null;
+  const retainMax = Number(opts.retain_max);
+  const sliceSort = normalizeCrInventorySort(opts.sort ?? DEFAULT_CR_INVENTORY_SLICE_SORT);
+  const maxTrusted = GITLAB_OPEN_PULL_COMPLIANT_MAX * 2;
+  let path = `${projectApiPath(ctx.config, 'merge_requests')}?state=opened`;
+  path = appendSortQuery(path, gitlabOpenPullSortQuery(sliceSort));
+  const separator = path.includes('?') ? '&' : '?';
+  const requestLimit = Math.min(retainMax, GITLAB_PAGE_SIZE);
+
+  let body;
+  let headers;
+  try {
+    ({ body, headers } = await gitlabFetchWithMeta(
+      ctx.config,
+      ctx.parsed,
+      `${path}${separator}per_page=${requestLimit}&page=1`,
+    ));
+  } catch {
+    return null;
+  }
+  if (!Array.isArray(body)) return null;
+
+  const totalCount = parseTotalCountHeader(headers, 'X-Total', { maxTrusted });
+  if (totalCount == null) return null;
+  if (totalCount <= requestLimit && body.length !== totalCount) return null;
+
+  let numbers = orderOpenPullNumbers(body, (mr) => mr?.iid, sliceSort);
+  if (numbers.length > retainMax) numbers = numbers.slice(0, retainMax);
+
+  return buildOpenPullListMeta({
+    totalCount,
+    numbers,
+    listTruncated: totalCount > GITLAB_OPEN_PULL_COMPLIANT_MAX,
+    sliceSort,
+  });
+}
+
+async function paginateGitlabOpenPullList(ctx, opts, sliceSort) {
   const listLimit =
     opts.limit != null && Number.isInteger(Number(opts.limit)) && Number(opts.limit) > 0
       ? Number(opts.limit)
@@ -333,27 +395,25 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
     Number(opts.retain_max) > 0
       ? Number(opts.retain_max)
       : null;
-  const path = `${projectApiPath(ctx.config, 'merge_requests')}?state=opened`;
+  let path = `${projectApiPath(ctx.config, 'merge_requests')}?state=opened`;
+  path = appendSortQuery(path, gitlabOpenPullSortQuery(sliceSort));
   const separator = path.includes('?') ? '&' : '?';
   const { items: all, list_truncated: listTruncated, entry_count: entryCount } =
     await paginateOffsetListPages({
-    pageSize: GITLAB_PAGE_SIZE,
-    listLimit,
-    retainMax,
-    ...(listLimit != null ? { maxPagesTruncatesWithLimit: true } : {}),
-    fetchPage: async ({ page, limit }) => {
-      const body = await gitlabFetch(
-        ctx.config,
-        ctx.parsed,
-        `${path}${separator}per_page=${limit}&page=${page}`,
-      );
-      return Array.isArray(body) ? body : [];
-    },
-  });
-  let numbers = all
-    .map((mr) => mr.iid)
-    .filter((number) => Number.isInteger(number))
-    .sort((a, b) => a - b);
+      pageSize: GITLAB_PAGE_SIZE,
+      listLimit,
+      retainMax,
+      ...(listLimit != null ? { maxPagesTruncatesWithLimit: true } : {}),
+      fetchPage: async ({ page, limit }) => {
+        const body = await gitlabFetch(
+          ctx.config,
+          ctx.parsed,
+          `${path}${separator}per_page=${limit}&page=${page}`,
+        );
+        return Array.isArray(body) ? body : [];
+      },
+    });
+  let numbers = orderOpenPullNumbers(all, (mr) => mr?.iid, sliceSort);
   if (listLimit != null && numbers.length > listLimit) {
     numbers = numbers.slice(0, listLimit);
   }
@@ -361,7 +421,17 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
     numbers,
     list_truncated: listTruncated,
     ...(entryCount != null ? { entry_count: entryCount } : {}),
+    slice_sort: sliceSort,
   };
+}
+
+export async function listOpenPullsWithMeta(ctx, opts = {}) {
+  apiBase(ctx.config, ctx.parsed);
+  requireToken();
+  const sliceSort = normalizeCrInventorySort(opts.sort ?? DEFAULT_CR_INVENTORY_SLICE_SORT);
+  const fast = await tryGitlabOpenPullFastPath(ctx, { ...opts, sort: sliceSort });
+  if (fast) return fast;
+  return paginateGitlabOpenPullList(ctx, opts, sliceSort);
 }
 
 export async function listOpenPulls(ctx, opts = {}) {

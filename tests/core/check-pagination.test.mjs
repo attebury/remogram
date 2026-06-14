@@ -215,6 +215,24 @@ describe('paginateOffsetListPages', () => {
     expect(result.list_truncated).toBe(false);
   });
 
+  it('listLimit exact cap at maxPages with empty probe is complete', async () => {
+    const pageSize = 2;
+    const maxPages = 2;
+    const listLimit = pageSize * maxPages;
+    const result = await paginateOffsetListPages({
+      pageSize,
+      maxPages,
+      listLimit,
+      fetchPage: async ({ page }) => {
+        if (page === 1) return [{ number: 1 }, { number: 2 }];
+        if (page === 2) return [{ number: 3 }, { number: 4 }];
+        return [];
+      },
+    });
+    expect(result.items).toHaveLength(4);
+    expect(result.list_truncated).toBe(false);
+  });
+
   it('truncates at maxPages when listLimit set and maxPagesTruncatesWithLimit', async () => {
     const result = await paginateOffsetListPages({
       pageSize: 1,

@@ -1,0 +1,90 @@
+import { describe, it, expect } from 'vitest';
+import {
+  CR_INVENTORY_SLICE_SORTS,
+  DEFAULT_CR_INVENTORY_SLICE_SORT,
+  normalizeCrInventorySort,
+  parseTotalCountHeader,
+  isCrInventoryFastPathEligible,
+  forgeOrderAuthoritative,
+  orderOpenPullNumbers,
+  buildOpenPullListMeta,
+  giteaOpenPullSortQuery,
+} from '@remogram/core';
+import { ERROR_CODES } from '@remogram/core';
+
+describe('open-pull-list', () => {
+  it('normalizes default sort to number_asc', () => {
+    expect(normalizeCrInventorySort(undefined)).toBe(DEFAULT_CR_INVENTORY_SLICE_SORT);
+    expect(normalizeCrInventorySort('')).toBe('number_asc');
+  });
+
+  it('accepts all supported sort presets', () => {
+    for (const sort of CR_INVENTORY_SLICE_SORTS) {
+      expect(normalizeCrInventorySort(sort)).toBe(sort);
+    }
+  });
+
+  it('rejects unknown sort with invalid_args', () => {
+    expect(() => normalizeCrInventorySort('newest')).toThrow(
+      expect.objectContaining({
+        forgeError: expect.objectContaining({ code: ERROR_CODES.INVALID_ARGS }),
+      }),
+    );
+  });
+
+  it('parseTotalCountHeader accepts positive integers within maxTrusted', () => {
+    const headers = new Map([['X-Total-Count', '42']]);
+    expect(parseTotalCountHeader(headers, 'X-Total-Count', { maxTrusted: 100 })).toBe(42);
+  });
+
+  it('parseTotalCountHeader rejects invalid values', () => {
+    expect(parseTotalCountHeader(null, 'X-Total-Count', { maxTrusted: 100 })).toBeNull();
+    expect(parseTotalCountHeader(new Map([['X-Total-Count', 'abc']]), 'X-Total-Count', { maxTrusted: 100 })).toBeNull();
+    expect(parseTotalCountHeader(new Map([['X-Total-Count', '0']]), 'X-Total-Count', { maxTrusted: 100 })).toBeNull();
+    expect(parseTotalCountHeader(new Map([['X-Total-Count', '-1']]), 'X-Total-Count', { maxTrusted: 100 })).toBeNull();
+    expect(parseTotalCountHeader(new Map([['X-Total-Count', '1000']]), 'X-Total-Count', { maxTrusted: 100 })).toBeNull();
+  });
+
+  it('isCrInventoryFastPathEligible requires retain_max', () => {
+    expect(isCrInventoryFastPathEligible({ retain_max: 3 })).toBe(true);
+    expect(isCrInventoryFastPathEligible({ limit: 3 })).toBe(false);
+    expect(isCrInventoryFastPathEligible({})).toBe(false);
+  });
+
+  it('forgeOrderAuthoritative is true for activity sorts', () => {
+    expect(forgeOrderAuthoritative('recent_update')).toBe(true);
+    expect(forgeOrderAuthoritative('number_asc')).toBe(false);
+  });
+
+  it('orderOpenPullNumbers sorts by number for number_asc and number_desc', () => {
+    const items = [{ number: 9 }, { number: 2 }, { number: 5 }];
+    expect(orderOpenPullNumbers(items, (pr) => pr.number, 'number_asc')).toEqual([2, 5, 9]);
+    expect(orderOpenPullNumbers(items, (pr) => pr.number, 'number_desc')).toEqual([9, 5, 2]);
+  });
+
+  it('orderOpenPullNumbers preserves forge order for recent_update', () => {
+    const items = [{ number: 9 }, { number: 2 }, { number: 5 }];
+    expect(orderOpenPullNumbers(items, (pr) => pr.number, 'recent_update')).toEqual([9, 2, 5]);
+  });
+
+  it('buildOpenPullListMeta shapes provider list meta', () => {
+    expect(
+      buildOpenPullListMeta({
+        totalCount: 10,
+        numbers: [1, 2, 3],
+        listTruncated: false,
+        sliceSort: 'recent_update',
+      }),
+    ).toEqual({
+      numbers: [1, 2, 3],
+      list_truncated: false,
+      entry_count: 10,
+      slice_sort: 'recent_update',
+    });
+  });
+
+  it('giteaOpenPullSortQuery maps recent_update', () => {
+    expect(giteaOpenPullSortQuery('recent_update')).toEqual({ sort: 'recentupdate' });
+    expect(giteaOpenPullSortQuery('number_asc')).toEqual({});
+  });
+});

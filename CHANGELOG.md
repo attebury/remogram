@@ -6,10 +6,14 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **`cr inventory --sort`:** opt-in normalized slice sort presets (`number_asc` default, `number_desc`, `recent_update`, `recent_created`); success packets include trusted `slice_sort`
+- **Open-PR list fast path:** Gitea/GitLab use forge total-count headers; GitHub uses Search API `total_count` when `incomplete_results` is false — default `cr inventory` avoids full open-list pagination when count is provable
 - **`remogram cr open`:** Gitea-first write path to open change requests; emits `change_request_opened` packet with trusted envelope; MCP `cr_open` tool with `readOnlyHint: false`
 
 ### Changed
 
+- **`open_pull_list` capabilities:** document `default_slice_sort`, `supported_slice_sorts`, and provider-specific `total_count_source` / `total_count_header`
+- **`paginateOffsetListPages`:** `listLimit` branch probes page+1 at maxPages (fixes false `list_truncated` at exact compliance boundary)
 - **Write opt-in:** `write_commands` in `.remogram.json` required for `cr open` (fail closed with `write_not_configured`); doctor warns when provider supports writes but config does not opt in
 - **Docs:** beta.0–beta.3 read/plan by default; incremental write wiring; opt-out bridge table (Gitea shim, gh/glab manual)
 

@@ -22,16 +22,17 @@ function load(name) {
   return JSON.parse(readFileSync(join(fixtures, name), 'utf8'));
 }
 
-function jsonResponse(body, status = 200, { link } = {}) {
+function jsonResponse(body, status = 200, { link, headers = {} } = {}) {
+  const headerEntries = { ...headers };
+  if (link) headerEntries.link = link;
+  const headerMap = new Map(Object.entries(headerEntries));
   return {
     ok: status >= 200 && status < 300,
     status,
     statusText: status === 200 ? 'OK' : 'Error',
-    headers: link
-      ? {
-          get: (name) => (String(name).toLowerCase() === 'link' ? link : null),
-        }
-      : undefined,
+    headers: {
+      get: (name) => headerMap.get(name) ?? headerMap.get(String(name).toLowerCase()) ?? null,
+    },
     body: {
       [Symbol.asyncIterator]: async function* () {
         yield Buffer.from(JSON.stringify(body));
@@ -1074,6 +1075,40 @@ describe('provider-github-api fixtures', () => {
     expect(body.blockers).toContain('checks_incomplete');
   });
 
+  it('listOpenPullsWithMeta fast path uses search total_count with retain_max', async () => {
+    global.fetch
+      .mockResolvedValueOnce(
+        jsonResponse({ total_count: 2, incomplete_results: false, items: [] }),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse([
+          { number: 30, state: 'open' },
+          { number: 10, state: 'open' },
+        ]),
+      );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 2, sort: 'recent_update' });
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(String(global.fetch.mock.calls[0][0])).toContain('/search/issues');
+    expect(String(global.fetch.mock.calls[1][0])).toContain('sort=updated');
+    expect(meta.entry_count).toBe(2);
+    expect(meta.list_truncated).toBe(false);
+    expect(meta.numbers).toEqual([30, 10]);
+    expect(meta.slice_sort).toBe('recent_update');
+  });
+
+  it('listOpenPullsWithMeta falls back when search incomplete_results is true', async () => {
+    global.fetch
+      .mockResolvedValueOnce(
+        jsonResponse({ total_count: 2, incomplete_results: true, items: [] }),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse([{ number: 1, state: 'open' }]),
+      );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 2 });
+    expect(global.fetch.mock.calls.length).toBeGreaterThan(1);
+    expect(meta.numbers).toEqual([1]);
+  });
+
   it('providerCapabilities reports supported pagination', () => {
     const caps = provider.providerCapabilities();
     expect(caps.pagination).toBe('supported');
@@ -1092,6 +1127,8 @@ describe('provider-github-api fixtures', () => {
       compliant_max_items_total: 2500,
       truncation_packet_field: 'checks_truncated',
     });
+    expect(caps.open_pull_list.total_count_source).toBe('search_api');
+    expect(caps.open_pull_list.default_slice_sort).toBe('number_asc');
   });
 
   it('syncPlan preserves shared packet body keys', async () => {
