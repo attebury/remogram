@@ -98,6 +98,7 @@ export async function paginateCheckStatusPages({
 
 /**
  * Offset/limit open-list pagination with ingest-cap backoff and optional list cap.
+ * listLimit bounds request size per page; callers slice returned items when enforcing a hard cap.
  * @param {{ fetchPage: (opts: { page: number, limit: number }) => Promise<unknown[]>, pageSize: number, listLimit?: number | null, maxPages?: number, maxPagesTruncatesWithLimit?: boolean }} opts
  * @returns {Promise<{ items: unknown[], list_truncated: boolean }>}
  */
