@@ -1,0 +1,9 @@
+requirement req_forge_trust_round11 {
+  name "Remogram forge trust round 11 — link confinement and list backoff parity"
+  description "Remogram must reject same-origin Link rel=next when pathname differs from current request; centralize GitHub Link pagination; apply ingest backoff to all open-PR list fetch paths on GitHub, Gitea, and GitLab."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority high
+  status draft
+}

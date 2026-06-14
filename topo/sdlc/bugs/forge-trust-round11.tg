@@ -1,0 +1,51 @@
+bug bug_link_same_origin_off_path {
+  name "Same-origin Link rel=next can target any API path"
+  description "isTrustedPaginationUrl validates origin only; githubFetchPaginated and listOpenPullsWithMeta follow same-origin off-path URLs with bearer token."
+  status open
+  severity high
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Token sent to unintended same-origin API path via malicious or compromised Link header."
+  linked_task task_forge_trust_round11_wave1
+  reproduction "Mock rel=next to https://api.github.com/user/emails while paginating /repos/o/r/pulls."
+  boundary_test_added false
+}
+
+bug bug_github_list_limit_no_backoff {
+  name "GitHub listOpenPullsWithMeta limit branch lacks ingest backoff"
+  description "opts.limit branch uses fetchJsonWithMeta directly with up to 100 per_page; oversized list page fails cr inventory under default ingest cap."
+  status open
+  severity medium
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "cr inventory --limit fails hard on large bounded open PR list JSON."
+  linked_task task_forge_trust_round11_wave3
+  reproduction "Mock oversized listOpenPullsWithMeta response with opts.limit set."
+  boundary_test_added false
+}
+
+bug bug_gitea_gitlab_list_no_ingest_backoff {
+  name "Gitea and GitLab listOpenPullsWithMeta lack ingest backoff"
+  description "Open PR list pages use giteaFetch/gitlabFetch without fetchWithIngestPageBackoff; oversized list JSON fails entire list phase."
+  status open
+  severity medium
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "cr inventory list fails on Gitea/GitLab with large open PR list payloads."
+  linked_task task_forge_trust_round11_wave3
+  reproduction "Mock oversized open PR list on Gitea/GitLab listOpenPullsWithMeta."
+  boundary_test_added false
+}
+
+bug bug_pagination_security_tests_incomplete {
+  name "Pagination trust tests omit off-path and protocol-relative cases"
+  description "pagination-trust.test.mjs and provider tests lack coverage for same-origin off-path Link and protocol-relative URL resolution."
+  status open
+  severity low
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Regression in pathname or protocol-relative trust logic goes undetected."
+  linked_task task_forge_trust_round11_wave1
+  reproduction "grep pagination-trust tests for off-path and protocol-relative cases."
+  boundary_test_added false
+}

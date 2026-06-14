@@ -1,0 +1,51 @@
+verification verification_forge_trust_round11_wave1 {
+  name "Forge trust round 11 wave 1"
+  description "Strict pathname Link confinement and security tests."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round11_wave1]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_link_same_origin_off_path, bug_pagination_security_tests_incomplete]
+  status draft
+}
+
+verification verification_forge_trust_round11_wave2 {
+  name "Forge trust round 11 wave 2"
+  description "GitHub Link-pagination helper DRY."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round11_wave2]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs []
+  status draft
+}
+
+verification verification_forge_trust_round11_wave3 {
+  name "Forge trust round 11 wave 3"
+  description "List ingest backoff parity on all providers."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round11_wave3]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_github_list_limit_no_backoff, bug_gitea_gitlab_list_no_ingest_backoff]
+  status draft
+}
+
+verification verification_forge_trust_round11_wave4 {
+  name "Forge trust round 11 wave 4"
+  description "Contract tests and agent-visible docs."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round11_wave4]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs []
+  status draft
+}
