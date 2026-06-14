@@ -1,7 +1,9 @@
 bug bug_packet_trust_contradiction {
   name "AGENTS.md marks whole packets trusted while embedding forge prose"
   description "Trust sections instruct agents to trust CLI/MCP packets, but pr_status and pr_checks packets include forge-sourced titles and check descriptions that can carry semantic prompt injection."
-  status open
+  fixed_in [task_forge_trust_round6_wave1]
+  fixed_in_verification [verification_forge_trust_round6_wave1]
+  status fixed
   severity high
   priority critical
   affects [cap_forge_remote_ops]
@@ -14,7 +16,9 @@ bug bug_packet_trust_contradiction {
 bug bug_doctor_exit_zero {
   name "Doctor exits 0 when summary is fail"
   description "remogram doctor returns without setting process.exitCode when checks fail."
-  status open
+  fixed_in [task_forge_trust_round6_wave1]
+  fixed_in_verification [verification_forge_trust_round6_wave1]
+  status fixed
   severity medium
   priority high
   affects [cap_forge_remote_ops]
@@ -27,7 +31,9 @@ bug bug_doctor_exit_zero {
 bug bug_doctor_ok_on_fail {
   name "Doctor packet ok true when summary fail"
   description "buildDoctorPacket never passes error to forgePacket; ok remains true when summary is fail."
-  status open
+  fixed_in [task_forge_trust_round6_wave1]
+  fixed_in_verification [verification_forge_trust_round6_wave1]
+  status fixed
   severity medium
   priority high
   affects [cap_forge_remote_ops]
@@ -40,7 +46,9 @@ bug bug_doctor_ok_on_fail {
 bug bug_sanitize_url_credentials {
   name "sanitizeUrl preserves URL userinfo"
   description "sanitizeUrl returns u.href which can embed user:pass from malicious forge URL fields."
-  status open
+  fixed_in [task_forge_trust_round6_wave1]
+  fixed_in_verification [verification_forge_trust_round6_wave1]
+  status fixed
   severity medium
   priority high
   affects [cap_forge_remote_ops]
@@ -53,7 +61,9 @@ bug bug_sanitize_url_credentials {
 bug bug_public_origin_remo_leak {
   name "Public export scripts default to origin/remo"
   description "run-secret-scan.mjs and install-pre-push-hook.sh reference origin/remo as default base ref in public GitHub tree."
-  status open
+  fixed_in [task_forge_trust_round6_wave1]
+  fixed_in_verification [verification_forge_trust_round6_wave1]
+  status fixed
   severity low
   priority medium
   affects [cap_forge_remote_ops]

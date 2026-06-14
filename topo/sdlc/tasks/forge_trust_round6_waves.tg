@@ -15,9 +15,10 @@ task task_forge_trust_round6_wave1 {
   disposition active
   priority critical
   work_type bugfix
+  claimed_by [actor_coding_agent]
   bug_discovery bug_linked
-  linked_bugs [bug_packet_trust_contradiction, bug_doctor_exit_zero, bug_doctor_ok_on_fail, bug_sanitize_url_credentials, bug_public_origin_remo_leak]
-  status unclaimed
+  linked_bugs [bug_packet_trust_contradiction bug_doctor_exit_zero bug_doctor_ok_on_fail bug_sanitize_url_credentials bug_public_origin_remo_leak]
+  status done
 }
 
 task task_forge_trust_round6_wave2 {
