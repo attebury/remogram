@@ -11,5 +11,5 @@ plan plan_forge_trust_round7 {
     step wave4_public_scripts status done description "Wave 4 — Behavioral secret-scan and pre-push-hook tests; optional doctor remote-fail path."
     step verify status done description "npm test, npm run test:coverage, topogram check green on remo tip."
   }
-  status draft
+  status superseded
 }

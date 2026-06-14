@@ -8,5 +8,5 @@ plan plan_gitea_commit_status_normalization {
     step wave1_status_field_and_dedupe status pending description "Wave 1 — status field fallback, latest-per-context collapse, provider fixtures and tests."
     step verify status pending description "npm test green on remo tip after implement merge."
   }
-  status draft
+  status superseded
 }

@@ -8,5 +8,5 @@ pitch pitch_forge_trust_round8 {
   no_go_areas "Hand-editing lifecycle status; rewriting round 7 archaeology; removing max_pages cap without replacement signal."
   affects [cap_forge_remote_ops]
   priority high
-  status draft
+  status rejected
 }

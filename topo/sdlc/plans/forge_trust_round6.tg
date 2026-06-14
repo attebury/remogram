@@ -11,5 +11,5 @@ plan plan_forge_trust_round6 {
     step wave4_mcp_export status done description "Wave 4 — MCP and platform hygiene: pr_checks zod refine; MCP integration tests; centralize secret redaction; export denylist test; gitAheadBehind assertGitRef."
     step verify status done description "npm test, npm run test:coverage, npm run security:secrets --full-history; export-public-main.sh preflight; topogram check green."
   }
-  status draft
+  status superseded
 }

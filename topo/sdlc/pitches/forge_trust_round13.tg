@@ -8,5 +8,5 @@ pitch pitch_forge_trust_round13 {
   no_go_areas "Hand-editing lifecycle status; changing conservative max_pages semantics."
   affects [cap_forge_remote_ops]
   priority high
-  status draft
+  status rejected
 }

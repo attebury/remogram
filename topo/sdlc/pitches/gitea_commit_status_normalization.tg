@@ -8,5 +8,5 @@ pitch pitch_gitea_commit_status_normalization {
   no_go_areas "Hand-editing lifecycle status; widening envelope fields; implementation in draft planning PR."
   affects [cap_forge_remote_ops]
   priority high
-  status draft
+  status rejected
 }

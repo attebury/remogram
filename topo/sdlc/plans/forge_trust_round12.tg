@@ -11,5 +11,5 @@ plan plan_forge_trust_round12 {
     step wave4_link_header_tests status pending description "Wave 4 — parseLinkHeader adversarial tests."
     step verify status pending description "npm test, topogram check green on remo tip after cluster closeout."
   }
-  status draft
+  status superseded
 }

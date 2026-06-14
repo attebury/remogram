@@ -9,5 +9,5 @@ plan plan_cr_inventory_provider_list_limit {
     step provider_parity status pending description "Plumb list limit options through GitHub/GitLab providers; document or test parity."
     step regression_tests status pending description "Add tests proving cr inventory --limit 1 bounds provider list HTTP before ingest (Gitea-focused)."
   }
-  status draft
+  status superseded
 }

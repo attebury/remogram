@@ -8,5 +8,5 @@ pitch pitch_forge_trust_round14 {
   no_go_areas "Hand-editing lifecycle status; product logic changes without test-driven need."
   affects [cap_forge_remote_ops]
   priority low
-  status draft
+  status rejected
 }
