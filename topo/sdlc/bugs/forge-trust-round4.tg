@@ -76,7 +76,9 @@ bug bug_public_origin_remo_leak {
 bug bug_check_pagination_first_page_only {
   name "pr_checks uses first page only"
   description "GitHub GitLab Gitea providers fetch one page of statuses/check-runs/pipelines; merge_plan can miss failures on later pages."
-  status open
+  fixed_in [task_forge_trust_round6_wave2]
+  fixed_in_verification [verification_forge_trust_round6_wave2]
+  status fixed
   severity high
   priority critical
   affects [cap_forge_remote_ops]
@@ -89,7 +91,9 @@ bug bug_check_pagination_first_page_only {
 bug bug_gitea_check_state_passthrough {
   name "Gitea check state not normalized"
   description "Gitea prChecks passes sanitizeField on state without mapping to shared enum unlike GitHub GitLab."
-  status open
+  fixed_in [task_forge_trust_round6_wave2]
+  fixed_in_verification [verification_forge_trust_round6_wave2]
+  status fixed
   severity high
   priority high
   affects [cap_forge_remote_ops]
