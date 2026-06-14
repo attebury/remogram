@@ -36,6 +36,13 @@ const PROVIDERS = {
   'github-gh': githubGh,
 };
 
+const REPEATABLE_FLAGS = new Set(['allowed_path']);
+
+function parseAllowedPathFlags(flags) {
+  if (flags.allowed_path == null) return undefined;
+  return Array.isArray(flags.allowed_path) ? flags.allowed_path : [flags.allowed_path];
+}
+
 function parsePositiveInt(value, name) {
   if (value == null) return undefined;
   const n = Number(value);
@@ -270,7 +277,13 @@ export async function runCli(argv, options = {}) {
     else if (arg.startsWith('--')) {
       const key = arg.slice(2).replace(/-/g, '_');
       const next = argv[i + 1];
-      if (next != null && !next.startsWith('--')) {
+      if (REPEATABLE_FLAGS.has(key)) {
+        if (!flags[key]) flags[key] = [];
+        if (next != null && !next.startsWith('--')) {
+          flags[key].push(next);
+          i += 1;
+        }
+      } else if (next != null && !next.startsWith('--')) {
         flags[key] = next;
         i += 1;
       } else {
@@ -415,7 +428,15 @@ export async function runCli(argv, options = {}) {
           forgeError: forgeError(ERROR_CODES.INVALID_ARGS, '--number required for merge plan'),
         });
       }
-      packet = forgePacket(PACKET_TYPES.MERGE_PLAN, ctx, await provider.mergePlan(ctx, { number }));
+      const allowedPaths = parseAllowedPathFlags(flags);
+      packet = forgePacket(
+        PACKET_TYPES.MERGE_PLAN,
+        ctx,
+        await provider.mergePlan(ctx, {
+          number,
+          ...(allowedPaths ? { allowed_paths: allowedPaths } : {}),
+        }),
+      );
     } else if (group === 'sync' && sub === 'plan') {
       const remote = flags.remote || ctx.config.remote;
       assertGitRemote(remote, '--remote');

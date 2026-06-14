@@ -40,4 +40,37 @@ describe('mergeBlockersFromFacts', () => {
       'pr_not_open',
     ]);
   });
+
+  it('blocks path scope violations when allowlist is configured', () => {
+    const allowed = ['packages/**', 'tests/**'];
+    expect(
+      mergeBlockersFromFacts(openClean, checksSuccess, {
+        allowed_paths: allowed,
+        changed_paths: ['packages/remogram-core/foo.js'],
+      }),
+    ).toEqual([]);
+    expect(
+      mergeBlockersFromFacts(openClean, checksSuccess, {
+        allowed_paths: allowed,
+        changed_paths: ['topo/sdlc/foo.tg'],
+      }),
+    ).toEqual(['path_scope_violation']);
+  });
+
+  it('blocks when allowlist is configured but changed paths are unavailable', () => {
+    expect(
+      mergeBlockersFromFacts(openClean, checksSuccess, {
+        allowed_paths: ['packages/**'],
+        changed_paths: null,
+      }),
+    ).toEqual(['changed_paths_unavailable']);
+  });
+
+  it('skips path scope checks when allowlist is omitted', () => {
+    expect(
+      mergeBlockersFromFacts(openClean, checksSuccess, {
+        changed_paths: ['topo/sdlc/foo.tg'],
+      }),
+    ).toEqual([]);
+  });
 });

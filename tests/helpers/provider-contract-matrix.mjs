@@ -57,6 +57,8 @@ const MERGE_BLOCKERS = new Set([
   'checks_failed',
   'checks_missing',
   'checks_pending',
+  'path_scope_violation',
+  'changed_paths_unavailable',
 ]);
 const COMMANDS = new Set([
   'repo_status',
