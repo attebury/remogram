@@ -144,12 +144,22 @@ describe('paginateOffsetListPages', () => {
 
   it('honors listLimit and sets list_truncated when more pages exist', async () => {
     const result = await paginateOffsetListPages({
-      pageSize: 10,
+      pageSize: 1,
       listLimit: 1,
-      fetchPage: async () => [{ number: 1 }, { number: 2 }],
+      fetchPage: async ({ page }) => (page === 1 ? [{ number: 1 }] : [{ number: 2 }]),
     });
-    expect(result.items).toHaveLength(2);
+    expect(result.items).toHaveLength(1);
     expect(result.list_truncated).toBe(true);
+  });
+
+  it('listLimit exact full page confirms end when next page is empty', async () => {
+    const result = await paginateOffsetListPages({
+      pageSize: 3,
+      listLimit: 3,
+      fetchPage: async ({ page }) => (page === 1 ? [{ number: 33 }, { number: 41 }, { number: 43 }] : []),
+    });
+    expect(result.items).toHaveLength(3);
+    expect(result.list_truncated).toBe(false);
   });
 
   it('sets list_truncated at maxPages without listLimit', async () => {

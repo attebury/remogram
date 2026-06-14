@@ -18,12 +18,11 @@ export function normalizeCrInventoryLimit(value) {
   return n;
 }
 
-async function resolveOpenPullList(provider, ctx, limit) {
-  const listOpts = { limit };
+async function resolveOpenPullList(provider, ctx) {
   if (typeof provider.listOpenPullsWithMeta === 'function') {
-    return provider.listOpenPullsWithMeta(ctx, listOpts);
+    return provider.listOpenPullsWithMeta(ctx, {});
   }
-  const numbers = await provider.listOpenPulls(ctx, listOpts);
+  const numbers = await provider.listOpenPulls(ctx, {});
   return { numbers, list_truncated: false };
 }
 
@@ -77,11 +76,7 @@ export function buildCrInventoryEntry(ctx, view, checks) {
  */
 export async function crInventory(ctx, provider, opts = {}) {
   const limit = normalizeCrInventoryLimit(opts.limit);
-  const { numbers, list_truncated: listTruncated } = await resolveOpenPullList(
-    provider,
-    ctx,
-    limit,
-  );
+  const { numbers, list_truncated: listTruncated } = await resolveOpenPullList(provider, ctx);
   const entryCount = numbers.length;
   const selected = numbers.slice(0, limit);
   const entries = [];

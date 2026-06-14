@@ -88,7 +88,7 @@ describe('cr inventory CLI integration', () => {
     expect(packet.entries).toHaveLength(10);
   });
 
-  it('cr inventory --limit 1 passes list limit to provider before aggregation', async () => {
+  it('cr inventory --limit 1 completes open list before entry cap', async () => {
     let listLimit;
     const setup = setupTempForge({
       config: defaultTestConfig(),
@@ -99,7 +99,7 @@ describe('cr inventory CLI integration', () => {
     const provider = createCrInventoryHookProvider({
       listOpenPullsWithMeta: async (_ctx, opts) => {
         listLimit = opts?.limit;
-        return { numbers: [1], list_truncated: false };
+        return { numbers: [1, 2], list_truncated: false };
       },
       prView: async (_ctx, { number }) => ({
         pr_number: number,
@@ -117,11 +117,14 @@ describe('cr inventory CLI integration', () => {
     );
     const packet = JSON.parse(logs[0]);
     expect(packet.ok).toBe(true);
-    expect(listLimit).toBe(1);
+    expect(listLimit).toBeUndefined();
     expect(packet.entries).toHaveLength(1);
+    expect(packet.entry_count).toBe(2);
+    expect(packet.truncated).toBe(true);
+    expect(packet.list_truncated).toBe(false);
   });
 
-  it('cr inventory default path uses safe list bound and returns ok slice', async () => {
+  it('cr inventory default path uses safe entry bound and complete open list', async () => {
     let listLimit;
     const setup = setupTempForge({
       config: defaultTestConfig(),
@@ -132,7 +135,7 @@ describe('cr inventory CLI integration', () => {
     const provider = createCrInventoryHookProvider({
       listOpenPullsWithMeta: async (_ctx, opts) => {
         listLimit = opts?.limit;
-        return { numbers: [1, 2, 3, 4, 5], list_truncated: true };
+        return { numbers: [1, 2, 3, 4, 5], list_truncated: false };
       },
       prView: async (_ctx, { number }) => ({
         pr_number: number,
@@ -152,9 +155,10 @@ describe('cr inventory CLI integration', () => {
     expect(packet.ok).toBe(true);
     expect(packet.type).toBe('cr_inventory_slice');
     expect(packet.error_code).toBeUndefined();
-    expect(listLimit).toBe(3);
+    expect(listLimit).toBeUndefined();
     expect(packet.entries).toHaveLength(3);
     expect(packet.truncated).toBe(true);
+    expect(packet.list_truncated).toBe(false);
   });
 
   it('cr inventory --limit 4 returns ok when some per-PR checks are oversized', async () => {
