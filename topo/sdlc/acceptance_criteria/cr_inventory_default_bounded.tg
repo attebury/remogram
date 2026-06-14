@@ -2,19 +2,19 @@ acceptance_criterion ac_cr_inventory_default_bounded_slice {
   name "Default cr inventory returns bounded slice without forge error"
   description "Given mocked provider payloads sized like attebury/topogram open PRs, when remogram cr inventory --json runs without --limit, then the command returns ok with type cr_inventory_slice and no top-level error_code oversized_raw_output."
   requirement req_cr_inventory_default_bounded
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_cr_inventory_default_safe_limit {
   name "Core applies safe default inventory bound"
   description "Given cr inventory invoked without --limit, when normalizeCrInventoryLimit and resolveOpenPullList run, then the effective list bound is lower than DEFAULT_CR_INVENTORY_LIMIT=50 and list_truncated/truncated semantics remain correct when more open PRs exist."
   requirement req_cr_inventory_default_bounded
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_cr_inventory_default_regression_tests {
   name "Regression tests for default and limit>=4 paths"
   description "Given mocked oversized per-PR view or check responses, when cr inventory runs at default and at --limit 4, then tests prove ok packets with entries and/or entries_skipped and no whole-command oversized_raw_output failure."
   requirement req_cr_inventory_default_bounded
-  status draft
+  status approved
 }
