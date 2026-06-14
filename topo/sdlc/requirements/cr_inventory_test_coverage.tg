@@ -2,5 +2,6 @@ requirement req_cr_inventory_test_coverage {
   name "CR inventory test coverage follow-up"
   description "After req_cr_inventory_hardening, add tests and one skip-semantics fix so cr_inventory_slice behavior is provably correct for Topogram consumers."
   priority medium
-  status draft
+  affects [cap_forge_remote_ops]
+  status satisfied
 }
