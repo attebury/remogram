@@ -219,32 +219,52 @@ export async function getPull(ctx, { number }) {
   return giteaFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'pulls', number));
 }
 
-export async function listOpenPullsWithMeta(ctx) {
+export async function listOpenPullsWithMeta(ctx, opts = {}) {
   requireToken();
+  const listLimit =
+    opts.limit != null && Number.isInteger(Number(opts.limit)) && Number(opts.limit) > 0
+      ? Number(opts.limit)
+      : null;
+  const pageSize =
+    listLimit != null ? Math.min(listLimit, GITEA_PAGE_SIZE) : GITEA_PAGE_SIZE;
   const all = [];
   let listTruncated = false;
   const path = `${repoApiPath(ctx.config, 'pulls')}?state=open`;
   const pageSep = path.includes('?') ? '&' : '?';
   for (let page = 1; page <= MAX_CHECK_PAGES; page += 1) {
+    const remaining = listLimit != null ? Math.max(listLimit - all.length, 0) : pageSize;
+    if (listLimit != null && remaining === 0) break;
+    const requestLimit = listLimit != null ? Math.min(pageSize, remaining) : pageSize;
     const body = await giteaFetch(
       ctx.config,
       ctx.parsed,
-      `${path}${pageSep}limit=${GITEA_PAGE_SIZE}&page=${page}`,
+      `${path}${pageSep}limit=${requestLimit}&page=${page}`,
     );
     const items = Array.isArray(body) ? body : [];
     all.push(...items);
-    if (items.length < GITEA_PAGE_SIZE) break;
-    if (page === MAX_CHECK_PAGES) listTruncated = true;
+    if (items.length < requestLimit) break;
+    if (listLimit != null) {
+      if (all.length >= listLimit) {
+        listTruncated = items.length >= requestLimit;
+        break;
+      }
+    } else if (page === MAX_CHECK_PAGES) {
+      listTruncated = true;
+      break;
+    }
   }
-  const numbers = all
+  let numbers = all
     .map((pr) => pr.number)
     .filter((number) => Number.isInteger(number))
     .sort((a, b) => a - b);
+  if (listLimit != null && numbers.length > listLimit) {
+    numbers = numbers.slice(0, listLimit);
+  }
   return { numbers, list_truncated: listTruncated };
 }
 
-export async function listOpenPulls(ctx) {
-  const meta = await listOpenPullsWithMeta(ctx);
+export async function listOpenPulls(ctx, opts = {}) {
+  const meta = await listOpenPullsWithMeta(ctx, opts);
   return meta.numbers;
 }
 

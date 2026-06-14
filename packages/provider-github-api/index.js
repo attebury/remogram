@@ -420,33 +420,63 @@ export async function mergePlan(ctx, opts) {
   };
 }
 
-export async function listOpenPullsWithMeta(ctx) {
+export async function listOpenPullsWithMeta(ctx, opts = {}) {
   apiBase(ctx.config, ctx.parsed);
   requireToken();
   const base = apiBase(ctx.config, ctx.parsed);
   const { token } = requireToken();
+  const listLimit =
+    opts.limit != null && Number.isInteger(Number(opts.limit)) && Number(opts.limit) > 0
+      ? Number(opts.limit)
+      : null;
+  const GITHUB_PAGE_SIZE = 100;
   const all = [];
   let listTruncated = false;
-  let url = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open`;
-  for (let page = 0; page < MAX_CHECK_PAGES && url; page += 1) {
-    const { body, headers } = await fetchJsonWithMeta(url, {
-      headers: authHeaders(token),
-    });
-    const items = Array.isArray(body) ? body : [];
-    all.push(...items);
-    const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
-    url = parseLinkHeader(linkHeader).next ?? null;
-    if (page === MAX_CHECK_PAGES - 1 && url) listTruncated = true;
+
+  if (listLimit == null) {
+    let url = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open`;
+    for (let page = 0; page < MAX_CHECK_PAGES && url; page += 1) {
+      const { body, headers } = await fetchJsonWithMeta(url, {
+        headers: authHeaders(token),
+      });
+      const items = Array.isArray(body) ? body : [];
+      all.push(...items);
+      const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
+      url = parseLinkHeader(linkHeader).next ?? null;
+      if (page === MAX_CHECK_PAGES - 1 && url) listTruncated = true;
+    }
+  } else {
+    for (let page = 1; page <= MAX_CHECK_PAGES; page += 1) {
+      const remaining = listLimit - all.length;
+      if (remaining <= 0) break;
+      const requestSize = Math.min(remaining, GITHUB_PAGE_SIZE);
+      const url = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open&per_page=${requestSize}&page=${page}`;
+      const { body } = await fetchJsonWithMeta(url, {
+        headers: authHeaders(token),
+      });
+      const items = Array.isArray(body) ? body : [];
+      all.push(...items);
+      if (items.length < requestSize) break;
+      if (all.length >= listLimit) {
+        listTruncated = items.length >= requestSize;
+        break;
+      }
+      if (page === MAX_CHECK_PAGES) listTruncated = true;
+    }
   }
-  const numbers = all
+
+  let numbers = all
     .map((pr) => pr.number)
     .filter((number) => Number.isInteger(number))
     .sort((a, b) => a - b);
+  if (listLimit != null && numbers.length > listLimit) {
+    numbers = numbers.slice(0, listLimit);
+  }
   return { numbers, list_truncated: listTruncated };
 }
 
-export async function listOpenPulls(ctx) {
-  const meta = await listOpenPullsWithMeta(ctx);
+export async function listOpenPulls(ctx, opts = {}) {
+  const meta = await listOpenPullsWithMeta(ctx, opts);
   return meta.numbers;
 }
 

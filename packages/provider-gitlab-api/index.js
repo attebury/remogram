@@ -303,33 +303,52 @@ export async function mergePlan(ctx, opts) {
   };
 }
 
-export async function listOpenPullsWithMeta(ctx) {
+export async function listOpenPullsWithMeta(ctx, opts = {}) {
   apiBase(ctx.config, ctx.parsed);
   requireToken();
+  const listLimit =
+    opts.limit != null && Number.isInteger(Number(opts.limit)) && Number(opts.limit) > 0
+      ? Number(opts.limit)
+      : null;
   const path = `${projectApiPath(ctx.config, 'merge_requests')}?state=opened`;
   const all = [];
   let listTruncated = false;
   for (let page = 1; page <= MAX_CHECK_PAGES; page += 1) {
+    const remaining = listLimit != null ? Math.max(listLimit - all.length, 0) : GITLAB_PAGE_SIZE;
+    if (listLimit != null && remaining === 0) break;
+    const requestSize =
+      listLimit != null ? Math.min(GITLAB_PAGE_SIZE, remaining) : GITLAB_PAGE_SIZE;
     const separator = path.includes('?') ? '&' : '?';
     const body = await gitlabFetch(
       ctx.config,
       ctx.parsed,
-      `${path}${separator}per_page=${GITLAB_PAGE_SIZE}&page=${page}`,
+      `${path}${separator}per_page=${requestSize}&page=${page}`,
     );
     const items = Array.isArray(body) ? body : [];
     all.push(...items);
-    if (items.length < GITLAB_PAGE_SIZE) break;
-    if (page === MAX_CHECK_PAGES) listTruncated = true;
+    if (items.length < requestSize) break;
+    if (listLimit != null) {
+      if (all.length >= listLimit) {
+        listTruncated = items.length >= requestSize;
+        break;
+      }
+    } else if (page === MAX_CHECK_PAGES) {
+      listTruncated = true;
+      break;
+    }
   }
-  const numbers = all
+  let numbers = all
     .map((mr) => mr.iid)
     .filter((number) => Number.isInteger(number))
     .sort((a, b) => a - b);
+  if (listLimit != null && numbers.length > listLimit) {
+    numbers = numbers.slice(0, listLimit);
+  }
   return { numbers, list_truncated: listTruncated };
 }
 
-export async function listOpenPulls(ctx) {
-  const meta = await listOpenPullsWithMeta(ctx);
+export async function listOpenPulls(ctx, opts = {}) {
+  const meta = await listOpenPullsWithMeta(ctx, opts);
   return meta.numbers;
 }
 
