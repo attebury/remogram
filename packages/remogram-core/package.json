@@ -1,6 +1,6 @@
 {
   "name": "@remogram/core",
-  "version": "0.1.0-beta.2",
+  "version": "0.1.0-beta.3",
   "description": "Remogram forge envelope, config, caps, and HTTP utilities",
   "type": "module",
   "license": "MIT",

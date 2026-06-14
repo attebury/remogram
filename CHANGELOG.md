@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [0.1.0-beta.3] - 2026-06-14
+
+### Added
+
+- **Semantic diff fact inventory:** `ref inventory`, `cr inventory`, and related read-only packets for Topogram consumer workflows; contract tests and provider matrix coverage
+- **CR inventory hardening:** single-pass aggregation, semantic SHAs and stale-head hints, entry bounds and truncation metadata, partial failure resilience
+- **CR inventory `--limit`:** provider open-PR list requests honor inventory limit before ingest (fixes `oversized_raw_output` on large repos when using `--limit 1`)
+- **Forge trust rounds 6–14:** check pagination across providers, ingest backoff and list truncation signaling, GitHub/GitLab Link header handling, pathname confinement, doctor and public-export script hardening, adversarial provider tests
+- **Gitea commit status normalization:** map Gitea `status` field with `state` fallback; dedupe duplicate contexts (latest row wins); fail-closed unknown values in `prChecks`
+- **Gitea CI gate workflow** for dogfood PR checks
+
+### Changed
+
+- Expanded test coverage for cr inventory CLI integration, provider matrix metadata, and forge-trust regression suites (366 tests on release tip)
+
+### Fixed
+
+- Gitea `prChecks` reading wrong field (`status` vs `state`) and stale duplicate context rows overriding newer success
+- `pr_not_open` entries recorded in `entries_skipped` when inventory skips non-open PRs
+- Multiple forge-trust issues from rounds 6–14 (pagination bounds, ingest cap backoff, export script defaults, stub doctor honesty, and related provider edge cases)
+
 ## [0.1.0-beta.2] - 2026-06-11
 
 ### Changed
@@ -45,6 +66,7 @@ All notable changes to this project will be documented in this file.
 - `github-gh` and `gitea-tea` provider IDs are reserved CLI-wrapper placeholders (not implemented); use `*-api` providers — GitLab's CLI is `glab` but has no wrapper ID yet (see README)
 - Payload-size smoke compare is not packaged in npm beta (monorepo dev tooling only)
 
+[0.1.0-beta.3]: https://github.com/attebury/remogram/releases/tag/v0.1.0-beta.3
 [0.1.0-beta.2]: https://github.com/attebury/remogram/releases/tag/v0.1.0-beta.2
 [0.1.0-beta.1]: https://github.com/attebury/remogram/releases/tag/v0.1.0-beta.1
 [0.1.0-beta.0]: https://github.com/attebury/remogram/releases/tag/v0.1.0-beta.0
