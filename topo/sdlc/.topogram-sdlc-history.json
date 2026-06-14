@@ -7463,5 +7463,27 @@
         "archive:goal/merge-plan-path-allowlist"
       ]
     }
+  ],
+  "goal_branch_cr_inventory_default_bounded": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T17:35:06.734Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:268"
+      ]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T17:35:18.357Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:268"
+      ]
+    }
   ]
 }
