@@ -5,5 +5,5 @@ goal_branch goal_branch_forge_trust_round12 {
   task task_forge_trust_round12_wave1
   evidence_refs [local:topo/sdlc/pitches/forge_trust_round12.tg, local:topo/sdlc/requirements/forge_trust_round12.tg, local:topo/sdlc/plans/forge_trust_round12.tg, local:topo/sdlc/tasks/forge_trust_round12_waves.tg, local:topo/sdlc/acceptance_criteria/forge_trust_round12.tg, local:topo/sdlc/bugs/forge-trust-round12.tg, local:topo/sdlc/decisions/forge_ingest_cap_policy.tg, local:topo/verifications/forge-trust-round12.tg]
   witness_refs []
-  status approved
+  status active
 }
