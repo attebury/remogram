@@ -7485,5 +7485,63 @@
         "pr:268"
       ]
     }
+  ],
+  "ac_cr_inventory_default_bounded_slice": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T17:46:32.386Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:269"
+      ]
+    }
+  ],
+  "ac_cr_inventory_default_safe_limit": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T17:46:32.660Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:269"
+      ]
+    }
+  ],
+  "ac_cr_inventory_default_regression_tests": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T17:46:32.890Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:269"
+      ]
+    }
+  ],
+  "req_cr_inventory_default_bounded": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T17:51:59.613Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:269"
+      ]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T17:52:02.557Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:269"
+      ]
+    }
   ]
 }
