@@ -126,6 +126,7 @@ export async function giteaFetch(config, parsed, path, options = {}) {
 
 const MAX_CHECK_PAGES = 50;
 const GITEA_PAGE_SIZE = 100;
+const CHECK_STATUS_PAGE_SIZE = 25;
 
 export async function giteaFetchPaginated(config, parsed, path) {
   const all = [];
@@ -134,11 +135,11 @@ export async function giteaFetchPaginated(config, parsed, path) {
     const body = await giteaFetch(
       config,
       parsed,
-      `${path}${separator}limit=${GITEA_PAGE_SIZE}&page=${page}`,
+      `${path}${separator}limit=${CHECK_STATUS_PAGE_SIZE}&page=${page}`,
     );
     const items = Array.isArray(body) ? body : [];
     all.push(...items);
-    if (items.length < GITEA_PAGE_SIZE) break;
+    if (items.length < CHECK_STATUS_PAGE_SIZE) break;
   }
   return all;
 }

@@ -223,7 +223,7 @@ describe('provider-gitlab-api fixtures', () => {
   });
 
   it('mergePlan includes checks_failed when commit statuses fail on page 2', async () => {
-    const page1Statuses = Array.from({ length: 100 }, (_, i) => ({
+    const page1Statuses = Array.from({ length: 25 }, (_, i) => ({
       name: `ci/page1-${i}`,
       status: 'success',
       description: 'ok',

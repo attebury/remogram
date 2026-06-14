@@ -159,12 +159,14 @@ export async function githubFetch(config, parsed, path, options = {}) {
 }
 
 const MAX_CHECK_PAGES = 50;
+const CHECK_STATUS_PAGE_SIZE = 25;
 
 export async function githubFetchPaginated(config, parsed, path, slice) {
   const base = apiBase(config, parsed);
   const { token } = requireToken();
   const all = [];
-  let url = `${base}${path}`;
+  const pageQuery = `${path.includes('?') ? '&' : '?'}per_page=${CHECK_STATUS_PAGE_SIZE}`;
+  let url = `${base}${path}${pageQuery}`;
   for (let page = 0; page < MAX_CHECK_PAGES && url; page += 1) {
     const { body, headers } = await fetchJsonWithMeta(url, {
       headers: authHeaders(token),

@@ -223,7 +223,7 @@ describe('provider-gitea-api fixtures', () => {
   it('mergePlan includes checks_failed when commit statuses fail on page 2', async () => {
     const pull = load('pull.json');
     const pullResponse = jsonPageResponse(pull);
-    const page1Statuses = Array.from({ length: 100 }, (_, i) => ({
+    const page1Statuses = Array.from({ length: 25 }, (_, i) => ({
       context: `ci/page1-${i}`,
       state: 'success',
       description: 'ok',
