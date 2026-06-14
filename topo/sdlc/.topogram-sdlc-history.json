@@ -7184,6 +7184,13 @@
       "evidence_refs": [
         "pr:253"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T07:31:10.646Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ],
   "pitch_autonomous_observer_merge_guardrails": [
@@ -7242,6 +7249,22 @@
       "evidence_refs": [
         "pr:253"
       ]
+    }
+  ],
+  "task_autonomous_observer_merge_guardrails": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T07:31:10.533Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T07:31:10.588Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ]
 }

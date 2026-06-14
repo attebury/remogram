@@ -44,6 +44,12 @@ export { buildRefInventoryBody, refsInventory } from './ref-inventory.js';
 export { buildCrInventoryEntry, buildHeadReconcile, crInventory, DEFAULT_CR_INVENTORY_LIMIT, normalizeCrInventoryLimit } from './cr-inventory.js';
 export { mergeBlockersFromFacts, isOpenPrState } from './merge-blockers.js';
 export {
+  matchPathAllowlist,
+  isPathAllowed,
+  pathsOutsideAllowlist,
+  allPathsAllowed,
+} from './path-allowlist.js';
+export {
   localHeadShaForPr,
   staleHeadDetails,
   staleHeadForgeError,

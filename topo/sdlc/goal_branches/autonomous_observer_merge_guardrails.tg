@@ -4,5 +4,5 @@ goal_branch goal_branch_autonomous_observer_merge_guardrails {
   branch_ref "goal/autonomous-observer-merge-guardrails"
   task task_autonomous_observer_merge_guardrails
   evidence_refs [local:topo/sdlc/pitches/autonomous_observer_merge_guardrails.tg, local:topo/sdlc/requirements/autonomous_observer_merge_guardrails.tg, local:topo/sdlc/tasks/autonomous_observer_merge_guardrails.tg, local:topo/sdlc/plans/autonomous_observer_merge_guardrails.tg]
-  status approved
+  status active
 }
