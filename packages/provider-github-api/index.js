@@ -292,10 +292,11 @@ export async function repoStatus(ctx) {
 }
 
 export function providerCapabilities() {
+  const check_sources = ['commit_statuses', 'check_runs'];
   return {
     commands: STRUCTURED_COMMANDS,
     auth_envs: ['GITHUB_TOKEN', 'GH_TOKEN'],
-    check_sources: ['commit_statuses', 'check_runs'],
+    check_sources,
     mergeability_confidence: 'derived',
     host_binding: 'verified_remote_host',
     pagination: 'supported',
@@ -304,7 +305,7 @@ export function providerCapabilities() {
     ...checkPaginationCapabilityFacts({
       strategy: 'link_header',
       pageSizeParam: 'per_page',
-      sourceCount: 2,
+      sourceCount: check_sources.length,
     }),
   };
 }
@@ -474,9 +475,13 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
     let url = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open`;
     for (let page = 0; page < MAX_CHECK_PAGES && url; page += 1) {
       const currentUrl = url;
-      const { body, headers } = await fetchJsonWithMeta(url, {
-        headers: authHeaders(token),
-      });
+      const { body, headers } = await fetchWithIngestPageBackoff(
+        (attemptUrl) =>
+          fetchJsonWithMeta(attemptUrl, {
+            headers: authHeaders(token),
+          }),
+        (limit) => withPerPageParam(currentUrl, limit),
+      );
       const items = Array.isArray(body) ? body : [];
       all.push(...items);
       const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;

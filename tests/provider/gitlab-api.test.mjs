@@ -121,6 +121,7 @@ describe('provider-gitlab-api fixtures', () => {
     expect(body.write_support).toBe(false);
     expect(body.forge_ingest_cap_bytes).toBe(8192);
     expect(body.pagination).toBe('supported');
+    expect(body.check_pagination.check_source_count).toBe(body.check_sources.length);
     expect(body.check_pagination).toEqual({
       strategy: 'offset_limit',
       page_size: 25,

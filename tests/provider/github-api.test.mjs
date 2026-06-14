@@ -363,7 +363,8 @@ describe('provider-github-api fixtures', () => {
     const relativeNext = '/repos/owner/repo/pulls?state=open&page=2';
     global.fetch.mockImplementation((url) => {
       const href = String(url);
-      if (href.includes('page=2')) {
+      const page = new URL(href).searchParams.get('page');
+      if (page === '2') {
         return Promise.resolve(jsonResponse([{ number: 2 }]));
       }
       if (href.includes('/pulls')) {
@@ -377,6 +378,38 @@ describe('provider-github-api fixtures', () => {
     expect(meta.list_truncated).toBe(false);
     expect(meta.numbers).toEqual([1, 2]);
     expect(global.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it('listOpenPullsWithMeta survives oversized open PR list via ingest backoff', async () => {
+    const paddedPulls = Array.from({ length: 25 }, (_, i) => ({
+      number: i + 1,
+      title: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedPulls);
+    expect(Buffer.byteLength(oversizedJson, 'utf8')).toBeGreaterThan(8192);
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      const perPage = Number(new URL(href).searchParams.get('per_page') || '25');
+      if (perPage > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          headers: { get: () => null },
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      return Promise.resolve(jsonResponse([{ number: 1 }]));
+    });
+
+    const meta = await listOpenPullsWithMeta(ctx, {});
+    expect(meta.numbers).toEqual([1]);
+    expect(meta.list_truncated).toBe(false);
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('per_page=12'))).toBe(true);
   });
 
   it('mergePlan adds checks_incomplete when statuses stream hits off-origin Link next', async () => {
@@ -681,6 +714,7 @@ describe('provider-github-api fixtures', () => {
     const caps = provider.providerCapabilities();
     expect(caps.pagination).toBe('supported');
     expect(caps.forge_ingest_cap_bytes).toBe(8192);
+    expect(caps.check_pagination.check_source_count).toBe(caps.check_sources.length);
     expect(caps.check_pagination).toEqual({
       strategy: 'link_header',
       page_size: 25,

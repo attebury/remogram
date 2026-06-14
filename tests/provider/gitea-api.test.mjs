@@ -414,6 +414,7 @@ describe('provider-gitea-api fixtures', () => {
     const caps = provider.providerCapabilities();
     expect(caps.pagination).toBe('supported');
     expect(caps.forge_ingest_cap_bytes).toBe(8192);
+    expect(caps.check_pagination.check_source_count).toBe(caps.check_sources.length);
     expect(caps.check_pagination).toEqual({
       strategy: 'offset_limit',
       page_size: 25,

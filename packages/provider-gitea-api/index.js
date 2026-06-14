@@ -182,16 +182,21 @@ export async function repoStatus(ctx) {
 }
 
 export function providerCapabilities() {
+  const check_sources = ['commit_statuses'];
   return {
     commands: STRUCTURED_COMMANDS,
     auth_envs: ['GITEA_TOKEN'],
-    check_sources: ['commit_statuses'],
+    check_sources,
     mergeability_confidence: 'direct',
     host_binding: 'verified_remote_host',
     pagination: 'supported',
     write_support: false,
     ...forgeIngestCapabilityFacts(),
-    ...checkPaginationCapabilityFacts({ strategy: 'offset_limit', pageSizeParam: 'limit' }),
+    ...checkPaginationCapabilityFacts({
+      strategy: 'offset_limit',
+      pageSizeParam: 'limit',
+      sourceCount: check_sources.length,
+    }),
   };
 }
 
