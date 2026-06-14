@@ -4442,5 +4442,23 @@
         "verification:verification_forge_trust_round6_wave2"
       ]
     }
+  ],
+  "ac_non_list_ingest_bounded_round6": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T02:09:04.733Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_capabilities_ingest_facts_round6": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T02:09:05.419Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
   ]
 }

@@ -51,14 +51,14 @@ acceptance_criterion ac_non_list_ingest_bounded_round6 {
   name "Non-list forge ingest stays bounded"
   description "Given a busy repo with large check/status payloads on non-list endpoints, when pr_checks or merge_plan runs, then pagination or chunking keeps raw ingest under default cap without OVERSIZED_RAW_OUTPUT."
   requirement req_forge_trust_round6
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_capabilities_ingest_facts_round6 {
   name "Capabilities report ingest and pagination facts"
   description "Given provider capabilities --json, when packet is returned, then forge_ingest_cap_bytes is 8192 by default and check_pagination describes behavior honestly."
   requirement req_forge_trust_round6
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_mcp_pr_checks_schema_round6 {
