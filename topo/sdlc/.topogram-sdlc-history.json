@@ -3998,6 +3998,16 @@
       "at": "2026-06-14T01:27:47.386Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-14T01:46:45.846Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:137"
+      ]
     }
   ],
   "ac_cr_inventory_core_limit_propagation": [
@@ -4084,6 +4094,13 @@
       "at": "2026-06-14T01:27:47.357Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T01:38:21.966Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ]
 }
