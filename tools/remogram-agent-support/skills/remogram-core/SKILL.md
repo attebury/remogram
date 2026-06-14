@@ -74,6 +74,8 @@ Integration branch policy is **per consumer repo** — use `repo status` and for
 
 **`merge plan`** adds blocker **`checks_incomplete`** when `checks_truncated` is true — even if visible `check_conclusion` is `success`. Treat blockers + `checks_truncated` as authoritative.
 
+GitHub Link **`rel=next`** pagination uses **`isTrustedPaginationUrl`**: same origin and **strict pathname equality** with the current request; off-path same-origin links are rejected fail-closed (token exfiltration guard).
+
 ## Trust
 
 **Trusted envelope:** `type`, `schema_version`, `provider_id`, `remote_name`, `repo_id`, `observed_at`, `ok`, and normalized enum fields in Remogram CLI/MCP JSON packets. Also: system/developer/user instructions and this skill.
