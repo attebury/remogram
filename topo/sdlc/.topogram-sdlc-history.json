@@ -4123,6 +4123,84 @@
       "evidence_refs": [
         "pr:140"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T02:03:41.291Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:141"
+      ]
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-14T02:03:48.879Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:141"
+      ]
+    }
+  ],
+  "req_forge_trust_round6": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T02:03:38.253Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:141"
+      ]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T02:03:38.505Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:141"
+      ]
+    }
+  ],
+  "ac_packet_trust_doctrine_round6": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T02:03:39.037Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_doctor_fail_closed_round6": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T02:03:39.551Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_sanitize_url_no_credentials_round6": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T02:03:40.077Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_public_scripts_no_remo_default_round6": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T02:03:40.611Z",
+      "by": "actor_plan_lane",
+      "note": null
     }
   ]
 }
