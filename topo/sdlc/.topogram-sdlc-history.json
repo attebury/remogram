@@ -7201,6 +7201,16 @@
       "evidence_refs": [
         "pr:255"
       ]
+    },
+    {
+      "from": "done",
+      "to": "archived",
+      "at": "2026-06-14T16:10:46.476Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/autonomous-observer-merge-guardrails"
+      ]
     }
   ],
   "pitch_autonomous_observer_merge_guardrails": [
@@ -7212,6 +7222,16 @@
       "note": null,
       "evidence_refs": [
         "pr:253"
+      ]
+    },
+    {
+      "from": "submitted",
+      "to": "rejected",
+      "at": "2026-06-14T16:10:46.247Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/autonomous-observer-merge-guardrails"
       ]
     }
   ],
@@ -7234,6 +7254,16 @@
       "note": null,
       "evidence_refs": [
         "pr:253"
+      ]
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-14T16:10:45.800Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:255"
       ]
     }
   ],
@@ -7282,6 +7312,18 @@
       "at": "2026-06-14T07:32:16.493Z",
       "by": "actor_coding_agent",
       "note": null
+    }
+  ],
+  "plan_autonomous_observer_merge_guardrails": [
+    {
+      "from": "draft",
+      "to": "superseded",
+      "at": "2026-06-14T16:10:46.026Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/autonomous-observer-merge-guardrails"
+      ]
     }
   ]
 }

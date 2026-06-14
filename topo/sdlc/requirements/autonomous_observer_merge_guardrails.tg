@@ -6,5 +6,5 @@ requirement req_autonomous_observer_merge_guardrails {
   respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
   pitch pitch_autonomous_observer_merge_guardrails
   priority medium
-  status approved
+  status satisfied
 }

@@ -7,5 +7,5 @@ plan plan_autonomous_observer_merge_guardrails {
     step unit_tests status pending description "tests/core/path-allowlist.test.mjs"
     step proof status pending description "npm test + topogram check green"
   }
-  status draft
+  status superseded
 }
