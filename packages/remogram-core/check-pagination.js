@@ -55,23 +55,18 @@ export async function paginateCheckStatusPages({
   const all = [];
   let truncated = false;
   for (let page = 1; page <= maxPages; page += 1) {
-    let limit = pageSize;
-    let pageItems;
-    while (true) {
-      try {
+    let usedLimit = pageSize;
+    const pageItems = await fetchWithIngestPageBackoff(
+      async (limit) => {
+        usedLimit = limit;
         const items = await fetchPage({ page, limit });
-        pageItems = Array.isArray(items) ? items : [];
-        break;
-      } catch (err) {
-        if (isOversizedIngestError(err) && limit > 1) {
-          limit = Math.max(1, Math.floor(limit / 2));
-          continue;
-        }
-        throw err;
-      }
-    }
+        return Array.isArray(items) ? items : [];
+      },
+      (limit) => limit,
+      pageSize,
+    );
     all.push(...pageItems);
-    if (pageItems.length < limit) {
+    if (pageItems.length < usedLimit) {
       break;
     }
     if (page === maxPages) {
