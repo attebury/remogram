@@ -7604,6 +7604,13 @@
       "evidence_refs": [
         "forge:issue/272"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T18:59:57.380Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ],
   "ac_cr_open_cli_packet": [
@@ -7674,6 +7681,22 @@
       "evidence_refs": [
         "forge:issue/272"
       ]
+    }
+  ],
+  "task_cr_open_lane_autonomy": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T18:59:57.264Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T18:59:57.332Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ]
 }

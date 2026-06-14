@@ -51,13 +51,14 @@ describe('remogram-mcp callTool', () => {
     expect(typeof packet.ok).toBe('boolean');
   }
 
-  it('returns the same read-only tools as listTools', async () => {
+  it('returns the same tools as listTools', async () => {
     const setup = setupGithubForge();
     cleanups.push(setup);
     await withMcpClient(setup.dir, async (client) => {
       const { tools } = await client.listTools();
       expect(tools.map((t) => t.name).sort()).toEqual([
         'cr_inventory',
+        'cr_open',
         'doctor',
         'merge_plan',
         'pr_checks',
@@ -68,6 +69,8 @@ describe('remogram-mcp callTool', () => {
         'repo_status',
         'sync_plan',
       ]);
+      const crOpen = tools.find((tool) => tool.name === 'cr_open');
+      expect(crOpen?.annotations?.readOnlyHint).toBe(false);
     });
   }, 15_000);
 

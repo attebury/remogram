@@ -8,12 +8,14 @@ const API_PROVIDER_MODULES = [
 
 describe('auth-aware provider capabilities', () => {
   it('apiProviderCommands lists auth_class for every command', () => {
-    const commands = apiProviderCommands();
+    const commands = apiProviderCommands({ writeCommandsImplemented: true });
     expect(commands).toHaveLength(Object.keys(API_PROVIDER_COMMAND_AUTH).length);
     for (const command of commands) {
       expect(command.implemented).toBe(true);
       expect(command.auth_class).toBe(API_PROVIDER_COMMAND_AUTH[command.name]);
     }
+    const readOnly = apiProviderCommands();
+    expect(readOnly.find((c) => c.name === 'cr_open')?.implemented).toBe(false);
   });
 
   for (const [providerId, loadModule] of API_PROVIDER_MODULES) {
@@ -51,6 +53,10 @@ describe('auth-aware provider capabilities', () => {
           auth_class: AUTH_CLASS.TOKEN_REQUIRED,
         });
       }
+      expect(byName.cr_open).toMatchObject({
+        implemented: providerId === 'gitea-api',
+        auth_class: AUTH_CLASS.TOKEN_REQUIRED,
+      });
     });
   }
 });

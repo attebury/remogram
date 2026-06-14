@@ -17,6 +17,7 @@ export const API_PROVIDER_COMMAND_AUTH = {
   pr_checks: AUTH_CLASS.TOKEN_REQUIRED,
   merge_plan: AUTH_CLASS.TOKEN_REQUIRED,
   sync_plan: AUTH_CLASS.GIT_ONLY,
+  cr_open: AUTH_CLASS.TOKEN_REQUIRED,
 };
 
 export function commandCapability(name, { implemented = true } = {}) {
@@ -27,10 +28,11 @@ export function commandCapability(name, { implemented = true } = {}) {
   return { name, implemented, auth_class };
 }
 
-export function apiProviderCommands() {
-  return Object.keys(API_PROVIDER_COMMAND_AUTH).map((name) =>
-    commandCapability(name, { implemented: true }),
-  );
+export function apiProviderCommands({ writeCommandsImplemented = false } = {}) {
+  return Object.keys(API_PROVIDER_COMMAND_AUTH).map((name) => {
+    const implemented = name === 'cr_open' ? writeCommandsImplemented : true;
+    return commandCapability(name, { implemented });
+  });
 }
 
 export function stubProviderCommands() {

@@ -128,6 +128,18 @@ describe('packet contracts', () => {
     expect(bodyKeys(p)).toEqual(['checks', 'provider_capabilities', 'summary']);
   });
 
+  it('change_request_opened', () => {
+    const p = forgePacket(PACKET_TYPES.CHANGE_REQUEST_OPENED, ctx, {
+      pr_number: 99,
+      url: 'http://localhost:3000/o/r/pulls/99',
+      head: 'impl/x',
+      base: 'remo',
+      title: 'Open CR',
+    });
+    expect(p.type).toBe('change_request_opened');
+    expect(bodyKeys(p)).toEqual(['base', 'head', 'pr_number', 'title', 'url']);
+  });
+
   it('forge_error', () => {
     const p = forgePacket(
       'forge_error',

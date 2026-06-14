@@ -69,6 +69,7 @@ const COMMANDS = new Set([
   'pr_checks',
   'merge_plan',
   'sync_plan',
+  'cr_open',
 ]);
 const AUTH_CLASSES = new Set(['none', 'git_only', 'token_required']);
 
@@ -125,7 +126,7 @@ export function runProviderContractMatrix(cases) {
         it('emits the structured provider_capabilities body shape', async () => {
           const body = await testCase.provider.providerCapabilities(testCase.ctx);
 
-          expect(body.write_support).toBe(false);
+          expect(body.write_support).toBe(testCase.writeSupport ?? false);
           expect(['unsupported', 'first_page_only', 'supported']).toContain(body.pagination);
           expect(['direct', 'derived', 'unknown']).toContain(body.mergeability_confidence);
           expect(Array.isArray(body.auth_envs)).toBe(true);
@@ -145,18 +146,18 @@ export function runProviderContractMatrix(cases) {
           const body = await testCase.provider.repoStatus(testCase.ctx);
 
           expect(body.auth_present).toBe(true);
-          expect(body.capabilities).toEqual(
-            expect.arrayContaining([
-              'repo_status',
-              'ref_compare',
-              'ref_inventory',
-              'cr_inventory',
-              'pr_status',
-              'pr_checks',
-              'merge_plan',
-              'sync_plan',
-            ]),
-          );
+          const expectedCaps = [
+            'repo_status',
+            'ref_compare',
+            'ref_inventory',
+            'cr_inventory',
+            'pr_status',
+            'pr_checks',
+            'merge_plan',
+            'sync_plan',
+          ];
+          if (testCase.writeSupport) expectedCaps.push('cr_open');
+          expect(body.capabilities).toEqual(expect.arrayContaining(expectedCaps));
           expectBodyKeys(PACKET_TYPES.REPO_STATUS, testCase, body);
         });
 
@@ -196,6 +197,41 @@ export function runProviderContractMatrix(cases) {
             forgeError: { code: 'unauthenticated_provider' },
           });
         });
+
+        if (typeof testCase.provider.crOpen === 'function') {
+          it('gates cr_open without forge auth', async () => {
+            testCase.clearAuth();
+
+            await expect(
+              testCase.provider.crOpen(testCase.ctx, {
+                head: 'feat/x',
+                base: 'remo',
+                title: 'Test',
+              }),
+            ).rejects.toMatchObject({
+              forgeError: { code: 'unauthenticated_provider' },
+            });
+            expect(global.fetch).not.toHaveBeenCalled();
+          });
+
+          it('emits change_request_opened body when authenticated', async () => {
+            if (typeof testCase.mockCrOpen !== 'function') return;
+            testCase.useAuth();
+            testCase.mockCrOpen();
+
+            const body = await testCase.provider.crOpen(testCase.ctx, {
+              head: 'feat/x',
+              base: 'remo',
+              title: 'Test CR',
+            });
+
+            expect(body.pr_number).toBeGreaterThan(0);
+            expect(typeof body.url).toBe('string');
+            expect(body.head).toBe('feat/x');
+            expect(body.base).toBe('remo');
+            expect(body.title).toBe('Test CR');
+          });
+        }
 
         it('emits cr_inventory_slice body when authenticated', async () => {
           if (typeof testCase.mockCrInventory !== 'function') return;

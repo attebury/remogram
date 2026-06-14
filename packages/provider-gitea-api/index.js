@@ -10,6 +10,7 @@ import {
   refsInventory,
   crInventory,
   buildMergePlanBodyFromFacts,
+  buildChangeRequestOpenedBody,
   ERROR_CODES,
   forgeError,
   forgeIngestCapabilityFacts,
@@ -34,9 +35,10 @@ const AUTH_CAPABILITIES = [
   'pr_checks',
   'merge_plan',
   'sync_plan',
+  'cr_open',
 ];
 
-const STRUCTURED_COMMANDS = apiProviderCommands();
+const STRUCTURED_COMMANDS = apiProviderCommands({ writeCommandsImplemented: true });
 
 export function giteaToken() {
   return process.env.GITEA_TOKEN || null;
@@ -222,7 +224,7 @@ export function providerCapabilities() {
     mergeability_confidence: 'direct',
     host_binding: 'verified_remote_host',
     pagination: 'supported',
-    write_support: false,
+    write_support: true,
     ...forgeIngestCapabilityFacts(),
     ...checkPaginationCapabilityFacts({
       strategy: 'offset_limit',
@@ -259,6 +261,30 @@ export async function getPull(ctx, { number }) {
     });
   }
   return giteaFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'pulls', number));
+}
+
+export async function crOpen(ctx, { head, base, title, body: prBody }) {
+  assertGitRef(head, 'head');
+  assertGitRef(base, 'base');
+  if (!title || typeof title !== 'string' || !title.trim()) {
+    throw Object.assign(new Error('--title required'), {
+      forgeError: forgeError(ERROR_CODES.INVALID_ARGS, '--title required for cr open'),
+    });
+  }
+  const payload = {
+    title: sanitizeField(title),
+    head: sanitizeField(head),
+    base: sanitizeField(base),
+  };
+  if (prBody != null && String(prBody).trim() !== '') {
+    payload.body = sanitizeField(String(prBody));
+  }
+  const pull = await giteaFetch(ctx.config, ctx.parsed, repoApiPath(ctx.config, 'pulls'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  return buildChangeRequestOpenedBody(pull, { head, base, title });
 }
 
 export async function listOpenPullsWithMeta(ctx, opts = {}) {
@@ -412,4 +438,5 @@ export const provider = {
   prChecks,
   mergePlan,
   syncPlan,
+  crOpen,
 };
