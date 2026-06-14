@@ -15,9 +15,8 @@ task task_cr_inventory_default_bounded {
   disposition active
   priority high
   work_type bugfix
-  bug_discovery bug_linked
-  bug_discovery_rationale "Gitea issue #267: default cr inventory --json and --limit 4+ return oversized_raw_output on attebury/topogram after provider-list-limit landed; limits 1-3 succeed."
-  linked_bugs [bug_cr_inventory_default_oversized_raw_output]
   claimed_by [actor_coding_agent]
-  status in-progress
+  bug_discovery bug_linked
+  linked_bugs [bug_cr_inventory_default_oversized_raw_output]
+  status done
 }

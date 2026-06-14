@@ -5,5 +5,5 @@ goal_branch goal_branch_cr_inventory_default_bounded {
   task task_cr_inventory_default_bounded
   evidence_refs [local:topo/sdlc/pitches/cr_inventory_default_bounded.tg, local:topo/sdlc/requirements/cr_inventory_default_bounded.tg, local:topo/sdlc/plans/cr_inventory_default_bounded.tg, local:topo/sdlc/tasks/cr_inventory_default_bounded.tg, local:topo/sdlc/acceptance_criteria/cr_inventory_default_bounded.tg, local:topo/sdlc/bugs/cr-inventory-default-bounded.tg, local:topo/verifications/cr-inventory-default-bounded.tg, forge:issue/267]
   witness_refs [forge:issue/267, forge:consumer/topogram-observer-attebury-topogram]
-  status active
+  status done
 }
