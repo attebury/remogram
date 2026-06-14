@@ -4211,6 +4211,16 @@
       "evidence_refs": [
         "pr:152"
       ]
+    },
+    {
+      "from": "done",
+      "to": "archived",
+      "at": "2026-06-14T02:12:10.302Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "origin/remo@8ba75a5a1cc40570992143918f42afdc4ad52526"
+      ]
     }
   ],
   "req_forge_trust_round6": [
