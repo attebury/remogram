@@ -5907,5 +5907,109 @@
         "pr:197"
       ]
     }
+  ],
+  "goal_branch_forge_trust_round11": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T04:47:01.977Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "origin/remo"
+      ]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T04:47:02.191Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:200"
+      ]
+    }
+  ],
+  "ac_link_pathname_confinement_round11": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T04:47:02.412Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:200"
+      ]
+    }
+  ],
+  "ac_github_link_helper_dry_round11": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T04:47:02.634Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:200"
+      ]
+    }
+  ],
+  "ac_list_backoff_all_providers_round11": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T04:47:02.907Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:200"
+      ]
+    }
+  ],
+  "ac_pagination_security_tests_round11": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T04:47:03.175Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:200"
+      ]
+    }
+  ],
+  "ac_agent_visible_pathname_docs_round11": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T04:47:03.410Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:200"
+      ]
+    }
+  ],
+  "req_forge_trust_round11": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T04:47:03.644Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:200"
+      ]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T04:47:03.877Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:200"
+      ]
+    }
   ]
 }
