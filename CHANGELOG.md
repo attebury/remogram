@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- **CR inventory probe fallback:** reuse page-one probe body on pagination fallback (Gitea/GitLab/GitHub) — avoids duplicate page-1 forge fetch ([#348](http://localhost:3000/attebury/remogram/issues/348))
+- **Gitea `recent_created` tail failure:** tail-only pagination fallback instead of page-1 oldest slice
+- **`list_truncated` vs trusted `entry_count`:** partial pagination walks with trusted forge total now set `list_truncated: true`
 - **`cr inventory` fallback:** preserve trusted forge `entry_count` (header/search total) when fast path rejects and pagination fallback runs
 - **Gitea `recent_created` when total exceeds limit:** fetch `sort=oldest` tail page for globally newest-created slice
 - **Gitea/GitLab number sorts when total exceeds limit:** full-list collect within compliant max before client sort and slice

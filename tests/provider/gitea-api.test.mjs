@@ -977,12 +977,13 @@ describe('provider-gitea-api fixtures', () => {
     global.fetch.mockResolvedValueOnce(
       jsonPageResponse([{ number: 1, state: 'open' }], { 'X-Total-Count': '5' }),
     );
-    global.fetch.mockResolvedValueOnce(jsonPageResponse([{ number: 1, state: 'open' }]));
     global.fetch.mockResolvedValueOnce(jsonPageResponse([]));
     const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3 });
-    expect(global.fetch.mock.calls.length).toBeGreaterThan(1);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(String(global.fetch.mock.calls[1][0])).toContain('page=2');
     expect(meta.numbers).toEqual([1]);
     expect(meta.entry_count).toBe(5);
+    expect(meta.list_truncated).toBe(true);
   });
 
   it('listOpenPullsWithMeta recent_created fetches tail page when total exceeds retain_max', async () => {
@@ -1023,8 +1024,11 @@ describe('provider-gitea-api fixtures', () => {
     global.fetch.mockResolvedValueOnce(
       jsonPageResponse(allMrs.slice(0, 3), { 'X-Total-Count': '10' }),
     );
-    global.fetch.mockResolvedValueOnce(jsonPageResponse(allMrs));
+    global.fetch.mockResolvedValueOnce(jsonPageResponse(allMrs.slice(3, 6)));
+    global.fetch.mockResolvedValueOnce(jsonPageResponse(allMrs.slice(6, 9)));
+    global.fetch.mockResolvedValueOnce(jsonPageResponse(allMrs.slice(9)));
     const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'number_asc' });
+    expect(global.fetch).toHaveBeenCalledTimes(4);
     expect(meta.entry_count).toBe(10);
     expect(meta.numbers).toEqual([1, 2, 3]);
   });
@@ -1042,8 +1046,56 @@ describe('provider-gitea-api fixtures', () => {
     );
     global.fetch.mockResolvedValueOnce(jsonPageResponse([]));
     const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'number_asc' });
-    expect(global.fetch.mock.calls.length).toBeGreaterThan(1);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
     expect(meta.slice_sort).toBe('number_asc');
+  });
+
+  it('listOpenPullsWithMeta recent_created tail page when total not multiple of page size', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(
+        [{ number: 1, state: 'open' }, { number: 2, state: 'open' }, { number: 3, state: 'open' }],
+        { 'X-Total-Count': '105' },
+      ),
+    );
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse([
+        { number: 101, state: 'open' },
+        { number: 102, state: 'open' },
+        { number: 103, state: 'open' },
+        { number: 104, state: 'open' },
+        { number: 105, state: 'open' },
+      ]),
+    );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'recent_created' });
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(String(global.fetch.mock.calls[1][0])).toContain('page=2');
+    expect(meta.numbers).toEqual([105, 104, 103]);
+    expect(meta.entry_count).toBe(105);
+  });
+
+  it('listOpenPullsWithMeta recent_created tail failure uses tail page not page 1', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(
+        [{ number: 1, state: 'open' }, { number: 2, state: 'open' }, { number: 3, state: 'open' }],
+        { 'X-Total-Count': '250' },
+      ),
+    );
+    global.fetch.mockRejectedValueOnce(new Error('tail fetch failed'));
+    global.fetch.mockRejectedValueOnce(new Error('tail retry failed'));
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse([
+        { number: 248, state: 'open' },
+        { number: 249, state: 'open' },
+        { number: 250, state: 'open' },
+      ]),
+    );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'recent_created' });
+    expect(global.fetch).toHaveBeenCalledTimes(4);
+    const pageOneCalls = global.fetch.mock.calls.filter(([url]) => /[?&]page=1(?:&|$)/.test(String(url)));
+    expect(pageOneCalls).toHaveLength(1);
+    expect(String(global.fetch.mock.calls[3][0])).toContain('page=3');
+    expect(meta.numbers).toEqual([250, 249, 248]);
+    expect(meta.entry_count).toBe(250);
   });
 
   it('providerCapabilities reports write_support for cr_open', async () => {

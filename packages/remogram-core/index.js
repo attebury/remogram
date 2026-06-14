@@ -60,6 +60,7 @@ export {
   validateFastPathPageLength,
   isNumberSortFastPathEligible,
   resolvePaginatedEntryCount,
+  resolveListTruncatedWithTrustedTotal,
   isRecentCreatedFastPathEligible,
   giteaRecentCreatedTailPage,
   isNumberSortFullCollectRequired,

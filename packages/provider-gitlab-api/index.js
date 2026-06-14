@@ -32,6 +32,7 @@ import {
   validateFastPathPageLength,
   isNumberSortFastPathEligible,
   isNumberSortFullCollectRequired,
+  resolveListTruncatedWithTrustedTotal,
   orderOpenPullNumbers,
   buildOpenPullListMeta,
   gitlabOpenPullSortQuery,
@@ -381,8 +382,24 @@ function buildGitlabOpenPullMetaFromPage(body, retainMax, sliceSort, totalCount,
   });
 }
 
+function gitlabProbePaginationOpts(probe, extra = {}) {
+  const { body, totalCount, requestLimit } = probe;
+  return {
+    trustedTotalCount: totalCount,
+    seededFirstPage: { items: body, usedLimit: requestLimit },
+    ...extra,
+  };
+}
+
 async function paginateGitlabOpenPullList(ctx, opts, sliceSort, paginationOpts = {}) {
-  const { trustedTotalCount = null, numberSortFullCollect = false } = paginationOpts;
+  const {
+    trustedTotalCount = null,
+    numberSortFullCollect = false,
+    seededFirstPage = null,
+    startPage = 1,
+    maxPages = MAX_CHECK_STATUS_PAGES,
+    suppressFinalPageProbe = false,
+  } = paginationOpts;
   const listLimit =
     opts.limit != null && Number.isInteger(Number(opts.limit)) && Number(opts.limit) > 0
       ? Number(opts.limit)
@@ -398,14 +415,22 @@ async function paginateGitlabOpenPullList(ctx, opts, sliceSort, paginationOpts =
   path = appendSortQuery(path, gitlabOpenPullSortQuery(sliceSort));
   const separator = path.includes('?') ? '&' : '?';
   const effectiveRetainMax = numberSortFullCollect ? null : retainMax;
-  const { items: all, list_truncated: listTruncated, entry_count: entryCount } =
-    await paginateOffsetListPages({
-      pageSize: GITLAB_PAGE_SIZE,
-      listLimit,
-      retainMax: effectiveRetainMax,
-      trustedEntryCount: trustedTotalCount,
-      ...(listLimit != null ? { maxPagesTruncatesWithLimit: true } : {}),
-      fetchPage: async ({ page, limit }) => {
+  const {
+    items: all,
+    list_truncated: listTruncated,
+    entry_count: entryCount,
+    walked_count: walkedCount,
+  } = await paginateOffsetListPages({
+    pageSize: GITLAB_PAGE_SIZE,
+    listLimit,
+    retainMax: effectiveRetainMax,
+    trustedEntryCount: trustedTotalCount,
+    seededFirstPage,
+    startPage,
+    maxPages,
+    suppressFinalPageProbe,
+    ...(listLimit != null ? { maxPagesTruncatesWithLimit: true } : {}),
+    fetchPage: async ({ page, limit }) => {
         const body = await gitlabFetch(
           ctx.config,
           ctx.parsed,
@@ -421,7 +446,12 @@ async function paginateGitlabOpenPullList(ctx, opts, sliceSort, paginationOpts =
   }
   return {
     numbers,
-    list_truncated: listTruncated,
+    list_truncated: resolveListTruncatedWithTrustedTotal({
+      listTruncated,
+      trustedTotalCount,
+      walkedCount,
+      fullCollect: numberSortFullCollect,
+    }),
     ...(entryCount != null ? { entry_count: entryCount } : {}),
     slice_sort: sliceSort,
   };
@@ -445,7 +475,7 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
 
   if (listTruncated) {
     if (body.length === 0) {
-      return paginateGitlabOpenPullList(ctx, opts, sliceSort, { trustedTotalCount: totalCount });
+      return paginateGitlabOpenPullList(ctx, opts, sliceSort, gitlabProbePaginationOpts(probe));
     }
     return buildGitlabOpenPullMetaFromPage(body, retainMax, sliceSort, totalCount, true);
   }
@@ -458,10 +488,12 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
   }
 
   const numberSortFullCollect = isNumberSortFullCollectRequired(totalCount, retainMax, sliceSort);
-  return paginateGitlabOpenPullList(ctx, opts, sliceSort, {
-    trustedTotalCount: totalCount,
-    numberSortFullCollect,
-  });
+  return paginateGitlabOpenPullList(
+    ctx,
+    opts,
+    sliceSort,
+    gitlabProbePaginationOpts(probe, { numberSortFullCollect }),
+  );
 }
 
 export async function listOpenPulls(ctx, opts = {}) {

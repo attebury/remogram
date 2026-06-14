@@ -37,6 +37,7 @@ import {
   isRecentCreatedFastPathEligible,
   giteaRecentCreatedTailPage,
   isNumberSortFullCollectRequired,
+  resolveListTruncatedWithTrustedTotal,
   prepareGiteaOpenPullPageItems,
   orderOpenPullNumbers,
   buildOpenPullListMeta,
@@ -452,8 +453,24 @@ async function fetchGiteaRecentCreatedTailSlice(ctx, retainMax, sliceSort, total
   return buildGiteaOpenPullMetaFromPage(body, retainMax, sliceSort, totalCount, false);
 }
 
+function giteaProbePaginationOpts(probe, extra = {}) {
+  const { body, totalCount, requestLimit } = probe;
+  return {
+    trustedTotalCount: totalCount,
+    seededFirstPage: { items: body, usedLimit: requestLimit },
+    ...extra,
+  };
+}
+
 async function paginateGiteaOpenPullList(ctx, opts, sliceSort, paginationOpts = {}) {
-  const { trustedTotalCount = null, numberSortFullCollect = false } = paginationOpts;
+  const {
+    trustedTotalCount = null,
+    numberSortFullCollect = false,
+    seededFirstPage = null,
+    startPage = 1,
+    maxPages = MAX_CHECK_STATUS_PAGES,
+    suppressFinalPageProbe = false,
+  } = paginationOpts;
   const listLimit =
     opts.limit != null && Number.isInteger(Number(opts.limit)) && Number(opts.limit) > 0
       ? Number(opts.limit)
@@ -471,14 +488,22 @@ async function paginateGiteaOpenPullList(ctx, opts, sliceSort, paginationOpts = 
   path = appendSortQuery(path, giteaOpenPullSortQuery(sliceSort));
   const pageSep = path.includes('?') ? '&' : '?';
   const effectiveRetainMax = numberSortFullCollect ? null : retainMax;
-  const { items: all, list_truncated: listTruncated, entry_count: entryCount } =
-    await paginateOffsetListPages({
-      pageSize,
-      listLimit,
-      retainMax: effectiveRetainMax,
-      trustedEntryCount: trustedTotalCount,
-      ...(listLimit != null && pageSize < listLimit ? { maxPagesTruncatesWithLimit: true } : {}),
-      fetchPage: async ({ page, limit }) => {
+  const {
+    items: all,
+    list_truncated: listTruncated,
+    entry_count: entryCount,
+    walked_count: walkedCount,
+  } = await paginateOffsetListPages({
+    pageSize,
+    listLimit,
+    retainMax: effectiveRetainMax,
+    trustedEntryCount: trustedTotalCount,
+    seededFirstPage,
+    startPage,
+    maxPages,
+    suppressFinalPageProbe,
+    ...(listLimit != null && pageSize < listLimit ? { maxPagesTruncatesWithLimit: true } : {}),
+    fetchPage: async ({ page, limit }) => {
         const body = await giteaFetch(
           ctx.config,
           ctx.parsed,
@@ -498,7 +523,12 @@ async function paginateGiteaOpenPullList(ctx, opts, sliceSort, paginationOpts = 
   }
   return {
     numbers,
-    list_truncated: listTruncated,
+    list_truncated: resolveListTruncatedWithTrustedTotal({
+      listTruncated,
+      trustedTotalCount,
+      walkedCount,
+      fullCollect: numberSortFullCollect,
+    }),
     ...(entryCount != null ? { entry_count: entryCount } : {}),
     slice_sort: sliceSort,
   };
@@ -521,7 +551,7 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
 
   if (listTruncated) {
     if (body.length === 0) {
-      return paginateGiteaOpenPullList(ctx, opts, sliceSort, { trustedTotalCount: totalCount });
+      return paginateGiteaOpenPullList(ctx, opts, sliceSort, giteaProbePaginationOpts(probe));
     }
     return buildGiteaOpenPullMetaFromPage(body, retainMax, sliceSort, totalCount, true);
   }
@@ -532,7 +562,15 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
   ) {
     const tail = await fetchGiteaRecentCreatedTailSlice(ctx, retainMax, sliceSort, totalCount);
     if (tail) return tail;
-    return paginateGiteaOpenPullList(ctx, opts, sliceSort, { trustedTotalCount: totalCount });
+    const tailRetry = await fetchGiteaRecentCreatedTailSlice(ctx, retainMax, sliceSort, totalCount);
+    if (tailRetry) return tailRetry;
+    const tailPage = giteaRecentCreatedTailPage(totalCount, GITEA_PAGE_SIZE);
+    return paginateGiteaOpenPullList(ctx, opts, sliceSort, {
+      trustedTotalCount: totalCount,
+      startPage: tailPage,
+      maxPages: tailPage,
+      suppressFinalPageProbe: true,
+    });
   }
 
   if (
@@ -544,10 +582,12 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
   }
 
   const numberSortFullCollect = isNumberSortFullCollectRequired(totalCount, retainMax, sliceSort);
-  return paginateGiteaOpenPullList(ctx, opts, sliceSort, {
-    trustedTotalCount: totalCount,
-    numberSortFullCollect,
-  });
+  return paginateGiteaOpenPullList(
+    ctx,
+    opts,
+    sliceSort,
+    giteaProbePaginationOpts(probe, { numberSortFullCollect }),
+  );
 }
 
 export async function listOpenPulls(ctx, opts = {}) {

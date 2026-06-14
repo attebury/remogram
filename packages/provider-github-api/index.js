@@ -31,7 +31,9 @@ import {
   isCrInventoryFastPathEligible,
   validateFastPathPageLength,
   isNumberSortFastPathEligible,
+  isNumberSortFullCollectRequired,
   resolvePaginatedEntryCount,
+  resolveListTruncatedWithTrustedTotal,
   orderOpenPullNumbers,
   buildOpenPullListMeta,
   githubOpenPullSortQuery,
@@ -199,12 +201,36 @@ async function paginateGitHubLinkPages({
   token,
   initialLimit = DEFAULT_CHECK_STATUS_PAGE_SIZE,
   mapPageItems,
+  seededFirstPage = null,
 }) {
   const all = [];
   let truncated = false;
+  let walkedCount = 0;
   let url = startUrl;
   let activeLimit = initialLimit;
-  for (let page = 0; page < MAX_CHECK_PAGES && url; page += 1) {
+  let pageIndex = 0;
+
+  if (seededFirstPage) {
+    const { items, linkHeader, currentUrl, usedLimit } = seededFirstPage;
+    activeLimit = usedLimit;
+    const mapped = mapPageItems(items);
+    walkedCount += mapped.length;
+    all.push(...mapped);
+    const linkPage = resolveGitHubLinkNextPage({
+      trustedOrigin,
+      currentUrl,
+      linkHeader,
+      pageIndex: 0,
+      maxPages: MAX_CHECK_PAGES,
+    });
+    if (linkPage.truncated) {
+      truncated = true;
+    }
+    url = linkPage.nextUrl ? withPerPageParam(linkPage.nextUrl, activeLimit) : null;
+    pageIndex = 1;
+  }
+
+  for (let page = pageIndex; page < MAX_CHECK_PAGES && url; page += 1) {
     const currentUrl = url;
     let usedLimit = activeLimit;
     const { body, headers } = await fetchWithIngestPageBackoff(
@@ -219,7 +245,9 @@ async function paginateGitHubLinkPages({
       activeLimit,
     );
     activeLimit = usedLimit;
-    all.push(...mapPageItems(body));
+    const mapped = mapPageItems(body);
+    walkedCount += mapped.length;
+    all.push(...mapped);
     const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
     const linkPage = resolveGitHubLinkNextPage({
       trustedOrigin,
@@ -233,7 +261,7 @@ async function paginateGitHubLinkPages({
     }
     url = linkPage.nextUrl ? withPerPageParam(linkPage.nextUrl, activeLimit) : null;
   }
-  return { items: all, truncated };
+  return { items: all, truncated, walked_count: walkedCount };
 }
 
 export async function githubFetchPaginated(config, parsed, path, slice) {
@@ -542,13 +570,15 @@ async function probeGitHubOpenPullPageOne(ctx, retainMax, sliceSort) {
   const { token } = requireToken();
   const requestLimit = Math.min(retainMax, GITHUB_PAGE_SIZE);
   const listPath = githubOpenPullsListPath(ctx.config, sliceSort);
+  const listUrl = withPerPageParam(`${base}${listPath}`, requestLimit);
   try {
-    const { body } = await fetchJsonWithMeta(withPerPageParam(`${base}${listPath}`, requestLimit), {
+    const { body, headers } = await fetchJsonWithMeta(listUrl, {
       headers: authHeaders(token),
     });
     if (!Array.isArray(body)) return null;
     const listTruncated = totalCount > GITHUB_OPEN_PULL_COMPLIANT_MAX;
-    return { body, totalCount, listTruncated, requestLimit };
+    const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
+    return { body, totalCount, listTruncated, requestLimit, listUrl, linkHeader };
   } catch {
     return null;
   }
@@ -565,8 +595,20 @@ function buildGitHubOpenPullMetaFromPage(body, retainMax, sliceSort, totalCount,
   });
 }
 
+function githubProbePaginationOpts(probe) {
+  const { body, totalCount, requestLimit, listUrl, linkHeader } = probe;
+  return {
+    trustedTotalCount: totalCount,
+    seededFirstPage: { items: body, usedLimit: requestLimit, listUrl, linkHeader },
+  };
+}
+
 async function paginateGitHubOpenPullList(ctx, opts, sliceSort, paginationOpts = {}) {
-  const { trustedTotalCount = null } = paginationOpts;
+  const {
+    trustedTotalCount = null,
+    seededFirstPage = null,
+    numberSortFullCollect = false,
+  } = paginationOpts;
   const base = apiBase(ctx.config, ctx.parsed);
   const { token } = requireToken();
   const listLimit =
@@ -575,24 +617,78 @@ async function paginateGitHubOpenPullList(ctx, opts, sliceSort, paginationOpts =
       : null;
   const all = [];
   let listTruncated = false;
+  let walkedCount = 0;
   const listPath = githubOpenPullsListPath(ctx.config, sliceSort);
+  const retainMax =
+    listLimit == null &&
+    opts.retain_max != null &&
+    Number.isInteger(Number(opts.retain_max)) &&
+    Number(opts.retain_max) > 0
+      ? Number(opts.retain_max)
+      : null;
 
-  if (listLimit == null) {
+  if (listLimit == null && numberSortFullCollect) {
+    const {
+      items: offsetItems,
+      list_truncated: offsetTruncated,
+      walked_count: offsetWalkedCount,
+    } = await paginateOffsetListPages({
+      pageSize: GITHUB_PAGE_SIZE,
+      retainMax: null,
+      trustedEntryCount: trustedTotalCount,
+      seededFirstPage: seededFirstPage
+        ? { items: seededFirstPage.items, usedLimit: seededFirstPage.usedLimit }
+        : null,
+      fetchPage: async ({ page, limit }) => {
+        const pageUrl = `${base}${listPath}&page=${page}`;
+        const { body } = await fetchJsonWithMeta(withPerPageParam(pageUrl, limit), {
+          headers: authHeaders(token),
+        });
+        return Array.isArray(body) ? body : [];
+      },
+    });
+    all.push(...offsetItems);
+    listTruncated = offsetTruncated;
+    walkedCount = offsetWalkedCount;
+  } else if (listLimit == null) {
     const trustedOrigin = new URL(base).origin;
     const startUrl = `${base}${listPath}`;
-    const { items: linkItems, truncated: linkTruncated } = await paginateGitHubLinkPages({
+    const linkSeed = seededFirstPage
+      ? {
+          items: seededFirstPage.items,
+          linkHeader: seededFirstPage.linkHeader,
+          currentUrl: seededFirstPage.listUrl,
+          usedLimit: seededFirstPage.usedLimit,
+        }
+      : null;
+    const {
+      items: linkItems,
+      truncated: linkTruncated,
+      walked_count: linkWalkedCount,
+    } = await paginateGitHubLinkPages({
       trustedOrigin,
       startUrl,
       token,
+      initialLimit: seededFirstPage?.usedLimit ?? DEFAULT_CHECK_STATUS_PAGE_SIZE,
       mapPageItems: (body) => (Array.isArray(body) ? body : []),
+      seededFirstPage: linkSeed,
     });
     all.push(...linkItems);
     listTruncated = linkTruncated;
+    walkedCount = linkWalkedCount;
   } else {
-    const { items: limitItems, list_truncated: limitTruncated } = await paginateOffsetListPages({
+    const {
+      items: limitItems,
+      list_truncated: limitTruncated,
+      walked_count: limitWalkedCount,
+    } = await paginateOffsetListPages({
       pageSize: GITHUB_PAGE_SIZE,
       listLimit,
       maxPagesTruncatesWithLimit: true,
+      trustedEntryCount: trustedTotalCount,
+      seededFirstPage: seededFirstPage
+        ? { items: seededFirstPage.items, usedLimit: seededFirstPage.usedLimit }
+        : null,
       fetchPage: async ({ page, limit }) => {
         const pageUrl = `${base}${listPath}&page=${page}`;
         const { body } = await fetchJsonWithMeta(withPerPageParam(pageUrl, limit), {
@@ -603,27 +699,26 @@ async function paginateGitHubOpenPullList(ctx, opts, sliceSort, paginationOpts =
     });
     all.push(...limitItems);
     listTruncated = limitTruncated;
+    walkedCount = limitWalkedCount;
   }
 
   let numbers = orderOpenPullNumbers(all, (pr) => pr?.number, sliceSort);
-  const retainMax =
-    listLimit == null &&
-    opts.retain_max != null &&
-    Number.isInteger(Number(opts.retain_max)) &&
-    Number(opts.retain_max) > 0
-      ? Number(opts.retain_max)
-      : null;
   const outputCap = listLimit ?? retainMax;
   if (outputCap != null && numbers.length > outputCap) {
     numbers = numbers.slice(0, outputCap);
   }
   const entryCount =
     trustedTotalCount != null
-      ? resolvePaginatedEntryCount(trustedTotalCount, numbers.length)
+      ? resolvePaginatedEntryCount(trustedTotalCount, walkedCount)
       : undefined;
   return {
     numbers,
-    list_truncated: listTruncated,
+    list_truncated: resolveListTruncatedWithTrustedTotal({
+      listTruncated,
+      trustedTotalCount,
+      walkedCount,
+      fullCollect: numberSortFullCollect,
+    }),
     slice_sort: sliceSort,
     ...(entryCount != null ? { entry_count: entryCount } : {}),
   };
@@ -647,7 +742,7 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
 
   if (listTruncated) {
     if (body.length === 0) {
-      return paginateGitHubOpenPullList(ctx, opts, sliceSort, { trustedTotalCount: totalCount });
+      return paginateGitHubOpenPullList(ctx, opts, sliceSort, githubProbePaginationOpts(probe));
     }
     return buildGitHubOpenPullMetaFromPage(body, retainMax, sliceSort, totalCount, true);
   }
@@ -659,7 +754,15 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
     return buildGitHubOpenPullMetaFromPage(body, retainMax, sliceSort, totalCount, false);
   }
 
-  return paginateGitHubOpenPullList(ctx, opts, sliceSort, { trustedTotalCount: totalCount });
+  return paginateGitHubOpenPullList(
+    ctx,
+    opts,
+    sliceSort,
+    {
+      ...githubProbePaginationOpts(probe),
+      numberSortFullCollect: isNumberSortFullCollectRequired(totalCount, retainMax, sliceSort),
+    },
+  );
 }
 
 export async function listOpenPulls(ctx, opts = {}) {

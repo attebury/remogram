@@ -103,6 +103,27 @@ export function resolvePaginatedEntryCount(trustedTotal, summedCount) {
 }
 
 /**
+ * When forge total is trusted but pagination walked fewer items, mark truncated.
+ * @param {{ listTruncated: boolean, trustedTotalCount?: number | null, walkedCount: number, fullCollect?: boolean }} opts
+ */
+export function resolveListTruncatedWithTrustedTotal({
+  listTruncated,
+  trustedTotalCount,
+  walkedCount,
+  fullCollect = false,
+}) {
+  if (
+    trustedTotalCount != null &&
+    Number.isInteger(trustedTotalCount) &&
+    trustedTotalCount > 0 &&
+    walkedCount < trustedTotalCount
+  ) {
+    return true;
+  }
+  return listTruncated;
+}
+
+/**
  * Gitea recent_created uses oldest sort; fast path only when total fits retain_max.
  * @param {number} totalCount
  * @param {number} retainMax

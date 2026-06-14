@@ -115,8 +115,8 @@ export async function paginateCheckStatusPages({
 /**
  * Offset/limit open-list pagination with ingest-cap backoff and optional list cap.
  * listLimit bounds request size per page; callers slice returned items when enforcing a hard cap.
- * @param {{ fetchPage: (opts: { page: number, limit: number }) => Promise<unknown[]>, pageSize: number, listLimit?: number | null, maxPages?: number, maxPagesTruncatesWithLimit?: boolean, retainMax?: number | null, trustedEntryCount?: number | null }} opts
- * @returns {Promise<{ items: unknown[], list_truncated: boolean, entry_count?: number }>}
+ * @param {{ fetchPage: (opts: { page: number, limit: number }) => Promise<unknown[]>, pageSize: number, listLimit?: number | null, maxPages?: number, maxPagesTruncatesWithLimit?: boolean, retainMax?: number | null, trustedEntryCount?: number | null, seededFirstPage?: { items: unknown[], usedLimit: number } | null, startPage?: number, suppressFinalPageProbe?: boolean }} opts
+ * @returns {Promise<{ items: unknown[], list_truncated: boolean, walked_count: number, entry_count?: number }>}
  */
 export async function paginateOffsetListPages({
   fetchPage,
@@ -126,17 +126,16 @@ export async function paginateOffsetListPages({
   maxPagesTruncatesWithLimit = false,
   retainMax = null,
   trustedEntryCount = null,
+  seededFirstPage = null,
+  startPage = 1,
+  suppressFinalPageProbe = false,
 }) {
   const all = [];
   let entryCount = 0;
   let listTruncated = false;
   let activeLimit = pageSize;
-  for (let page = 1; page <= maxPages; page += 1) {
-    const remaining = listLimit != null ? Math.max(listLimit - all.length, 0) : activeLimit;
-    if (listLimit != null && remaining === 0) break;
-    const requestLimit = listLimit != null ? Math.min(activeLimit, remaining) : activeLimit;
-    const { items, usedLimit } = await fetchPageWithIngestBackoff(fetchPage, page, requestLimit);
-    activeLimit = usedLimit;
+
+  async function afterPage(page, items, usedLimit) {
     entryCount += items.length;
     if (retainMax != null) {
       const space = Math.max(retainMax - all.length, 0);
@@ -144,24 +143,69 @@ export async function paginateOffsetListPages({
     } else {
       all.push(...items);
     }
-    if (items.length < usedLimit) break;
+    if (items.length < usedLimit) {
+      if (
+        trustedEntryCount != null &&
+        trustedEntryCount > entryCount &&
+        page === 1 &&
+        page < maxPages
+      ) {
+        return false;
+      }
+      return true;
+    }
     if (listLimit != null && all.length >= listLimit) {
       listTruncated = await probeNextPageHasItems(fetchPage, page, maxPages);
-      break;
+      return true;
     }
     if (listLimit != null) {
       if (maxPagesTruncatesWithLimit && page === maxPages) {
         listTruncated = true;
-        break;
+        return true;
       }
     } else if (page === maxPages) {
-      listTruncated = await probeNextPageHasItems(fetchPage, page, maxPages);
+      if (suppressFinalPageProbe) {
+        listTruncated = items.length >= usedLimit;
+      } else {
+        listTruncated = await probeNextPageHasItems(fetchPage, page, maxPages);
+      }
+      return true;
+    }
+    return false;
+  }
+
+  let page = startPage;
+  if (seededFirstPage && startPage === 1) {
+    const { items, usedLimit } = seededFirstPage;
+    activeLimit = usedLimit;
+    if (await afterPage(1, items, usedLimit)) {
+      return {
+        items: all,
+        list_truncated: listTruncated,
+        walked_count: entryCount,
+        ...(retainMax != null || trustedEntryCount != null
+          ? { entry_count: resolvePaginatedEntryCount(trustedEntryCount, entryCount) }
+          : {}),
+      };
+    }
+    page = 2;
+  }
+
+  for (; page <= maxPages; page += 1) {
+    const remaining = listLimit != null ? Math.max(listLimit - all.length, 0) : activeLimit;
+    if (listLimit != null && remaining === 0) break;
+    const requestLimit = listLimit != null ? Math.min(activeLimit, remaining) : activeLimit;
+    const { items, usedLimit } = await fetchPageWithIngestBackoff(fetchPage, page, requestLimit);
+    activeLimit = usedLimit;
+    if (await afterPage(page, items, usedLimit)) {
       break;
     }
   }
+
   return {
     items: all,
     list_truncated: listTruncated,
+    walked_count: entryCount,
     ...(retainMax != null || trustedEntryCount != null
       ? {
           entry_count: resolvePaginatedEntryCount(trustedEntryCount, entryCount),

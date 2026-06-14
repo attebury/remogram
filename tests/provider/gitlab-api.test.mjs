@@ -644,12 +644,13 @@ describe('provider-gitlab-api fixtures', () => {
     global.fetch.mockResolvedValueOnce(
       jsonResponse([{ iid: 1, state: 'opened' }], 200, { headers: { 'X-Total': '5' } }),
     );
-    global.fetch.mockResolvedValueOnce(jsonResponse([{ iid: 1, state: 'opened' }]));
     global.fetch.mockResolvedValueOnce(jsonResponse([]));
     const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3 });
-    expect(global.fetch.mock.calls.length).toBeGreaterThan(1);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(String(global.fetch.mock.calls[1][0])).toContain('page=2');
     expect(meta.numbers).toEqual([1]);
     expect(meta.entry_count).toBe(5);
+    expect(meta.list_truncated).toBe(true);
   });
 
   it('listOpenPullsWithMeta number_asc full-collects when total exceeds retain_max', async () => {
@@ -668,8 +669,11 @@ describe('provider-gitlab-api fixtures', () => {
     global.fetch.mockResolvedValueOnce(
       jsonResponse(allMrs.slice(0, 3), 200, { headers: { 'X-Total': '10' } }),
     );
-    global.fetch.mockResolvedValueOnce(jsonResponse(allMrs));
+    global.fetch.mockResolvedValueOnce(jsonResponse(allMrs.slice(3, 6)));
+    global.fetch.mockResolvedValueOnce(jsonResponse(allMrs.slice(6, 9)));
+    global.fetch.mockResolvedValueOnce(jsonResponse(allMrs.slice(9)));
     const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'number_asc' });
+    expect(global.fetch).toHaveBeenCalledTimes(4);
     expect(meta.entry_count).toBe(10);
     expect(meta.numbers).toEqual([1, 2, 3]);
   });
@@ -688,7 +692,7 @@ describe('provider-gitlab-api fixtures', () => {
     );
     global.fetch.mockResolvedValueOnce(jsonResponse([]));
     const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'number_asc' });
-    expect(global.fetch.mock.calls.length).toBeGreaterThan(1);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
     expect(meta.slice_sort).toBe('number_asc');
   });
 

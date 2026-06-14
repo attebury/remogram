@@ -1114,11 +1114,25 @@ describe('provider-github-api fixtures', () => {
       .mockResolvedValueOnce(
         jsonResponse({ total_count: 5, incomplete_results: false, items: [] }),
       )
-      .mockResolvedValueOnce(jsonResponse([{ number: 1, state: 'open' }]))
-      .mockResolvedValueOnce(jsonResponse([]));
-    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3 });
-    expect(global.fetch.mock.calls.length).toBeGreaterThan(2);
+      .mockResolvedValueOnce(jsonResponse([{ number: 1, state: 'open' }]));
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'recent_update' });
+    expect(global.fetch).toHaveBeenCalledTimes(2);
     expect(meta.entry_count).toBe(5);
+    expect(meta.numbers).toEqual([1]);
+    expect(meta.list_truncated).toBe(true);
+  });
+
+  it('listOpenPullsWithMeta recent_update body mismatch preserves search entry_count', async () => {
+    global.fetch
+      .mockResolvedValueOnce(
+        jsonResponse({ total_count: 5, incomplete_results: false, items: [] }),
+      )
+      .mockResolvedValueOnce(jsonResponse([{ number: 42, state: 'open' }]));
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'recent_update' });
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(meta.entry_count).toBe(5);
+    expect(meta.list_truncated).toBe(true);
+    expect(meta.slice_sort).toBe('recent_update');
   });
 
   it('listOpenPullsWithMeta preserves search total_count on number_asc fallback', async () => {
@@ -1139,8 +1153,11 @@ describe('provider-github-api fixtures', () => {
         jsonResponse({ total_count: 10, incomplete_results: false, items: [] }),
       )
       .mockResolvedValueOnce(jsonResponse(allMrs.slice(0, 3)))
-      .mockResolvedValueOnce(jsonResponse(allMrs));
+      .mockResolvedValueOnce(jsonResponse(allMrs.slice(3, 6)))
+      .mockResolvedValueOnce(jsonResponse(allMrs.slice(6, 9)))
+      .mockResolvedValueOnce(jsonResponse(allMrs.slice(9)));
     const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'number_asc' });
+    expect(global.fetch).toHaveBeenCalledTimes(5);
     expect(meta.entry_count).toBe(10);
     expect(meta.numbers).toEqual([1, 2, 3]);
   });
@@ -1159,7 +1176,7 @@ describe('provider-github-api fixtures', () => {
       )
       .mockResolvedValueOnce(jsonResponse([]));
     const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'number_asc' });
-    expect(global.fetch.mock.calls.length).toBeGreaterThan(2);
+    expect(global.fetch).toHaveBeenCalledTimes(3);
     expect(meta.slice_sort).toBe('number_asc');
   });
 
