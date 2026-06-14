@@ -330,6 +330,42 @@ describe('provider-github-api fixtures', () => {
     expect(global.fetch.mock.calls.every(([u]) => !String(u).includes('/user/emails'))).toBe(true);
   });
 
+  it('githubFetchPaginated rejects userinfo Link rel=next without fetching', async () => {
+    const userinfoNext =
+      'https://evil@api.github.com/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/check-runs?page=2';
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('evil@')) {
+        throw new Error('must not fetch untrusted pagination URL');
+      }
+      return Promise.resolve(
+        jsonResponse(
+          {
+            check_runs: [
+              {
+                name: 'ci/page1',
+                status: 'completed',
+                conclusion: 'success',
+                output: { title: 'page1 ok' },
+              },
+            ],
+          },
+          200,
+          { link: `<${userinfoNext}>; rel="next"` },
+        ),
+      );
+    });
+    const result = await githubFetchPaginated(
+      ctx.config,
+      ctx.parsed,
+      repoApiPath(ctx.config, 'commits', 'a'.repeat(40), 'check-runs'),
+      (body) => body?.check_runs ?? [],
+    );
+    expect(result.truncated).toBe(true);
+    expect(result.items).toHaveLength(1);
+    expect(global.fetch.mock.calls.every(([u]) => !String(u).includes('evil@'))).toBe(true);
+  });
+
   it('githubFetchPaginated follows relative same-origin Link rel=next', async () => {
     const page1Url =
       'https://api.github.com/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/check-runs?per_page=25';

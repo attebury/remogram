@@ -525,6 +525,8 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
     const { items: limitItems, list_truncated: limitTruncated } = await paginateOffsetListPages({
       pageSize: GITHUB_PAGE_SIZE,
       listLimit,
+      // GitHub uses fixed pageSize with optional listLimit; mark truncated at maxPages.
+      // Gitea/GitLab omit this flag — pageSize derives from listLimit so the loop exits naturally.
       maxPagesTruncatesWithLimit: true,
       fetchPage: async ({ page, limit }) => {
         const pageUrl = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open&page=${page}`;
