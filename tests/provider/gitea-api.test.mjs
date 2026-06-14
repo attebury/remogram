@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { provider, repoApiPath, apiBase, normalizeGiteaStatusState, normalizeGiteaPrState, listOpenPullsWithMeta, crInventorySlice } from '@remogram/provider-gitea-api';
+import { DEFAULT_CHECK_STATUS_PAGE_SIZE } from '@remogram/core';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const fixtures = join(__dirname, '../fixtures/gitea-api');
@@ -259,10 +260,49 @@ describe('provider-gitea-api fixtures', () => {
     expect(global.fetch.mock.calls.some(([u]) => String(u).includes('limit=12'))).toBe(true);
   });
 
+  it('prChecks includes checks_failed when commit statuses fail on page 2', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    const page1Statuses = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
+      context: `ci/page1-${i}`,
+      state: 'success',
+      description: 'ok',
+    }));
+    const page2Statuses = [{ context: 'ci/page2-fail', state: 'failure', description: 'fail' }];
+    global.fetch
+      .mockResolvedValueOnce(pullResponse)
+      .mockResolvedValueOnce(jsonPageResponse(page1Statuses))
+      .mockResolvedValueOnce(jsonPageResponse(page2Statuses));
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.check_conclusion).toBe('failure');
+    const statusUrls = global.fetch.mock.calls.map(([u]) => String(u));
+    expect(statusUrls.some((u) => u.includes(`limit=${DEFAULT_CHECK_STATUS_PAGE_SIZE}`))).toBe(true);
+    expect(statusUrls.some((u) => u.includes('page=2'))).toBe(true);
+  });
+
+  it('mergePlan includes checks_failed when page 1 returns 100 statuses', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    const legacyPage1 = Array.from({ length: 100 }, (_, i) => ({
+      context: `ci/legacy-${i}`,
+      state: 'success',
+      description: 'ok',
+    }));
+    const page2Statuses = [{ context: 'ci/page2-fail', state: 'failure', description: 'fail' }];
+    global.fetch
+      .mockResolvedValueOnce(pullResponse)
+      .mockResolvedValueOnce(pullResponse)
+      .mockResolvedValueOnce(jsonPageResponse(legacyPage1))
+      .mockResolvedValueOnce(jsonPageResponse(page2Statuses));
+    const body = await provider.mergePlan(ctx, { number: 1 });
+    expect(body.checks_conclusion).toBe('failure');
+    expect(body.blockers).toContain('checks_failed');
+  });
+
   it('mergePlan includes checks_failed when commit statuses fail on page 2', async () => {
     const pull = load('pull.json');
     const pullResponse = jsonPageResponse(pull);
-    const page1Statuses = Array.from({ length: 25 }, (_, i) => ({
+    const page1Statuses = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
       context: `ci/page1-${i}`,
       state: 'success',
       description: 'ok',

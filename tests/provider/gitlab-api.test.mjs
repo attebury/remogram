@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { forgePacket, PACKET_TYPES } from '@remogram/core';
+import { forgePacket, PACKET_TYPES, DEFAULT_CHECK_STATUS_PAGE_SIZE } from '@remogram/core';
 import {
   provider,
   apiBase,
@@ -228,8 +228,56 @@ describe('provider-gitlab-api fixtures', () => {
     expect(summarizeChecks([{ state: 'success' }, { state: 'unknown' }])).toBe('unknown');
   });
 
+  it('prChecks includes checks_failed when commit statuses fail on page 2', async () => {
+    const page1Statuses = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
+      name: `ci/page1-${i}`,
+      status: 'success',
+      description: 'ok',
+    }));
+    const page2Statuses = [{ name: 'ci/page2-fail', status: 'failed', description: 'fail' }];
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('merge_requests/42')) {
+        return Promise.resolve(jsonResponse(load('merge-request-clean.json')));
+      }
+      if (href.includes('/statuses') && href.includes('page=2')) {
+        return Promise.resolve(jsonResponse(page2Statuses));
+      }
+      if (href.includes('/statuses')) {
+        return Promise.resolve(jsonResponse(page1Statuses));
+      }
+      if (href.includes('/pipelines')) {
+        return Promise.resolve(jsonResponse([]));
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+    const body = await provider.prChecks(ctx, { number: 42 });
+    expect(body.check_conclusion).toBe('failure');
+    const statusUrls = global.fetch.mock.calls.map(([u]) => String(u));
+    expect(statusUrls.some((u) => u.includes(`per_page=${DEFAULT_CHECK_STATUS_PAGE_SIZE}`))).toBe(true);
+    expect(statusUrls.some((u) => u.includes('/statuses') && u.includes('page=2'))).toBe(true);
+  });
+
+  it('mergePlan includes checks_failed when page 1 returns 100 statuses', async () => {
+    const legacyPage1 = Array.from({ length: 100 }, (_, i) => ({
+      name: `ci/legacy-${i}`,
+      status: 'success',
+      description: 'ok',
+    }));
+    const page2Statuses = [{ name: 'ci/page2-fail', status: 'failed', description: 'fail' }];
+    global.fetch
+      .mockResolvedValueOnce(jsonResponse(load('merge-request-clean.json')))
+      .mockResolvedValueOnce(jsonResponse(load('merge-request-clean.json')))
+      .mockResolvedValueOnce(jsonResponse(legacyPage1))
+      .mockResolvedValueOnce(jsonResponse(page2Statuses))
+      .mockResolvedValueOnce(jsonResponse([]));
+    const body = await provider.mergePlan(ctx, { number: 42 });
+    expect(body.checks_conclusion).toBe('failure');
+    expect(body.blockers).toContain('checks_failed');
+  });
+
   it('mergePlan includes checks_failed when commit statuses fail on page 2', async () => {
-    const page1Statuses = Array.from({ length: 25 }, (_, i) => ({
+    const page1Statuses = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
       name: `ci/page1-${i}`,
       status: 'success',
       description: 'ok',
