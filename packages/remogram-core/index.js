@@ -44,7 +44,9 @@ export { buildRefInventoryBody, refsInventory } from './ref-inventory.js';
 export { buildCrInventoryEntry, buildHeadReconcile, crInventory, DEFAULT_CR_INVENTORY_LIMIT, DEFAULT_CR_INVENTORY_SAFE_LIMIT, normalizeCrInventoryLimit } from './cr-inventory.js';
 export { buildChangeRequestOpenedBody } from './cr-open.js';
 export {
+  WRITE_COMMAND_IDS,
   CONFIGURED_WRITE_COMMANDS,
+  writeCommandSchema,
   assertWriteCommandConfigured,
   isWriteCommandConfigured,
 } from './write-config.js';

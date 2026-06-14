@@ -37,6 +37,16 @@ describe('cr open packet', () => {
     );
   });
 
+  it('buildChangeRequestOpenedBody sets reused_existing and forge title when reusing', () => {
+    const body = buildChangeRequestOpenedBody(
+      { number: 7, html_url: 'http://localhost:3000/o/r/pulls/7', title: 'Forge title' },
+      { head: 'feat/x', base: 'remo', title: 'Requested title' },
+      { reusedExisting: true },
+    );
+    expect(body.reused_existing).toBe(true);
+    expect(body.title).toBe('Forge title');
+  });
+
   it('change_request_opened packet excludes forbidden keys', () => {
     const packet = forgePacket(PACKET_TYPES.CHANGE_REQUEST_OPENED, ctx, {
       pr_number: 1,
@@ -44,11 +54,13 @@ describe('cr open packet', () => {
       head: 'feat',
       base: 'remo',
       title: 'T',
+      reused_existing: true,
     });
     for (const key of FORBIDDEN_PACKET_KEYS) {
       expect(packet).not.toHaveProperty(key);
     }
     expect(packet.type).toBe('change_request_opened');
     expect(packet.ok).toBe(true);
+    expect(packet.reused_existing).toBe(true);
   });
 });

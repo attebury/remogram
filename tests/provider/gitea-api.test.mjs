@@ -680,8 +680,84 @@ describe('provider-gitea-api fixtures', () => {
       title: 'New title',
     });
     expect(body.pr_number).toBe(42);
+    expect(body.title).toBe('Existing');
+    expect(body.reused_existing).toBe(true);
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(global.fetch.mock.calls[0][1]?.method).toBeUndefined();
+  });
+
+  function jsonPage(items) {
+    return {
+      ok: true,
+      status: 200,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify(items));
+        },
+      },
+    };
+  }
+
+  function openPullMismatchPage(count) {
+    return Array.from({ length: count }, (_, i) => ({
+      number: i + 1,
+      state: 'open',
+      head: { ref: 'other' },
+      base: { ref: 'remo' },
+    }));
+  }
+
+  it('crOpen finds match on page 2 without POST', async () => {
+    global.fetch.mockResolvedValueOnce(jsonPage(openPullMismatchPage(100)));
+    global.fetch.mockResolvedValueOnce(
+      jsonPage([
+        {
+          number: 99,
+          state: 'open',
+          html_url: 'http://localhost:3000/attebury/remogram/pulls/99',
+          title: 'Page two',
+          head: { ref: 'feat/x' },
+          base: { ref: 'remo' },
+        },
+      ]),
+    );
+    const body = await provider.crOpen(ctx, {
+      head: 'feat/x',
+      base: 'remo',
+      title: 'Ignored',
+    });
+    expect(body.pr_number).toBe(99);
+    expect(body.reused_existing).toBe(true);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it('crOpen fails closed when idempotency scan is truncated', async () => {
+    for (let page = 0; page < MAX_CHECK_STATUS_PAGES; page += 1) {
+      global.fetch.mockResolvedValueOnce(jsonPage(openPullMismatchPage(100)));
+    }
+    await expect(
+      provider.crOpen(ctx, { head: 'feat/x', base: 'remo', title: 'T' }),
+    ).rejects.toMatchObject({
+      forgeError: expect.objectContaining({ code: 'idempotency_scan_incomplete' }),
+    });
+    expect(global.fetch).toHaveBeenCalledTimes(MAX_CHECK_STATUS_PAGES);
+  });
+
+  it('crOpen rejects non-array open pull list', async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from('{}');
+        },
+      },
+    });
+    await expect(
+      provider.crOpen(ctx, { head: 'feat/x', base: 'remo', title: 'T' }),
+    ).rejects.toMatchObject({
+      forgeError: expect.objectContaining({ code: 'unparseable_provider_output' }),
+    });
   });
 
   it('crOpen maps API failure to forge error', async () => {

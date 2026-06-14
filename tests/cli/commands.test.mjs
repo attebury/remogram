@@ -194,6 +194,29 @@ describe('remogram cli commands', () => {
     );
   });
 
+  it('doctor warns when provider supports writes but write_commands omitted', async () => {
+    const config = defaultTestConfig();
+    delete config.write_commands;
+    const setup = setupTempForge({
+      config,
+      remoteUrl: 'http://localhost:3000/owner/repo.git',
+    });
+    cleanups.push(setup);
+    process.env.GITEA_TOKEN = 'test-token';
+    const { provider: giteaProvider } = await import('@remogram/provider-gitea-api');
+    const { logs } = await captureCliOutput(() =>
+      runCli(['doctor', '--json'], {
+        cwd: setup.dir,
+        providers: { 'gitea-api': giteaProvider },
+      }),
+    );
+    const packet = JSON.parse(logs[0]);
+    expect(packet.ok).toBe(true);
+    const writeCheck = packet.checks.find((c) => c.name === 'write_config');
+    expect(writeCheck?.status).toBe('warn');
+    expect(writeCheck?.message).toContain('write_commands');
+  });
+
   it('doctor fails closed when .remogram.json is missing', async () => {
     const { mkdtempSync, rmSync } = await import('node:fs');
     const { tmpdir } = await import('node:os');

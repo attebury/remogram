@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- **CR open review follow-up:** paginated fail-closed idempotency scan (`idempotency_scan_incomplete`); `reused_existing` on idempotent packets; write-command enum DRY; MCP/doctor negative tests; consumer CLI/MCP write boundary docs
 - **CR open hardening:** idempotent open for matching head+base; structured `unparseable_provider_output` for invalid provider pull numbers; MCP `destructiveHint` on `cr_open`; expanded provider/CLI/MCP tests
 
 - **CR inventory default bound:** when `--limit` is omitted, inventory uses `DEFAULT_CR_INVENTORY_SAFE_LIMIT` (3) instead of 50 so default `cr inventory --json` avoids top-level `oversized_raw_output` on repos with large open-PR payloads; explicit `--limit` unchanged up to 50

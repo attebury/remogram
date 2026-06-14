@@ -7874,6 +7874,13 @@
       "at": "2026-06-14T19:52:55.384Z",
       "by": "actor_plan_agent",
       "note": null
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T19:59:53.283Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ],
   "req_cr_open_review_followup": [
@@ -7976,6 +7983,22 @@
       "at": "2026-06-14T19:58:57.446Z",
       "by": "actor_plan_agent",
       "note": null
+    }
+  ],
+  "task_cr_open_review_followup": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T19:59:53.122Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T19:59:53.207Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ]
 }

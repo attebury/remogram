@@ -14,6 +14,7 @@ export const ERROR_CODES = {
   PR_NOT_OPEN: 'pr_not_open',
   REMOTE_INFER_FAILED: 'remote_infer_failed',
   WRITE_NOT_CONFIGURED: 'write_not_configured',
+  IDEMPOTENCY_SCAN_INCOMPLETE: 'idempotency_scan_incomplete',
 };
 
 export function forgeError(code, message, status = null) {
