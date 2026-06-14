@@ -1,0 +1,14 @@
+plan plan_cr_open_scan_hardening {
+  name "CR open scan hardening — implementation plan"
+  description "Single-wave hardening after cr-open-polish in-depth review."
+  task task_cr_open_scan_hardening
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  steps {
+    step scan_backoff status pending description "fetchPageWithIngestBackoff in findOpenPullByHeadBase; usedLimit for full-page and fail-closed."
+    step error_fields status pending description "forge-error-fields allowlist and validation in envelope."
+    step capabilities status pending description "idempotencyScanCapabilityFacts on Gitea providerCapabilities."
+    step default_cap_tests status pending description "Provider and CLI tests at 8192 ingest cap on idempotency scan."
+    step semantic_diff status pending description "Nested idempotency_scan in semantic-diff registry; docs."
+  }
+  status active
+}

@@ -1,0 +1,22 @@
+task task_cr_open_scan_hardening {
+  name "CR open scan hardening"
+  description "Idempotency scan ingest backoff, forge_error fields allowlist, capabilities idempotency facts, default-cap tests, semantic-diff registry."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Provider-level write gate" "Distributed locking" "Changing fail-closed policy" "merge execute"]
+  entrypoints ["packages/**" "tests/**" "README.md" "CHANGELOG.md" "AGENTS.md" "tools/remogram-agent-support/skills/**" "topo/sdlc/**" "topo/verifications/**"]
+  satisfies [req_cr_open_scan_hardening]
+  acceptance_refs [ac_idempotency_scan_ingest_backoff, ac_forge_error_fields_allowlist, ac_default_cap_scan_tests, ac_error_fields_negative_tests, ac_capabilities_idempotency_facts, ac_semantic_diff_registry]
+  verification_refs [verification_cr_open_scan_hardening]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type implementation
+  claimed_by []
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "In-depth review follow-up from merged impl PR #301; scan/error contract gaps not a forge bug."
+  status unclaimed
+}

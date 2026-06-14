@@ -1,0 +1,10 @@
+requirement req_cr_open_scan_hardening {
+  name "CR open idempotency scan ingest and error-field hardening"
+  description "Idempotency scan uses fetchPageWithIngestBackoff aligned with inventory list pagination; forge_error fields allowlisted and validated; default 8192 ingest-cap tests on scan path; idempotency_scan facts in provider capabilities; semantic-diff nested registry."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  pitch pitch_cr_open_scan_hardening
+  priority high
+  status draft
+}
