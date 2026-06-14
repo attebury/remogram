@@ -54,6 +54,33 @@ describe('forge ingest cap policy', () => {
         ingest_backoff: 'halve_until_fit',
         on_page_cap: 'set_checks_truncated',
         compliant_max_items_per_source: 1250,
+        check_source_count: 1,
+        truncation_combination: 'single_source',
+        compliant_max_items_total: 1250,
+        truncation_packet_field: 'checks_truncated',
+      },
+    });
+  });
+
+  it('checkPaginationCapabilityFacts describes dual-source totals', () => {
+    expect(
+      checkPaginationCapabilityFacts({
+        strategy: 'link_header',
+        pageSizeParam: 'per_page',
+        sourceCount: 2,
+      }),
+    ).toEqual({
+      check_pagination: {
+        strategy: 'link_header',
+        page_size: 25,
+        max_pages: 50,
+        page_size_param: 'per_page',
+        ingest_backoff: 'halve_until_fit',
+        on_page_cap: 'set_checks_truncated',
+        compliant_max_items_per_source: 1250,
+        check_source_count: 2,
+        truncation_combination: 'any_source_truncated',
+        compliant_max_items_total: 2500,
         truncation_packet_field: 'checks_truncated',
       },
     });

@@ -66,9 +66,11 @@ Integration branch policy is **per consumer repo** — use `repo status` and for
 
 ## Check enumeration bounds
 
-`provider capabilities --json` **`check_pagination`** describes page size, max pages, **`ingest_backoff: halve_until_fit`**, and **`truncation_packet_field: checks_truncated`**.
+`provider capabilities --json` **`check_pagination`** describes page size, max pages, **`ingest_backoff: halve_until_fit`**, **`truncation_packet_field: checks_truncated`**, and for multi-source providers **`check_source_count`**, **`compliant_max_items_total`**, and **`truncation_combination`**.
 
-**`pr checks`** packets include **`checks_truncated: boolean`**. When true, enumeration stopped at the provider page cap and more checks may exist on the forge.
+**`pr checks`** packets include **`checks_truncated: boolean`**. When true, enumeration stopped at the provider page cap and more checks may exist on the forge. At exactly `page_size × max_pages` items the signal is conservative fail-closed.
+
+**`cr inventory`** entries include **`checks_truncated: boolean`** per PR.
 
 **`merge plan`** adds blocker **`checks_incomplete`** when `checks_truncated` is true — even if visible `check_conclusion` is `success`. Treat blockers + `checks_truncated` as authoritative.
 

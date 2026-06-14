@@ -154,7 +154,11 @@ export function providerCapabilities() {
     pagination: 'supported',
     write_support: false,
     ...forgeIngestCapabilityFacts(),
-    ...checkPaginationCapabilityFacts({ strategy: 'offset_limit', pageSizeParam: 'per_page' }),
+    ...checkPaginationCapabilityFacts({
+      strategy: 'offset_limit',
+      pageSizeParam: 'per_page',
+      sourceCount: 2,
+    }),
   };
 }
 
