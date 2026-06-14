@@ -17,6 +17,6 @@ task task_cr_open_review_followup {
   work_type implementation
   claimed_by [actor_coding_agent]
   bug_discovery no_bug_observed
-  bug_discovery_rationale "Code review follow-up from merged impl PR #285; hardening gaps not a forge bug."
-  status in-progress
+  bug_discovery_rationale "Code review follow-up from merged impl PR #293; hardening gaps not a forge bug."
+  status done
 }
