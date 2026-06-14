@@ -1,0 +1,9 @@
+goal_branch goal_branch_cr_open_scan_hardening {
+  name "CR open scan hardening Intent Packet"
+  description "Post-polish in-depth review: idempotency scan backoff, error.fields allowlist, capabilities facts, default-cap tests."
+  branch_ref "goal/cr-open-scan-hardening"
+  task task_cr_open_scan_hardening
+  evidence_refs [local:topo/sdlc/pitches/cr_open_scan_hardening.tg, local:topo/sdlc/requirements/cr_open_scan_hardening.tg, local:topo/sdlc/plans/cr_open_scan_hardening.tg, local:topo/sdlc/tasks/cr_open_scan_hardening.tg, local:topo/sdlc/acceptance_criteria/cr_open_scan_hardening.tg, local:topo/verifications/cr-open-scan-hardening.tg, forge:pr/301]
+  witness_refs [forge:pr/301]
+  status draft
+}

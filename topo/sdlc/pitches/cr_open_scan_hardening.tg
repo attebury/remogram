@@ -1,0 +1,12 @@
+pitch pitch_cr_open_scan_hardening {
+  name "CR open scan hardening"
+  description "Fix post-polish review gaps: idempotency scan ingest backoff, allowlisted forge_error fields, default-cap tests, capabilities idempotency facts, semantic-diff registry."
+  appetite "small"
+  problem "findOpenPullByHeadBase skips ingest backoff causing oversized_raw_output before idempotency_scan_incomplete; error.fields is unallowlisted; no default-cap scan tests; agents cannot read scan limits from capabilities."
+  solution_sketch "Single wave: fetchPageWithIngestBackoff in idempotency scan; forge-error-fields allowlist; idempotencyScanCapabilityFacts; default-cap provider and CLI tests; semantic-diff nested idempotency_scan registry."
+  rabbit_holes "Provider-level write gate; distributed locking; changing fail-closed policy."
+  no_go_areas "Hand-editing lifecycle status; implementation in draft planning PR."
+  affects [cap_forge_remote_ops]
+  priority high
+  status covered
+}

@@ -1,0 +1,41 @@
+acceptance_criterion ac_idempotency_scan_ingest_backoff {
+  name "Idempotency scan uses ingest backoff"
+  description "Given findOpenPullByHeadBase, when paginating open pulls, then each page uses fetchPageWithIngestBackoff, early-exits on match, uses usedLimit for end-of-list and fail-closed, and carries reduced limit across pages."
+  requirement req_cr_open_scan_hardening
+  status draft
+}
+
+acceptance_criterion ac_forge_error_fields_allowlist {
+  name "Forge error fields allowlisted and validated"
+  description "Given forge_error with error.fields, when merged into packet, then only allowlisted keys per error_code are permitted and idempotency_scan contains positive integer pages max_pages page_size."
+  requirement req_cr_open_scan_hardening
+  status draft
+}
+
+acceptance_criterion ac_default_cap_scan_tests {
+  name "Default ingest cap idempotency scan tests"
+  description "Given default 8192-byte ingest cap, when idempotency scan hits oversized open-pull list page, then backoff succeeds and scan reaches match POST or idempotency_scan_incomplete not oversized_raw_output in provider and CLI tests."
+  requirement req_cr_open_scan_hardening
+  status draft
+}
+
+acceptance_criterion ac_error_fields_negative_tests {
+  name "Forge error fields negative contract tests"
+  description "Given forgeErrorPacket with fields containing forbidden keys or envelope overrides, when built, then validation throws and trust envelope fields are not overridable."
+  requirement req_cr_open_scan_hardening
+  status draft
+}
+
+acceptance_criterion ac_capabilities_idempotency_facts {
+  name "Provider capabilities expose idempotency scan facts"
+  description "Given Gitea providerCapabilities, when read, then idempotency_scan includes max_pages page_size and ingest_backoff from core caps."
+  requirement req_cr_open_scan_hardening
+  status draft
+}
+
+acceptance_criterion ac_semantic_diff_registry {
+  name "Semantic diff nested idempotency_scan registry"
+  description "Given semantic-diff-facts registry, when checked, then nested idempotency_scan object is registered and docs state agents read caps from provider capabilities first."
+  requirement req_cr_open_scan_hardening
+  status draft
+}
