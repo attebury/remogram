@@ -22,6 +22,9 @@ export const V1_READ_PLAN_COMMANDS = Object.freeze([
   'doctor',
 ]);
 
+/** v1 write surface (Gitea cr open only in first slice). */
+export const V1_WRITE_COMMANDS = Object.freeze(['cr open']);
+
 /**
  * Planned fact-inventory packet types (not emitted until wave 2+ commands ship).
  * All use schema_version 1 envelope discipline via forgePacket.
@@ -74,6 +77,7 @@ export const FORGE_SOURCED_STRING_LEAVES = Object.freeze({
   merge_plan: ['blockers[].message', 'blockers[].context'],
   sync_plan: ['remote', 'local_sha', 'remote_sha', 'blockers[].message'],
   ref_inventory: ['refs[].name', 'refs[].sha', 'default_ref'],
+  change_request_opened: ['url', 'title', 'head', 'base'],
   cr_inventory_slice: [
     'entries[].url',
     'entries[].title',

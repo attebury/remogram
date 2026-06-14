@@ -12,6 +12,7 @@ export const PACKET_TYPES = {
   PROVIDER_CAPABILITIES: 'provider_capabilities',
   PROVIDER_DOCTOR: 'provider_doctor',
   FORGE_ERROR: 'forge_error',
+  CHANGE_REQUEST_OPENED: 'change_request_opened',
 };
 
 export const FORBIDDEN_PACKET_KEYS = new Set([

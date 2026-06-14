@@ -8,7 +8,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const serverEntry = join(__dirname, '../../packages/remogram-mcp/bin/remogram-mcp.js');
 
 describe('remogram-mcp server', () => {
-  it('lists read-only forge tools on initialize', async () => {
+  it('lists forge tools on initialize', async () => {
     const transport = new StdioClientTransport({
       command: process.execPath,
       args: [serverEntry],
@@ -20,6 +20,7 @@ describe('remogram-mcp server', () => {
     const names = tools.map((t) => t.name).sort();
     expect(names).toEqual([
       'cr_inventory',
+      'cr_open',
       'doctor',
       'merge_plan',
       'pr_checks',

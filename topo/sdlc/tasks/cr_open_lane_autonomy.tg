@@ -15,8 +15,8 @@ task task_cr_open_lane_autonomy {
   disposition active
   priority high
   work_type implementation
-  claimed_by []
+  claimed_by [actor_coding_agent]
   bug_discovery no_bug_observed
   bug_discovery_rationale "Forge issue #272: product gap for lane autonomy; control-plane shim exists but is not product boundary."
-  status unclaimed
+  status in-progress
 }

@@ -29,6 +29,7 @@ function giteaCase() {
   return {
     provider: giteaProvider,
     ctx,
+    writeSupport: true,
     prOpts: { number: 1 },
     useAuth() {
       process.env.GITEA_TOKEN = 'test-token';
@@ -60,6 +61,15 @@ function giteaCase() {
         .mockResolvedValueOnce(jsonResponse(pull))
         .mockResolvedValueOnce(jsonResponse(pull))
         .mockResolvedValueOnce(jsonResponse([]));
+    },
+    mockCrOpen() {
+      global.fetch.mockResolvedValueOnce(
+        jsonResponse({
+          number: 99,
+          html_url: 'http://localhost:3000/attebury/remogram/pulls/99',
+          title: 'Test CR',
+        }),
+      );
     },
   };
 }

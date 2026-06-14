@@ -276,6 +276,49 @@ describe('remogram cli commands', () => {
     expect(packet.error_code).toBe('unauthenticated_provider');
   });
 
+  it('cr open returns change_request_opened via mock provider', async () => {
+    const { cli } = env();
+    const { logs } = await cli([
+      'cr',
+      'open',
+      '--head',
+      'impl/x',
+      '--base',
+      'remo',
+      '--title',
+      'Open CR',
+    ]);
+    const packet = JSON.parse(logs[0]);
+    expectEnvelope(packet);
+    expect(packet.type).toBe(PACKET_TYPES.CHANGE_REQUEST_OPENED);
+    expect(packet.pr_number).toBe(99);
+    expect(packet.head).toBe('impl/x');
+    expect(packet.base).toBe('remo');
+  });
+
+  it('cr open without provider support returns provider_unsupported', async () => {
+    const config = defaultTestConfig({
+      provider: 'github-api',
+      baseUrl: 'https://github.com',
+    });
+    const setup = setupTempForge({
+      config,
+      remoteUrl: 'https://github.com/owner/repo.git',
+    });
+    cleanups.push(setup);
+    process.env.GITHUB_TOKEN = 'test-token';
+    const { provider: githubProvider } = await import('@remogram/provider-github-api');
+    const { logs } = await captureCliOutput(() =>
+      runCli(
+        ['cr', 'open', '--head', 'feat', '--base', 'main', '--title', 'T', '--json'],
+        { cwd: setup.dir, providers: { 'github-api': githubProvider } },
+      ),
+    );
+    const packet = JSON.parse(logs[0]);
+    expect(packet.ok).toBe(false);
+    expect(packet.error_code).toBe('provider_unsupported');
+  });
+
   it('pr view', async () => {
     const { cli } = env();
     const { logs } = await cli(['pr', 'view', '--number', '1']);

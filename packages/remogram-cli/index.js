@@ -382,6 +382,35 @@ export async function runCli(argv, options = {}) {
           limit: parsePositiveInt(flags.limit, '--limit'),
         }),
       );
+    } else if (group === 'cr' && sub === 'open') {
+      if (typeof provider.crOpen !== 'function') {
+        throw Object.assign(new Error('cr open not implemented for provider'), {
+          forgeError: forgeError(
+            ERROR_CODES.PROVIDER_UNSUPPORTED,
+            'cr open not implemented for provider',
+          ),
+        });
+      }
+      if (!flags.head || !flags.base || !flags.title) {
+        throw Object.assign(new Error('--head, --base, and --title required'), {
+          forgeError: forgeError(
+            ERROR_CODES.INVALID_ARGS,
+            '--head, --base, and --title required for cr open',
+          ),
+        });
+      }
+      assertGitRef(flags.head, '--head');
+      assertGitRef(flags.base, '--base');
+      packet = forgePacket(
+        PACKET_TYPES.CHANGE_REQUEST_OPENED,
+        ctx,
+        await provider.crOpen(ctx, {
+          head: flags.head,
+          base: flags.base,
+          title: flags.title,
+          body: flags.body,
+        }),
+      );
     } else if (group === 'pr' && sub === 'view') {
       const number = parsePositiveInt(flags.number, '--number');
       if (number == null) {
@@ -449,7 +478,7 @@ export async function runCli(argv, options = {}) {
       throw Object.assign(new Error(`Unknown command: ${positional.join(' ')}`), {
         forgeError: forgeError(
           ERROR_CODES.INVALID_ARGS,
-          'Unknown command. Try: provider capabilities, repo status, refs compare, refs inventory, cr inventory, pr view, pr checks, merge plan, sync plan',
+          'Unknown command. Try: provider capabilities, repo status, refs compare, refs inventory, cr inventory, cr open, pr view, pr checks, merge plan, sync plan',
         ),
       });
     }

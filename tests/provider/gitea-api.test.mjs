@@ -615,4 +615,39 @@ describe('provider-gitea-api fixtures', () => {
     expect(body.list_truncated).toBe(true);
     expect(body.entries).toHaveLength(1);
   });
+
+  it('crOpen POSTs pull create and maps response', async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 201,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(
+            JSON.stringify({
+              number: 278,
+              html_url: 'http://localhost:3000/attebury/remogram/pulls/278',
+              title: 'impl: cr open',
+            }),
+          );
+        },
+      },
+    });
+    const body = await provider.crOpen(ctx, {
+      head: 'impl/cr-open-lane-autonomy',
+      base: 'remo',
+      title: 'impl: cr open',
+    });
+    expect(body.pr_number).toBe(278);
+    expect(body.head).toBe('impl/cr-open-lane-autonomy');
+    expect(body.base).toBe('remo');
+    expect(global.fetch.mock.calls[0][0]).toContain('/pulls');
+    expect(global.fetch.mock.calls[0][1]?.method).toBe('POST');
+  });
+
+  it('providerCapabilities reports write_support for cr_open', async () => {
+    const body = await provider.providerCapabilities();
+    expect(body.write_support).toBe(true);
+    const crOpen = body.commands.find((c) => c.name === 'cr_open');
+    expect(crOpen).toMatchObject({ implemented: true, auth_class: 'token_required' });
+  });
 });

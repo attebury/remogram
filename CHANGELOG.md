@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Added
+
+- **`remogram cr open`:** Gitea-first write path to open change requests; emits `change_request_opened` packet with trusted envelope; MCP `cr_open` tool with `readOnlyHint: false`
+
 ### Fixed
 
 - **CR inventory default bound:** when `--limit` is omitted, inventory uses `DEFAULT_CR_INVENTORY_SAFE_LIMIT` (3) instead of 50 so default `cr inventory --json` avoids top-level `oversized_raw_output` on repos with large open-PR payloads; explicit `--limit` unchanged up to 50

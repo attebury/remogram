@@ -92,6 +92,13 @@ export function createMockProvider(overrides = {}) {
       diverged: false,
       blockers: [],
     }),
+    crOpen: async (_ctx, { head, base, title }) => ({
+      pr_number: 99,
+      url: 'http://localhost:3000/o/r/pulls/99',
+      head,
+      base,
+      title,
+    }),
     ...overrides,
   };
 }

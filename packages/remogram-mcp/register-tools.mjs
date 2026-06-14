@@ -51,6 +51,22 @@ export function registerTools(server) {
       },
     },
     {
+      name: 'cr_open',
+      description: 'Open a change request (pull request) on the configured forge.',
+      inputSchema: z.object({
+        head: z.string().describe('Head branch ref'),
+        base: z.string().describe('Base branch ref'),
+        title: z.string().describe('Change request title'),
+        body: z.string().optional().describe('Optional change request body'),
+      }),
+      args: (input) => {
+        const a = ['cr', 'open', '--head', input.head, '--base', input.base, '--title', input.title];
+        if (input.body) a.push('--body', input.body);
+        return a;
+      },
+      readOnlyHint: false,
+    },
+    {
       name: 'pr_status',
       description: 'PR metadata and mergeability facts.',
       inputSchema: z.object({
@@ -112,7 +128,10 @@ export function registerTools(server) {
       {
         description: tool.description,
         inputSchema: tool.inputSchema,
-        annotations: { readOnlyHint: true, destructiveHint: false },
+        annotations: {
+          readOnlyHint: tool.readOnlyHint !== false,
+          destructiveHint: false,
+        },
       },
       async (input) => {
         const args = typeof tool.args === 'function' ? tool.args(input) : tool.args;
