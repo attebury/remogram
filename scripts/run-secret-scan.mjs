@@ -2,9 +2,11 @@
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createGitHelpers } from './lib/secret-scan-base.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_HEAD_REF = 'HEAD';
+const { runGit, resolveCommit, resolveAutomaticBaseRef } = createGitHelpers(repoRoot);
 
 function fail(message) {
   console.error(message);
@@ -84,47 +86,6 @@ function parseArgs(argv) {
   return options;
 }
 
-function runGit(args) {
-  return spawnSync('git', args, {
-    cwd: repoRoot,
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'pipe'],
-  });
-}
-
-function resolveCommit(ref, { required }) {
-  const result = runGit(['rev-parse', '--verify', `${ref}^{commit}`]);
-  if (result.status === 0) {
-    return result.stdout.trim();
-  }
-
-  if (!required) {
-    return null;
-  }
-
-  const diagnostic = (result.stderr || result.stdout || '').trim();
-  fail([
-    `Unable to resolve git ref ${ref} for the Gitleaks scan.`,
-    diagnostic,
-    'Fetch the base ref first or run `npm run security:secrets -- --full-history`.',
-  ].filter(Boolean).join('\n'));
-}
-
-function resolveAutomaticBaseRef() {
-  for (const candidate of [
-    process.env.REMOGRAM_SECRET_SCAN_BASE_REF,
-    process.env.TOPOGRAM_SECRET_SCAN_BASE_REF,
-    process.env.GITHUB_BASE_REF ? `origin/${process.env.GITHUB_BASE_REF}` : null,
-    'origin/main',
-  ]) {
-    if (candidate && resolveCommit(candidate, { required: false })) {
-      return candidate;
-    }
-  }
-
-  return null;
-}
-
 function resolveScanPlan(options) {
   if (options.fullHistory) {
     return { mode: 'full-history' };
@@ -144,7 +105,17 @@ function resolveScanPlan(options) {
     return { mode: 'full-history', reason };
   }
 
-  const headCommit = resolveCommit(options.head, { required: true });
+  const headCommit = (() => {
+    try {
+      return resolveCommit(options.head, { required: true });
+    } catch (err) {
+      fail([
+        `Unable to resolve git ref ${options.head} for the Gitleaks scan.`,
+        err.message,
+        'Fetch the base ref first or run `npm run security:secrets -- --full-history`.',
+      ].filter(Boolean).join('\n'));
+    }
+  })();
   const mergeBase = runGit(['merge-base', baseCommit, headCommit]);
   if (mergeBase.status !== 0) {
     const diagnostic = (mergeBase.stderr || mergeBase.stdout || '').trim();
