@@ -1,0 +1,8 @@
+requirement req_cr_inventory_fallback_trusted_total {
+  name "Fallback pagination preserves trusted entry_count"
+  description "When fast path rejects but page-one probe obtained forge total (header or search), pagination fallback must emit that trusted entry_count, not summed page lengths."
+  affects [cap_forge_remote_ops]
+  pitch pitch_cr_inventory_list_v2_cr_followup
+  priority high
+  status draft
+}

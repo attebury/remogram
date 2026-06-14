@@ -1,0 +1,8 @@
+requirement req_cr_inventory_sort_slice_accuracy {
+  name "Sort slice accuracy when total exceeds limit"
+  description "Gitea recent_created uses tail-page fetch when total exceeds retain_max; Gitea/GitLab number sorts full-collect within compliant max before client sort and slice."
+  affects [cap_forge_remote_ops]
+  pitch pitch_cr_inventory_list_v2_cr_followup
+  priority high
+  status draft
+}

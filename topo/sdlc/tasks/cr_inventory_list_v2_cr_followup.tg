@@ -1,0 +1,22 @@
+task task_cr_inventory_list_v2_cr_followup {
+  name "CR inventory list v2 cr follow-up"
+  description "Trusted entry_count on fallback; Gitea recent_created tail-page; number-sort full collect on Gitea/GitLab."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Global sort beyond compliant max" "Fast-path error surfacing refactor" "Default sort change"]
+  entrypoints ["packages/remogram-core/open-pull-list.js" "packages/remogram-core/check-pagination.js" "packages/provider-gitea-api/**" "packages/provider-gitlab-api/**" "packages/provider-github-api/**" "tests/**" "CHANGELOG.md"]
+  satisfies [req_cr_inventory_fallback_trusted_total req_cr_inventory_sort_slice_accuracy]
+  acceptance_refs [ac_fallback_preserves_trusted_entry_count ac_gitea_recent_created_tail_page_when_total_gt_limit ac_number_sort_full_collect_gitea_gitlab ac_github_fallback_search_total ac_caps_document_gitea_recent_created]
+  verification_refs [verification_cr_inventory_list_v2_cr_followup]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type implementation
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_observed
+  bug_discovery_rationale "Code review after cr-inventory-list-v2-review-followup merge"
+  status unclaimed
+}

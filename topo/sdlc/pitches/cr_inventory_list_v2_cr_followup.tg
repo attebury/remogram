@@ -1,0 +1,12 @@
+pitch pitch_cr_inventory_list_v2_cr_followup {
+  name "CR inventory list v2 code-review follow-up"
+  description "Fix post-merge code-review regressions: trusted entry_count on fast-path fallback, Gitea recent_created tail-page slice, Gitea/GitLab number-sort full collect."
+  appetite "small"
+  problem "Fallback pagination drops forge header total; Gitea recent_created fast path returns oldest-page slice when total exceeds limit; Gitea/GitLab number sorts only reorder first-page subset on fallback."
+  solution_sketch "Wave 1: page-one probe retains trustedTotalCount through pagination. Wave 2: Gitea tail-page fetch for recent_created; number-sort full collect within compliant max on Gitea/GitLab; caps docs and provider tests."
+  rabbit_holes "Global sort beyond compliant max; fast-path error surfacing; envelope schema_version bump."
+  no_go_areas "Hand-editing lifecycle status; implementation in draft planning PR."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}
