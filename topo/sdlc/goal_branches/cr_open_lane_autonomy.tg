@@ -5,5 +5,5 @@ goal_branch goal_branch_cr_open_lane_autonomy {
   task task_cr_open_lane_autonomy
   evidence_refs [local:topo/sdlc/pitches/cr_open_lane_autonomy.tg, local:topo/sdlc/requirements/cr_open_lane_autonomy.tg, local:topo/sdlc/plans/cr_open_lane_autonomy.tg, local:topo/sdlc/tasks/cr_open_lane_autonomy.tg, local:topo/sdlc/acceptance_criteria/cr_open_lane_autonomy.tg, local:topo/verifications/cr-open-lane-autonomy.tg, forge:issue/272]
   witness_refs [forge:issue/272]
-  status draft
+  status approved
 }
