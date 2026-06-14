@@ -2,8 +2,8 @@ goal_branch goal_branch_forge_trust_round9 {
   name "Forge Trust Round 9 Intent Packet"
   description "Intent Packet for Round 8 review residuals: complete Link pagination hardening, proof parity, agent-visible multi-source bounds, cr_inventory truncation field, merge/internals polish. Four serialized waves. Planning-only until explicit approval."
   branch_ref "goal/forge-trust-round9"
-  task task_forge_trust_round9_wave1
+  task task_forge_trust_round9_wave4
   evidence_refs [local:topo/sdlc/pitches/forge_trust_round9.tg, local:topo/sdlc/requirements/forge_trust_round9.tg, local:topo/sdlc/plans/forge_trust_round9.tg, local:topo/sdlc/tasks/forge_trust_round9_waves.tg, local:topo/sdlc/acceptance_criteria/forge_trust_round9.tg, local:topo/sdlc/bugs/forge-trust-round9.tg, local:topo/sdlc/decisions/forge_ingest_cap_policy.tg, local:topo/verifications/forge-trust-round9.tg]
   witness_refs []
-  status active
+  status archived
 }

@@ -15,9 +15,10 @@ task task_forge_trust_round9_wave1 {
   disposition active
   priority high
   work_type bugfix
-  bug_discovery unlinked
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
   linked_bugs [bug_github_list_link_next_unvalidated]
-  status unclaimed
+  status done
 }
 
 task task_forge_trust_round9_wave2 {
@@ -37,9 +38,10 @@ task task_forge_trust_round9_wave2 {
   disposition active
   priority high
   work_type bugfix
-  bug_discovery unlinked
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
   linked_bugs [bug_github_gitlab_truncation_proof_gap]
-  status unclaimed
+  status done
 }
 
 task task_forge_trust_round9_wave3 {
@@ -59,9 +61,10 @@ task task_forge_trust_round9_wave3 {
   disposition active
   priority high
   work_type bugfix
-  bug_discovery unlinked
-  linked_bugs [bug_check_pagination_multi_source_opaque, bug_cr_inventory_omits_checks_truncated]
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
+  linked_bugs [bug_check_pagination_multi_source_opaque bug_cr_inventory_omits_checks_truncated]
+  status done
 }
 
 task task_forge_trust_round9_wave4 {
@@ -81,7 +84,8 @@ task task_forge_trust_round9_wave4 {
   disposition active
   priority medium
   work_type bugfix
-  bug_discovery unlinked
-  linked_bugs [bug_merge_blockers_truncation_loose, bug_pagination_backoff_duplicated]
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
+  linked_bugs [bug_merge_blockers_truncation_loose bug_pagination_backoff_duplicated]
+  status done
 }
