@@ -61,7 +61,7 @@ export function parseLinkHeader(linkHeader) {
   const links = {};
   for (const segment of String(linkHeader).split(',')) {
     const match = segment.trim().match(/^<([^>]+)>;\s*rel=(?:"([^"]+)"|'([^']+)')/);
-    if (match) links[match[2] ?? match[3]] = match[1];
+    if (match) links[(match[2] ?? match[3]).toLowerCase()] = match[1];
   }
   return links;
 }

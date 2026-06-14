@@ -15,6 +15,11 @@ describe('parseLinkHeader', () => {
     expect(links.next).toBe('https://api.github.com/page2');
   });
 
+  it('parses rel="Next" case-insensitively', () => {
+    const links = parseLinkHeader('<https://api.github.com/page2>; rel="Next"');
+    expect(links.next).toBe('https://api.github.com/page2');
+  });
+
   it('returns empty object when rel=next is missing', () => {
     expect(parseLinkHeader('<https://api.github.com/page2>; rel="prev"')).toEqual({
       prev: 'https://api.github.com/page2',
