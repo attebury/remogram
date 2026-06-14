@@ -1,0 +1,12 @@
+pitch pitch_forge_trust_round8 {
+  name "Forge Trust Round 8 — Honest Bounds Signaling"
+  description "Eighth forge-trust Intent Packet so agents reason about check enumeration bounds without reading source: consumer-visible checks_truncated, honest check_pagination capabilities including ingest backoff, asymmetric proof closure, and Link-header same-origin hardening."
+  appetite "medium"
+  problem "Round 7 closed review proof gaps but check lists still truncate silently at max_pages; check_pagination omits adaptive backoff and truncation semantics; GitHub/GitLab lack oversize ingest mocks; GitHub prChecks page-2 tests skip commit statuses stream; secret-scan remo-only path and pre-push hook remain weakly tested."
+  solution_sketch "Four serialized waves: (1) core pagination metadata + honest capabilities, (2) checks_truncated packet field + checks_incomplete merge blocker, (3) provider proof gaps (oversize, dual-stream, fail-closed), (4) remo-only secret-scan, pre-push behavioral test, Link-header same-origin validation. Close each linked bug with boundary_test_added true. Autonomous Observer-routed execution."
+  rabbit_holes "Raising DEFAULT_MAX_BYTES globally; .remogram.json ingest cap fields; reopening archived round 7 cluster; mutation commands; npm publish."
+  no_go_areas "Hand-editing lifecycle status; rewriting round 7 archaeology; removing max_pages cap without replacement signal."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}

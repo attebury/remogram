@@ -1,0 +1,51 @@
+verification verification_forge_trust_round8_wave1 {
+  name "Forge trust round 8 wave 1"
+  description "Pagination metadata return shape and honest check_pagination capability facts."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round8_wave1]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_check_pagination_under_reports_bounds]
+  status draft
+}
+
+verification verification_forge_trust_round8_wave2 {
+  name "Forge trust round 8 wave 2"
+  description "checks_truncated on pr_checks and checks_incomplete merge blocker."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round8_wave2]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_checks_truncation_silent]
+  status draft
+}
+
+verification verification_forge_trust_round8_wave3 {
+  name "Forge trust round 8 wave 3"
+  description "GitHub/GitLab oversize mocks, GitHub statuses page-2, truncation at max_pages."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round8_wave3]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_github_gitlab_oversize_untested, bug_github_statuses_page2_untested]
+  status draft
+}
+
+verification verification_forge_trust_round8_wave4 {
+  name "Forge trust round 8 wave 4"
+  description "Remo-only secret-scan, pre-push behavioral test, Link next same-origin."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round8_wave4]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_secret_scan_remo_only_untested, bug_github_link_next_unvalidated]
+  status draft
+}

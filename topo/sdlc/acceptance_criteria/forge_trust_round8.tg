@@ -1,0 +1,55 @@
+acceptance_criterion ac_check_pagination_honest_bounds_round8 {
+  name "Capabilities report honest check pagination bounds"
+  description "Given provider capabilities --json, when packet is returned, then check_pagination includes ingest_backoff on_page_cap compliant_max_items_per_source and truncation_packet_field for each *-api provider."
+  requirement req_forge_trust_round8
+  status draft
+}
+
+acceptance_criterion ac_pagination_metadata_round8 {
+  name "Pagination helpers return truncation metadata"
+  description "Given paginateCheckStatusPages or githubFetchPaginated, when enumeration completes or hits max_pages, then return value includes items and truncated boolean."
+  requirement req_forge_trust_round8
+  status draft
+}
+
+acceptance_criterion ac_checks_truncated_packet_round8 {
+  name "pr_checks exposes checks_truncated"
+  description "Given mocked APIs hitting page cap with more data available, when pr_checks runs, then checks_truncated is true and statuses reflect fetched pages only."
+  requirement req_forge_trust_round8
+  status draft
+}
+
+acceptance_criterion ac_checks_incomplete_blocker_round8 {
+  name "merge_plan blocks on truncated checks"
+  description "Given checks_truncated true, when merge_plan runs, then blockers includes checks_incomplete even if visible check_conclusion is success."
+  requirement req_forge_trust_round8
+  status draft
+}
+
+acceptance_criterion ac_oversize_github_gitlab_round8 {
+  name "GitHub and GitLab oversize ingest mocks pass"
+  description "Given mocked forge APIs returning one paginated page whose raw JSON exceeds 8192 bytes, when pr_checks runs on GitHub and GitLab providers, then ingest backoff succeeds without OVERSIZED_RAW_OUTPUT under default cap."
+  requirement req_forge_trust_round8
+  status draft
+}
+
+acceptance_criterion ac_github_statuses_page2_round8 {
+  name "GitHub prChecks sees commit statuses page-2 failure"
+  description "Given mocked GitHub APIs with failing commit status on page 2, when pr_checks runs, then check_conclusion is failure."
+  requirement req_forge_trust_round8
+  status draft
+}
+
+acceptance_criterion ac_secret_scan_remo_only_round8 {
+  name "Secret-scan remo-only repo falls back correctly"
+  description "Given temp git repo with only origin/remo remote ref, when resolveAutomaticBaseRef runs, then result is null."
+  requirement req_forge_trust_round8
+  status draft
+}
+
+acceptance_criterion ac_link_next_same_origin_round8 {
+  name "GitHub Link next URL must match API origin"
+  description "Given mocked Link header with off-origin rel=next URL, when githubFetchPaginated runs, then token is not sent off-host and checks_truncated signals incomplete enumeration."
+  requirement req_forge_trust_round8
+  status draft
+}

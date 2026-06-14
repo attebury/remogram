@@ -1,0 +1,91 @@
+task task_forge_trust_round8_wave1 {
+  name "Wave 1 — Core truncation contract and honest capabilities"
+  description "Refactor paginateCheckStatusPages and githubFetchPaginated to return items+truncated. Extend checkPaginationCapabilityFacts with ingest_backoff, on_page_cap, compliant_max_items_per_source, truncation_packet_field."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Raising DEFAULT_MAX_BYTES globally" "checks_truncated on pr_checks packet yet"]
+  entrypoints ["packages/remogram-core/check-pagination.js" "packages/remogram-core/caps.js" "packages/provider-github-api/index.js" "packages/provider-gitea-api/index.js" "packages/provider-gitlab-api/index.js" "tests/core/check-pagination.test.mjs" "tests/core/forge-ingest-policy.test.mjs"]
+  satisfies [req_forge_trust_round8]
+  acceptance_refs [ac_check_pagination_honest_bounds_round8, ac_pagination_metadata_round8]
+  verification_refs [verification_forge_trust_round8_wave1]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  claimed_by []
+  bug_discovery unlinked
+  linked_bugs [bug_check_pagination_under_reports_bounds]
+  status unclaimed
+}
+
+task task_forge_trust_round8_wave2 {
+  name "Wave 2 — checks_truncated packet and merge blocking"
+  description "Emit checks_truncated on all provider prChecks. Add checks_incomplete to mergeBlockersFromFacts. Update contract matrix, semantic-diff facts, README, remogram-core skill."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Raising DEFAULT_MAX_BYTES" "Link-header same-origin validation"]
+  entrypoints ["packages/remogram-core/merge-blockers.js" "packages/provider-*/index.js" "tests/core/merge-blockers.test.mjs" "tests/helpers/provider-contract-matrix.mjs" "README.md" "tools/remogram-agent-support/skills/remogram-core/SKILL.md"]
+  satisfies [req_forge_trust_round8]
+  acceptance_refs [ac_checks_truncated_packet_round8, ac_checks_incomplete_blocker_round8]
+  verification_refs [verification_forge_trust_round8_wave2]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round8_wave1]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  claimed_by []
+  bug_discovery unlinked
+  linked_bugs [bug_checks_truncation_silent]
+  status unclaimed
+}
+
+task task_forge_trust_round8_wave3 {
+  name "Wave 3 — Provider proof gaps"
+  description "GitHub/GitLab oversize ingest mocks, GitHub commit statuses page-2 prChecks test, limit=1 fail-closed core test, max-pages truncation provider tests."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Changing DEFAULT_MAX_BYTES" "Live-network provider tests"]
+  entrypoints ["tests/provider/github-api.test.mjs" "tests/provider/gitlab-api.test.mjs" "tests/provider/gitea-api.test.mjs" "tests/core/check-pagination.test.mjs"]
+  satisfies [req_forge_trust_round8]
+  acceptance_refs [ac_oversize_github_gitlab_round8, ac_github_statuses_page2_round8]
+  verification_refs [verification_forge_trust_round8_wave3]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round8_wave2]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  claimed_by []
+  bug_discovery unlinked
+  linked_bugs [bug_github_gitlab_oversize_untested, bug_github_statuses_page2_untested]
+  status unclaimed
+}
+
+task task_forge_trust_round8_wave4 {
+  name "Wave 4 — Edge proof and Link-header hardening"
+  description "Remo-only secret-scan temp repo test, pre-push hook behavioral test, GitHub Link next same-origin validation with checks_truncated on mismatch."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Changing script behavior beyond test coverage and link validation"]
+  entrypoints ["scripts/lib/secret-scan-base.mjs" "scripts/install-pre-push-hook.sh" "tests/core/secret-scan.test.mjs" "tests/core/pre-push-hook.test.mjs" "packages/provider-github-api/index.js"]
+  satisfies [req_forge_trust_round8]
+  acceptance_refs [ac_secret_scan_remo_only_round8, ac_link_next_same_origin_round8]
+  verification_refs [verification_forge_trust_round8_wave4]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round8_wave3]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type bugfix
+  claimed_by []
+  bug_discovery unlinked
+  linked_bugs [bug_secret_scan_remo_only_untested, bug_github_link_next_unvalidated]
+  status unclaimed
+}
