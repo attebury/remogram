@@ -64,9 +64,7 @@ export const TRUSTED_NORMALIZED_BODY_FIELDS = Object.freeze({
   diverged: true,
   auth_present: true,
   reused_existing: true,
-  'idempotency_scan.pages': true,
-  'idempotency_scan.max_pages': true,
-  'idempotency_scan.page_size': true,
+  idempotency_scan: true,
 });
 
 /**

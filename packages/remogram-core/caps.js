@@ -53,6 +53,17 @@ export function checkPaginationCapabilityFacts({ strategy, pageSizeParam, source
   };
 }
 
+/** Structured idempotency scan facts for provider capabilities (cr open). */
+export function idempotencyScanCapabilityFacts() {
+  return {
+    idempotency_scan: {
+      max_pages: MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
+      page_size: DEFAULT_OPEN_PULL_LIST_PAGE_SIZE,
+      ingest_backoff: 'halve_until_fit',
+    },
+  };
+}
+
 export function capText(text, maxBytes = DEFAULT_MAX_BYTES) {
   if (!text) return { text: '', truncated: false, bytes: 0 };
   const buf = Buffer.from(text, 'utf8');

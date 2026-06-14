@@ -42,6 +42,7 @@ const BODY_KEYS = {
     'commands',
     'forge_ingest_cap_bytes',
     'host_binding',
+    'idempotency_scan',
     'mergeability_confidence',
     'pagination',
     'write_support',
@@ -106,6 +107,9 @@ function expectBodyKeys(type, testCase, body) {
   let expected = BODY_KEYS[type];
   if (type === PACKET_TYPES.PROVIDER_CAPABILITIES && !testCase.writeSupport) {
     expected = expected.filter((key) => key !== 'write_commands');
+  }
+  if (type === PACKET_TYPES.PROVIDER_CAPABILITIES && testCase.provider.id !== 'gitea-api') {
+    expected = expected.filter((key) => key !== 'idempotency_scan');
   }
   const packet = forgePacket(type, packetCtx(testCase), body);
   expect(packet.type).toBe(type);

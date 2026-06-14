@@ -500,6 +500,87 @@ describe('remogram cli commands', () => {
     }
   });
 
+  it('cr open idempotency scan uses ingest backoff at default ingest cap', async () => {
+    delete process.env.REMOGRAM_FORGE_INGEST_MAX_BYTES;
+    const config = defaultTestConfig();
+    config.write_commands = ['cr_open'];
+    const setup = setupTempForge({
+      config,
+      remoteUrl: 'http://localhost:3000/owner/repo.git',
+    });
+    cleanups.push(setup);
+    process.env.GITEA_TOKEN = 'test-token';
+
+    const paddedPulls = Array.from({ length: 25 }, (_, i) => ({
+      number: i + 1,
+      state: 'open',
+      title: 'z'.repeat(400),
+      head: { ref: 'other-head' },
+      base: { ref: 'remo' },
+    }));
+    const oversizedJson = JSON.stringify(paddedPulls);
+    expect(Buffer.byteLength(oversizedJson, 'utf8')).toBeGreaterThan(8192);
+
+    vi.stubGlobal('fetch', vi.fn());
+    try {
+      global.fetch.mockImplementation((url, opts) => {
+        const href = String(url);
+        if (opts?.method === 'POST') {
+          return Promise.resolve({
+            ok: true,
+            status: 201,
+            body: {
+              [Symbol.asyncIterator]: async function* () {
+                yield Buffer.from(
+                  JSON.stringify({
+                    number: 401,
+                    html_url: 'http://localhost:3000/owner/repo/pulls/401',
+                    title: 'T',
+                  }),
+                );
+              },
+            },
+          });
+        }
+        const limitMatch = href.match(/[?&]limit=(\d+)/);
+        const limit = limitMatch ? Number(limitMatch[1]) : 100;
+        if (limit > 12) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            body: {
+              [Symbol.asyncIterator]: async function* () {
+                yield Buffer.from(oversizedJson);
+              },
+            },
+          });
+        }
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from('[]');
+            },
+          },
+        });
+      });
+
+      const { logs } = await captureCliOutput(() =>
+        runCli(['cr', 'open', '--head', 'feat/x', '--base', 'remo', '--title', 'T', '--json'], {
+          cwd: setup.dir,
+          providers: { 'gitea-api': giteaProvider },
+        }),
+      );
+      const packet = JSON.parse(logs[0]);
+      expect(packet.ok).toBe(true);
+      expect(packet.type).toBe(PACKET_TYPES.CHANGE_REQUEST_OPENED);
+      expect(packet.pr_number).toBe(401);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it('cr open without provider support returns provider_unsupported', async () => {
     const config = defaultTestConfig({
       provider: 'github-api',

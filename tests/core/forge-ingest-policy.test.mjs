@@ -11,6 +11,7 @@ import {
   forgeIngestCapabilityFacts,
   checkPaginationCapabilityFacts,
   getEffectiveIngestMaxBytes,
+  idempotencyScanCapabilityFacts,
 } from '@remogram/core';
 
 const repoRoot = join(import.meta.dirname, '../..');
@@ -49,6 +50,16 @@ describe('forge ingest cap policy', () => {
   it('exports open-pull idempotency pagination constants decoupled from check status', () => {
     expect(DEFAULT_OPEN_PULL_LIST_PAGE_SIZE).toBe(100);
     expect(MAX_OPEN_PULL_IDEMPOTENCY_PAGES).toBe(50);
+  });
+
+  it('idempotencyScanCapabilityFacts describes cr open scan policy', () => {
+    expect(idempotencyScanCapabilityFacts()).toEqual({
+      idempotency_scan: {
+        max_pages: 50,
+        page_size: 100,
+        ingest_backoff: 'halve_until_fit',
+      },
+    });
   });
 
   it('checkPaginationCapabilityFacts describes offset_limit strategy', () => {

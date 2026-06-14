@@ -1,4 +1,5 @@
 import { sanitizeField } from '../caps.js';
+import { normalizeForgeErrorFields } from './forge-error-fields.js';
 
 export const SCHEMA_VERSION = 1;
 
@@ -56,7 +57,10 @@ export function forgePacket(type, context, body = {}, error = null) {
     if (error.status != null) packet.error_status = error.status;
     if (error.fields != null && typeof error.fields === 'object') {
       assertNoForbiddenKeys(error.fields);
-      Object.assign(packet, error.fields);
+      const trustedFields = normalizeForgeErrorFields(error.code, error.fields);
+      if (trustedFields != null) {
+        Object.assign(packet, trustedFields);
+      }
     }
   }
 

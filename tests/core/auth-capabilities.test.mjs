@@ -57,6 +57,13 @@ describe('auth-aware provider capabilities', () => {
         implemented: providerId === 'gitea-api',
         auth_class: AUTH_CLASS.TOKEN_REQUIRED,
       });
+      if (providerId === 'gitea-api') {
+        expect(body.idempotency_scan).toEqual({
+          max_pages: 50,
+          page_size: 100,
+          ingest_backoff: 'halve_until_fit',
+        });
+      }
     });
   }
 });

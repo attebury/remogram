@@ -731,6 +731,61 @@ describe('provider-gitea-api fixtures', () => {
     expect(global.fetch).toHaveBeenCalledTimes(2);
   });
 
+  it('crOpen idempotency scan uses ingest backoff at default ingest cap', async () => {
+    delete process.env.REMOGRAM_FORGE_INGEST_MAX_BYTES;
+    const paddedPulls = Array.from({ length: 25 }, (_, i) => ({
+      number: i + 1,
+      state: 'open',
+      title: 'z'.repeat(400),
+      head: { ref: 'other-head' },
+      base: { ref: 'remo' },
+    }));
+    const oversizedJson = JSON.stringify(paddedPulls);
+    expect(Buffer.byteLength(oversizedJson, 'utf8')).toBeGreaterThan(8192);
+
+    global.fetch.mockImplementation((url, opts) => {
+      const href = String(url);
+      if (opts?.method === 'POST') {
+        return Promise.resolve({
+          ok: true,
+          status: 201,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(
+                JSON.stringify({
+                  number: 400,
+                  html_url: 'http://localhost:3000/attebury/remogram/pulls/400',
+                  title: 'T',
+                }),
+              );
+            },
+          },
+        });
+      }
+      if (!href.includes('/pulls') || href.includes('/pulls/')) {
+        return Promise.reject(new Error(`unexpected fetch: ${href}`));
+      }
+      const limitMatch = href.match(/[?&]limit=(\d+)/);
+      const limit = limitMatch ? Number(limitMatch[1]) : 100;
+      if (limit > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      return Promise.resolve(jsonPageResponse([]));
+    });
+
+    const body = await provider.crOpen(ctx, { head: 'feat/x', base: 'remo', title: 'T' });
+    expect(body.pr_number).toBe(400);
+    expect(global.fetch.mock.calls.some(([, o]) => o?.method === 'POST')).toBe(true);
+  });
+
   it('crOpen fails closed when idempotency scan is truncated', async () => {
     for (let page = 0; page < MAX_OPEN_PULL_IDEMPOTENCY_PAGES; page += 1) {
       global.fetch.mockResolvedValueOnce(jsonPage(openPullMismatchPage(100)));
@@ -800,6 +855,11 @@ describe('provider-gitea-api fixtures', () => {
     const body = await provider.providerCapabilities();
     expect(body.write_support).toBe(true);
     expect(body.write_commands).toEqual(['cr_open']);
+    expect(body.idempotency_scan).toEqual({
+      max_pages: MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
+      page_size: 100,
+      ingest_backoff: 'halve_until_fit',
+    });
     const crOpen = body.commands.find((c) => c.name === 'cr_open');
     expect(crOpen).toMatchObject({ implemented: true, auth_class: 'token_required' });
   });

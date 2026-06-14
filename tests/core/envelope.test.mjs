@@ -73,6 +73,32 @@ describe('forgePacket', () => {
     expect(p.idempotency_scan).toEqual({ pages: 50, max_pages: 50, page_size: 100 });
     expect(p.error_code).toBe(ERROR_CODES.IDEMPOTENCY_SCAN_INCOMPLETE);
   });
+
+  it('rejects forbidden keys inside forge error fields', () => {
+    expect(() =>
+      forgeErrorPacket(ctx, {
+        code: ERROR_CODES.IDEMPOTENCY_SCAN_INCOMPLETE,
+        message: 'bad',
+        fields: {
+          idempotency_scan: { pages: 1, max_pages: 50, page_size: 100 },
+          lane: 'Merge',
+        },
+      }),
+    ).toThrow(/Forbidden Topogram concept/);
+  });
+
+  it('rejects forge error fields that override envelope trust', () => {
+    expect(() =>
+      forgeErrorPacket(ctx, {
+        code: ERROR_CODES.IDEMPOTENCY_SCAN_INCOMPLETE,
+        message: 'bad',
+        fields: {
+          idempotency_scan: { pages: 1, max_pages: 50, page_size: 100 },
+          provider_id: 'evil',
+        },
+      }),
+    ).toThrow(/cannot override packet field provider_id/);
+  });
 });
 
 describe('sanitizeField', () => {

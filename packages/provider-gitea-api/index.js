@@ -15,6 +15,7 @@ import {
   forgeError,
   forgeIngestCapabilityFacts,
   checkPaginationCapabilityFacts,
+  idempotencyScanCapabilityFacts,
   DEFAULT_CHECK_STATUS_PAGE_SIZE,
   MAX_CHECK_STATUS_PAGES,
   DEFAULT_OPEN_PULL_LIST_PAGE_SIZE,
@@ -139,7 +140,7 @@ export async function giteaFetch(config, parsed, path, options = {}) {
 const MAX_CHECK_PAGES = MAX_CHECK_STATUS_PAGES;
 const GITEA_PAGE_SIZE = DEFAULT_OPEN_PULL_LIST_PAGE_SIZE;
 
-function idempotencyScanIncompleteError(pagesScanned) {
+function idempotencyScanIncompleteError(pagesScanned, pageSizeUsed) {
   return forgeError(
     ERROR_CODES.IDEMPOTENCY_SCAN_INCOMPLETE,
     'Cannot prove no open pull exists for head+base within scan limit; use cr inventory or open manually',
@@ -148,7 +149,7 @@ function idempotencyScanIncompleteError(pagesScanned) {
       idempotency_scan: {
         pages: pagesScanned,
         max_pages: MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
-        page_size: DEFAULT_OPEN_PULL_LIST_PAGE_SIZE,
+        page_size: pageSizeUsed,
       },
     },
   );
@@ -249,6 +250,7 @@ export function providerCapabilities() {
       pageSizeParam: 'limit',
       sourceCount: check_sources.length,
     }),
+    ...idempotencyScanCapabilityFacts(),
   };
 }
 
@@ -286,21 +288,31 @@ export async function findOpenPullByHeadBase(ctx, head, base) {
   requireToken();
   const path = `${repoApiPath(ctx.config, 'pulls')}?state=open`;
   const pageSep = path.includes('?') ? '&' : '?';
+  let activeLimit = GITEA_PAGE_SIZE;
 
   for (let page = 1; page <= MAX_OPEN_PULL_IDEMPOTENCY_PAGES; page += 1) {
-    const items = await giteaFetch(
-      ctx.config,
-      ctx.parsed,
-      `${path}${pageSep}limit=${GITEA_PAGE_SIZE}&page=${page}`,
+    const { items, usedLimit } = await fetchPageWithIngestBackoff(
+      async ({ page: pageNum, limit }) => {
+        const body = await giteaFetch(
+          ctx.config,
+          ctx.parsed,
+          `${path}${pageSep}limit=${limit}&page=${pageNum}`,
+        );
+        if (!Array.isArray(body)) {
+          throw Object.assign(new Error('Provider returned non-array open pull list'), {
+            forgeError: forgeError(
+              ERROR_CODES.UNPARSEABLE_PROVIDER_OUTPUT,
+              'Provider returned non-array open pull list',
+            ),
+          });
+        }
+        return body;
+      },
+      page,
+      activeLimit,
     );
-    if (!Array.isArray(items)) {
-      throw Object.assign(new Error('Provider returned non-array open pull list'), {
-        forgeError: forgeError(
-          ERROR_CODES.UNPARSEABLE_PROVIDER_OUTPUT,
-          'Provider returned non-array open pull list',
-        ),
-      });
-    }
+    activeLimit = usedLimit;
+
     const match =
       items.find(
         (pr) =>
@@ -309,10 +321,10 @@ export async function findOpenPullByHeadBase(ctx, head, base) {
           pr?.base?.ref === base,
       ) ?? null;
     if (match) return match;
-    if (items.length < GITEA_PAGE_SIZE) return null;
+    if (items.length < usedLimit) return null;
     if (page === MAX_OPEN_PULL_IDEMPOTENCY_PAGES) {
       throw Object.assign(new Error('Open pull idempotency scan incomplete'), {
-        forgeError: idempotencyScanIncompleteError(page),
+        forgeError: idempotencyScanIncompleteError(page, usedLimit),
       });
     }
   }
