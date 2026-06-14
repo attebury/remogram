@@ -17,6 +17,7 @@ import {
   DEFAULT_CHECK_STATUS_PAGE_SIZE,
   MAX_CHECK_STATUS_PAGES,
   paginateCheckStatusPages,
+  paginateOffsetListPages,
   fetchWithIngestPageBackoff,
   fetchPageWithIngestBackoff,
   withPerPageParam,
@@ -238,40 +239,20 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
       : null;
   const pageSize =
     listLimit != null ? Math.min(listLimit, GITEA_PAGE_SIZE) : GITEA_PAGE_SIZE;
-  const all = [];
-  let listTruncated = false;
   const path = `${repoApiPath(ctx.config, 'pulls')}?state=open`;
   const pageSep = path.includes('?') ? '&' : '?';
-  let activeLimit = pageSize;
-  for (let page = 1; page <= MAX_CHECK_PAGES; page += 1) {
-    const remaining = listLimit != null ? Math.max(listLimit - all.length, 0) : activeLimit;
-    if (listLimit != null && remaining === 0) break;
-    const requestLimit = listLimit != null ? Math.min(activeLimit, remaining) : activeLimit;
-    const { items, usedLimit } = await fetchPageWithIngestBackoff(
-      async ({ page: pageNum, limit }) => {
-        const body = await giteaFetch(
-          ctx.config,
-          ctx.parsed,
-          `${path}${pageSep}limit=${limit}&page=${pageNum}`,
-        );
-        return Array.isArray(body) ? body : [];
-      },
-      page,
-      requestLimit,
-    );
-    activeLimit = usedLimit;
-    all.push(...items);
-    if (items.length < usedLimit) break;
-    if (listLimit != null) {
-      if (all.length >= listLimit) {
-        listTruncated = items.length >= usedLimit;
-        break;
-      }
-    } else if (page === MAX_CHECK_PAGES) {
-      listTruncated = true;
-      break;
-    }
-  }
+  const { items: all, list_truncated: listTruncated } = await paginateOffsetListPages({
+    pageSize,
+    listLimit,
+    fetchPage: async ({ page, limit }) => {
+      const body = await giteaFetch(
+        ctx.config,
+        ctx.parsed,
+        `${path}${pageSep}limit=${limit}&page=${page}`,
+      );
+      return Array.isArray(body) ? body : [];
+    },
+  });
   let numbers = all
     .map((pr) => pr.number)
     .filter((number) => Number.isInteger(number))

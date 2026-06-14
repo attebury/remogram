@@ -17,6 +17,7 @@ import {
   DEFAULT_CHECK_STATUS_PAGE_SIZE,
   MAX_CHECK_STATUS_PAGES,
   paginateCheckStatusPages,
+  paginateOffsetListPages,
   fetchWithIngestPageBackoff,
   fetchPageWithIngestBackoff,
   withPerPageParam,
@@ -330,39 +331,19 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
       ? Number(opts.limit)
       : null;
   const path = `${projectApiPath(ctx.config, 'merge_requests')}?state=opened`;
-  const all = [];
-  let listTruncated = false;
   const separator = path.includes('?') ? '&' : '?';
-  let activeLimit = GITLAB_PAGE_SIZE;
-  for (let page = 1; page <= MAX_CHECK_PAGES; page += 1) {
-    const remaining = listLimit != null ? Math.max(listLimit - all.length, 0) : activeLimit;
-    if (listLimit != null && remaining === 0) break;
-    const requestSize = listLimit != null ? Math.min(activeLimit, remaining) : activeLimit;
-    const { items, usedLimit } = await fetchPageWithIngestBackoff(
-      async ({ page: pageNum, limit }) => {
-        const body = await gitlabFetch(
-          ctx.config,
-          ctx.parsed,
-          `${path}${separator}per_page=${limit}&page=${pageNum}`,
-        );
-        return Array.isArray(body) ? body : [];
-      },
-      page,
-      requestSize,
-    );
-    activeLimit = usedLimit;
-    all.push(...items);
-    if (items.length < usedLimit) break;
-    if (listLimit != null) {
-      if (all.length >= listLimit) {
-        listTruncated = items.length >= usedLimit;
-        break;
-      }
-    } else if (page === MAX_CHECK_PAGES) {
-      listTruncated = true;
-      break;
-    }
-  }
+  const { items: all, list_truncated: listTruncated } = await paginateOffsetListPages({
+    pageSize: GITLAB_PAGE_SIZE,
+    listLimit,
+    fetchPage: async ({ page, limit }) => {
+      const body = await gitlabFetch(
+        ctx.config,
+        ctx.parsed,
+        `${path}${separator}per_page=${limit}&page=${page}`,
+      );
+      return Array.isArray(body) ? body : [];
+    },
+  });
   let numbers = all
     .map((mr) => mr.iid)
     .filter((number) => Number.isInteger(number))

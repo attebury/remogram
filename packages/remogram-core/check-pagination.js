@@ -95,3 +95,43 @@ export async function paginateCheckStatusPages({
   }
   return { items: all, truncated };
 }
+
+/**
+ * Offset/limit open-list pagination with ingest-cap backoff and optional list cap.
+ * @param {{ fetchPage: (opts: { page: number, limit: number }) => Promise<unknown[]>, pageSize: number, listLimit?: number | null, maxPages?: number, maxPagesTruncatesWithLimit?: boolean }} opts
+ * @returns {Promise<{ items: unknown[], list_truncated: boolean }>}
+ */
+export async function paginateOffsetListPages({
+  fetchPage,
+  pageSize,
+  listLimit = null,
+  maxPages = MAX_CHECK_STATUS_PAGES,
+  maxPagesTruncatesWithLimit = false,
+}) {
+  const all = [];
+  let listTruncated = false;
+  let activeLimit = pageSize;
+  for (let page = 1; page <= maxPages; page += 1) {
+    const remaining = listLimit != null ? Math.max(listLimit - all.length, 0) : activeLimit;
+    if (listLimit != null && remaining === 0) break;
+    const requestLimit = listLimit != null ? Math.min(activeLimit, remaining) : activeLimit;
+    const { items, usedLimit } = await fetchPageWithIngestBackoff(fetchPage, page, requestLimit);
+    activeLimit = usedLimit;
+    all.push(...items);
+    if (items.length < usedLimit) break;
+    if (listLimit != null) {
+      if (all.length >= listLimit) {
+        listTruncated = items.length >= usedLimit;
+        break;
+      }
+      if (maxPagesTruncatesWithLimit && page === maxPages) {
+        listTruncated = true;
+        break;
+      }
+    } else if (page === maxPages) {
+      listTruncated = true;
+      break;
+    }
+  }
+  return { items: all, list_truncated: listTruncated };
+}
