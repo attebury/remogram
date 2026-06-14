@@ -1,0 +1,87 @@
+task task_forge_trust_round9_wave1 {
+  name "Wave 1 — Complete GitHub Link pagination hardening"
+  description "Extract isTrustedPaginationUrl to remogram-core; apply to listOpenPullsWithMeta; add off-origin and end-to-end tests."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Path-prefix Link validation" "Raising DEFAULT_MAX_BYTES"]
+  entrypoints ["packages/remogram-core/http.js" "packages/remogram-core/index.js" "packages/provider-github-api/index.js" "tests/provider/github-api.test.mjs"]
+  satisfies [req_forge_trust_round9]
+  acceptance_refs [ac_github_list_link_same_origin_round9]
+  verification_refs [verification_forge_trust_round9_wave1]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  bug_discovery unlinked
+  linked_bugs [bug_github_list_link_next_unvalidated]
+  status unclaimed
+}
+
+task task_forge_trust_round9_wave2 {
+  name "Wave 2 — GitHub/GitLab proof parity"
+  description "Add max_pages checks_truncated and mergePlan checks_incomplete tests on GitHub and GitLab matching Gitea coverage."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Product changes unless tests reveal bugs"]
+  entrypoints ["tests/provider/github-api.test.mjs" "tests/provider/gitlab-api.test.mjs"]
+  satisfies [req_forge_trust_round9]
+  acceptance_refs [ac_github_gitlab_truncation_proof_round9]
+  verification_refs [verification_forge_trust_round9_wave2]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round9_wave1]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  bug_discovery unlinked
+  linked_bugs [bug_github_gitlab_truncation_proof_gap]
+  status unclaimed
+}
+
+task task_forge_trust_round9_wave3 {
+  name "Wave 3 — Agent-visible bounds and cr_inventory truncation"
+  description "Extend checkPaginationCapabilityFacts with multi-source totals; add checks_truncated to cr_inventory entries; update semantic-diff, contract matrix, README, skill."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Raising DEFAULT_MAX_BYTES"]
+  entrypoints ["packages/remogram-core/caps.js" "packages/remogram-core/cr-inventory.js" "packages/provider-*-api/index.js" "packages/remogram-core/contracts/semantic-diff-facts.js" "tests/core/cr-inventory.test.mjs" "tests/helpers/provider-contract-matrix.mjs" "README.md" "tools/remogram-agent-support/skills/remogram-core/SKILL.md"]
+  satisfies [req_forge_trust_round9]
+  acceptance_refs [ac_multi_source_capability_bounds_round9, ac_cr_inventory_checks_truncated_round9]
+  verification_refs [verification_forge_trust_round9_wave3]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round9_wave2]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  bug_discovery unlinked
+  linked_bugs [bug_check_pagination_multi_source_opaque, bug_cr_inventory_omits_checks_truncated]
+  status unclaimed
+}
+
+task task_forge_trust_round9_wave4 {
+  name "Wave 4 — Merge and pagination internals polish"
+  description "Strict checks_truncated === true in mergeBlockersFromFacts; DRY paginateCheckStatusPages backoff via fetchWithIngestPageBackoff."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Path-prefix Link validation"]
+  entrypoints ["packages/remogram-core/merge-blockers.js" "packages/remogram-core/check-pagination.js" "tests/core/merge-blockers.test.mjs" "tests/core/check-pagination.test.mjs"]
+  satisfies [req_forge_trust_round9]
+  acceptance_refs [ac_merge_blockers_strict_truncation_round9, ac_pagination_backoff_dry_round9]
+  verification_refs [verification_forge_trust_round9_wave4]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round9_wave3]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type bugfix
+  bug_discovery unlinked
+  linked_bugs [bug_merge_blockers_truncation_loose, bug_pagination_backoff_duplicated]
+  status unclaimed
+}

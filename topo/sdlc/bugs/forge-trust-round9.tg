@@ -1,0 +1,77 @@
+bug bug_github_list_link_next_unvalidated {
+  name "GitHub listOpenPullsWithMeta follows untrusted Link rel=next"
+  description "Round 8 hardened githubFetchPaginated but listOpenPullsWithMeta still assigns parseLinkHeader next URL without same-origin validation; cr inventory list path can exfiltrate token."
+  status open
+  severity high
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Adversarial forge Link header on open PR list points off-host; Remogram fetches with Bearer token during cr inventory."
+  linked_task task_forge_trust_round9_wave1
+  reproduction "Inspect listOpenPullsWithMeta; url = parseLinkHeader(linkHeader).next without isTrustedPaginationUrl."
+  boundary_test_added false
+}
+
+bug bug_github_gitlab_truncation_proof_gap {
+  name "GitHub/GitLab lack Gitea-equivalent truncation tests"
+  description "Gitea has prChecks max_pages and mergePlan checks_incomplete tests; GitHub and GitLab lack equivalent boundary tests for checks_truncated signaling."
+  status open
+  severity medium
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Regression in GitHub/GitLab truncation signaling goes undetected while Gitea tests pass."
+  linked_task task_forge_trust_round9_wave2
+  reproduction "grep checks_incomplete tests/provider/github-api.test.mjs; no max_pages truncation mergePlan test."
+  boundary_test_added false
+}
+
+bug bug_check_pagination_multi_source_opaque {
+  name "Dual-stream total bounds not agent-visible in capabilities"
+  description "check_pagination reports compliant_max_items_per_source only; GitHub/GitLab dual-stream providers require agents to read source to compute total enumeration bound."
+  status open
+  severity medium
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Agents underestimate total checks before truncation on multi-source providers."
+  linked_task task_forge_trust_round9_wave3
+  reproduction "remogram provider capabilities --json on GitHub; no compliant_max_items_total or truncation_combination."
+  boundary_test_added false
+}
+
+bug bug_cr_inventory_omits_checks_truncated {
+  name "cr_inventory entries omit checks_truncated"
+  description "buildCrInventoryEntry exposes checks_conclusion and blockers but not checks_truncated; agents cannot distinguish incomplete enumeration from check failures in inventory sweeps."
+  status open
+  severity medium
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Inventory entry shows checks_incomplete blocker without underlying truncation boolean field."
+  linked_task task_forge_trust_round9_wave3
+  reproduction "Read buildCrInventoryEntry; no checks_truncated on entry object."
+  boundary_test_added false
+}
+
+bug bug_merge_blockers_truncation_loose {
+  name "mergeBlockers uses truthy checks_truncated check"
+  description "mergeBlockersFromFacts uses if (checks.checks_truncated) which treats undefined same as false without documenting contract requirement."
+  status open
+  severity low
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Implicit contract that checks_truncated must always be boolean on provider packets is not enforced in code."
+  linked_task task_forge_trust_round9_wave4
+  reproduction "Read mergeBlockersFromFacts; loose truthy check on checks_truncated."
+  boundary_test_added false
+}
+
+bug bug_pagination_backoff_duplicated {
+  name "paginateCheckStatusPages duplicates ingest backoff logic"
+  description "paginateCheckStatusPages inlines halve-on-oversize loop while fetchWithIngestPageBackoff exists in same module; drift risk on future edits."
+  status open
+  severity low
+  priority low
+  affects [cap_forge_remote_ops]
+  failure_mode "Future backoff fix applied to one helper but not the other."
+  linked_task task_forge_trust_round9_wave4
+  reproduction "Compare paginateCheckStatusPages inner loop with fetchWithIngestPageBackoff."
+  boundary_test_added false
+}

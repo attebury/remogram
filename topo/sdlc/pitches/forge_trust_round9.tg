@@ -1,0 +1,12 @@
+pitch pitch_forge_trust_round9 {
+  name "Forge Trust Round 9 — Review Residual Hardening"
+  description "Ninth forge-trust Intent Packet closing Round 8 code-review residuals: complete GitHub Link-pagination same-origin hardening on list paths, GitHub/GitLab truncation proof parity, agent-visible multi-source bounds, cr_inventory checks_truncated, and low-severity merge/internals polish."
+  appetite "medium"
+  problem "Round 8 fixed githubFetchPaginated Link validation but listOpenPullsWithMeta still follows off-origin rel=next with token; GitHub/GitLab lack Gitea-equivalent max-pages and mergePlan checks_incomplete tests; dual-stream total bounds opaque in capabilities; cr_inventory entries omit checks_truncated; mergeBlockers and paginateCheckStatusPages have loose or duplicated truncation handling."
+  solution_sketch "Four serialized waves: (1) shared isTrustedPaginationUrl + listOpenPullsWithMeta hardening, (2) GitHub/GitLab proof parity tests, (3) multi-source capability facts + cr_inventory checks_truncated + docs, (4) strict mergeBlockers and DRY ingest backoff. Close six linked bugs with boundary_test_added true. Autonomous Observer-routed execution."
+  rabbit_holes "Raising DEFAULT_MAX_BYTES globally; .remogram.json ingest cap fields; reopening archived round 8 cluster; path-prefix Link URL validation; npm publish."
+  no_go_areas "Hand-editing lifecycle status; rewriting round 8 archaeology; removing max_pages cap without replacement signal; path-prefix Link validation in v1."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}
