@@ -15,9 +15,8 @@ task task_cr_inventory_provider_list_limit {
   disposition active
   priority medium
   work_type implementation
-  bug_discovery bug_linked
-  bug_discovery_rationale "Consumer Topogram repo repro: cr inventory --limit 1 returns oversized_raw_output; list path fetches 100 open PRs before narrowing."
-  linked_bugs [bug_forge_ingest_oversize_checks]
   claimed_by [actor_coding_agent]
-  status in-progress
+  bug_discovery bug_linked
+  linked_bugs [bug_forge_ingest_oversize_checks]
+  status done
 }
