@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { forgePacket, PACKET_TYPES } from '@remogram/core';
+import { forgePacket, PACKET_TYPES, DEFAULT_CHECK_STATUS_PAGE_SIZE } from '@remogram/core';
 import {
   provider,
   apiBase,
@@ -254,6 +254,46 @@ describe('provider-github-api fixtures', () => {
       'head_sha',
       'statuses',
     ]);
+  });
+
+  it('prChecks includes checks_failed when check-runs fail on page 2', async () => {
+    const page2Url =
+      'https://api.github.com/repos/owner/repo/commits/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/check-runs?page=2';
+    global.fetch
+      .mockResolvedValueOnce(graphqlResponse('pull-graphql-clean.json'))
+      .mockResolvedValueOnce(jsonResponse([]))
+      .mockResolvedValueOnce(
+        jsonResponse(
+          {
+            check_runs: [
+              {
+                name: 'ci/page1',
+                status: 'completed',
+                conclusion: 'success',
+                output: { title: 'page1 ok' },
+              },
+            ],
+          },
+          200,
+          { link: `<${page2Url}>; rel="next"` },
+        ),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse({
+          check_runs: [
+            {
+              name: 'ci/page2',
+              status: 'completed',
+              conclusion: 'failure',
+              output: { title: 'page2 fail' },
+            },
+          ],
+        }),
+      );
+    const body = await provider.prChecks(ctx, { number: 42 });
+    expect(body.check_conclusion).toBe('failure');
+    const urls = global.fetch.mock.calls.map(([u]) => String(u));
+    expect(urls.some((u) => u.includes(`per_page=${DEFAULT_CHECK_STATUS_PAGE_SIZE}`))).toBe(true);
   });
 
   it('prChecks supports a local git ref without fetching the pull request', async () => {
