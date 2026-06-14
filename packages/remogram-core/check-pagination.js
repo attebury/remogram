@@ -120,11 +120,17 @@ export async function paginateOffsetListPages({
     activeLimit = usedLimit;
     all.push(...items);
     if (items.length < usedLimit) break;
-    if (listLimit != null) {
-      if (all.length >= listLimit) {
-        listTruncated = items.length >= usedLimit;
+    if (listLimit != null && all.length >= listLimit) {
+      if (items.length < usedLimit) break;
+      if (page >= maxPages) {
+        listTruncated = true;
         break;
       }
+      const { items: probeItems } = await fetchPageWithIngestBackoff(fetchPage, page + 1, 1);
+      if (probeItems.length > 0) listTruncated = true;
+      break;
+    }
+    if (listLimit != null) {
       if (maxPagesTruncatesWithLimit && page === maxPages) {
         listTruncated = true;
         break;

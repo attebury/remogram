@@ -91,18 +91,38 @@ describe('cr inventory', () => {
     expect(checksCalls).toBe(2);
   });
 
-  it('crInventory passes inventory limit to listOpenPullsWithMeta', async () => {
+  it('crInventory does not pass entry limit to listOpenPullsWithMeta', async () => {
     let receivedLimit;
     const provider = {
       listOpenPullsWithMeta: async (_ctx, opts) => {
         receivedLimit = opts?.limit;
-        return { numbers: [1], list_truncated: false };
+        return { numbers: [1, 2, 3], list_truncated: false };
       },
       prView: async () => ({ pr_number: 1, state: 'open', mergeability: 'clean' }),
       prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
     };
     await crInventory(ctx, provider, { limit: 7 });
-    expect(receivedLimit).toBe(7);
+    expect(receivedLimit).toBeUndefined();
+  });
+
+  it('crInventory reports list_truncated false when forge open set matches entry cap', async () => {
+    const provider = {
+      listOpenPullsWithMeta: async () => ({
+        numbers: [33, 41, 43],
+        list_truncated: false,
+      }),
+      prView: async (_ctx, { number }) => ({
+        pr_number: number,
+        state: 'open',
+        mergeability: 'clean',
+      }),
+      prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
+    };
+    const body = await crInventory(ctx, provider);
+    expect(body.entry_count).toBe(3);
+    expect(body.entries).toHaveLength(3);
+    expect(body.truncated).toBe(false);
+    expect(body.list_truncated).toBe(false);
   });
 
   it('crInventory caps entries and reports truncation metadata', async () => {
@@ -266,7 +286,7 @@ describe('cr inventory', () => {
     const provider = {
       listOpenPullsWithMeta: async (_ctx, opts) => {
         receivedLimit = opts?.limit;
-        return { numbers: [1, 2, 3, 4, 5], list_truncated: true };
+        return { numbers: [1, 2, 3, 4, 5], list_truncated: false };
       },
       prView: async (_ctx, { number }) => ({
         pr_number: number,
@@ -276,11 +296,11 @@ describe('cr inventory', () => {
       prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
     };
     const body = await crInventory(ctx, provider);
-    expect(receivedLimit).toBe(3);
+    expect(receivedLimit).toBeUndefined();
     expect(body.entries).toHaveLength(3);
     expect(body.entry_count).toBe(5);
     expect(body.truncated).toBe(true);
-    expect(body.list_truncated).toBe(true);
+    expect(body.list_truncated).toBe(false);
   });
 
   it('crInventory at --limit 4 degrades oversized per-PR checks without failing slice', async () => {

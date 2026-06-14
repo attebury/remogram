@@ -578,11 +578,26 @@ describe('provider-gitea-api fixtures', () => {
 
   it('listOpenPullsWithMeta honors list limit in HTTP query', async () => {
     global.fetch.mockResolvedValueOnce(jsonPageResponse([{ number: 1, state: 'open' }]));
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([]));
     const meta = await listOpenPullsWithMeta(ctx, { limit: 1 });
-    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
     expect(global.fetch.mock.calls[0][0]).toContain('limit=1');
     expect(meta.numbers).toEqual([1]);
-    expect(meta.list_truncated).toBe(true);
+    expect(meta.list_truncated).toBe(false);
+  });
+
+  it('listOpenPullsWithMeta sets list_truncated false when open count equals list limit', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse([
+        { number: 33, state: 'open' },
+        { number: 41, state: 'open' },
+        { number: 43, state: 'open' },
+      ]),
+    );
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([]));
+    const meta = await listOpenPullsWithMeta(ctx, { limit: 3 });
+    expect(meta.numbers).toEqual([33, 41, 43]);
+    expect(meta.list_truncated).toBe(false);
   });
 
   it('listOpenPullsWithMeta sets list_truncated after max list pages', async () => {
@@ -603,17 +618,17 @@ describe('provider-gitea-api fixtures', () => {
     expect(meta.numbers).toHaveLength(5000);
   });
 
-  it('crInventorySlice bounds open PR list before ingest when limit is 1', async () => {
+  it('crInventorySlice bounds entries when limit is 1 and list is complete', async () => {
     const pull = load('pull.json');
+    const statuses = load('statuses-success.json');
     global.fetch.mockResolvedValueOnce(jsonPageResponse([{ number: 1, state: 'open' }]));
-    global.fetch
-      .mockResolvedValueOnce(jsonPageResponse(pull))
-      .mockResolvedValueOnce(jsonPageResponse(pull))
-      .mockResolvedValueOnce(jsonPageResponse([]));
+    global.fetch.mockResolvedValueOnce(jsonPageResponse(pull));
+    global.fetch.mockResolvedValueOnce(jsonPageResponse(pull));
+    global.fetch.mockResolvedValueOnce(jsonPageResponse(statuses));
     const body = await crInventorySlice(ctx, { limit: 1 });
-    expect(global.fetch.mock.calls[0][0]).toContain('limit=1');
-    expect(body.list_truncated).toBe(true);
+    expect(body.list_truncated).toBe(false);
     expect(body.entries).toHaveLength(1);
+    expect(body.entry_count).toBe(1);
   });
 
   it('crOpen POSTs pull create and maps response', async () => {
