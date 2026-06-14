@@ -54,6 +54,7 @@ describe('semantic diff fact inventory contracts', () => {
           state: 'open',
           mergeability: 'clean',
           checks_conclusion: 'missing',
+          checks_truncated: false,
           blockers: ['checks_missing'],
         },
       ],

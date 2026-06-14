@@ -679,6 +679,44 @@ describe('provider-github-api fixtures', () => {
     expect(body.statuses.length).toBe(DEFAULT_CHECK_STATUS_PAGE_SIZE * MAX_CHECK_STATUS_PAGES);
   });
 
+  it('prChecks sets checks_truncated when check-runs stream hits max_pages', async () => {
+    const fullPageCheckRuns = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
+      name: `ci/cap-${i}`,
+      status: 'completed',
+      conclusion: 'success',
+      output: { title: 'ok' },
+    }));
+    let checkRunFetchCount = 0;
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('graphql')) {
+        return Promise.resolve(graphqlResponse('pull-graphql-clean.json'));
+      }
+      if (href.includes('/statuses')) {
+        return Promise.resolve(jsonResponse([]));
+      }
+      if (href.includes('/check-runs')) {
+        checkRunFetchCount += 1;
+        const nextUrl = `https://api.github.com/repos/owner/repo/commits/abc/check-runs?page=${checkRunFetchCount + 1}`;
+        const linkHeader =
+          checkRunFetchCount <= MAX_CHECK_STATUS_PAGES
+            ? `<${nextUrl}>; rel="next"`
+            : undefined;
+        return Promise.resolve(
+          jsonResponse(
+            { check_runs: fullPageCheckRuns },
+            200,
+            linkHeader ? { link: linkHeader } : {},
+          ),
+        );
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+    const body = await provider.prChecks(ctx, { number: 42 });
+    expect(body.checks_truncated).toBe(true);
+    expect(body.statuses.length).toBe(DEFAULT_CHECK_STATUS_PAGE_SIZE * MAX_CHECK_STATUS_PAGES);
+  });
+
   it('mergePlan adds checks_incomplete when check enumeration truncates', async () => {
     const fullPageStatuses = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
       context: `ci/cap-${i}`,
@@ -702,6 +740,44 @@ describe('provider-github-api fixtures', () => {
             ? `<${nextUrl}>; rel="next"`
             : undefined;
         return Promise.resolve(jsonResponse(fullPageStatuses, 200, linkHeader ? { link: linkHeader } : {}));
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+    const body = await provider.mergePlan(ctx, { number: 42 });
+    expect(body.checks_conclusion).toBe('success');
+    expect(body.blockers).toContain('checks_incomplete');
+  });
+
+  it('mergePlan adds checks_incomplete when check-runs enumeration truncates', async () => {
+    const fullPageCheckRuns = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
+      name: `ci/cap-${i}`,
+      status: 'completed',
+      conclusion: 'success',
+      output: { title: 'ok' },
+    }));
+    let checkRunFetchCount = 0;
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('graphql')) {
+        return Promise.resolve(graphqlResponse('pull-graphql-clean.json'));
+      }
+      if (href.includes('/statuses')) {
+        return Promise.resolve(jsonResponse([]));
+      }
+      if (href.includes('/check-runs')) {
+        checkRunFetchCount += 1;
+        const nextUrl = `https://api.github.com/repos/owner/repo/commits/abc/check-runs?page=${checkRunFetchCount + 1}`;
+        const linkHeader =
+          checkRunFetchCount <= MAX_CHECK_STATUS_PAGES
+            ? `<${nextUrl}>; rel="next"`
+            : undefined;
+        return Promise.resolve(
+          jsonResponse(
+            { check_runs: fullPageCheckRuns },
+            200,
+            linkHeader ? { link: linkHeader } : {},
+          ),
+        );
       }
       return Promise.reject(new Error(`unexpected fetch: ${href}`));
     });

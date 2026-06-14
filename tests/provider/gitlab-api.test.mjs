@@ -453,6 +453,30 @@ describe('provider-gitlab-api fixtures', () => {
     expect(body.statuses.length).toBe(DEFAULT_CHECK_STATUS_PAGE_SIZE * MAX_CHECK_STATUS_PAGES);
   });
 
+  it('prChecks sets checks_truncated when pipelines stream hits max_pages', async () => {
+    const fullPage = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
+      id: i + 1,
+      status: 'success',
+      name: `pipe-${i}`,
+    }));
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('merge_requests/42')) {
+        return Promise.resolve(jsonResponse(load('merge-request-clean.json')));
+      }
+      if (href.includes('/statuses')) {
+        return Promise.resolve(jsonResponse([]));
+      }
+      if (href.includes('/pipelines')) {
+        return Promise.resolve(jsonResponse(fullPage));
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+    const body = await provider.prChecks(ctx, { number: 42 });
+    expect(body.checks_truncated).toBe(true);
+    expect(body.statuses.length).toBe(DEFAULT_CHECK_STATUS_PAGE_SIZE * MAX_CHECK_STATUS_PAGES);
+  });
+
   it('mergePlan adds checks_incomplete when check enumeration truncates', async () => {
     const fullPage = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
       name: `ci/cap-${i}`,
@@ -469,6 +493,30 @@ describe('provider-gitlab-api fixtures', () => {
       }
       if (href.includes('/pipelines')) {
         return Promise.resolve(jsonResponse([]));
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+    const body = await provider.mergePlan(ctx, { number: 42 });
+    expect(body.checks_conclusion).toBe('success');
+    expect(body.blockers).toContain('checks_incomplete');
+  });
+
+  it('mergePlan adds checks_incomplete when pipelines enumeration truncates', async () => {
+    const fullPage = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
+      id: i + 1,
+      status: 'success',
+      name: `pipe-${i}`,
+    }));
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('merge_requests/42')) {
+        return Promise.resolve(jsonResponse(load('merge-request-clean.json')));
+      }
+      if (href.includes('/statuses')) {
+        return Promise.resolve(jsonResponse([]));
+      }
+      if (href.includes('/pipelines')) {
+        return Promise.resolve(jsonResponse(fullPage));
       }
       return Promise.reject(new Error(`unexpected fetch: ${href}`));
     });
