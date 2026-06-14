@@ -161,6 +161,36 @@ export function normalizeGiteaStatusState(state) {
   return 'unknown';
 }
 
+function giteaStatusRecordOrder(a, b) {
+  const aUpdated = Date.parse(a.updated_at ?? '') || 0;
+  const bUpdated = Date.parse(b.updated_at ?? '') || 0;
+  if (aUpdated !== bUpdated) return aUpdated - bUpdated;
+  const aId = Number(a.id) || 0;
+  const bId = Number(b.id) || 0;
+  return aId - bId;
+}
+
+export function dedupeGiteaStatusRecords(records) {
+  const latestByContext = new Map();
+  for (const record of records) {
+    const context = record?.context;
+    if (context == null || context === '') continue;
+    const existing = latestByContext.get(context);
+    if (!existing || giteaStatusRecordOrder(record, existing) > 0) {
+      latestByContext.set(context, record);
+    }
+  }
+  return Array.from(latestByContext.values());
+}
+
+export function mapGiteaCommitStatuses(records) {
+  return dedupeGiteaStatusRecords(records).map((s) => ({
+    context: sanitizeField(s.context),
+    state: normalizeGiteaStatusState(s.status ?? s.state),
+    description: sanitizeField(s.description),
+  }));
+}
+
 export function normalizeGiteaPrState(state) {
   const normalized = String(state ?? '').toLowerCase();
   if (normalized === 'open') return 'open';
@@ -319,11 +349,7 @@ export async function prChecks(ctx, opts) {
     ctx.parsed,
     repoApiPath(ctx.config, 'commits', sha, 'statuses'),
   );
-  const mapped = statusRecords.map((s) => ({
-    context: sanitizeField(s.context),
-    state: normalizeGiteaStatusState(s.state),
-    description: sanitizeField(s.description),
-  }));
+  const mapped = mapGiteaCommitStatuses(statusRecords);
   const conclusion = summarizeChecks(mapped);
   return {
     head_sha: sha,

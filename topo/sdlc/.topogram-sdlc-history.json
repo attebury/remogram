@@ -6705,6 +6705,13 @@
       "evidence_refs": [
         "pr:claim-wave"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T06:27:23.157Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ],
   "ac_gitea_status_field_mapping": [
@@ -6754,6 +6761,22 @@
       "evidence_refs": [
         "pr:245"
       ]
+    }
+  ],
+  "task_gitea_commit_status_normalization_wave1": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T06:27:23.038Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T06:27:23.115Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ]
 }

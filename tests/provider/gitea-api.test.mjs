@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { provider, repoApiPath, apiBase, normalizeGiteaStatusState, normalizeGiteaPrState, listOpenPullsWithMeta, crInventorySlice } from '@remogram/provider-gitea-api';
+import { provider, repoApiPath, apiBase, normalizeGiteaStatusState, normalizeGiteaPrState, listOpenPullsWithMeta, crInventorySlice, dedupeGiteaStatusRecords, mapGiteaCommitStatuses } from '@remogram/provider-gitea-api';
 import { DEFAULT_CHECK_STATUS_PAGE_SIZE, MAX_CHECK_STATUS_PAGES } from '@remogram/core';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -182,6 +182,59 @@ describe('provider-gitea-api fixtures', () => {
     const body = await provider.prChecks(ctx, { number: 1 });
     expect(body.check_conclusion).toBe('success');
     expect(body.statuses[0].state).toBe('success');
+  });
+
+  function mockPullAndStatuses(statusesFixture) {
+    global.fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify(load('pull.json')));
+          },
+        },
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify(load(statusesFixture)));
+          },
+        },
+      });
+  }
+
+  it('prChecks maps Gitea status field when state is absent', async () => {
+    mockPullAndStatuses('statuses-gitea-api-success.json');
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.check_conclusion).toBe('success');
+    expect(body.statuses).toHaveLength(1);
+    expect(body.statuses[0].state).toBe('success');
+  });
+
+  it('prChecks dedupes duplicate contexts to the latest row', async () => {
+    mockPullAndStatuses('statuses-duplicate-context.json');
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.check_conclusion).toBe('success');
+    expect(body.statuses).toHaveLength(1);
+    expect(body.statuses[0].state).toBe('success');
+  });
+
+  it('prChecks keeps unknown status values fail-closed without throwing', async () => {
+    mockPullAndStatuses('statuses-unknown-value.json');
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.check_conclusion).toBe('unknown');
+    expect(body.statuses).toHaveLength(1);
+    expect(body.statuses[0].state).toBe('unknown');
+  });
+
+  it('dedupeGiteaStatusRecords prefers newer updated_at then higher id', () => {
+    const deduped = dedupeGiteaStatusRecords(load('statuses-duplicate-context.json'));
+    expect(deduped).toHaveLength(1);
+    expect(deduped[0].id).toBe(2);
+    expect(mapGiteaCommitStatuses(deduped)[0].state).toBe('success');
   });
 
   it('mergePlan treats Closed PR state as not open', async () => {
@@ -367,17 +420,19 @@ describe('provider-gitea-api fixtures', () => {
   it('prChecks sets checks_truncated when status pages hit max_pages', async () => {
     const pull = load('pull.json');
     const pullResponse = jsonPageResponse(pull);
-    const fullPage = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
-      context: `ci/cap-${i}`,
-      state: 'success',
-      description: 'ok',
-    }));
+    let statusPage = 0;
     global.fetch.mockImplementation((url) => {
       const href = String(url);
       if (href.includes('/pulls/1')) {
         return Promise.resolve(pullResponse);
       }
       if (href.includes('/statuses')) {
+        statusPage += 1;
+        const fullPage = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
+          context: `ci/cap-${statusPage}-${i}`,
+          state: 'success',
+          description: 'ok',
+        }));
         return Promise.resolve(jsonPageResponse(fullPage));
       }
       return Promise.reject(new Error(`unexpected fetch: ${href}`));
