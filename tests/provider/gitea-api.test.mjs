@@ -600,10 +600,21 @@ describe('provider-gitea-api fixtures', () => {
     expect(meta.list_truncated).toBe(false);
   });
 
-  it('listOpenPullsWithMeta sets list_truncated after max list pages', async () => {
+  it('listOpenPullsWithMeta sets list_truncated false when open count equals maxPages window', async () => {
     for (let page = 1; page <= 50; page += 1) {
       global.fetch.mockResolvedValueOnce(jsonPageResponse(openPullPage((page - 1) * 100 + 1)));
     }
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([]));
+    const meta = await listOpenPullsWithMeta(ctx);
+    expect(meta.list_truncated).toBe(false);
+    expect(meta.numbers).toHaveLength(5000);
+  });
+
+  it('listOpenPullsWithMeta sets list_truncated after max list pages when more exist', async () => {
+    for (let page = 1; page <= 50; page += 1) {
+      global.fetch.mockResolvedValueOnce(jsonPageResponse(openPullPage((page - 1) * 100 + 1)));
+    }
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([{ number: 5001, state: 'open' }]));
     const meta = await listOpenPullsWithMeta(ctx);
     expect(meta.list_truncated).toBe(true);
     expect(meta.numbers).toHaveLength(5000);
@@ -613,6 +624,7 @@ describe('provider-gitea-api fixtures', () => {
     for (let page = 1; page <= 50; page += 1) {
       global.fetch.mockResolvedValueOnce(jsonPageResponse(openPullPage((page - 1) * 100 + 1)));
     }
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([{ number: 5001, state: 'open' }]));
     const meta = await listOpenPullsWithMeta(ctx, { limit: 6000 });
     expect(meta.list_truncated).toBe(true);
     expect(meta.numbers).toHaveLength(5000);
