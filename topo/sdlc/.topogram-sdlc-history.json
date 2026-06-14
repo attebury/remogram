@@ -8692,5 +8692,73 @@
       "by": "actor_planning_lane",
       "note": null
     }
+  ],
+  "ac_inventory_list_incomplete_fail_closed": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T21:14:51.512Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
+  ],
+  "ac_inventory_streaming_pagination": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T21:14:52.420Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
+  ],
+  "ac_inventory_open_pull_list_caps": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T21:14:52.918Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
+  ],
+  "ac_inventory_gitea_backoff_regression": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T21:14:53.238Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
+  ],
+  "req_cr_inventory_fail_closed": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T21:14:53.508Z",
+      "by": "actor_planning_lane",
+      "note": null
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T21:14:53.768Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
+  ],
+  "req_cr_inventory_list_efficiency": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T21:14:54.052Z",
+      "by": "actor_planning_lane",
+      "note": null
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T21:14:54.320Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
   ]
 }

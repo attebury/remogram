@@ -4,5 +4,5 @@ requirement req_cr_inventory_list_efficiency {
   affects [cap_forge_remote_ops]
   pitch pitch_inventory_post_review_hardening
   priority high
-  status draft
+  status approved
 }
