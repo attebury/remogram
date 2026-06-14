@@ -8017,5 +8017,27 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "goal_branch_cr_open_polish": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T20:11:34.489Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/297"
+      ]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T20:11:34.788Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/297"
+      ]
+    }
   ]
 }
