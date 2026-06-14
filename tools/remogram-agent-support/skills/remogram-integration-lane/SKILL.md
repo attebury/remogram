@@ -42,6 +42,10 @@ Forbidden:
 - Declaring Intent Packet / goal cluster done before **all** cluster tasks are `done` on `remo`
 - Transitioning `goal_branch` on per-wave integrate PRs (wave closeout closes tasks only)
 - Merge without Review classification when required
+- **`topogram work start` on tasks already claimed by Implement** — `work start` sets or
+  requires matching `claimed_by`; Integration closeout uses **`work complete`** only
+  (see wave closeout recipe below). Use `--actor actor_integration_lane` on verify/complete
+  transitions, not `work start --actor actor_integration_lane` on an in-progress task.
 
 ## Wave closeout (per task)
 
