@@ -121,6 +121,84 @@ describe('cr inventory CLI integration', () => {
     expect(packet.entries).toHaveLength(1);
   });
 
+  it('cr inventory default path uses safe list bound and returns ok slice', async () => {
+    let listLimit;
+    const setup = setupTempForge({
+      config: defaultTestConfig(),
+      remoteUrl: 'http://localhost:3000/owner/repo.git',
+    });
+    cleanups.push(setup);
+
+    const provider = createCrInventoryHookProvider({
+      listOpenPullsWithMeta: async (_ctx, opts) => {
+        listLimit = opts?.limit;
+        return { numbers: [1, 2, 3, 4, 5], list_truncated: true };
+      },
+      prView: async (_ctx, { number }) => ({
+        pr_number: number,
+        state: 'open',
+        mergeability: 'clean',
+      }),
+      prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
+    });
+
+    const { logs } = await captureCliOutput(() =>
+      runCli(['cr', 'inventory', '--json'], {
+        cwd: setup.dir,
+        providers: { 'gitea-api': provider },
+      }),
+    );
+    const packet = JSON.parse(logs[0]);
+    expect(packet.ok).toBe(true);
+    expect(packet.type).toBe('cr_inventory_slice');
+    expect(packet.error_code).toBeUndefined();
+    expect(listLimit).toBe(3);
+    expect(packet.entries).toHaveLength(3);
+    expect(packet.truncated).toBe(true);
+  });
+
+  it('cr inventory --limit 4 returns ok when some per-PR checks are oversized', async () => {
+    const setup = setupTempForge({
+      config: defaultTestConfig(),
+      remoteUrl: 'http://localhost:3000/owner/repo.git',
+    });
+    cleanups.push(setup);
+
+    const provider = createCrInventoryHookProvider({
+      listOpenPullsWithMeta: async (_ctx, opts) => ({
+        numbers: [1, 2, 3, 4].slice(0, opts?.limit ?? 4),
+        list_truncated: false,
+      }),
+      prView: async (_ctx, { number }) => ({
+        pr_number: number,
+        state: 'open',
+        mergeability: 'clean',
+      }),
+      prChecks: async (_ctx, { number }) => {
+        if (number >= 3) {
+          const err = new Error('oversized');
+          err.forgeError = { code: 'oversized_raw_output', message: 'too big' };
+          throw err;
+        }
+        return { check_conclusion: 'success', statuses: [] };
+      },
+    });
+
+    const { logs } = await captureCliOutput(() =>
+      runCli(['cr', 'inventory', '--limit', '4', '--json'], {
+        cwd: setup.dir,
+        providers: { 'gitea-api': provider },
+      }),
+    );
+    const packet = JSON.parse(logs[0]);
+    expect(packet.ok).toBe(true);
+    expect(packet.entries).toHaveLength(2);
+    expect(packet.entries_skipped).toEqual([
+      { pr_number: 3, error_code: 'oversized_raw_output' },
+      { pr_number: 4, error_code: 'oversized_raw_output' },
+    ]);
+  });
+
   it('emits no forbidden workflow keys in successful CLI packet', async () => {
     const setup = setupTempForge({
       config: defaultTestConfig(),

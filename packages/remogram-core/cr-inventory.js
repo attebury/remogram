@@ -4,9 +4,11 @@ import { mergeBlockersFromFacts, isOpenPrState } from './merge-blockers.js';
 import { staleHeadDetails } from './pr-head-reconcile.js';
 
 export const DEFAULT_CR_INVENTORY_LIMIT = 50;
+/** Default bound when `--limit` is omitted (keeps forge ingest under cap on large repos). */
+export const DEFAULT_CR_INVENTORY_SAFE_LIMIT = 3;
 
 export function normalizeCrInventoryLimit(value) {
-  if (value == null || value === '') return DEFAULT_CR_INVENTORY_LIMIT;
+  if (value == null || value === '') return DEFAULT_CR_INVENTORY_SAFE_LIMIT;
   const n = Number(value);
   if (!Number.isInteger(n) || n <= 0) {
     throw Object.assign(new Error('Invalid cr inventory limit'), {
