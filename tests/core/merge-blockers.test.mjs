@@ -15,6 +15,10 @@ describe('mergeBlockersFromFacts', () => {
     ).toEqual(['checks_incomplete']);
   });
 
+  it('does not block when checks_truncated is omitted', () => {
+    expect(mergeBlockersFromFacts(openClean, { check_conclusion: 'success' })).toEqual([]);
+  });
+
   it('maps mergeability and check conclusions to shared vocabulary', () => {
     expect(
       mergeBlockersFromFacts({ mergeability: 'conflicted', state: 'open' }, checksSuccess),
