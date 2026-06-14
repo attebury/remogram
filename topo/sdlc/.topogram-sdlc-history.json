@@ -6462,5 +6462,61 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "goal_branch_forge_trust_round14": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T05:44:38.543Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:237"
+      ]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T05:44:56.066Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:approve-r14"
+      ]
+    }
+  ],
+  "req_forge_trust_round14": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T05:44:59.169Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:approve-r14"
+      ]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T05:44:59.512Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:approve-r14"
+      ]
+    }
+  ],
+  "plan_forge_trust_round14": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-14T05:45:02.120Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:approve-r14"
+      ]
+    }
   ]
 }
