@@ -2,40 +2,40 @@ acceptance_criterion ac_idempotency_paginated_fail_closed {
   name "Paginated idempotency scan fail closed"
   description "Given gitea-api crOpen, when findOpenPullByHeadBase paginates open pulls, then it early-exits on head+base match, throws unparseable_provider_output on non-array page, and throws idempotency_scan_incomplete without POST when maxPages exhausted with a full last page."
   requirement req_cr_open_review_followup
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_idempotent_packet_fidelity {
   name "Idempotent packet uses forge title and reused_existing"
   description "Given an existing open PR for head and base, when cr open reuses it, then change_request_opened has reused_existing true and title from forge not the requested title. Fresh POST omits reused_existing or sets false."
   requirement req_cr_open_review_followup
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_write_command_enum_dry {
   name "Write command enum single source"
   description "Given WRITE_COMMAND_IDS exported from core, when config schema and assertWriteCommandConfigured run, then they share the same enum and unknown command names fail with invalid_args before config check."
   requirement req_cr_open_review_followup
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_consumer_write_boundary_docs {
   name "Consumer write boundary documented"
   description "Given AGENTS.md README and remogram skills, when read, then they state agents must use CLI or MCP with write_commands for writes and direct provider import is maintainer or test only."
   requirement req_cr_open_review_followup
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_negative_tests_doctor_mcp {
   name "MCP and doctor negative write paths tested"
   description "Given MCP cr_open without write_commands in config, when called, then write_not_configured. Given doctor with gitea-api and no write_commands, when run, then write_config check warns."
   requirement req_cr_open_review_followup
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_idempotency_regression_tests {
   name "Idempotency regression test depth"
   description "Given mocked Gitea API, when idempotency tests run, then page-2 match, truncated scan fail-closed, malformed list, reuse title and reused_existing, and enum validation are covered."
   requirement req_cr_open_review_followup
-  status draft
+  status approved
 }
