@@ -10,5 +10,5 @@ plan plan_cr_open_hardening {
     step tests status pending description "Config gate, open-inventory, MCP callTool, POST body and error paths."
     step mcp_capabilities status pending description "write_commands in capabilities; MCP destructiveHint for cr_open."
   }
-  status draft
+  status active
 }
