@@ -222,6 +222,24 @@ describe('provider-gitlab-api fixtures', () => {
     expect(summarizeChecks([{ state: 'success' }, { state: 'unknown' }])).toBe('unknown');
   });
 
+  it('mergePlan includes checks_failed when commit statuses fail on page 2', async () => {
+    const page1Statuses = Array.from({ length: 100 }, (_, i) => ({
+      name: `ci/page1-${i}`,
+      status: 'success',
+      description: 'ok',
+    }));
+    const page2Statuses = [{ name: 'ci/page2-fail', status: 'failed', description: 'fail' }];
+    global.fetch
+      .mockResolvedValueOnce(jsonResponse(load('merge-request-clean.json')))
+      .mockResolvedValueOnce(jsonResponse(load('merge-request-clean.json')))
+      .mockResolvedValueOnce(jsonResponse(page1Statuses))
+      .mockResolvedValueOnce(jsonResponse(page2Statuses))
+      .mockResolvedValueOnce(jsonResponse([]));
+    const body = await provider.mergePlan(ctx, { number: 42 });
+    expect(body.checks_conclusion).toBe('failure');
+    expect(body.blockers).toContain('checks_failed');
+  });
+
   it('mergePlan uses the shared blocker vocabulary', async () => {
     global.fetch
       .mockResolvedValueOnce(jsonResponse(load('merge-request-conflicted.json')))
