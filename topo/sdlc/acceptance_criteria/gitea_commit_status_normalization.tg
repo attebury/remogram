@@ -1,0 +1,20 @@
+acceptance_criterion ac_gitea_status_field_mapping {
+  name "Gitea prChecks maps status field to normalized state"
+  description "Given Gitea commit status API rows with status success and no state field (Gitea 1.23.x shape), when prChecks runs, then normalized status rows use state success and check_conclusion is success."
+  requirement req_gitea_commit_status_normalization
+  status draft
+}
+
+acceptance_criterion ac_gitea_status_latest_context_dedupe {
+  name "Latest row wins for duplicate Gitea status contexts"
+  description "Given multiple commit status rows sharing a context where an older row is pending and a newer row is success (by updated_at or id), when prChecks runs, then check_conclusion is success and pending stale rows do not override newer success."
+  requirement req_gitea_commit_status_normalization
+  status draft
+}
+
+acceptance_criterion ac_gitea_status_fail_closed_unknown {
+  name "Unknown Gitea status values remain fail-closed"
+  description "Given a commit status row with missing or unrecognized status/state values after fallback, when prChecks runs, then normalized state is unknown and check_conclusion follows existing summarizeChecks precedence without throwing."
+  requirement req_gitea_commit_status_normalization
+  status draft
+}

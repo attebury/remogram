@@ -1,0 +1,12 @@
+verification verification_gitea_commit_status_normalization_wave1 {
+  name "Gitea commit status normalization wave 1"
+  description "Provider tests for Gitea status field mapping, duplicate-context dedupe, and fail-closed unknown."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [gitea_commit_status_normalization_wave1]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_gitea_commit_status_field_mismatch, bug_gitea_commit_status_duplicate_context_stale]
+  status draft
+}

@@ -1,0 +1,22 @@
+task task_gitea_commit_status_normalization_wave1 {
+  name "Wave 1 — Gitea commit status field and dedupe"
+  description "Map Gitea status field with state fallback; collapse duplicate contexts to latest row before summarizeChecks; add fixtures and provider tests."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["GitHub/GitLab provider changes" "Shared envelope vocabulary changes" "Live runlane network tests"]
+  entrypoints ["packages/provider-gitea-api/index.js" "tests/provider/gitea-api.test.mjs" "tests/fixtures/gitea-api/**"]
+  satisfies [req_gitea_commit_status_normalization]
+  acceptance_refs [ac_gitea_status_field_mapping, ac_gitea_status_latest_context_dedupe, ac_gitea_status_fail_closed_unknown]
+  verification_refs [verification_gitea_commit_status_normalization_wave1]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
+  linked_bugs [bug_gitea_commit_status_field_mismatch, bug_gitea_commit_status_duplicate_context_stale]
+  status unclaimed
+}
