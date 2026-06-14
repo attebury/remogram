@@ -1,0 +1,14 @@
+plan plan_cr_open_lane_autonomy {
+  name "CR open lane autonomy — implementation plan"
+  description "Single-wave plan for remogram cr open CLI, MCP, Gitea provider, and contract tests."
+  task task_cr_open_lane_autonomy
+  architecture_patterns [contract_boundary, fail_closed_gate, command_owned_mutation]
+  steps {
+    step core_contract status pending description "Define change_request_opened packet and cr open args in remogram-core contracts."
+    step gitea_provider status pending description "Implement crOpen in provider-gitea-api via POST /pulls."
+    step cli_mcp status pending description "Wire remogram cr open in CLI and cr_open MCP tool with readOnlyHint false."
+    step capabilities_doctor status pending description "Report scoped write_support and auth requirements in capabilities/doctor."
+    step regression_tests status pending description "CLI, provider, MCP, and forbidden-key contract tests."
+  }
+  status draft
+}

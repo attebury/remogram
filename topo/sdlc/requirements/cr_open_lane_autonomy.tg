@@ -1,0 +1,10 @@
+requirement req_cr_open_lane_autonomy {
+  name "Remogram can open forge change requests for lane handoff"
+  description "Remogram must expose remogram cr open --json (and MCP cr_open) to create an open pull/merge request on the configured forge from head and base refs with sanitized title/body. Returned change_request_opened packet must include pr_number and appear in subsequent remogram cr inventory --json. Gitea provider implements write first; capabilities and doctor report scoped write_support for cr open. Tests cover CLI, provider, MCP, and forbidden workflow keys in output."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  pitch pitch_cr_open_lane_autonomy
+  priority high
+  status draft
+}

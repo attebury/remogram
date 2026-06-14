@@ -1,0 +1,12 @@
+pitch pitch_cr_open_lane_autonomy {
+  name "Forge write: cr open for lane autonomy"
+  description "Add first-class remogram cr open so Implement Lane and autonomous Observer can open Gitea change requests without control-plane curl shims."
+  appetite "small"
+  problem "Remogram v1 is read/plan only. Implement pushes branches but remogram cr inventory stays empty until manual PR creation. Observer tick stops after Implement with open_cr_count 0. Dogfood uses open-gitea-change-request.mjs outside packages. Evidence: forge issue #272, cr-inventory-default-bounded autonomy run."
+  solution_sketch "Single wave: remogram cr open CLI + MCP cr_open; Gitea provider POST /pulls; change_request_opened packet with trusted envelope only; scoped write_support in capabilities/doctor; contract and integration tests."
+  rabbit_holes "Merge execute; GitHub/GitLab write in v1 slice; widening packet with SDLC keys; replacing Merge Lane."
+  no_go_areas "Hand-editing lifecycle status; merge execute; provider refactors beyond cr open; implementation in draft planning PR."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}
