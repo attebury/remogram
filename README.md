@@ -277,7 +277,9 @@ To change coverage include/exclude lists or add thresholds, update this section,
 
 ## Provider capabilities
 
-`remogram provider capabilities --json` returns structured provider facts: which commands are implemented, per-command **`auth_class`** (`none`, `git_only`, or `token_required`), auth env names, check source support, mergeability confidence, host-binding mode, `pagination` (check listing behavior), **`check_pagination`** (structured page size, max pages, and strategy for check/status endpoints), `forge_ingest_cap_bytes` (effective raw HTTP ingest cap, default **8192**), and `write_support: false` for v1.
+`remogram provider capabilities --json` returns structured provider facts: which commands are implemented, per-command **`auth_class`** (`none`, `git_only`, or `token_required`), auth env names, check source support, mergeability confidence, host-binding mode, `pagination` (check listing behavior), **`check_pagination`** (structured page size, max pages, ingest backoff, and truncation semantics for check/status endpoints), `forge_ingest_cap_bytes` (effective raw HTTP ingest cap, default **8192**), and `write_support: false` for v1.
+
+**`pr checks`** / MCP **`pr_checks`** include **`checks_truncated`** when check enumeration stops at the provider page cap. **`merge plan`** adds blocker **`checks_incomplete`** when truncation occurred, even if visible checks look successful.
 
 ### Auth class matrix (API providers)
 

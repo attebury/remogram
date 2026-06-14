@@ -318,7 +318,7 @@ export async function prChecks(ctx, opts) {
       forgeError: forgeError(ERROR_CODES.MISSING_REF, 'Could not determine head SHA for checks'),
     });
   }
-  const { items: statusRecords } = await giteaFetchPaginated(
+  const { items: statusRecords, truncated: checks_truncated } = await giteaFetchPaginated(
     ctx.config,
     ctx.parsed,
     repoApiPath(ctx.config, 'commits', sha, 'statuses'),
@@ -329,7 +329,12 @@ export async function prChecks(ctx, opts) {
     description: sanitizeField(s.description),
   }));
   const conclusion = summarizeChecks(mapped);
-  return { head_sha: sha, check_conclusion: conclusion, statuses: mapped };
+  return {
+    head_sha: sha,
+    check_conclusion: conclusion,
+    checks_truncated,
+    statuses: mapped,
+  };
 }
 
 export function summarizeChecks(statuses) {

@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { provider, repoApiPath, apiBase, normalizeGiteaStatusState, normalizeGiteaPrState, listOpenPullsWithMeta, crInventorySlice } from '@remogram/provider-gitea-api';
-import { DEFAULT_CHECK_STATUS_PAGE_SIZE } from '@remogram/core';
+import { DEFAULT_CHECK_STATUS_PAGE_SIZE, MAX_CHECK_STATUS_PAGES } from '@remogram/core';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const fixtures = join(__dirname, '../fixtures/gitea-api');
@@ -316,6 +316,52 @@ describe('provider-gitea-api fixtures', () => {
     const body = await provider.mergePlan(ctx, { number: 1 });
     expect(body.checks_conclusion).toBe('failure');
     expect(body.blockers).toContain('checks_failed');
+  });
+
+  it('prChecks sets checks_truncated when status pages hit max_pages', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    const fullPage = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
+      context: `ci/cap-${i}`,
+      state: 'success',
+      description: 'ok',
+    }));
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('/pulls/1')) {
+        return Promise.resolve(pullResponse);
+      }
+      if (href.includes('/statuses')) {
+        return Promise.resolve(jsonPageResponse(fullPage));
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.checks_truncated).toBe(true);
+    expect(body.statuses.length).toBe(DEFAULT_CHECK_STATUS_PAGE_SIZE * MAX_CHECK_STATUS_PAGES);
+  });
+
+  it('mergePlan adds checks_incomplete when check enumeration truncates', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    const fullPage = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
+      context: `ci/cap-${i}`,
+      state: 'success',
+      description: 'ok',
+    }));
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('/pulls/1')) {
+        return Promise.resolve(pullResponse);
+      }
+      if (href.includes('/statuses')) {
+        return Promise.resolve(jsonPageResponse(fullPage));
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+    const body = await provider.mergePlan(ctx, { number: 1 });
+    expect(body.checks_conclusion).toBe('success');
+    expect(body.blockers).toContain('checks_incomplete');
   });
 
   it('providerCapabilities reports supported pagination', () => {

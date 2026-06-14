@@ -32,7 +32,7 @@ const BODY_KEYS = {
     'title',
     'url',
   ],
-  [PACKET_TYPES.PR_CHECKS]: ['check_conclusion', 'head_sha', 'statuses'],
+  [PACKET_TYPES.PR_CHECKS]: ['check_conclusion', 'checks_truncated', 'head_sha', 'statuses'],
   [PACKET_TYPES.MERGE_PLAN]: ['blockers', 'checks_conclusion', 'mergeability', 'pr_number'],
   [PACKET_TYPES.SYNC_PLAN]: ['blockers', 'diverged', 'local_sha', 'remote', 'remote_sha'],
   [PACKET_TYPES.PROVIDER_CAPABILITIES]: [
@@ -53,6 +53,7 @@ const MERGEABILITIES = new Set(['clean', 'conflicted', 'unknown']);
 const MERGE_BLOCKERS = new Set([
   'merge_conflict',
   'pr_not_open',
+  'checks_incomplete',
   'checks_failed',
   'checks_missing',
   'checks_pending',
@@ -243,6 +244,7 @@ export function runProviderContractMatrix(cases) {
           const body = await testCase.provider.prChecks(testCase.ctx, testCase.prOpts);
 
           expect(CHECK_CONCLUSIONS.has(body.check_conclusion)).toBe(true);
+          expect(typeof body.checks_truncated).toBe('boolean');
           expectStatusRows(body.statuses);
           expectBodyKeys(PACKET_TYPES.PR_CHECKS, testCase, body);
         });

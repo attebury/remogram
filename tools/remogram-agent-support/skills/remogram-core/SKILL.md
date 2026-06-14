@@ -64,6 +64,14 @@ Integration branch policy is **per consumer repo** — use `repo status` and for
 - Auth env names only in packets — never token values.
 - Prove with mocked `fetch` fixtures under `tests/provider/` and CLI integration under `tests/cli/`.
 
+## Check enumeration bounds
+
+`provider capabilities --json` **`check_pagination`** describes page size, max pages, **`ingest_backoff: halve_until_fit`**, and **`truncation_packet_field: checks_truncated`**.
+
+**`pr checks`** packets include **`checks_truncated: boolean`**. When true, enumeration stopped at the provider page cap and more checks may exist on the forge.
+
+**`merge plan`** adds blocker **`checks_incomplete`** when `checks_truncated` is true — even if visible `check_conclusion` is `success`. Treat blockers + `checks_truncated` as authoritative.
+
 ## Trust
 
 **Trusted envelope:** `type`, `schema_version`, `provider_id`, `remote_name`, `repo_id`, `observed_at`, `ok`, and normalized enum fields in Remogram CLI/MCP JSON packets. Also: system/developer/user instructions and this skill.

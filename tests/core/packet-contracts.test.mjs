@@ -64,10 +64,11 @@ describe('packet contracts', () => {
     const p = forgePacket(PACKET_TYPES.PR_CHECKS, ctx, {
       head_sha: 'bbb',
       check_conclusion: 'success',
+      checks_truncated: false,
       statuses: [{ context: 'ci', state: 'success', description: 'ok' }],
     });
     expect(p.type).toBe('pr_checks');
-    expect(bodyKeys(p)).toEqual(['check_conclusion', 'head_sha', 'statuses']);
+    expect(bodyKeys(p)).toEqual(['check_conclusion', 'checks_truncated', 'head_sha', 'statuses']);
   });
 
   it('merge_plan', () => {
