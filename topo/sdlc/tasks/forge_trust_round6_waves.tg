@@ -61,9 +61,10 @@ task task_forge_trust_round6_wave3 {
   disposition active
   priority high
   work_type bugfix
+  claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_forge_ingest_oversize_checks]
-  status unclaimed
+  status done
 }
 
 task task_forge_trust_round6_wave4 {

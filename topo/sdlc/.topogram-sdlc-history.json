@@ -4177,6 +4177,23 @@
       "evidence_refs": [
         "pr:146"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T02:10:22.095Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-14T02:10:40.482Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:149"
+      ]
     }
   ],
   "req_forge_trust_round6": [
@@ -4459,6 +4476,48 @@
       "at": "2026-06-14T02:09:05.419Z",
       "by": "actor_plan_lane",
       "note": null
+    }
+  ],
+  "task_forge_trust_round6_wave3": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T02:10:22.018Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T02:10:22.056Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T02:10:30.843Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_forge_ingest_oversize_checks": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:10:32.304Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:10:32.840Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "verification:verification_forge_trust_round6_wave3"
+      ]
     }
   ]
 }

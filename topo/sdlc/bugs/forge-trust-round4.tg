@@ -120,7 +120,9 @@ bug bug_gitea_pr_state_case {
 bug bug_forge_ingest_oversize_checks {
   name "8 KiB ingest cap breaks legitimate check endpoints"
   description "fetchJson rejects raw bodies over DEFAULT_MAX_BYTES before normalization; busy repos hit OVERSIZED_RAW_OUTPUT on pr_checks despite fixable via pagination not cap increase."
-  status open
+  fixed_in [task_forge_trust_round6_wave3]
+  fixed_in_verification [verification_forge_trust_round6_wave3]
+  status fixed
   severity high
   priority high
   affects [cap_forge_remote_ops]
