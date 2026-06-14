@@ -1,0 +1,91 @@
+task task_forge_trust_round10_wave1 {
+  name "Wave 1 — Offset pagination backoff carry-forward"
+  description "Introduce activeLimit in paginateCheckStatusPages; fetchPageWithIngestBackoff helper; core and Gitea/GitLab multi-page oversize tests."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Raising DEFAULT_MAX_BYTES" "Changing max_pages semantics"]
+  entrypoints ["packages/remogram-core/check-pagination.js" "tests/core/check-pagination.test.mjs" "tests/provider/gitea-api.test.mjs" "tests/provider/gitlab-api.test.mjs"]
+  satisfies [req_forge_trust_round10]
+  acceptance_refs [ac_offset_backoff_carry_forward_round10]
+  verification_refs [verification_forge_trust_round10_wave1]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
+  linked_bugs [bug_offset_backoff_page_skip]
+  status unclaimed
+}
+
+task task_forge_trust_round10_wave2 {
+  name "Wave 2 — Relative Link URL resolution"
+  description "Extend isTrustedPaginationUrl with resolveBase; update GitHub call sites; core unit tests and GitHub relative Link tests."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Path-prefix Link validation"]
+  entrypoints ["packages/remogram-core/http.js" "packages/provider-github-api/index.js" "tests/core/pagination-trust.test.mjs" "tests/provider/github-api.test.mjs"]
+  satisfies [req_forge_trust_round10]
+  acceptance_refs [ac_link_relative_next_trusted_round10]
+  verification_refs [verification_forge_trust_round10_wave2]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round10_wave1]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
+  linked_bugs [bug_link_relative_next_rejected, bug_pagination_trust_untested]
+  status unclaimed
+}
+
+task task_forge_trust_round10_wave3 {
+  name "Wave 3 — List ingest backoff and capability honesty"
+  description "GitHub listOpenPullsWithMeta ingest backoff; derive sourceCount from check_sources.length on all providers."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Raising DEFAULT_MAX_BYTES"]
+  entrypoints ["packages/provider-github-api/index.js" "packages/provider-gitlab-api/index.js" "packages/provider-gitea-api/index.js" "tests/provider/github-api.test.mjs" "tests/provider/gitlab-api.test.mjs" "tests/provider/gitea-api.test.mjs"]
+  satisfies [req_forge_trust_round10]
+  acceptance_refs [ac_github_list_ingest_backoff_round10, ac_check_source_count_honest_round10]
+  verification_refs [verification_forge_trust_round10_wave3]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round10_wave2]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
+  linked_bugs [bug_github_list_no_ingest_backoff, bug_check_source_count_drift]
+  status unclaimed
+}
+
+task task_forge_trust_round10_wave4 {
+  name "Wave 4 — Dual-stream proof and test hygiene"
+  description "GitHub check-runs and GitLab pipelines max-pages tests; mock-provider checks_truncated; semantic-diff fixture."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Product changes unless tests reveal bugs"]
+  entrypoints ["tests/provider/github-api.test.mjs" "tests/provider/gitlab-api.test.mjs" "tests/helpers/mock-provider.mjs" "tests/core/semantic-diff-facts.test.mjs"]
+  satisfies [req_forge_trust_round10]
+  acceptance_refs [ac_dual_stream_truncation_proof_round10, ac_fixture_hygiene_round10]
+  verification_refs [verification_forge_trust_round10_wave4]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round10_wave3]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type bugfix
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
+  linked_bugs [bug_dual_stream_truncation_untested]
+  status unclaimed
+}

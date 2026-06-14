@@ -1,0 +1,12 @@
+pitch pitch_forge_trust_round10 {
+  name "Forge Trust Round 10 — Pagination Correctness and Trust Closure"
+  description "Tenth forge-trust Intent Packet closing Round 9 deep-dive findings: offset pagination backoff carry-forward, relative Link URL resolution, GitHub list ingest backoff, capability sourceCount honesty, dual-stream truncation proof, and test hygiene."
+  appetite "medium"
+  problem "paginateCheckStatusPages resets limit after ingest backoff causing skipped checks on Gitea/GitLab; isTrustedPaginationUrl rejects relative same-origin Link next; GitHub listOpenPulls lacks ingest backoff; check_source_count hardcoded; dual-stream max-pages untested on check-runs/pipelines."
+  solution_sketch "Four serialized waves: (1) activeLimit carry-forward in paginateCheckStatusPages, (2) resolveBase for isTrustedPaginationUrl, (3) list ingest backoff + sourceCount from check_sources.length, (4) dual-stream proof and fixture hygiene. All four claim-wave PRs on remo. Autonomous Observer-routed execution."
+  rabbit_holes "Raising DEFAULT_MAX_BYTES globally; .remogram.json ingest cap fields; reopening archived round 8/9 clusters; path-prefix Link validation; npm publish."
+  no_go_areas "Hand-editing lifecycle status; rewriting round 8/9 archaeology; changing conservative max_pages semantics; path-prefix Link validation in v1."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}

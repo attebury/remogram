@@ -1,0 +1,9 @@
+goal_branch goal_branch_forge_trust_round10 {
+  name "Forge Trust Round 10 Intent Packet"
+  description "Intent Packet for pagination backoff correctness, Link URL resolution, list ingest backoff, capability honesty, and dual-stream proof. Four serialized waves. Planning-only until explicit approval."
+  branch_ref "goal/forge-trust-round10"
+  task task_forge_trust_round10_wave1
+  evidence_refs [local:topo/sdlc/pitches/forge_trust_round10.tg, local:topo/sdlc/requirements/forge_trust_round10.tg, local:topo/sdlc/plans/forge_trust_round10.tg, local:topo/sdlc/tasks/forge_trust_round10_waves.tg, local:topo/sdlc/acceptance_criteria/forge_trust_round10.tg, local:topo/sdlc/bugs/forge-trust-round10.tg, local:topo/sdlc/decisions/forge_ingest_cap_policy.tg, local:topo/verifications/forge-trust-round10.tg]
+  witness_refs []
+  status draft
+}
