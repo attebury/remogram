@@ -17,6 +17,6 @@ task task_cr_inventory_list_v2_review_followup {
   work_type implementation
   claimed_by [actor_coding_agent]
   bug_discovery no_bug_observed
-  bug_discovery_rationale "Code review follow-up from merged impl PR #333."
-  status claimed
+  bug_discovery_rationale "impl merged PR 339"
+  status done
 }
