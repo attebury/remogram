@@ -41,12 +41,17 @@ export function registerTools(server) {
       description: 'Aggregate open change requests with checks and merge-plan facts into a semantic-diff slice.',
       inputSchema: z.object({
         slice_ref: z.string().optional().describe('Optional slice ref label for consumers'),
-        limit: z.number().int().positive().optional().describe('Max open CR entries (default 50)'),
+        limit: z.number().int().positive().optional().describe('Max open CR entries (default 3)'),
+        sort: z
+          .enum(['number_asc', 'number_desc', 'recent_update', 'recent_created'])
+          .optional()
+          .describe('Open-list slice sort preset (default number_asc)'),
       }),
       args: (input) => {
         const a = ['cr', 'inventory'];
         if (input.slice_ref) a.push('--slice-ref', input.slice_ref);
         if (input.limit != null) a.push('--limit', String(input.limit));
+        if (input.sort) a.push('--sort', input.sort);
         return a;
       },
     },

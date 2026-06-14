@@ -394,6 +394,7 @@ export async function runCli(argv, options = {}) {
       const inventoryBody = await provider.crInventory(ctx, {
           slice_ref: flags.slice_ref,
           limit: parsePositiveInt(flags.limit, '--limit'),
+          sort: flags.sort,
         });
       if (inventoryBody.list_truncated === true) {
         throw Object.assign(new Error('Open CR list incomplete'), {

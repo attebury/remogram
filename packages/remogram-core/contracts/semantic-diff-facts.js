@@ -58,6 +58,7 @@ export const TRUSTED_NORMALIZED_BODY_FIELDS = Object.freeze({
   truncated: true,
   list_truncated: true,
   checks_truncated: true,
+  slice_sort: true,
   entry_count: true,
   mergeability_confidence: true,
   write_support: true,
@@ -114,6 +115,8 @@ export const FACT_INVENTORY_BODY_SHAPES = Object.freeze({
     /** true when list cap applied (entry_count > limit), not missing entries */
     truncated: 'boolean',
     list_truncated: 'boolean',
+    /** normalized slice sort preset applied to open-list resolution */
+    slice_sort: 'string',
     entries_skipped:
       'array<{ pr_number: number, error_code: pr_not_open | api_error | oversized_raw_output | ... }> optional',
     slice_ref: 'string optional',

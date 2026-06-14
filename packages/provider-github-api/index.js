@@ -17,13 +17,21 @@ import {
   forgeError,
   forgeIngestCapabilityFacts,
   checkPaginationCapabilityFacts,
+  openPullListCapabilityFacts,
   DEFAULT_CHECK_STATUS_PAGE_SIZE,
   MAX_CHECK_STATUS_PAGES,
+  DEFAULT_OPEN_PULL_LIST_PAGE_SIZE,
   fetchWithIngestPageBackoff,
   paginateOffsetListPages,
   fetchPageWithIngestBackoff,
   withPerPageParam,
   apiProviderCommands,
+  normalizeCrInventorySort,
+  DEFAULT_CR_INVENTORY_SLICE_SORT,
+  isCrInventoryFastPathEligible,
+  orderOpenPullNumbers,
+  buildOpenPullListMeta,
+  githubOpenPullSortQuery,
 } from '@remogram/core';
 
 const PUBLIC_GITHUB_HOST = 'github.com';
@@ -347,6 +355,9 @@ export function providerCapabilities() {
       pageSizeParam: 'per_page',
       sourceCount: check_sources.length,
     }),
+    ...openPullListCapabilityFacts({
+      totalCountSource: 'search_api',
+    }),
   };
 }
 
@@ -491,22 +502,82 @@ export async function mergePlan(ctx, opts) {
   return buildMergePlanBodyFromFacts(ctx, view, checks, opts);
 }
 
-export async function listOpenPullsWithMeta(ctx, opts = {}) {
-  apiBase(ctx.config, ctx.parsed);
-  requireToken();
+const GITHUB_OPEN_PULL_COMPLIANT_MAX =
+  DEFAULT_OPEN_PULL_LIST_PAGE_SIZE * MAX_CHECK_STATUS_PAGES;
+const GITHUB_PAGE_SIZE = 100;
+
+function githubOpenPullsListPath(config, sliceSort) {
+  const params = new URLSearchParams({ state: 'open', ...githubOpenPullSortQuery(sliceSort) });
+  return `${repoApiPath(config, 'pulls')}?${params.toString()}`;
+}
+
+async function fetchGitHubOpenPullSearchTotal(ctx) {
+  const base = apiBase(ctx.config, ctx.parsed);
+  const { token } = requireToken();
+  const owner = encodeURIComponent(ctx.config.owner);
+  const repo = encodeURIComponent(ctx.config.repo);
+  const searchPath = `/search/issues?q=repo:${owner}/${repo}+is:pr+state:open&per_page=1`;
+  try {
+    const { body } = await fetchJsonWithMeta(`${base}${searchPath}`, {
+      headers: authHeaders(token),
+    });
+    if (!body || body.incomplete_results === true) return null;
+    const total = Number(body.total_count);
+    const maxTrusted = GITHUB_OPEN_PULL_COMPLIANT_MAX * 2;
+    if (!Number.isInteger(total) || total <= 0 || total > maxTrusted) return null;
+    return total;
+  } catch {
+    return null;
+  }
+}
+
+async function tryGitHubOpenPullFastPath(ctx, opts) {
+  if (!isCrInventoryFastPathEligible(opts)) return null;
+  const retainMax = Number(opts.retain_max);
+  const sliceSort = normalizeCrInventorySort(opts.sort ?? DEFAULT_CR_INVENTORY_SLICE_SORT);
+  const totalCount = await fetchGitHubOpenPullSearchTotal(ctx);
+  if (totalCount == null) return null;
+
+  const base = apiBase(ctx.config, ctx.parsed);
+  const { token } = requireToken();
+  const requestLimit = Math.min(retainMax, GITHUB_PAGE_SIZE);
+  const listPath = githubOpenPullsListPath(ctx.config, sliceSort);
+  let body;
+  try {
+    ({ body } = await fetchJsonWithMeta(withPerPageParam(`${base}${listPath}`, requestLimit), {
+      headers: authHeaders(token),
+    }));
+  } catch {
+    return null;
+  }
+  if (!Array.isArray(body)) return null;
+  if (totalCount <= requestLimit && body.length !== totalCount) return null;
+
+  let numbers = orderOpenPullNumbers(body, (pr) => pr?.number, sliceSort);
+  if (numbers.length > retainMax) numbers = numbers.slice(0, retainMax);
+
+  return buildOpenPullListMeta({
+    totalCount,
+    numbers,
+    listTruncated: totalCount > GITHUB_OPEN_PULL_COMPLIANT_MAX,
+    sliceSort,
+  });
+}
+
+async function paginateGitHubOpenPullList(ctx, opts, sliceSort) {
   const base = apiBase(ctx.config, ctx.parsed);
   const { token } = requireToken();
   const listLimit =
     opts.limit != null && Number.isInteger(Number(opts.limit)) && Number(opts.limit) > 0
       ? Number(opts.limit)
       : null;
-  const GITHUB_PAGE_SIZE = 100;
   const all = [];
   let listTruncated = false;
+  const listPath = githubOpenPullsListPath(ctx.config, sliceSort);
 
   if (listLimit == null) {
     const trustedOrigin = new URL(base).origin;
-    const startUrl = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open`;
+    const startUrl = `${base}${listPath}`;
     const { items: linkItems, truncated: linkTruncated } = await paginateGitHubLinkPages({
       trustedOrigin,
       startUrl,
@@ -519,11 +590,9 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
     const { items: limitItems, list_truncated: limitTruncated } = await paginateOffsetListPages({
       pageSize: GITHUB_PAGE_SIZE,
       listLimit,
-      // GitHub/GitLab use fixed pageSize with optional listLimit; mark truncated at maxPages.
-      // Gitea passes pageSize=min(listLimit, cap) so the limit branch often exits in one page.
       maxPagesTruncatesWithLimit: true,
       fetchPage: async ({ page, limit }) => {
-        const pageUrl = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open&page=${page}`;
+        const pageUrl = `${base}${listPath}&page=${page}`;
         const { body } = await fetchJsonWithMeta(withPerPageParam(pageUrl, limit), {
           headers: authHeaders(token),
         });
@@ -534,14 +603,20 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
     listTruncated = limitTruncated;
   }
 
-  let numbers = all
-    .map((pr) => pr.number)
-    .filter((number) => Number.isInteger(number))
-    .sort((a, b) => a - b);
+  let numbers = orderOpenPullNumbers(all, (pr) => pr?.number, sliceSort);
   if (listLimit != null && numbers.length > listLimit) {
     numbers = numbers.slice(0, listLimit);
   }
-  return { numbers, list_truncated: listTruncated };
+  return { numbers, list_truncated: listTruncated, slice_sort: sliceSort };
+}
+
+export async function listOpenPullsWithMeta(ctx, opts = {}) {
+  apiBase(ctx.config, ctx.parsed);
+  requireToken();
+  const sliceSort = normalizeCrInventorySort(opts.sort ?? DEFAULT_CR_INVENTORY_SLICE_SORT);
+  const fast = await tryGitHubOpenPullFastPath(ctx, { ...opts, sort: sliceSort });
+  if (fast) return fast;
+  return paginateGitHubOpenPullList(ctx, opts, sliceSort);
 }
 
 export async function listOpenPulls(ctx, opts = {}) {

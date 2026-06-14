@@ -159,6 +159,58 @@ describe('cr inventory CLI integration', () => {
     expect(packet.entries).toHaveLength(3);
     expect(packet.truncated).toBe(true);
     expect(packet.list_truncated).toBe(false);
+    expect(packet.slice_sort).toBe('number_asc');
+  });
+
+  it('cr inventory forwards --sort recent_update to provider', async () => {
+    let receivedSort;
+    const setup = setupTempForge({
+      config: defaultTestConfig(),
+      remoteUrl: 'http://localhost:3000/owner/repo.git',
+    });
+    cleanups.push(setup);
+
+    const provider = createCrInventoryHookProvider({
+      listOpenPullsWithMeta: async (_ctx, opts) => {
+        receivedSort = opts?.sort;
+        return { numbers: [9, 2], entry_count: 2, list_truncated: false, slice_sort: 'recent_update' };
+      },
+      prView: async (_ctx, { number }) => ({
+        pr_number: number,
+        state: 'open',
+        mergeability: 'clean',
+      }),
+      prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
+    });
+
+    const { logs } = await captureCliOutput(() =>
+      runCli(['cr', 'inventory', '--limit', '2', '--sort', 'recent_update', '--json'], {
+        cwd: setup.dir,
+        providers: { 'gitea-api': provider },
+      }),
+    );
+    const packet = JSON.parse(logs[0]);
+    expect(packet.ok).toBe(true);
+    expect(receivedSort).toBe('recent_update');
+    expect(packet.slice_sort).toBe('recent_update');
+  });
+
+  it('cr inventory rejects invalid --sort', async () => {
+    const setup = setupTempForge({
+      config: defaultTestConfig(),
+      remoteUrl: 'http://localhost:3000/owner/repo.git',
+    });
+    cleanups.push(setup);
+
+    const { logs } = await captureCliOutput(() =>
+      runCli(['cr', 'inventory', '--sort', 'newest', '--json'], {
+        cwd: setup.dir,
+        providers: { 'gitea-api': createCrInventoryHookProvider() },
+      }),
+    );
+    const packet = JSON.parse(logs[0]);
+    expect(packet.ok).toBe(false);
+    expect(packet.error_code).toBe('invalid_args');
   });
 
   it('cr inventory --limit 4 returns ok when some per-PR checks are oversized', async () => {

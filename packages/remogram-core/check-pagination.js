@@ -144,10 +144,6 @@ export async function paginateOffsetListPages({
     }
     if (items.length < usedLimit) break;
     if (listLimit != null && all.length >= listLimit) {
-      if (page >= maxPages) {
-        listTruncated = true;
-        break;
-      }
       listTruncated = await probeNextPageHasItems(fetchPage, page, maxPages);
       break;
     }

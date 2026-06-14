@@ -485,10 +485,11 @@ describe('provider-gitea-api fixtures', () => {
     });
   });
 
-  function jsonPageResponse(body) {
+  function jsonPageResponse(body, headers = {}) {
     return {
       ok: true,
       status: 200,
+      headers: new Map(Object.entries(headers)),
       body: {
         [Symbol.asyncIterator]: async function* () {
           yield Buffer.from(JSON.stringify(body));
@@ -633,7 +634,9 @@ describe('provider-gitea-api fixtures', () => {
   it('crInventorySlice bounds entries when limit is 1 and list is complete', async () => {
     const pull = load('pull.json');
     const statuses = load('statuses-success.json');
-    global.fetch.mockResolvedValueOnce(jsonPageResponse([{ number: 1, state: 'open' }]));
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse([{ number: 1, state: 'open' }], { 'X-Total-Count': '1' }),
+    );
     global.fetch.mockResolvedValueOnce(jsonPageResponse(pull));
     global.fetch.mockResolvedValueOnce(jsonPageResponse(pull));
     global.fetch.mockResolvedValueOnce(jsonPageResponse(statuses));
@@ -878,6 +881,62 @@ describe('provider-gitea-api fixtures', () => {
     });
   });
 
+  it('listOpenPullsWithMeta fast path uses X-Total-Count with retain_max', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(
+        [
+          { number: 30, state: 'open' },
+          { number: 10, state: 'open' },
+          { number: 20, state: 'open' },
+        ],
+        { 'X-Total-Count': '3' },
+      ),
+    );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'recent_update' });
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(String(global.fetch.mock.calls[0][0])).toContain('sort=recentupdate');
+    expect(meta.entry_count).toBe(3);
+    expect(meta.list_truncated).toBe(false);
+    expect(meta.numbers).toEqual([30, 10, 20]);
+    expect(meta.slice_sort).toBe('recent_update');
+  });
+
+  it('listOpenPullsWithMeta fast path fails closed when total exceeds compliant max', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse([{ number: 1, state: 'open' }], { 'X-Total-Count': '5001' }),
+    );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3 });
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(meta.list_truncated).toBe(true);
+    expect(meta.entry_count).toBe(5001);
+  });
+
+  it('listOpenPullsWithMeta falls back when X-Total-Count header is invalid', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse([{ number: 1, state: 'open' }], { 'X-Total-Count': 'not-a-number' }),
+    );
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([]));
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3 });
+    expect(global.fetch.mock.calls.length).toBe(2);
+    expect(meta.list_truncated).toBe(false);
+  });
+
+  it('listOpenPullsWithMeta default sort keeps lowest numbers', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(
+        [
+          { number: 30, state: 'open' },
+          { number: 10, state: 'open' },
+          { number: 20, state: 'open' },
+        ],
+        { 'X-Total-Count': '3' },
+      ),
+    );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3 });
+    expect(meta.numbers).toEqual([10, 20, 30]);
+    expect(meta.slice_sort).toBe('number_asc');
+  });
+
   it('providerCapabilities reports write_support for cr_open', async () => {
     const body = await provider.providerCapabilities();
     expect(body.write_support).toBe(true);
@@ -894,6 +953,10 @@ describe('provider-gitea-api fixtures', () => {
       compliant_max_items: 5000,
       truncation_packet_field: 'list_truncated',
       incomplete_error_code: 'inventory_list_incomplete',
+      default_slice_sort: 'number_asc',
+      supported_slice_sorts: ['number_asc', 'number_desc', 'recent_update', 'recent_created'],
+      total_count_source: 'response_header',
+      total_count_header: 'X-Total-Count',
     });
     const crOpen = body.commands.find((c) => c.name === 'cr_open');
     expect(crOpen).toMatchObject({ implemented: true, auth_class: 'token_required' });

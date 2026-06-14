@@ -70,7 +70,7 @@ Integration branch policy is **per consumer repo** — use `repo status` and for
 
 **`pr checks`** packets include **`checks_truncated: boolean`**. When true, enumeration stopped at the provider page cap and more checks may exist on the forge. At exactly `page_size × max_pages` items the signal is conservative fail-closed.
 
-**`cr inventory`** entries include **`checks_truncated: boolean`** per PR.
+**`cr inventory`** entries include **`checks_truncated: boolean`** per PR. Optional **`--sort`** / MCP **`sort`** selects a normalized open-list slice preset (default **`number_asc`**); packets include trusted **`slice_sort`**. Read **`open_pull_list`** from **`provider capabilities --json`** for total-count source, compliant bounds, and supported sorts. Gitea/GitLab fast-path inventory uses forge total-count headers; GitHub uses Search API **`total_count`** when **`incomplete_results`** is false.
 
 **`merge plan`** adds blocker **`checks_incomplete`** when `checks_truncated` is true — even if visible `check_conclusion` is `success`. Treat blockers + `checks_truncated` as authoritative.
 

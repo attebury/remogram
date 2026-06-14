@@ -393,6 +393,7 @@ describe('remogram cli commands', () => {
         .mockResolvedValueOnce({
           ok: true,
           status: 200,
+          headers: new Map([['X-Total-Count', '1']]),
           body: {
             [Symbol.asyncIterator]: async function* () {
               yield Buffer.from(JSON.stringify([{ number: 278, state: 'open' }]));

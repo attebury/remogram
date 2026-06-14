@@ -76,13 +76,14 @@ const COMMANDS = new Set([
 ]);
 const AUTH_CLASSES = new Set(['none', 'git_only', 'token_required']);
 
-export function jsonResponse(body, status = 200) {
+export function jsonResponse(body, status = 200, { headers = {} } = {}) {
+  const headerMap = new Map(Object.entries(headers));
   return {
     ok: status >= 200 && status < 300,
     status,
     statusText: status === 200 ? 'OK' : 'Error',
     headers: {
-      get: () => null,
+      get: (name) => headerMap.get(name) ?? headerMap.get(String(name).toLowerCase()) ?? null,
     },
     body: {
       [Symbol.asyncIterator]: async function* () {
@@ -114,8 +115,7 @@ function expectBodyKeys(type, testCase, body) {
   }
   if (
     type === PACKET_TYPES.PROVIDER_CAPABILITIES
-    && testCase.provider.id !== 'gitea-api'
-    && testCase.provider.id !== 'gitlab-api'
+    && !['gitea-api', 'gitlab-api', 'github-api'].includes(testCase.provider.id)
   ) {
     expected = expected.filter((key) => key !== 'open_pull_list');
   }

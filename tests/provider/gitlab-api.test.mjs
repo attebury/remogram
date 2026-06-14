@@ -20,11 +20,15 @@ function load(name) {
   return JSON.parse(readFileSync(join(fixtures, name), 'utf8'));
 }
 
-function jsonResponse(body, status = 200) {
+function jsonResponse(body, status = 200, { headers = {} } = {}) {
+  const headerMap = new Map(Object.entries(headers));
   return {
     ok: status >= 200 && status < 300,
     status,
     statusText: status === 200 ? 'OK' : 'Error',
+    headers: {
+      get: (name) => headerMap.get(name) ?? headerMap.get(String(name).toLowerCase()) ?? null,
+    },
     body: {
       [Symbol.asyncIterator]: async function* () {
         yield Buffer.from(JSON.stringify(body));
@@ -615,6 +619,25 @@ describe('provider-gitlab-api fixtures', () => {
     const meta = await listOpenPullsWithMeta(ctx, {});
     expect(meta.numbers).toContain(26);
     expect(global.fetch.mock.calls.some(([u]) => String(u).includes('page=2') && String(u).includes('per_page=12'))).toBe(true);
+  });
+
+  it('listOpenPullsWithMeta fast path uses X-Total with retain_max', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonResponse(
+        [
+          { iid: 30, state: 'opened' },
+          { iid: 10, state: 'opened' },
+        ],
+        200,
+        { headers: { 'X-Total': '2' } },
+      ),
+    );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 2, sort: 'recent_update' });
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(String(global.fetch.mock.calls[0][0])).toContain('order_by=updated_at');
+    expect(meta.entry_count).toBe(2);
+    expect(meta.list_truncated).toBe(false);
+    expect(meta.slice_sort).toBe('recent_update');
   });
 
   it('listOpenPullsWithMeta sets list_truncated at maxPages when limit exceeds fetch window', async () => {
