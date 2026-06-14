@@ -7841,6 +7841,13 @@
       "at": "2026-06-14T19:29:05.357Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T19:34:10.783Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ]
 }
