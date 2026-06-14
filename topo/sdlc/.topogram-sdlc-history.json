@@ -8039,5 +8039,50 @@
         "forge:pr/297"
       ]
     }
+  ],
+  "ac_idempotency_pagination_constant": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:12:00.269Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_idempotency_error_metadata": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:12:00.521Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_contract_reused_existing": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:12:00.771Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_cli_mcp_truncated_scan_tests": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:12:01.023Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_observer_retry_docs": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:12:01.306Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
   ]
 }
