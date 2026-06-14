@@ -15,7 +15,8 @@ task task_merge_plan_path_allowlist {
   disposition active
   priority medium
   work_type implementation
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  status in-progress
   bug_discovery no_bug_observed
   bug_discovery_rationale "Follow-on to satisfied path-allowlist helper; no pre-existing defect."
 }
