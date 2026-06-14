@@ -2,14 +2,14 @@ acceptance_criterion ac_check_pagination_honest_bounds_round8 {
   name "Capabilities report honest check pagination bounds"
   description "Given provider capabilities --json, when packet is returned, then check_pagination includes ingest_backoff on_page_cap compliant_max_items_per_source and truncation_packet_field for each *-api provider."
   requirement req_forge_trust_round8
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_pagination_metadata_round8 {
   name "Pagination helpers return truncation metadata"
   description "Given paginateCheckStatusPages or githubFetchPaginated, when enumeration completes or hits max_pages, then return value includes items and truncated boolean."
   requirement req_forge_trust_round8
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_checks_truncated_packet_round8 {
