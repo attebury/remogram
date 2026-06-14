@@ -3,5 +3,5 @@ requirement req_cr_inventory_probe_page_reuse {
   description "When page-one probe succeeds but fast path is rejected, pagination fallback must not re-fetch page 1; probe body seeds paginator."
   pitch pitch_cr_inventory_probe_fallback_hardening
   witness_refs [forge:issue/348]
-  status draft
+  status satisfied
 }

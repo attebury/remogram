@@ -2,26 +2,26 @@ acceptance_criterion ac_probe_page_reused_on_fallback {
   name "Probe page reused on pagination fallback"
   description "Given page-one probe succeeded but fast path rejected on Gitea, GitLab, or GitHub, when pagination fallback runs, then page 1 is not re-fetched and provider tests assert exact fetch counts."
   requirement req_cr_inventory_probe_page_reuse
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_gitea_tail_failure_tail_only {
   name "Gitea tail failure uses tail-only fallback"
   description "Given Gitea recent_created tail fetch fails after probe, when fallback runs, then pagination starts at tail page not page 1 and does not return oldest-page slice numbers."
   requirement req_cr_inventory_fallback_semantics
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_list_truncated_matches_trusted_total {
   name "list_truncated reflects trusted total on partial walk"
   description "Given trustedTotalCount from probe and pagination walked fewer items than forge total without full collect, when listOpenPullsWithMeta returns, then list_truncated is true."
   requirement req_cr_inventory_fallback_semantics
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_exact_fetch_count_tests {
   name "Exact fetch count provider tests"
   description "Given body-mismatch, number-sort skip, tail page, and GitHub recent_update mismatch scenarios, when provider tests run, then global.fetch call counts are exact not toBeGreaterThan."
   requirement req_cr_inventory_probe_page_reuse
-  status draft
+  status approved
 }

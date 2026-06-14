@@ -7,5 +7,5 @@ verification verification_cr_inventory_probe_fallback_hardening {
   proof_commands {
     command npm_test argv ["npm" "test"]
   }
-  status draft
+  status passed
 }

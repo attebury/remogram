@@ -5,5 +5,5 @@ goal_branch goal_branch_cr_inventory_probe_fallback_hardening {
   task task_cr_inventory_probe_fallback_hardening
   evidence_refs [local:topo/sdlc/pitches/cr_inventory_probe_fallback_hardening.tg, local:topo/sdlc/requirements/cr_inventory_probe_page_reuse.tg, local:topo/sdlc/requirements/cr_inventory_fallback_semantics.tg, local:topo/sdlc/plans/cr_inventory_probe_fallback_hardening.tg, local:topo/sdlc/tasks/cr_inventory_probe_fallback_hardening.tg, local:topo/sdlc/acceptance_criteria/cr_inventory_probe_fallback_hardening.tg, local:topo/verifications/cr-inventory-probe-fallback-hardening.tg]
   witness_refs [forge:issue/348]
-  status active
+  status done
 }
