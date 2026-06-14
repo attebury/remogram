@@ -7521,5 +7521,27 @@
         "pr:269"
       ]
     }
+  ],
+  "req_cr_inventory_default_bounded": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T17:51:59.613Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:269"
+      ]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T17:52:02.557Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:269"
+      ]
+    }
   ]
 }
