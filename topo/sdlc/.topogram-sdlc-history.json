@@ -3894,5 +3894,81 @@
       "by": "actor_planning_lane",
       "note": "Orphan draft pitch; work delivered via archived goal_branch_cr_inventory_test_coverage"
     }
+  ],
+  "pitch_cr_inventory_hardening": [
+    {
+      "from": "draft",
+      "to": "covered",
+      "at": "2026-06-14T01:00:48.181Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive/workcycle/cr-inventory-hardening"
+      ]
+    }
+  ],
+  "req_cr_inventory_hardening": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T01:00:59.403Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive/workcycle/cr-inventory-hardening"
+      ]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T01:01:11.071Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive/workcycle/cr-inventory-hardening"
+      ]
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-14T01:01:11.272Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive/workcycle/cr-inventory-hardening"
+      ]
+    }
+  ],
+  "req_cr_inventory_test_coverage": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T01:01:11.473Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive/workcycle/cr-inventory-test-coverage"
+      ]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T01:01:11.675Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive/workcycle/cr-inventory-test-coverage"
+      ]
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-14T01:01:11.877Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive/workcycle/cr-inventory-test-coverage"
+      ]
+    }
   ]
 }
