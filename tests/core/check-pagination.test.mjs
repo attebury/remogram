@@ -21,6 +21,35 @@ describe('check pagination ingest backoff', () => {
     expect(result.truncated).toBe(false);
   });
 
+  it('paginateCheckStatusPages carries reduced limit to page 2 after backoff', async () => {
+    const requests = [];
+    const result = await paginateCheckStatusPages({
+      pageSize: 25,
+      fetchPage: async ({ page, limit }) => {
+        requests.push({ page, limit });
+        if (page === 1 && limit > 12) {
+          throw Object.assign(new Error('oversized'), {
+            forgeError: { code: ERROR_CODES.OVERSIZED_RAW_OUTPUT },
+          });
+        }
+        if (page === 1) {
+          return Array.from({ length: 12 }, (_, i) => ({ context: `ci/${i}` }));
+        }
+        if (page === 2) {
+          return [{ context: 'ci/last' }];
+        }
+        return [];
+      },
+    });
+    expect(requests).toEqual([
+      { page: 1, limit: 25 },
+      { page: 1, limit: 12 },
+      { page: 2, limit: 12 },
+    ]);
+    expect(result.items).toHaveLength(13);
+    expect(result.truncated).toBe(false);
+  });
+
   it('paginateCheckStatusPages sets truncated at maxPages with full last page', async () => {
     const result = await paginateCheckStatusPages({
       pageSize: 2,

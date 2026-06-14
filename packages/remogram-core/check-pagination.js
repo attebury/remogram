@@ -44,6 +44,28 @@ export async function fetchWithIngestPageBackoff(
 }
 
 /**
+ * Fetch one offset page with ingest-cap backoff.
+ * @template T
+ * @param {(opts: { page: number, limit: number }) => Promise<unknown[]>} fetchPage
+ * @param {number} page
+ * @param {number} initialLimit
+ * @returns {Promise<{ items: unknown[], usedLimit: number }>}
+ */
+export async function fetchPageWithIngestBackoff(fetchPage, page, initialLimit) {
+  let usedLimit = initialLimit;
+  const items = await fetchWithIngestPageBackoff(
+    async (limit) => {
+      usedLimit = limit;
+      const pageItems = await fetchPage({ page, limit });
+      return Array.isArray(pageItems) ? pageItems : [];
+    },
+    (limit) => limit,
+    initialLimit,
+  );
+  return { items, usedLimit };
+}
+
+/**
  * Offset/limit check-status pagination with ingest-cap backoff.
  * @param {{ fetchPage: (opts: { page: number, limit: number }) => Promise<unknown[]>, pageSize?: number, maxPages?: number }} opts
  */
@@ -54,17 +76,14 @@ export async function paginateCheckStatusPages({
 }) {
   const all = [];
   let truncated = false;
+  let activeLimit = pageSize;
   for (let page = 1; page <= maxPages; page += 1) {
-    let usedLimit = pageSize;
-    const pageItems = await fetchWithIngestPageBackoff(
-      async (limit) => {
-        usedLimit = limit;
-        const items = await fetchPage({ page, limit });
-        return Array.isArray(items) ? items : [];
-      },
-      (limit) => limit,
-      pageSize,
+    const { items: pageItems, usedLimit } = await fetchPageWithIngestBackoff(
+      fetchPage,
+      page,
+      activeLimit,
     );
+    activeLimit = usedLimit;
     all.push(...pageItems);
     if (pageItems.length < usedLimit) {
       break;

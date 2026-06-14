@@ -308,6 +308,58 @@ describe('provider-gitlab-api fixtures', () => {
     expect(global.fetch.mock.calls.some(([u]) => String(u).includes('per_page=12'))).toBe(true);
   });
 
+  it('prChecks carries reduced per_page to page 2 after oversized page 1', async () => {
+    const paddedStatuses = Array.from({ length: 25 }, (_, i) => ({
+      name: `ci/pad-${i}`,
+      status: 'success',
+      description: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedStatuses);
+    const page2Status = [{ name: 'ci/page2', status: 'success', description: 'ok' }];
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('merge_requests/42')) {
+        return Promise.resolve(jsonResponse(load('merge-request-clean.json')));
+      }
+      if (href.includes('/pipelines')) {
+        return Promise.resolve(jsonResponse([]));
+      }
+      if (href.includes('/statuses')) {
+        const parsed = new URL(href);
+        const perPage = Number(parsed.searchParams.get('per_page') || '25');
+        const page = Number(parsed.searchParams.get('page') || '1');
+        if (page === 1 && perPage > 12) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            body: {
+              [Symbol.asyncIterator]: async function* () {
+                yield Buffer.from(oversizedJson);
+              },
+            },
+          });
+        }
+        if (page === 1) {
+          return Promise.resolve(jsonResponse(paddedStatuses.slice(0, 12)));
+        }
+        if (page === 2) {
+          expect(perPage).toBe(12);
+          return Promise.resolve(jsonResponse(page2Status));
+        }
+        return Promise.resolve(jsonResponse([]));
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+
+    const body = await provider.prChecks(ctx, { number: 42 });
+    expect(body.check_conclusion).toBe('success');
+    expect(global.fetch.mock.calls.some(([u]) => {
+      const href = String(u);
+      return href.includes('/statuses') && href.includes('page=2') && href.includes('per_page=12');
+    })).toBe(true);
+  });
+
   it('mergePlan includes checks_failed when page 1 returns 100 statuses', async () => {
     const legacyPage1 = Array.from({ length: 100 }, (_, i) => ({
       name: `ci/legacy-${i}`,
