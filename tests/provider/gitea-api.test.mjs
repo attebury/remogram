@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { provider, repoApiPath, apiBase, normalizeGiteaStatusState, normalizeGiteaPrState, listOpenPullsWithMeta, crInventorySlice, dedupeGiteaStatusRecords, mapGiteaCommitStatuses } from '@remogram/provider-gitea-api';
-import { DEFAULT_CHECK_STATUS_PAGE_SIZE, MAX_CHECK_STATUS_PAGES } from '@remogram/core';
+import { DEFAULT_CHECK_STATUS_PAGE_SIZE, MAX_CHECK_STATUS_PAGES, MAX_OPEN_PULL_IDEMPOTENCY_PAGES } from '@remogram/core';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const fixtures = join(__dirname, '../fixtures/gitea-api');
@@ -732,15 +732,24 @@ describe('provider-gitea-api fixtures', () => {
   });
 
   it('crOpen fails closed when idempotency scan is truncated', async () => {
-    for (let page = 0; page < MAX_CHECK_STATUS_PAGES; page += 1) {
+    for (let page = 0; page < MAX_OPEN_PULL_IDEMPOTENCY_PAGES; page += 1) {
       global.fetch.mockResolvedValueOnce(jsonPage(openPullMismatchPage(100)));
     }
     await expect(
       provider.crOpen(ctx, { head: 'feat/x', base: 'remo', title: 'T' }),
     ).rejects.toMatchObject({
-      forgeError: expect.objectContaining({ code: 'idempotency_scan_incomplete' }),
+      forgeError: expect.objectContaining({
+        code: 'idempotency_scan_incomplete',
+        fields: {
+          idempotency_scan: {
+            pages: MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
+            max_pages: MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
+            page_size: 100,
+          },
+        },
+      }),
     });
-    expect(global.fetch).toHaveBeenCalledTimes(MAX_CHECK_STATUS_PAGES);
+    expect(global.fetch).toHaveBeenCalledTimes(MAX_OPEN_PULL_IDEMPOTENCY_PAGES);
   });
 
   it('crOpen rejects non-array open pull list', async () => {

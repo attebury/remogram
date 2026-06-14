@@ -5,5 +5,5 @@ goal_branch goal_branch_cr_open_polish {
   task task_cr_open_polish
   evidence_refs [local:topo/sdlc/pitches/cr_open_polish.tg, local:topo/sdlc/requirements/cr_open_polish.tg, local:topo/sdlc/plans/cr_open_polish.tg, local:topo/sdlc/tasks/cr_open_polish.tg, local:topo/sdlc/acceptance_criteria/cr_open_polish.tg, local:topo/verifications/cr-open-polish.tg, forge:pr/293]
   witness_refs [forge:pr/293]
-  status approved
+  status active
 }

@@ -61,6 +61,18 @@ describe('forgePacket', () => {
     });
     expect(p.error_message).toBe('bad inject');
   });
+
+  it('merges trusted fields on forge_error packets', () => {
+    const p = forgeErrorPacket(ctx, {
+      code: ERROR_CODES.IDEMPOTENCY_SCAN_INCOMPLETE,
+      message: 'scan incomplete',
+      fields: {
+        idempotency_scan: { pages: 50, max_pages: 50, page_size: 100 },
+      },
+    });
+    expect(p.idempotency_scan).toEqual({ pages: 50, max_pages: 50, page_size: 100 });
+    expect(p.error_code).toBe(ERROR_CODES.IDEMPOTENCY_SCAN_INCOMPLETE);
+  });
 });
 
 describe('sanitizeField', () => {

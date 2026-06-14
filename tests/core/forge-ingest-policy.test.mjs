@@ -5,6 +5,8 @@ import {
   DEFAULT_MAX_BYTES,
   DEFAULT_CHECK_STATUS_PAGE_SIZE,
   MAX_CHECK_STATUS_PAGES,
+  DEFAULT_OPEN_PULL_LIST_PAGE_SIZE,
+  MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
   FORGE_INGEST_MAX_BYTES_ENV,
   forgeIngestCapabilityFacts,
   checkPaginationCapabilityFacts,
@@ -42,6 +44,11 @@ describe('forge ingest cap policy', () => {
   it('exports shared check pagination constants', () => {
     expect(DEFAULT_CHECK_STATUS_PAGE_SIZE).toBe(25);
     expect(MAX_CHECK_STATUS_PAGES).toBe(50);
+  });
+
+  it('exports open-pull idempotency pagination constants decoupled from check status', () => {
+    expect(DEFAULT_OPEN_PULL_LIST_PAGE_SIZE).toBe(100);
+    expect(MAX_OPEN_PULL_IDEMPOTENCY_PAGES).toBe(50);
   });
 
   it('checkPaginationCapabilityFacts describes offset_limit strategy', () => {

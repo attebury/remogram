@@ -54,13 +54,18 @@ export function forgePacket(type, context, body = {}, error = null) {
     packet.error_code = error.code;
     packet.error_message = sanitizeField(error.message);
     if (error.status != null) packet.error_status = error.status;
+    if (error.fields != null && typeof error.fields === 'object') {
+      assertNoForbiddenKeys(error.fields);
+      Object.assign(packet, error.fields);
+    }
   }
 
   return packet;
 }
 
 export function forgeErrorPacket(context, error, type = PACKET_TYPES.FORGE_ERROR) {
-  return forgePacket(type, context, {}, error);
+  const body = error?.fields != null && typeof error.fields === 'object' ? error.fields : {};
+  return forgePacket(type, context, body, error);
 }
 
 export function unknownForgeContext() {

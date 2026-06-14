@@ -26,6 +26,8 @@ export {
   FORGE_INGEST_MAX_BYTES_ENV,
   DEFAULT_CHECK_STATUS_PAGE_SIZE,
   MAX_CHECK_STATUS_PAGES,
+  DEFAULT_OPEN_PULL_LIST_PAGE_SIZE,
+  MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
   getEffectiveIngestMaxBytes,
   forgeIngestCapabilityFacts,
   checkPaginationCapabilityFacts,

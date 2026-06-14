@@ -17,6 +17,11 @@ export const ERROR_CODES = {
   IDEMPOTENCY_SCAN_INCOMPLETE: 'idempotency_scan_incomplete',
 };
 
-export function forgeError(code, message, status = null) {
-  return { code, message, ...(status != null ? { status } : {}) };
+export function forgeError(code, message, status = null, fields = null) {
+  return {
+    code,
+    message,
+    ...(status != null ? { status } : {}),
+    ...(fields != null && typeof fields === 'object' ? { fields } : {}),
+  };
 }
