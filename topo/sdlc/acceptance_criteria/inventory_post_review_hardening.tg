@@ -51,12 +51,12 @@ acceptance_criterion ac_gitleaks_linux_arm64 {
   name "Workflow supports Linux arm64"
   description "Given secret-scan.yml platform case, when parsed, then Linux arm64 maps to linux_arm64 gitleaks asset."
   requirement req_gitleaks_arm64_guards
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_gitleaks_workflow_guard_parity {
   name "Workflow guard tests match Topogram parity"
   description "Given secret-scan.test.mjs, when run, then workflow lacks gitleaks-action and GITHUB_TOKEN patterns and asserts push-range and full-history fallback steps."
   requirement req_gitleaks_arm64_guards
-  status draft
+  status approved
 }

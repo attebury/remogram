@@ -8760,5 +8760,39 @@
       "by": "actor_planning_lane",
       "note": null
     }
+  ],
+  "ac_gitleaks_linux_arm64": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T21:21:03.670Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
+  ],
+  "ac_gitleaks_workflow_guard_parity": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T21:21:03.950Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
+  ],
+  "req_gitleaks_arm64_guards": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T21:21:04.241Z",
+      "by": "actor_planning_lane",
+      "note": null
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T21:21:04.498Z",
+      "by": "actor_planning_lane",
+      "note": null
+    }
   ]
 }
