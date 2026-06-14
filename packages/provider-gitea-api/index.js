@@ -16,6 +16,9 @@ import {
   checkPaginationCapabilityFacts,
   DEFAULT_CHECK_STATUS_PAGE_SIZE,
   MAX_CHECK_STATUS_PAGES,
+  paginateCheckStatusPages,
+  fetchWithIngestPageBackoff,
+  withPerPageParam,
   apiProviderCommands,
 } from '@remogram/core';
 const PUBLIC_GITEA_HOST = 'gitea.com';
@@ -131,19 +134,17 @@ const MAX_CHECK_PAGES = MAX_CHECK_STATUS_PAGES;
 const GITEA_PAGE_SIZE = 100;
 
 export async function giteaFetchPaginated(config, parsed, path) {
-  const all = [];
-  for (let page = 1; page <= MAX_CHECK_PAGES; page += 1) {
-    const separator = path.includes('?') ? '&' : '?';
-    const body = await giteaFetch(
-      config,
-      parsed,
-      `${path}${separator}limit=${DEFAULT_CHECK_STATUS_PAGE_SIZE}&page=${page}`,
-    );
-    const items = Array.isArray(body) ? body : [];
-    all.push(...items);
-    if (items.length < DEFAULT_CHECK_STATUS_PAGE_SIZE) break;
-  }
-  return all;
+  return paginateCheckStatusPages({
+    fetchPage: async ({ page, limit }) => {
+      const separator = path.includes('?') ? '&' : '?';
+      const body = await giteaFetch(
+        config,
+        parsed,
+        `${path}${separator}limit=${limit}&page=${page}`,
+      );
+      return Array.isArray(body) ? body : [];
+    },
+  });
 }
 
 export function normalizeGiteaStatusState(state) {
