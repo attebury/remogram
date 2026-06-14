@@ -35,6 +35,11 @@ export function checkPaginationCapabilityFacts({ strategy, pageSizeParam }) {
       page_size: DEFAULT_CHECK_STATUS_PAGE_SIZE,
       max_pages: MAX_CHECK_STATUS_PAGES,
       page_size_param: pageSizeParam,
+      ingest_backoff: 'halve_until_fit',
+      on_page_cap: 'set_checks_truncated',
+      compliant_max_items_per_source:
+        DEFAULT_CHECK_STATUS_PAGE_SIZE * MAX_CHECK_STATUS_PAGES,
+      truncation_packet_field: 'checks_truncated',
     },
   };
 }
