@@ -16,7 +16,7 @@ acceptance_criterion ac_link_parser_and_provider_boundary_tests_round13 {
   name "Link parser and provider boundary tests"
   description "Given case-variant rel keys and provider Link chains with single quotes or trailing slashes, when pagination runs, then rel=next resolves and trusted links are followed."
   requirement req_forge_trust_round13
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_github_link_active_limit_carry_round13 {
