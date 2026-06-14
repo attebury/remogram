@@ -1,0 +1,12 @@
+pitch pitch_forge_trust_round13 {
+  name "Forge Trust Round 13 — Code Review Follow-Up Patch"
+  description "Thirteenth forge-trust Intent Packet closing Round 12 code-review follow-ups: DRY offset list pagination, userinfo rejection in Link trust, case-insensitive parseLinkHeader rel keys, GitHub Link-mode activeLimit carry-forward, and missing boundary tests."
+  appetite "medium"
+  problem "List pagination logic duplicated across three providers risking regression drift; isTrustedPaginationUrl accepts userinfo in Link URLs; parseLinkHeader rel keys are case-sensitive causing false truncation; GitHub Link-mode list omits per_page carry after ingest backoff; boundary tests missing for empty resolveBase, provider Link E2E, and resolveGitHubLinkNextPage."
+  solution_sketch "Four serialized waves: (1) paginateOffsetListPages shared helper and provider refactor, (2) userinfo fail-closed in isTrustedPaginationUrl, (3) lowercase rel keys plus provider Link boundary tests, (4) GitHub Link activeLimit carry in githubFetchPaginated and listOpenPullsWithMeta. All four claim-wave PRs on remo. Autonomous Observer-routed execution."
+  rabbit_holes "Raising DEFAULT_MAX_BYTES globally; .remogram.json ingest cap fields; reopening archived round 8–12 clusters; full RFC5988 Link parser rewrite; repo-scoped pathname prefix allowlists; npm publish."
+  no_go_areas "Hand-editing lifecycle status; changing conservative max_pages semantics."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}

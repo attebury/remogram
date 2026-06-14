@@ -1,0 +1,9 @@
+requirement req_forge_trust_round13 {
+  name "Remogram forge trust round 13 — DRY list pagination and Link trust hardening"
+  description "Remogram must share offset list pagination via paginateOffsetListPages; reject userinfo in trusted Link URLs; normalize parseLinkHeader rel keys case-insensitively; carry reduced ingest limit across GitHub Link pagination pages; and prove missing boundary tests."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority high
+  status draft
+}

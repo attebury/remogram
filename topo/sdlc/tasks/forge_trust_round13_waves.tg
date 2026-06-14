@@ -1,0 +1,91 @@
+task task_forge_trust_round13_wave1 {
+  name "Wave 1 — DRY offset list pagination"
+  description "Add paginateOffsetListPages to remogram-core and refactor Gitea, GitLab, and GitHub listOpenPullsWithMeta limit branches."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["GitHub Link-mode refactor" "Raising DEFAULT_MAX_BYTES"]
+  entrypoints ["packages/remogram-core/check-pagination.js" "packages/remogram-core/index.js" "packages/provider-gitea-api/index.js" "packages/provider-gitlab-api/index.js" "packages/provider-github-api/index.js" "tests/core/check-pagination.test.mjs"]
+  satisfies [req_forge_trust_round13]
+  acceptance_refs [ac_paginate_offset_list_pages_round13]
+  verification_refs [verification_forge_trust_round13_wave1]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type implementation
+  claimed_by []
+  bug_discovery bug_linked
+  linked_bugs [bug_list_pagination_logic_duplicated]
+  status unclaimed
+}
+
+task task_forge_trust_round13_wave2 {
+  name "Wave 2 — Userinfo rejection in Link trust"
+  description "Reject userinfo in isTrustedPaginationUrl; add empty resolveBase and userinfo boundary tests; update docs."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Repo-scoped prefix allowlists"]
+  entrypoints ["packages/remogram-core/http.js" "tests/core/pagination-trust.test.mjs" "README.md" "tools/remogram-agent-support/skills/remogram-core/SKILL.md"]
+  satisfies [req_forge_trust_round13]
+  acceptance_refs [ac_reject_userinfo_pagination_url_round13]
+  verification_refs [verification_forge_trust_round13_wave2]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round13_wave1]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  claimed_by []
+  bug_discovery bug_linked
+  linked_bugs [bug_pagination_trust_userinfo_accepted]
+  status unclaimed
+}
+
+task task_forge_trust_round13_wave3 {
+  name "Wave 3 — Link parser and provider boundary tests"
+  description "Lowercase parseLinkHeader rel keys; export resolveGitHubLinkNextPage; add core and provider Link boundary tests."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Full RFC5988 rewrite"]
+  entrypoints ["packages/remogram-core/http.js" "packages/provider-github-api/index.js" "tests/core/link-header.test.mjs" "tests/provider/github-link-pagination.test.mjs"]
+  satisfies [req_forge_trust_round13]
+  acceptance_refs [ac_link_parser_and_provider_boundary_tests_round13]
+  verification_refs [verification_forge_trust_round13_wave3]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round13_wave2]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type bugfix
+  claimed_by []
+  bug_discovery bug_linked
+  linked_bugs [bug_parse_link_header_rel_case_sensitive]
+  status unclaimed
+}
+
+task task_forge_trust_round13_wave4 {
+  name "Wave 4 — GitHub Link activeLimit carry-forward"
+  description "Carry reduced ingest limit across Link pagination in githubFetchPaginated and listOpenPullsWithMeta."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Raising ingest cap"]
+  entrypoints ["packages/provider-github-api/index.js" "tests/provider/github-api.test.mjs"]
+  satisfies [req_forge_trust_round13]
+  acceptance_refs [ac_github_link_active_limit_carry_round13]
+  verification_refs [verification_forge_trust_round13_wave4]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round13_wave3]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type bugfix
+  claimed_by []
+  bug_discovery bug_linked
+  linked_bugs [bug_github_link_list_per_page_no_carry]
+  status unclaimed
+}
