@@ -23,5 +23,5 @@ acceptance_criterion ac_github_link_active_limit_carry_round13 {
   name "GitHub Link pagination carries reduced per_page"
   description "Given oversized mocked Link page 1 on GitHub list or check pagination, when page 2 is fetched via rel=next, then per_page matches the reduced limit from page 1 backoff."
   requirement req_forge_trust_round13
-  status draft
+  status approved
 }
