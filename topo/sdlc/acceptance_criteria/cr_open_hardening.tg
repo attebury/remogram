@@ -2,47 +2,47 @@ acceptance_criterion ac_docs_beta_readonly {
   name "Docs state beta read/plan default and opt-out bridges"
   description "Given AGENTS.md README and remogram skills, when read, then they state beta.0-beta.3 read/plan by default, writes require config opt-in plus provider support, and opt-out bridge table documents Gitea shim only with gh/glab manual."
   requirement req_cr_open_hardening
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_write_config_gate {
   name "write_commands config gate fail closed"
   description "Given gitea-api without write_commands in .remogram.json, when remogram cr open runs, then forge_error write_not_configured. Given write_commands includes cr_open, when cr open runs with token, then ok change_request_opened. Doctor warns when provider supports writes but config does not opt in."
   requirement req_cr_open_hardening
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_forge_error_invalid_pull {
   name "Invalid pull number uses unparseable_provider_output"
   description "Given Gitea returns a pull without valid number, when cr open completes provider normalization, then error uses unparseable_provider_output not generic api_error."
   requirement req_cr_open_hardening
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_capabilities_write_commands {
   name "Capabilities report write_commands on gitea-api"
   description "Given remogram provider capabilities --json on gitea-api, when inspected, then write_support true and write_commands includes cr_open. GitHub and GitLab report write_support false without write_commands."
   requirement req_cr_open_hardening
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_cr_open_idempotent {
   name "cr open idempotent for head and base"
   description "Given an open PR already exists for head and base refs, when remogram cr open runs again, then it returns the existing pr_number without a duplicate POST."
   requirement req_cr_open_hardening
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_cr_open_test_depth {
   name "Expanded cr open test coverage"
   description "Given mocked Gitea API, when cr open tests run, then POST body assertions, API error paths, config gate, CLI open-to-inventory, and MCP callTool are covered."
   requirement req_cr_open_hardening
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_mcp_write_hints {
   name "MCP cr_open write hints"
   description "Given MCP listTools, when cr_open is inspected, then readOnlyHint is false and destructiveHint is true."
   requirement req_cr_open_hardening
-  status draft
+  status approved
 }

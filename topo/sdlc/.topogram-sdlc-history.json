@@ -7715,5 +7715,100 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "req_cr_open_hardening": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T19:25:29.192Z",
+      "by": "actor_plan_lane",
+      "note": null
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T19:25:29.493Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "goal_branch_cr_open_hardening": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T19:25:33.381Z",
+      "by": "actor_plan_lane",
+      "note": null
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T19:25:33.636Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_docs_beta_readonly": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T19:25:37.077Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_write_config_gate": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T19:25:37.324Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_forge_error_invalid_pull": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T19:25:37.579Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_capabilities_write_commands": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T19:25:37.843Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_cr_open_idempotent": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T19:25:38.105Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_cr_open_test_depth": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T19:25:38.409Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_mcp_write_hints": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T19:25:38.685Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
   ]
 }
