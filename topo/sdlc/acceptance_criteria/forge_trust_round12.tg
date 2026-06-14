@@ -2,26 +2,26 @@ acceptance_criterion ac_list_active_limit_carry_round12 {
   name "List pagination carries reduced limit after ingest backoff"
   description "Given oversized mocked list page 1, when listOpenPullsWithMeta fetches page 2, then page 2 uses the reduced limit from page 1 backoff."
   requirement req_forge_trust_round12
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_require_resolve_base_round12 {
   name "Link trust requires resolveBase"
   description "Given isTrustedPaginationUrl without resolveBase, when any URL is evaluated, then result is false fail-closed."
   requirement req_forge_trust_round12
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_pathname_trailing_slash_round12 {
   name "Trailing-slash pathname variants trusted"
   description "Given resolveBase and rel=next differing only by trailing slash on pathname, when trust is evaluated, then URL is trusted."
   requirement req_forge_trust_round12
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_link_header_adversarial_tests_round12 {
   name "parseLinkHeader adversarial cases covered"
   description "Given malformed and adversarial Link header fixtures, when parseLinkHeader runs, then behavior is deterministic and does not throw."
   requirement req_forge_trust_round12
-  status draft
+  status approved
 }
