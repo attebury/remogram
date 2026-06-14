@@ -3068,6 +3068,13 @@
       "evidence_refs": [
         "pr:87"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-14T00:44:31.869Z",
+      "by": "actor_planning_lane",
+      "note": "SDLC groom closeout post PR #131; command-owned transitions on origin/remo@6d6929d: done task evidence, no active satisfying task"
     }
   ],
   "task_semantic_diff_fact_inventory_wave1": [
@@ -3820,6 +3827,72 @@
       "at": "2026-06-12T05:40:47.054Z",
       "by": "actor_integration_lane",
       "note": null
+    }
+  ],
+  "plan_cr_inventory_hardening": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-14T00:44:32.085Z",
+      "by": "actor_planning_lane",
+      "note": "SDLC groom closeout post PR #131; command-owned transitions on origin/remo@6d6929d: all steps done or skipped"
+    },
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-14T00:44:32.292Z",
+      "by": "actor_planning_lane",
+      "note": "SDLC groom closeout post PR #131; command-owned transitions on origin/remo@6d6929d: all steps done or skipped"
+    }
+  ],
+  "plan_cr_inventory_test_coverage": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-14T00:44:32.502Z",
+      "by": "actor_planning_lane",
+      "note": "SDLC groom closeout post PR #131; command-owned transitions on origin/remo@6d6929d: all steps done or skipped"
+    },
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-14T00:44:32.706Z",
+      "by": "actor_planning_lane",
+      "note": "SDLC groom closeout post PR #131; command-owned transitions on origin/remo@6d6929d: all steps done or skipped"
+    }
+  ],
+  "plan_semantic_diff_fact_inventory": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-14T00:44:32.921Z",
+      "by": "actor_planning_lane",
+      "note": "SDLC groom closeout post PR #131; command-owned transitions on origin/remo@6d6929d: all steps done or skipped"
+    },
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-14T00:44:33.227Z",
+      "by": "actor_planning_lane",
+      "note": "SDLC groom closeout post PR #131; command-owned transitions on origin/remo@6d6929d: all steps done or skipped"
+    }
+  ],
+  "pitch_semantic_diff_fact_inventory": [
+    {
+      "from": "draft",
+      "to": "covered",
+      "at": "2026-06-14T00:44:33.442Z",
+      "by": "actor_planning_lane",
+      "note": "SDLC groom closeout post PR #131; command-owned transitions on origin/remo@6d6929d: req_semantic_diff_fact_inventory satisfied"
+    }
+  ],
+  "pitch_cr_inventory_test_coverage": [
+    {
+      "from": "draft",
+      "to": "rejected",
+      "at": "2026-06-14T00:44:33.649Z",
+      "by": "actor_planning_lane",
+      "note": "Orphan draft pitch; work delivered via archived goal_branch_cr_inventory_test_coverage"
     }
   ]
 }

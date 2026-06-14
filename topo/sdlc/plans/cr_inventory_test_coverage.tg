@@ -10,5 +10,5 @@ plan plan_cr_inventory_test_coverage {
     step wave3_cli_integration status done description "Hook provider CLI tests, --limit, forbidden keys path."
     step wave4_provider_matrix status done description "Provider matrix metadata, mockCrInventory trim, gitea list_truncated HTTP."
   }
-  status draft
+  status complete
 }

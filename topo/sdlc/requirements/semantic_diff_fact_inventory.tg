@@ -6,5 +6,5 @@ requirement req_semantic_diff_fact_inventory {
   respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
   pitch pitch_semantic_diff_fact_inventory
   priority high
-  status approved
+  status satisfied
 }

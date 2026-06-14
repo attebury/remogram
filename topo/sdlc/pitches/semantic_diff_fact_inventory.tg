@@ -8,5 +8,5 @@ pitch pitch_semantic_diff_fact_inventory {
   no_go_areas "packages implementation in draft PR; approving goal or ACs in draft PR; duplicating Topogram queue/lifecycle semantics in remogram packets; hand-editing command-owned sidecar status."
   affects [cap_forge_remote_ops]
   priority high
-  status draft
+  status covered
 }
