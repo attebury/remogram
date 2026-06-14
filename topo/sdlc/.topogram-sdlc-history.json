@@ -8140,5 +8140,27 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "goal_branch_cr_open_scan_hardening": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T20:26:49.187Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/304"
+      ]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T20:26:49.572Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/304"
+      ]
+    }
   ]
 }
