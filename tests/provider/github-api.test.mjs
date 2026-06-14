@@ -541,6 +541,112 @@ describe('provider-github-api fixtures', () => {
     expect(global.fetch.mock.calls.some(([u]) => String(u).includes('page=2') && String(u).includes('per_page=12'))).toBe(true);
   });
 
+  it('listOpenPullsWithMeta Link branch carries reduced per_page to page 2 after oversized page 1', async () => {
+    const paddedPulls = Array.from({ length: 25 }, (_, i) => ({
+      number: i + 1,
+      title: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedPulls);
+    const relativeNext = '/repos/owner/repo/pulls?state=open&page=2&per_page=100';
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (!href.includes('/pulls')) {
+        return Promise.reject(new Error(`unexpected fetch: ${href}`));
+      }
+      const parsed = new URL(href);
+      const perPage = Number(parsed.searchParams.get('per_page') || '25');
+      const page = Number(parsed.searchParams.get('page') || '1');
+      if (page === 1 && perPage > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          headers: { get: () => null },
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      if (page === 1) {
+        return Promise.resolve(
+          jsonResponse(
+            paddedPulls.slice(0, 12).map((p) => ({ number: p.number })),
+            200,
+            { link: `<${relativeNext}>; rel="next"` },
+          ),
+        );
+      }
+      if (page === 2) {
+        expect(perPage).toBe(12);
+        return Promise.resolve(jsonResponse([{ number: 26 }]));
+      }
+      return Promise.resolve(jsonResponse([]));
+    });
+
+    const meta = await listOpenPullsWithMeta(ctx, {});
+    expect(meta.numbers).toContain(26);
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('page=2') && String(u).includes('per_page=12'))).toBe(true);
+  });
+
+  it('githubFetchPaginated carries reduced per_page to Link page 2 after oversized page 1', async () => {
+    const paddedRuns = Array.from({ length: 25 }, (_, i) => ({
+      name: `ci/${i}`,
+      status: 'completed',
+      conclusion: 'success',
+      output: { title: 'z'.repeat(400) },
+    }));
+    const oversizedJson = JSON.stringify({ check_runs: paddedRuns });
+    const sha = 'a'.repeat(40);
+    const relativeNext = `/repos/owner/repo/commits/${sha}/check-runs?page=2&per_page=100`;
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (!href.includes('/check-runs')) {
+        return Promise.reject(new Error(`unexpected fetch: ${href}`));
+      }
+      const parsed = new URL(href);
+      const perPage = Number(parsed.searchParams.get('per_page') || '25');
+      const page = Number(parsed.searchParams.get('page') || '1');
+      if (page === 1 && perPage > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          headers: { get: () => null },
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      if (page === 1) {
+        return Promise.resolve(
+          jsonResponse(
+            { check_runs: paddedRuns.slice(0, 12) },
+            200,
+            { link: `<${relativeNext}>; rel="next"` },
+          ),
+        );
+      }
+      if (page === 2) {
+        expect(perPage).toBe(12);
+        return Promise.resolve(jsonResponse({ check_runs: [{ name: 'ci/last', status: 'completed', conclusion: 'success' }] }));
+      }
+      return Promise.resolve(jsonResponse({ check_runs: [] }));
+    });
+
+    const result = await githubFetchPaginated(
+      ctx.config,
+      ctx.parsed,
+      repoApiPath(ctx.config, 'commits', sha, 'check-runs'),
+      (body) => body?.check_runs ?? [],
+    );
+    expect(result.items.some((run) => run.name === 'ci/last')).toBe(true);
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('page=2') && String(u).includes('per_page=12'))).toBe(true);
+  });
+
   it('mergePlan adds checks_incomplete when statuses stream hits off-origin Link next', async () => {
     const evilNext = 'https://evil.example/api/statuses?page=2';
     global.fetch
