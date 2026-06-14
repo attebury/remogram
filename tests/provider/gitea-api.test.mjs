@@ -478,6 +478,49 @@ describe('provider-gitea-api fixtures', () => {
     expect(global.fetch.mock.calls.some(([u]) => String(u).includes('limit=12'))).toBe(true);
   });
 
+  it('listOpenPullsWithMeta carries reduced limit to page 2 after oversized page 1', async () => {
+    const paddedPulls = Array.from({ length: 25 }, (_, i) => ({
+      number: i + 1,
+      title: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedPulls);
+    const page2Pull = [{ number: 26, state: 'open' }];
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (!href.includes('/pulls') || href.includes('/pulls/')) {
+        return Promise.reject(new Error(`unexpected fetch: ${href}`));
+      }
+      const limitMatch = href.match(/[?&]limit=(\d+)/);
+      const pageMatch = href.match(/[?&]page=(\d+)/);
+      const limit = limitMatch ? Number(limitMatch[1]) : 25;
+      const page = pageMatch ? Number(pageMatch[1]) : 1;
+      if (page === 1 && limit > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      if (page === 1) {
+        return Promise.resolve(jsonPageResponse(paddedPulls.slice(0, 12)));
+      }
+      if (page === 2) {
+        expect(limit).toBe(12);
+        return Promise.resolve(jsonPageResponse(page2Pull));
+      }
+      return Promise.resolve(jsonPageResponse([]));
+    });
+
+    const meta = await listOpenPullsWithMeta(ctx, {});
+    expect(meta.numbers).toContain(26);
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('page=2') && String(u).includes('limit=12'))).toBe(true);
+  });
+
   it('listOpenPullsWithMeta honors list limit in HTTP query', async () => {
     global.fetch.mockResolvedValueOnce(jsonPageResponse([{ number: 1, state: 'open' }]));
     const meta = await listOpenPullsWithMeta(ctx, { limit: 1 });

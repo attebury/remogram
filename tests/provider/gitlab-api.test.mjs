@@ -574,4 +574,46 @@ describe('provider-gitlab-api fixtures', () => {
     expect(meta.list_truncated).toBe(false);
     expect(global.fetch.mock.calls.some(([u]) => String(u).includes('per_page=12'))).toBe(true);
   });
+
+  it('listOpenPullsWithMeta carries reduced per_page to page 2 after oversized page 1', async () => {
+    const paddedMrs = Array.from({ length: 25 }, (_, i) => ({
+      iid: i + 1,
+      title: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedMrs);
+    const page2Mr = [{ iid: 26 }];
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (!href.includes('/merge_requests')) {
+        return Promise.reject(new Error(`unexpected fetch: ${href}`));
+      }
+      const parsed = new URL(href);
+      const perPage = Number(parsed.searchParams.get('per_page') || '25');
+      const page = Number(parsed.searchParams.get('page') || '1');
+      if (page === 1 && perPage > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      if (page === 1) {
+        return Promise.resolve(jsonResponse(paddedMrs.slice(0, 12)));
+      }
+      if (page === 2) {
+        expect(perPage).toBe(12);
+        return Promise.resolve(jsonResponse(page2Mr));
+      }
+      return Promise.resolve(jsonResponse([]));
+    });
+
+    const meta = await listOpenPullsWithMeta(ctx, {});
+    expect(meta.numbers).toContain(26);
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('page=2') && String(u).includes('per_page=12'))).toBe(true);
+  });
 });
