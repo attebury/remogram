@@ -220,6 +220,25 @@ describe('provider-gitea-api fixtures', () => {
     expect(normalizeGiteaPrState('closed')).toBe('closed');
   });
 
+  it('mergePlan includes checks_failed when commit statuses fail on page 2', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    const page1Statuses = Array.from({ length: 100 }, (_, i) => ({
+      context: `ci/page1-${i}`,
+      state: 'success',
+      description: 'ok',
+    }));
+    const page2Statuses = [{ context: 'ci/page2-fail', state: 'failure', description: 'fail' }];
+    global.fetch
+      .mockResolvedValueOnce(pullResponse)
+      .mockResolvedValueOnce(pullResponse)
+      .mockResolvedValueOnce(jsonPageResponse(page1Statuses))
+      .mockResolvedValueOnce(jsonPageResponse(page2Statuses));
+    const body = await provider.mergePlan(ctx, { number: 1 });
+    expect(body.checks_conclusion).toBe('failure');
+    expect(body.blockers).toContain('checks_failed');
+  });
+
   it('providerCapabilities reports supported pagination', () => {
     const caps = provider.providerCapabilities();
     expect(caps.pagination).toBe('supported');
