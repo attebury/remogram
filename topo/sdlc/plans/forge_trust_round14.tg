@@ -8,5 +8,5 @@ plan plan_forge_trust_round14 {
     step wave1_hygiene status pending description "Wave 1 — githubFetchPaginated userinfo test, maxPagesTruncatesWithLimit comment, password-only resolveBase test."
     step verify status pending description "npm test and topogram check green on remo tip after cluster closeout."
   }
-  status draft
+  status active
 }
