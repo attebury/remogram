@@ -17,6 +17,6 @@ task task_cr_open_polish {
   work_type implementation
   claimed_by [actor_coding_agent]
   bug_discovery no_bug_observed
-  bug_discovery_rationale "Code review polish after merged impl PR #293; contract and test gaps not a forge bug."
-  status in-progress
+  bug_discovery_rationale "Contract polish cluster; no forge bug."
+  status done
 }
