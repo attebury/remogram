@@ -43,6 +43,7 @@ const BODY_KEYS = {
     'forge_ingest_cap_bytes',
     'host_binding',
     'idempotency_scan',
+    'open_pull_list',
     'mergeability_confidence',
     'pagination',
     'write_support',
@@ -110,6 +111,13 @@ function expectBodyKeys(type, testCase, body) {
   }
   if (type === PACKET_TYPES.PROVIDER_CAPABILITIES && testCase.provider.id !== 'gitea-api') {
     expected = expected.filter((key) => key !== 'idempotency_scan');
+  }
+  if (
+    type === PACKET_TYPES.PROVIDER_CAPABILITIES
+    && testCase.provider.id !== 'gitea-api'
+    && testCase.provider.id !== 'gitlab-api'
+  ) {
+    expected = expected.filter((key) => key !== 'open_pull_list');
   }
   const packet = forgePacket(type, packetCtx(testCase), body);
   expect(packet.type).toBe(type);

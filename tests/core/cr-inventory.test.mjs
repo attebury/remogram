@@ -91,18 +91,38 @@ describe('cr inventory', () => {
     expect(checksCalls).toBe(2);
   });
 
-  it('crInventory does not pass entry limit to listOpenPullsWithMeta', async () => {
-    let receivedLimit;
+  it('crInventory passes retain_max entry limit to listOpenPullsWithMeta', async () => {
+    let receivedRetainMax;
     const provider = {
       listOpenPullsWithMeta: async (_ctx, opts) => {
-        receivedLimit = opts?.limit;
-        return { numbers: [1, 2, 3], list_truncated: false };
+        receivedRetainMax = opts?.retain_max;
+        return { numbers: [1, 2, 3], list_truncated: false, entry_count: 3 };
       },
       prView: async () => ({ pr_number: 1, state: 'open', mergeability: 'clean' }),
       prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
     };
     await crInventory(ctx, provider, { limit: 7 });
-    expect(receivedLimit).toBeUndefined();
+    expect(receivedRetainMax).toBe(7);
+  });
+
+  it('crInventory uses provider entry_count when streaming list pagination', async () => {
+    const provider = {
+      listOpenPullsWithMeta: async () => ({
+        numbers: [1, 2, 3],
+        entry_count: 50,
+        list_truncated: false,
+      }),
+      prView: async (_ctx, { number }) => ({
+        pr_number: number,
+        state: 'open',
+        mergeability: 'clean',
+      }),
+      prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
+    };
+    const body = await crInventory(ctx, provider);
+    expect(body.entry_count).toBe(50);
+    expect(body.entries).toHaveLength(3);
+    expect(body.truncated).toBe(true);
   });
 
   it('crInventory reports list_truncated false when forge open set matches entry cap', async () => {
@@ -282,11 +302,11 @@ describe('cr inventory', () => {
   });
 
   it('crInventory uses safe default limit when limit omitted', async () => {
-    let receivedLimit;
+    let receivedRetainMax;
     const provider = {
       listOpenPullsWithMeta: async (_ctx, opts) => {
-        receivedLimit = opts?.limit;
-        return { numbers: [1, 2, 3, 4, 5], list_truncated: false };
+        receivedRetainMax = opts?.retain_max;
+        return { numbers: [1, 2, 3], entry_count: 5, list_truncated: false };
       },
       prView: async (_ctx, { number }) => ({
         pr_number: number,
@@ -296,7 +316,7 @@ describe('cr inventory', () => {
       prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
     };
     const body = await crInventory(ctx, provider);
-    expect(receivedLimit).toBeUndefined();
+    expect(receivedRetainMax).toBe(3);
     expect(body.entries).toHaveLength(3);
     expect(body.entry_count).toBe(5);
     expect(body.truncated).toBe(true);

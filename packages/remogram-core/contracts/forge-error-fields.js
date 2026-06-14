@@ -17,6 +17,7 @@ const FORBIDDEN_ERROR_FIELD_KEYS = new Set([
 /** Trusted body fields allowed per forge error code. */
 export const FORGE_ERROR_FIELD_ALLOWLIST = Object.freeze({
   [ERROR_CODES.IDEMPOTENCY_SCAN_INCOMPLETE]: ['idempotency_scan'],
+  [ERROR_CODES.INVENTORY_LIST_INCOMPLETE]: ['inventory_list'],
 });
 
 function assertPositiveInteger(name, value) {
@@ -38,6 +39,18 @@ function validateIdempotencyScan(scan) {
   assertPositiveInteger('idempotency_scan.max_pages', scan.max_pages);
   assertPositiveInteger('idempotency_scan.page_size', scan.page_size);
   return { idempotency_scan: scan };
+}
+
+function validateInventoryList(list) {
+  if (list == null || typeof list !== 'object' || Array.isArray(list)) {
+    throw new Error('Invalid forge error field inventory_list: must be an object');
+  }
+  const keys = Object.keys(list).sort();
+  if (keys.length !== 1 || keys[0] !== 'entry_count') {
+    throw new Error('Invalid forge error field inventory_list: unexpected keys');
+  }
+  assertPositiveInteger('inventory_list.entry_count', list.entry_count);
+  return { inventory_list: list };
 }
 
 /**
@@ -74,6 +87,10 @@ export function normalizeForgeErrorFields(code, fields) {
 
   if (fields.idempotency_scan != null) {
     return validateIdempotencyScan(fields.idempotency_scan);
+  }
+
+  if (fields.inventory_list != null) {
+    return validateInventoryList(fields.inventory_list);
   }
 
   return fields;

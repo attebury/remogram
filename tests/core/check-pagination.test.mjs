@@ -200,6 +200,21 @@ describe('paginateOffsetListPages', () => {
     expect(result.list_truncated).toBe(true);
   });
 
+  it('retainMax keeps slice while reporting full entry_count', async () => {
+    const result = await paginateOffsetListPages({
+      pageSize: 2,
+      retainMax: 2,
+      fetchPage: async ({ page }) => {
+        if (page === 1) return [{ number: 1 }, { number: 2 }];
+        if (page === 2) return [{ number: 3 }];
+        return [];
+      },
+    });
+    expect(result.items).toHaveLength(2);
+    expect(result.entry_count).toBe(3);
+    expect(result.list_truncated).toBe(false);
+  });
+
   it('truncates at maxPages when listLimit set and maxPagesTruncatesWithLimit', async () => {
     const result = await paginateOffsetListPages({
       pageSize: 1,

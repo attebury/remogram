@@ -887,6 +887,14 @@ describe('provider-gitea-api fixtures', () => {
       page_size: 100,
       ingest_backoff: 'halve_until_fit',
     });
+    expect(body.open_pull_list).toEqual({
+      max_pages: 50,
+      page_size: 100,
+      ingest_backoff: 'halve_until_fit',
+      compliant_max_items: 5000,
+      truncation_packet_field: 'list_truncated',
+      incomplete_error_code: 'inventory_list_incomplete',
+    });
     const crOpen = body.commands.find((c) => c.name === 'cr_open');
     expect(crOpen).toMatchObject({ implemented: true, auth_class: 'token_required' });
   });

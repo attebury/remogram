@@ -36,6 +36,7 @@ export {
   forgeIngestCapabilityFacts,
   checkPaginationCapabilityFacts,
   idempotencyScanCapabilityFacts,
+  openPullListCapabilityFacts,
 } from './caps.js';
 export {
   paginateCheckStatusPages,

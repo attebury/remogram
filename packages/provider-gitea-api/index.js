@@ -16,6 +16,7 @@ import {
   forgeIngestCapabilityFacts,
   checkPaginationCapabilityFacts,
   idempotencyScanCapabilityFacts,
+  openPullListCapabilityFacts,
   DEFAULT_CHECK_STATUS_PAGE_SIZE,
   MAX_CHECK_STATUS_PAGES,
   DEFAULT_OPEN_PULL_LIST_PAGE_SIZE,
@@ -251,6 +252,7 @@ export function providerCapabilities() {
       sourceCount: check_sources.length,
     }),
     ...idempotencyScanCapabilityFacts(),
+    ...openPullListCapabilityFacts(),
   };
 }
 
@@ -365,13 +367,22 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
     opts.limit != null && Number.isInteger(Number(opts.limit)) && Number(opts.limit) > 0
       ? Number(opts.limit)
       : null;
+  const retainMax =
+    listLimit == null &&
+    opts.retain_max != null &&
+    Number.isInteger(Number(opts.retain_max)) &&
+    Number(opts.retain_max) > 0
+      ? Number(opts.retain_max)
+      : null;
   const pageSize =
     listLimit != null ? Math.min(listLimit, GITEA_PAGE_SIZE) : GITEA_PAGE_SIZE;
   const path = `${repoApiPath(ctx.config, 'pulls')}?state=open`;
   const pageSep = path.includes('?') ? '&' : '?';
-  const { items: all, list_truncated: listTruncated } = await paginateOffsetListPages({
+  const { items: all, list_truncated: listTruncated, entry_count: entryCount } =
+    await paginateOffsetListPages({
     pageSize,
     listLimit,
+    retainMax,
     ...(listLimit != null && pageSize < listLimit ? { maxPagesTruncatesWithLimit: true } : {}),
     fetchPage: async ({ page, limit }) => {
       const body = await giteaFetch(
@@ -389,7 +400,11 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
   if (listLimit != null && numbers.length > listLimit) {
     numbers = numbers.slice(0, listLimit);
   }
-  return { numbers, list_truncated: listTruncated };
+  return {
+    numbers,
+    list_truncated: listTruncated,
+    ...(entryCount != null ? { entry_count: entryCount } : {}),
+  };
 }
 
 export async function listOpenPulls(ctx, opts = {}) {
