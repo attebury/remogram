@@ -52,6 +52,7 @@ export function createMockProvider(overrides = {}) {
           head_sha: 'bbb222',
           mergeability: 'clean',
           checks_conclusion: 'success',
+          checks_truncated: false,
           blockers: [],
           head_reconcile: { stale: false },
         },
@@ -75,6 +76,7 @@ export function createMockProvider(overrides = {}) {
     prChecks: async () => ({
       head_sha: 'bbb222',
       check_conclusion: 'success',
+      checks_truncated: false,
       statuses: [{ context: 'ci/gate', state: 'success', description: 'ok' }],
     }),
     mergePlan: async (_ctx, { number }) => ({
