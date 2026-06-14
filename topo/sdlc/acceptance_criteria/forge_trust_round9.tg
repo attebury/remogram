@@ -2,40 +2,40 @@ acceptance_criterion ac_github_list_link_same_origin_round9 {
   name "GitHub listOpenPulls Link next must match API origin"
   description "Given mocked Link header with off-origin rel=next URL on open PR list, when listOpenPullsWithMeta runs, then token is not sent off-host and list_truncated is true."
   requirement req_forge_trust_round9
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_github_gitlab_truncation_proof_round9 {
   name "GitHub and GitLab truncation proof parity with Gitea"
   description "Given mocked APIs returning full pages through max_pages, when prChecks and mergePlan run on GitHub and GitLab, then checks_truncated and checks_incomplete behave like Gitea tests."
   requirement req_forge_trust_round9
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_multi_source_capability_bounds_round9 {
   name "Capabilities expose multi-source enumeration totals"
   description "Given provider capabilities --json on GitHub or GitLab, when check_pagination is returned, then check_source_count truncation_combination and compliant_max_items_total reflect dual-stream bounds."
   requirement req_forge_trust_round9
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_cr_inventory_checks_truncated_round9 {
   name "cr_inventory entries include checks_truncated"
   description "Given prChecks returns checks_truncated true, when cr inventory builds an entry, then entry includes checks_truncated boolean."
   requirement req_forge_trust_round9
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_merge_blockers_strict_truncation_round9 {
   name "mergeBlockers requires explicit checks_truncated true"
   description "Given checks object with checks_truncated undefined, when mergeBlockersFromFacts runs, then checks_incomplete is not emitted; when checks_truncated is true, then checks_incomplete is emitted."
   requirement req_forge_trust_round9
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_pagination_backoff_dry_round9 {
   name "paginateCheckStatusPages reuses fetchWithIngestPageBackoff"
   description "Given paginateCheckStatusPages with oversized page mock, when backoff succeeds, then behavior matches prior tests without duplicated halve logic in source."
   requirement req_forge_trust_round9
-  status draft
+  status approved
 }
