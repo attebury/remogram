@@ -60,7 +60,14 @@ export {
   assertForgeReady,
   forgeContext,
 } from './resolve.js';
-export { fetchWithTimeout, fetchJson, fetchJsonWithMeta, parseLinkHeader, fetchTextCapped } from './http.js';
+export {
+  fetchWithTimeout,
+  fetchJson,
+  fetchJsonWithMeta,
+  parseLinkHeader,
+  isTrustedPaginationUrl,
+  fetchTextCapped,
+} from './http.js';
 export {
   AUTH_CLASS,
   API_PROVIDER_COMMAND_AUTH,

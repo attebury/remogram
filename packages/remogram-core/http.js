@@ -66,6 +66,15 @@ export function parseLinkHeader(linkHeader) {
   return links;
 }
 
+/** Reject Link rel=next URLs that leave the configured API origin (token exfiltration guard). */
+export function isTrustedPaginationUrl(trustedOrigin, url) {
+  try {
+    return new URL(url).origin === trustedOrigin;
+  } catch {
+    return false;
+  }
+}
+
 export async function fetchJsonWithMeta(
   url,
   options = {},

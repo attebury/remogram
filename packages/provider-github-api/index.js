@@ -2,6 +2,7 @@ import {
   fetchJson,
   fetchJsonWithMeta,
   parseLinkHeader,
+  isTrustedPaginationUrl,
   sanitizeField,
   sanitizeUrl,
   assertGitRef,
@@ -165,16 +166,9 @@ export async function githubFetch(config, parsed, path, options = {}) {
 
 const MAX_CHECK_PAGES = MAX_CHECK_STATUS_PAGES;
 
-function isTrustedPaginationUrl(config, parsed, url) {
-  try {
-    return new URL(url).origin === new URL(apiBase(config, parsed)).origin;
-  } catch {
-    return false;
-  }
-}
-
 export async function githubFetchPaginated(config, parsed, path, slice) {
   const base = apiBase(config, parsed);
+  const trustedOrigin = new URL(base).origin;
   const { token } = requireToken();
   const all = [];
   let truncated = false;
@@ -192,7 +186,7 @@ export async function githubFetchPaginated(config, parsed, path, slice) {
     all.push(...slice(body));
     const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
     const nextUrl = parseLinkHeader(linkHeader).next ?? null;
-    if (nextUrl && !isTrustedPaginationUrl(config, parsed, nextUrl)) {
+    if (nextUrl && !isTrustedPaginationUrl(trustedOrigin, nextUrl)) {
       truncated = true;
       url = null;
     } else if (nextUrl && page === MAX_CHECK_PAGES - 1) {
@@ -472,6 +466,7 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
   let listTruncated = false;
 
   if (listLimit == null) {
+    const trustedOrigin = new URL(base).origin;
     let url = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open`;
     for (let page = 0; page < MAX_CHECK_PAGES && url; page += 1) {
       const { body, headers } = await fetchJsonWithMeta(url, {
@@ -480,8 +475,16 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
       const items = Array.isArray(body) ? body : [];
       all.push(...items);
       const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
-      url = parseLinkHeader(linkHeader).next ?? null;
-      if (page === MAX_CHECK_PAGES - 1 && url) listTruncated = true;
+      const nextUrl = parseLinkHeader(linkHeader).next ?? null;
+      if (nextUrl && !isTrustedPaginationUrl(trustedOrigin, nextUrl)) {
+        listTruncated = true;
+        url = null;
+      } else if (nextUrl && page === MAX_CHECK_PAGES - 1) {
+        listTruncated = true;
+        url = null;
+      } else {
+        url = nextUrl;
+      }
     }
   } else {
     for (let page = 1; page <= MAX_CHECK_PAGES; page += 1) {
