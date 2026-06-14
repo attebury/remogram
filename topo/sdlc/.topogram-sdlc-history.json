@@ -4194,6 +4194,23 @@
       "evidence_refs": [
         "pr:149"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T02:11:15.817Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-14T02:11:40.052Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:152"
+      ]
     }
   ],
   "req_forge_trust_round6": [
@@ -4554,6 +4571,105 @@
       "at": "2026-06-14T02:10:50.984Z",
       "by": "actor_plan_lane",
       "note": null
+    }
+  ],
+  "task_forge_trust_round6_wave4": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T02:11:15.688Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T02:11:15.764Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T02:11:25.268Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_mcp_pr_checks_empty_args": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:11:26.278Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:11:26.806Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "verification:verification_forge_trust_round6_wave4"
+      ]
+    }
+  ],
+  "bug_export_denylist_untested": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:11:28.395Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:11:29.021Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "verification:verification_forge_trust_round6_wave4"
+      ]
+    }
+  ],
+  "bug_mcp_core_redaction_split": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:11:30.210Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:11:30.445Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "verification:verification_forge_trust_round6_wave4"
+      ]
+    }
+  ],
+  "bug_git_ahead_behind_unvalidated": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:11:31.197Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:11:31.437Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "verification:verification_forge_trust_round6_wave4"
+      ]
     }
   ]
 }

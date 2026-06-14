@@ -84,7 +84,8 @@ task task_forge_trust_round6_wave4 {
   disposition active
   priority high
   work_type bugfix
+  claimed_by [actor_coding_agent]
   bug_discovery bug_linked
-  linked_bugs [bug_mcp_pr_checks_empty_args, bug_export_denylist_untested, bug_mcp_core_redaction_split, bug_git_ahead_behind_unvalidated]
-  status unclaimed
+  linked_bugs [bug_mcp_pr_checks_empty_args bug_export_denylist_untested bug_mcp_core_redaction_split bug_git_ahead_behind_unvalidated]
+  status done
 }
