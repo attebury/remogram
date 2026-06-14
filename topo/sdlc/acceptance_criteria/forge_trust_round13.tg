@@ -1,0 +1,27 @@
+acceptance_criterion ac_paginate_offset_list_pages_round13 {
+  name "Shared offset list pagination carries reduced limit"
+  description "Given oversized mocked list page 1, when paginateOffsetListPages fetches page 2, then page 2 uses the reduced limit from page 1 backoff."
+  requirement req_forge_trust_round13
+  status draft
+}
+
+acceptance_criterion ac_reject_userinfo_pagination_url_round13 {
+  name "Link trust rejects userinfo URLs"
+  description "Given a Link URL with embedded userinfo on matching pathname, when isTrustedPaginationUrl evaluates it, then result is false fail-closed."
+  requirement req_forge_trust_round13
+  status draft
+}
+
+acceptance_criterion ac_link_parser_and_provider_boundary_tests_round13 {
+  name "Link parser and provider boundary tests"
+  description "Given case-variant rel keys and provider Link chains with single quotes or trailing slashes, when pagination runs, then rel=next resolves and trusted links are followed."
+  requirement req_forge_trust_round13
+  status draft
+}
+
+acceptance_criterion ac_github_link_active_limit_carry_round13 {
+  name "GitHub Link pagination carries reduced per_page"
+  description "Given oversized mocked Link page 1 on GitHub list or check pagination, when page 2 is fetched via rel=next, then per_page matches the reduced limit from page 1 backoff."
+  requirement req_forge_trust_round13
+  status draft
+}
