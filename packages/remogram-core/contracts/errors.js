@@ -15,6 +15,7 @@ export const ERROR_CODES = {
   REMOTE_INFER_FAILED: 'remote_infer_failed',
   WRITE_NOT_CONFIGURED: 'write_not_configured',
   IDEMPOTENCY_SCAN_INCOMPLETE: 'idempotency_scan_incomplete',
+  INVENTORY_LIST_INCOMPLETE: 'inventory_list_incomplete',
 };
 
 export function forgeError(code, message, status = null, fields = null) {

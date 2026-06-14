@@ -14,6 +14,7 @@ import {
   forgeError,
   forgeIngestCapabilityFacts,
   checkPaginationCapabilityFacts,
+  openPullListCapabilityFacts,
   DEFAULT_CHECK_STATUS_PAGE_SIZE,
   MAX_CHECK_STATUS_PAGES,
   paginateCheckStatusPages,
@@ -162,6 +163,7 @@ export function providerCapabilities() {
       pageSizeParam: 'per_page',
       sourceCount: check_sources.length,
     }),
+    ...openPullListCapabilityFacts(),
   };
 }
 
@@ -324,11 +326,20 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
     opts.limit != null && Number.isInteger(Number(opts.limit)) && Number(opts.limit) > 0
       ? Number(opts.limit)
       : null;
+  const retainMax =
+    listLimit == null &&
+    opts.retain_max != null &&
+    Number.isInteger(Number(opts.retain_max)) &&
+    Number(opts.retain_max) > 0
+      ? Number(opts.retain_max)
+      : null;
   const path = `${projectApiPath(ctx.config, 'merge_requests')}?state=opened`;
   const separator = path.includes('?') ? '&' : '?';
-  const { items: all, list_truncated: listTruncated } = await paginateOffsetListPages({
+  const { items: all, list_truncated: listTruncated, entry_count: entryCount } =
+    await paginateOffsetListPages({
     pageSize: GITLAB_PAGE_SIZE,
     listLimit,
+    retainMax,
     ...(listLimit != null ? { maxPagesTruncatesWithLimit: true } : {}),
     fetchPage: async ({ page, limit }) => {
       const body = await gitlabFetch(
@@ -346,7 +357,11 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
   if (listLimit != null && numbers.length > listLimit) {
     numbers = numbers.slice(0, listLimit);
   }
-  return { numbers, list_truncated: listTruncated };
+  return {
+    numbers,
+    list_truncated: listTruncated,
+    ...(entryCount != null ? { entry_count: entryCount } : {}),
+  };
 }
 
 export async function listOpenPulls(ctx, opts = {}) {

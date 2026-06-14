@@ -89,7 +89,7 @@ describe('cr inventory CLI integration', () => {
   });
 
   it('cr inventory --limit 1 completes open list before entry cap', async () => {
-    let listLimit;
+    let retainMax;
     const setup = setupTempForge({
       config: defaultTestConfig(),
       remoteUrl: 'http://localhost:3000/owner/repo.git',
@@ -98,8 +98,8 @@ describe('cr inventory CLI integration', () => {
 
     const provider = createCrInventoryHookProvider({
       listOpenPullsWithMeta: async (_ctx, opts) => {
-        listLimit = opts?.limit;
-        return { numbers: [1, 2], list_truncated: false };
+        retainMax = opts?.retain_max;
+        return { numbers: [1], entry_count: 2, list_truncated: false };
       },
       prView: async (_ctx, { number }) => ({
         pr_number: number,
@@ -117,7 +117,7 @@ describe('cr inventory CLI integration', () => {
     );
     const packet = JSON.parse(logs[0]);
     expect(packet.ok).toBe(true);
-    expect(listLimit).toBeUndefined();
+    expect(retainMax).toBe(1);
     expect(packet.entries).toHaveLength(1);
     expect(packet.entry_count).toBe(2);
     expect(packet.truncated).toBe(true);
@@ -125,7 +125,7 @@ describe('cr inventory CLI integration', () => {
   });
 
   it('cr inventory default path uses safe entry bound and complete open list', async () => {
-    let listLimit;
+    let retainMax;
     const setup = setupTempForge({
       config: defaultTestConfig(),
       remoteUrl: 'http://localhost:3000/owner/repo.git',
@@ -134,8 +134,8 @@ describe('cr inventory CLI integration', () => {
 
     const provider = createCrInventoryHookProvider({
       listOpenPullsWithMeta: async (_ctx, opts) => {
-        listLimit = opts?.limit;
-        return { numbers: [1, 2, 3, 4, 5], list_truncated: false };
+        retainMax = opts?.retain_max;
+        return { numbers: [1, 2, 3], entry_count: 5, list_truncated: false };
       },
       prView: async (_ctx, { number }) => ({
         pr_number: number,
@@ -155,7 +155,7 @@ describe('cr inventory CLI integration', () => {
     expect(packet.ok).toBe(true);
     expect(packet.type).toBe('cr_inventory_slice');
     expect(packet.error_code).toBeUndefined();
-    expect(listLimit).toBeUndefined();
+    expect(retainMax).toBe(3);
     expect(packet.entries).toHaveLength(3);
     expect(packet.truncated).toBe(true);
     expect(packet.list_truncated).toBe(false);
@@ -201,6 +201,39 @@ describe('cr inventory CLI integration', () => {
       { pr_number: 3, error_code: 'oversized_raw_output' },
       { pr_number: 4, error_code: 'oversized_raw_output' },
     ]);
+  });
+
+  it('cr inventory fails closed when open list is truncated', async () => {
+    const setup = setupTempForge({
+      config: defaultTestConfig(),
+      remoteUrl: 'http://localhost:3000/owner/repo.git',
+    });
+    cleanups.push(setup);
+
+    const provider = createCrInventoryHookProvider({
+      listOpenPullsWithMeta: async () => ({
+        numbers: [1],
+        entry_count: 5000,
+        list_truncated: true,
+      }),
+      prView: async (_ctx, { number }) => ({
+        pr_number: number,
+        state: 'open',
+        mergeability: 'clean',
+      }),
+      prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
+    });
+
+    const { logs } = await captureCliOutput(() =>
+      runCli(['cr', 'inventory', '--json'], {
+        cwd: setup.dir,
+        providers: { 'gitea-api': provider },
+      }),
+    );
+    const packet = JSON.parse(logs[0]);
+    expect(packet.ok).toBe(false);
+    expect(packet.error_code).toBe('inventory_list_incomplete');
+    expect(packet.inventory_list).toEqual({ entry_count: 5000 });
   });
 
   it('emits no forbidden workflow keys in successful CLI packet', async () => {

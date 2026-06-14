@@ -114,8 +114,8 @@ export async function paginateCheckStatusPages({
 /**
  * Offset/limit open-list pagination with ingest-cap backoff and optional list cap.
  * listLimit bounds request size per page; callers slice returned items when enforcing a hard cap.
- * @param {{ fetchPage: (opts: { page: number, limit: number }) => Promise<unknown[]>, pageSize: number, listLimit?: number | null, maxPages?: number, maxPagesTruncatesWithLimit?: boolean }} opts
- * @returns {Promise<{ items: unknown[], list_truncated: boolean }>}
+ * @param {{ fetchPage: (opts: { page: number, limit: number }) => Promise<unknown[]>, pageSize: number, listLimit?: number | null, maxPages?: number, maxPagesTruncatesWithLimit?: boolean, retainMax?: number | null }} opts
+ * @returns {Promise<{ items: unknown[], list_truncated: boolean, entry_count?: number }>}
  */
 export async function paginateOffsetListPages({
   fetchPage,
@@ -123,8 +123,10 @@ export async function paginateOffsetListPages({
   listLimit = null,
   maxPages = MAX_CHECK_STATUS_PAGES,
   maxPagesTruncatesWithLimit = false,
+  retainMax = null,
 }) {
   const all = [];
+  let entryCount = 0;
   let listTruncated = false;
   let activeLimit = pageSize;
   for (let page = 1; page <= maxPages; page += 1) {
@@ -133,7 +135,13 @@ export async function paginateOffsetListPages({
     const requestLimit = listLimit != null ? Math.min(activeLimit, remaining) : activeLimit;
     const { items, usedLimit } = await fetchPageWithIngestBackoff(fetchPage, page, requestLimit);
     activeLimit = usedLimit;
-    all.push(...items);
+    entryCount += items.length;
+    if (retainMax != null) {
+      const space = Math.max(retainMax - all.length, 0);
+      if (space > 0) all.push(...items.slice(0, space));
+    } else {
+      all.push(...items);
+    }
     if (items.length < usedLimit) break;
     if (listLimit != null && all.length >= listLimit) {
       if (page >= maxPages) {
@@ -153,5 +161,9 @@ export async function paginateOffsetListPages({
       break;
     }
   }
-  return { items: all, list_truncated: listTruncated };
+  return {
+    items: all,
+    list_truncated: listTruncated,
+    ...(retainMax != null ? { entry_count: entryCount } : {}),
+  };
 }

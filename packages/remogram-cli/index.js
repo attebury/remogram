@@ -391,13 +391,28 @@ export async function runCli(argv, options = {}) {
           ),
         });
       }
+      const inventoryBody = await provider.crInventory(ctx, {
+          slice_ref: flags.slice_ref,
+          limit: parsePositiveInt(flags.limit, '--limit'),
+        });
+      if (inventoryBody.list_truncated === true) {
+        throw Object.assign(new Error('Open CR list incomplete'), {
+          forgeError: forgeError(
+            ERROR_CODES.INVENTORY_LIST_INCOMPLETE,
+            'Open change request list could not be proved complete within pagination bounds',
+            null,
+            {
+              inventory_list: {
+                entry_count: inventoryBody.entry_count,
+              },
+            },
+          ),
+        });
+      }
       packet = forgeFactInventoryPacket(
         FACT_INVENTORY_PACKET_TYPES.CR_INVENTORY_SLICE,
         ctx,
-        await provider.crInventory(ctx, {
-          slice_ref: flags.slice_ref,
-          limit: parsePositiveInt(flags.limit, '--limit'),
-        }),
+        inventoryBody,
       );
     } else if (group === 'cr' && sub === 'open') {
       if (typeof provider.crOpen !== 'function') {

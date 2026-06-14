@@ -54,4 +54,17 @@ describe('normalizeForgeErrorFields', () => {
       'idempotency_scan',
     ]);
   });
+
+  it('allows inventory_list for inventory_list_incomplete', () => {
+    const fields = normalizeForgeErrorFields(ERROR_CODES.INVENTORY_LIST_INCOMPLETE, {
+      inventory_list: { entry_count: 5000 },
+    });
+    expect(fields).toEqual({ inventory_list: { entry_count: 5000 } });
+  });
+
+  it('exports allowlist for inventory_list_incomplete', () => {
+    expect(FORGE_ERROR_FIELD_ALLOWLIST[ERROR_CODES.INVENTORY_LIST_INCOMPLETE]).toEqual([
+      'inventory_list',
+    ]);
+  });
 });
