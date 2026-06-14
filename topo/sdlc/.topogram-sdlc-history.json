@@ -5928,6 +5928,16 @@
       "evidence_refs": [
         "pr:200"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T04:47:13.645Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:201"
+      ]
     }
   ],
   "ac_link_pathname_confinement_round11": [
@@ -6009,6 +6019,54 @@
       "note": null,
       "evidence_refs": [
         "pr:200"
+      ]
+    }
+  ],
+  "task_forge_trust_round11_wave1": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T04:47:13.863Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:201"
+      ]
+    }
+  ],
+  "task_forge_trust_round11_wave2": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T04:47:14.084Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:201"
+      ]
+    }
+  ],
+  "task_forge_trust_round11_wave3": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T04:47:14.365Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:201"
+      ]
+    }
+  ],
+  "task_forge_trust_round11_wave4": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T04:47:15.018Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:201"
       ]
     }
   ]
