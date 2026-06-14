@@ -31,6 +31,7 @@ import {
   isCrInventoryFastPathEligible,
   validateFastPathPageLength,
   isNumberSortFastPathEligible,
+  isNumberSortFullCollectRequired,
   orderOpenPullNumbers,
   buildOpenPullListMeta,
   gitlabOpenPullSortQuery,
@@ -347,43 +348,31 @@ export async function mergePlan(ctx, opts) {
 const GITLAB_OPEN_PULL_COMPLIANT_MAX =
   DEFAULT_OPEN_PULL_LIST_PAGE_SIZE * MAX_CHECK_STATUS_PAGES;
 
-async function tryGitlabOpenPullFastPath(ctx, opts) {
-  if (!isCrInventoryFastPathEligible(opts)) return null;
-  const retainMax = Number(opts.retain_max);
-  const sliceSort = normalizeCrInventorySort(opts.sort ?? DEFAULT_CR_INVENTORY_SLICE_SORT);
+async function probeGitlabOpenPullPageOne(ctx, retainMax, sliceSort) {
   const maxTrusted = GITLAB_OPEN_PULL_COMPLIANT_MAX * 2;
   let path = `${projectApiPath(ctx.config, 'merge_requests')}?state=opened`;
   path = appendSortQuery(path, gitlabOpenPullSortQuery(sliceSort));
   const separator = path.includes('?') ? '&' : '?';
   const requestLimit = Math.min(retainMax, GITLAB_PAGE_SIZE);
-
-  let body;
-  let headers;
   try {
-    ({ body, headers } = await gitlabFetchWithMeta(
+    const { body, headers } = await gitlabFetchWithMeta(
       ctx.config,
       ctx.parsed,
       `${path}${separator}per_page=${requestLimit}&page=1`,
-    ));
+    );
+    if (!Array.isArray(body)) return null;
+    const totalCount = parseTotalCountHeader(headers, 'X-Total', { maxTrusted });
+    if (totalCount == null) return null;
+    const listTruncated = totalCount > GITLAB_OPEN_PULL_COMPLIANT_MAX;
+    return { body, totalCount, listTruncated, requestLimit };
   } catch {
     return null;
   }
-  if (!Array.isArray(body)) return null;
+}
 
-  const totalCount = parseTotalCountHeader(headers, 'X-Total', { maxTrusted });
-  if (totalCount == null) return null;
-
-  const listTruncated = totalCount > GITLAB_OPEN_PULL_COMPLIANT_MAX;
-  if (!listTruncated) {
-    if (!isNumberSortFastPathEligible(totalCount, retainMax, sliceSort)) return null;
-    if (!validateFastPathPageLength(totalCount, requestLimit, body.length)) return null;
-  } else if (body.length === 0) {
-    return null;
-  }
-
+function buildGitlabOpenPullMetaFromPage(body, retainMax, sliceSort, totalCount, listTruncated) {
   let numbers = orderOpenPullNumbers(body, (mr) => mr?.iid, sliceSort);
   if (numbers.length > retainMax) numbers = numbers.slice(0, retainMax);
-
   return buildOpenPullListMeta({
     totalCount,
     numbers,
@@ -392,7 +381,8 @@ async function tryGitlabOpenPullFastPath(ctx, opts) {
   });
 }
 
-async function paginateGitlabOpenPullList(ctx, opts, sliceSort) {
+async function paginateGitlabOpenPullList(ctx, opts, sliceSort, paginationOpts = {}) {
+  const { trustedTotalCount = null, numberSortFullCollect = false } = paginationOpts;
   const listLimit =
     opts.limit != null && Number.isInteger(Number(opts.limit)) && Number(opts.limit) > 0
       ? Number(opts.limit)
@@ -407,11 +397,13 @@ async function paginateGitlabOpenPullList(ctx, opts, sliceSort) {
   let path = `${projectApiPath(ctx.config, 'merge_requests')}?state=opened`;
   path = appendSortQuery(path, gitlabOpenPullSortQuery(sliceSort));
   const separator = path.includes('?') ? '&' : '?';
+  const effectiveRetainMax = numberSortFullCollect ? null : retainMax;
   const { items: all, list_truncated: listTruncated, entry_count: entryCount } =
     await paginateOffsetListPages({
       pageSize: GITLAB_PAGE_SIZE,
       listLimit,
-      retainMax,
+      retainMax: effectiveRetainMax,
+      trustedEntryCount: trustedTotalCount,
       ...(listLimit != null ? { maxPagesTruncatesWithLimit: true } : {}),
       fetchPage: async ({ page, limit }) => {
         const body = await gitlabFetch(
@@ -423,8 +415,9 @@ async function paginateGitlabOpenPullList(ctx, opts, sliceSort) {
       },
     });
   let numbers = orderOpenPullNumbers(all, (mr) => mr?.iid, sliceSort);
-  if (listLimit != null && numbers.length > listLimit) {
-    numbers = numbers.slice(0, listLimit);
+  const outputCap = listLimit ?? retainMax;
+  if (outputCap != null && numbers.length > outputCap) {
+    numbers = numbers.slice(0, outputCap);
   }
   return {
     numbers,
@@ -438,9 +431,37 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
   apiBase(ctx.config, ctx.parsed);
   requireToken();
   const sliceSort = normalizeCrInventorySort(opts.sort ?? DEFAULT_CR_INVENTORY_SLICE_SORT);
-  const fast = await tryGitlabOpenPullFastPath(ctx, { ...opts, sort: sliceSort });
-  if (fast) return fast;
-  return paginateGitlabOpenPullList(ctx, opts, sliceSort);
+  if (!isCrInventoryFastPathEligible(opts)) {
+    return paginateGitlabOpenPullList(ctx, opts, sliceSort);
+  }
+
+  const retainMax = Number(opts.retain_max);
+  const probe = await probeGitlabOpenPullPageOne(ctx, retainMax, sliceSort);
+  if (!probe) {
+    return paginateGitlabOpenPullList(ctx, opts, sliceSort);
+  }
+
+  const { body, totalCount, listTruncated, requestLimit } = probe;
+
+  if (listTruncated) {
+    if (body.length === 0) {
+      return paginateGitlabOpenPullList(ctx, opts, sliceSort, { trustedTotalCount: totalCount });
+    }
+    return buildGitlabOpenPullMetaFromPage(body, retainMax, sliceSort, totalCount, true);
+  }
+
+  if (
+    isNumberSortFastPathEligible(totalCount, retainMax, sliceSort) &&
+    validateFastPathPageLength(totalCount, requestLimit, body.length)
+  ) {
+    return buildGitlabOpenPullMetaFromPage(body, retainMax, sliceSort, totalCount, false);
+  }
+
+  const numberSortFullCollect = isNumberSortFullCollectRequired(totalCount, retainMax, sliceSort);
+  return paginateGitlabOpenPullList(ctx, opts, sliceSort, {
+    trustedTotalCount: totalCount,
+    numberSortFullCollect,
+  });
 }
 
 export async function listOpenPulls(ctx, opts = {}) {

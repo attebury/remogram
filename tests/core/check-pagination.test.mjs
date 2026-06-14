@@ -215,6 +215,17 @@ describe('paginateOffsetListPages', () => {
     expect(result.list_truncated).toBe(false);
   });
 
+  it('trustedEntryCount overrides summed entry_count when retainMax set', async () => {
+    const result = await paginateOffsetListPages({
+      pageSize: 2,
+      retainMax: 2,
+      trustedEntryCount: 5,
+      fetchPage: async ({ page }) => (page === 1 ? [{ number: 1 }] : []),
+    });
+    expect(result.items).toHaveLength(1);
+    expect(result.entry_count).toBe(5);
+  });
+
   it('listLimit exact cap at maxPages with empty probe is complete', async () => {
     const pageSize = 2;
     const maxPages = 2;

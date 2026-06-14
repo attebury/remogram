@@ -1,5 +1,6 @@
 import { ERROR_CODES } from './contracts/errors.js';
 import { DEFAULT_CHECK_STATUS_PAGE_SIZE, MAX_CHECK_STATUS_PAGES } from './caps.js';
+import { resolvePaginatedEntryCount } from './open-pull-list.js';
 
 function isOversizedIngestError(err) {
   return err?.forgeError?.code === ERROR_CODES.OVERSIZED_RAW_OUTPUT;
@@ -114,7 +115,7 @@ export async function paginateCheckStatusPages({
 /**
  * Offset/limit open-list pagination with ingest-cap backoff and optional list cap.
  * listLimit bounds request size per page; callers slice returned items when enforcing a hard cap.
- * @param {{ fetchPage: (opts: { page: number, limit: number }) => Promise<unknown[]>, pageSize: number, listLimit?: number | null, maxPages?: number, maxPagesTruncatesWithLimit?: boolean, retainMax?: number | null }} opts
+ * @param {{ fetchPage: (opts: { page: number, limit: number }) => Promise<unknown[]>, pageSize: number, listLimit?: number | null, maxPages?: number, maxPagesTruncatesWithLimit?: boolean, retainMax?: number | null, trustedEntryCount?: number | null }} opts
  * @returns {Promise<{ items: unknown[], list_truncated: boolean, entry_count?: number }>}
  */
 export async function paginateOffsetListPages({
@@ -124,6 +125,7 @@ export async function paginateOffsetListPages({
   maxPages = MAX_CHECK_STATUS_PAGES,
   maxPagesTruncatesWithLimit = false,
   retainMax = null,
+  trustedEntryCount = null,
 }) {
   const all = [];
   let entryCount = 0;
@@ -160,6 +162,10 @@ export async function paginateOffsetListPages({
   return {
     items: all,
     list_truncated: listTruncated,
-    ...(retainMax != null ? { entry_count: entryCount } : {}),
+    ...(retainMax != null || trustedEntryCount != null
+      ? {
+          entry_count: resolvePaginatedEntryCount(trustedEntryCount, entryCount),
+        }
+      : {}),
   };
 }

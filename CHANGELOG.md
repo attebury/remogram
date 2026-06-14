@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- **`cr inventory` fallback:** preserve trusted forge `entry_count` (header/search total) when fast path rejects and pagination fallback runs
+- **Gitea `recent_created` when total exceeds limit:** fetch `sort=oldest` tail page for globally newest-created slice
+- **Gitea/GitLab number sorts when total exceeds limit:** full-list collect within compliant max before client sort and slice
+- **GitHub fallback:** include search `total_count` as `entry_count` when fast path rejects
 - **`cr inventory --sort recent_created` (Gitea):** map to `sort=oldest` and reverse page order so it differs from `recent_update`
 - **Open-PR fast path:** reject header/body length mismatch; skip fast path for `number_asc` / `number_desc` when total open count exceeds `--limit` (fallback to pagination)
 

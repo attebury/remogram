@@ -8,6 +8,10 @@ import {
   forgeOrderAuthoritative,
   validateFastPathPageLength,
   isNumberSortFastPathEligible,
+  resolvePaginatedEntryCount,
+  isRecentCreatedFastPathEligible,
+  giteaRecentCreatedTailPage,
+  isNumberSortFullCollectRequired,
   prepareGiteaOpenPullPageItems,
   orderOpenPullNumbers,
   buildOpenPullListMeta,
@@ -111,5 +115,27 @@ describe('open-pull-list', () => {
       3, 2, 1,
     ]);
     expect(prepareGiteaOpenPullPageItems(items, 'recent_update')).toBe(items);
+  });
+
+  it('resolvePaginatedEntryCount prefers trusted total', () => {
+    expect(resolvePaginatedEntryCount(5, 1)).toBe(5);
+    expect(resolvePaginatedEntryCount(null, 3)).toBe(3);
+  });
+
+  it('isRecentCreatedFastPathEligible rejects Gitea recent_created when total exceeds retain_max', () => {
+    expect(isRecentCreatedFastPathEligible(3, 3, 'recent_created', 'gitea-api')).toBe(true);
+    expect(isRecentCreatedFastPathEligible(10, 3, 'recent_created', 'gitea-api')).toBe(false);
+    expect(isRecentCreatedFastPathEligible(10, 3, 'recent_created', 'github-api')).toBe(true);
+  });
+
+  it('giteaRecentCreatedTailPage computes last page index', () => {
+    expect(giteaRecentCreatedTailPage(250, 100)).toBe(3);
+    expect(giteaRecentCreatedTailPage(10, 100)).toBe(1);
+  });
+
+  it('isNumberSortFullCollectRequired when number sort and total exceeds retain_max', () => {
+    expect(isNumberSortFullCollectRequired(10, 3, 'number_asc')).toBe(true);
+    expect(isNumberSortFullCollectRequired(3, 3, 'number_asc')).toBe(false);
+    expect(isNumberSortFullCollectRequired(10, 3, 'recent_update')).toBe(false);
   });
 });

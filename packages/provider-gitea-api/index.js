@@ -34,6 +34,9 @@ import {
   isCrInventoryFastPathEligible,
   validateFastPathPageLength,
   isNumberSortFastPathEligible,
+  isRecentCreatedFastPathEligible,
+  giteaRecentCreatedTailPage,
+  isNumberSortFullCollectRequired,
   prepareGiteaOpenPullPageItems,
   orderOpenPullNumbers,
   buildOpenPullListMeta,
@@ -276,6 +279,14 @@ export function providerCapabilities() {
     ...openPullListCapabilityFacts({
       totalCountSource: 'response_header',
       totalCountHeader: 'X-Total-Count',
+      sliceSortNotes: {
+        recent_created:
+          'sort=oldest; fetches tail page when total exceeds limit; page reversed for newest-first',
+        number_asc:
+          'full-list collect within compliant_max when total exceeds limit, then client sort',
+        number_desc:
+          'full-list collect within compliant_max when total exceeds limit, then client sort',
+      },
     }),
   };
 }
@@ -388,44 +399,32 @@ export async function crOpen(ctx, { head, base, title, body: prBody }) {
 const GITEA_OPEN_PULL_COMPLIANT_MAX =
   DEFAULT_OPEN_PULL_LIST_PAGE_SIZE * MAX_CHECK_STATUS_PAGES;
 
-async function tryGiteaOpenPullFastPath(ctx, opts) {
-  if (!isCrInventoryFastPathEligible(opts)) return null;
-  const retainMax = Number(opts.retain_max);
-  const sliceSort = normalizeCrInventorySort(opts.sort ?? DEFAULT_CR_INVENTORY_SLICE_SORT);
+async function probeGiteaOpenPullPageOne(ctx, retainMax, sliceSort) {
   const maxTrusted = GITEA_OPEN_PULL_COMPLIANT_MAX * 2;
   let path = `${repoApiPath(ctx.config, 'pulls')}?state=open`;
   path = appendSortQuery(path, giteaOpenPullSortQuery(sliceSort));
   const pageSep = path.includes('?') ? '&' : '?';
   const requestLimit = Math.min(retainMax, GITEA_PAGE_SIZE);
-
-  let body;
-  let headers;
   try {
-    ({ body, headers } = await giteaFetchWithMeta(
+    const { body, headers } = await giteaFetchWithMeta(
       ctx.config,
       ctx.parsed,
       `${path}${pageSep}limit=${requestLimit}&page=1`,
-    ));
+    );
+    if (!Array.isArray(body)) return null;
+    const totalCount = parseTotalCountHeader(headers, 'X-Total-Count', { maxTrusted });
+    if (totalCount == null) return null;
+    const listTruncated = totalCount > GITEA_OPEN_PULL_COMPLIANT_MAX;
+    return { body, totalCount, listTruncated, requestLimit };
   } catch {
     return null;
   }
-  if (!Array.isArray(body)) return null;
+}
 
-  const totalCount = parseTotalCountHeader(headers, 'X-Total-Count', { maxTrusted });
-  if (totalCount == null) return null;
-
-  const listTruncated = totalCount > GITEA_OPEN_PULL_COMPLIANT_MAX;
-  if (!listTruncated) {
-    if (!isNumberSortFastPathEligible(totalCount, retainMax, sliceSort)) return null;
-    if (!validateFastPathPageLength(totalCount, requestLimit, body.length)) return null;
-  } else if (body.length === 0) {
-    return null;
-  }
-
+function buildGiteaOpenPullMetaFromPage(body, retainMax, sliceSort, totalCount, listTruncated) {
   const pageItems = prepareGiteaOpenPullPageItems(body, sliceSort);
   let numbers = orderOpenPullNumbers(pageItems, (pr) => pr?.number, sliceSort);
   if (numbers.length > retainMax) numbers = numbers.slice(0, retainMax);
-
   return buildOpenPullListMeta({
     totalCount,
     numbers,
@@ -434,7 +433,27 @@ async function tryGiteaOpenPullFastPath(ctx, opts) {
   });
 }
 
-async function paginateGiteaOpenPullList(ctx, opts, sliceSort) {
+async function fetchGiteaRecentCreatedTailSlice(ctx, retainMax, sliceSort, totalCount) {
+  const tailPage = giteaRecentCreatedTailPage(totalCount, GITEA_PAGE_SIZE);
+  let path = `${repoApiPath(ctx.config, 'pulls')}?state=open`;
+  path = appendSortQuery(path, giteaOpenPullSortQuery(sliceSort));
+  const pageSep = path.includes('?') ? '&' : '?';
+  let body;
+  try {
+    body = await giteaFetch(
+      ctx.config,
+      ctx.parsed,
+      `${path}${pageSep}limit=${GITEA_PAGE_SIZE}&page=${tailPage}`,
+    );
+  } catch {
+    return null;
+  }
+  if (!Array.isArray(body) || body.length === 0) return null;
+  return buildGiteaOpenPullMetaFromPage(body, retainMax, sliceSort, totalCount, false);
+}
+
+async function paginateGiteaOpenPullList(ctx, opts, sliceSort, paginationOpts = {}) {
+  const { trustedTotalCount = null, numberSortFullCollect = false } = paginationOpts;
   const listLimit =
     opts.limit != null && Number.isInteger(Number(opts.limit)) && Number(opts.limit) > 0
       ? Number(opts.limit)
@@ -451,11 +470,13 @@ async function paginateGiteaOpenPullList(ctx, opts, sliceSort) {
   let path = `${repoApiPath(ctx.config, 'pulls')}?state=open`;
   path = appendSortQuery(path, giteaOpenPullSortQuery(sliceSort));
   const pageSep = path.includes('?') ? '&' : '?';
+  const effectiveRetainMax = numberSortFullCollect ? null : retainMax;
   const { items: all, list_truncated: listTruncated, entry_count: entryCount } =
     await paginateOffsetListPages({
       pageSize,
       listLimit,
-      retainMax,
+      retainMax: effectiveRetainMax,
+      trustedEntryCount: trustedTotalCount,
       ...(listLimit != null && pageSize < listLimit ? { maxPagesTruncatesWithLimit: true } : {}),
       fetchPage: async ({ page, limit }) => {
         const body = await giteaFetch(
@@ -471,8 +492,9 @@ async function paginateGiteaOpenPullList(ctx, opts, sliceSort) {
     (pr) => pr?.number,
     sliceSort,
   );
-  if (listLimit != null && numbers.length > listLimit) {
-    numbers = numbers.slice(0, listLimit);
+  const outputCap = listLimit ?? retainMax;
+  if (outputCap != null && numbers.length > outputCap) {
+    numbers = numbers.slice(0, outputCap);
   }
   return {
     numbers,
@@ -485,9 +507,47 @@ async function paginateGiteaOpenPullList(ctx, opts, sliceSort) {
 export async function listOpenPullsWithMeta(ctx, opts = {}) {
   requireToken();
   const sliceSort = normalizeCrInventorySort(opts.sort ?? DEFAULT_CR_INVENTORY_SLICE_SORT);
-  const fast = await tryGiteaOpenPullFastPath(ctx, { ...opts, sort: sliceSort });
-  if (fast) return fast;
-  return paginateGiteaOpenPullList(ctx, opts, sliceSort);
+  if (!isCrInventoryFastPathEligible(opts)) {
+    return paginateGiteaOpenPullList(ctx, opts, sliceSort);
+  }
+
+  const retainMax = Number(opts.retain_max);
+  const probe = await probeGiteaOpenPullPageOne(ctx, retainMax, sliceSort);
+  if (!probe) {
+    return paginateGiteaOpenPullList(ctx, opts, sliceSort);
+  }
+
+  const { body, totalCount, listTruncated, requestLimit } = probe;
+
+  if (listTruncated) {
+    if (body.length === 0) {
+      return paginateGiteaOpenPullList(ctx, opts, sliceSort, { trustedTotalCount: totalCount });
+    }
+    return buildGiteaOpenPullMetaFromPage(body, retainMax, sliceSort, totalCount, true);
+  }
+
+  if (
+    sliceSort === 'recent_created' &&
+    !isRecentCreatedFastPathEligible(totalCount, retainMax, sliceSort, 'gitea-api')
+  ) {
+    const tail = await fetchGiteaRecentCreatedTailSlice(ctx, retainMax, sliceSort, totalCount);
+    if (tail) return tail;
+    return paginateGiteaOpenPullList(ctx, opts, sliceSort, { trustedTotalCount: totalCount });
+  }
+
+  if (
+    isRecentCreatedFastPathEligible(totalCount, retainMax, sliceSort, 'gitea-api') &&
+    isNumberSortFastPathEligible(totalCount, retainMax, sliceSort) &&
+    validateFastPathPageLength(totalCount, requestLimit, body.length)
+  ) {
+    return buildGiteaOpenPullMetaFromPage(body, retainMax, sliceSort, totalCount, false);
+  }
+
+  const numberSortFullCollect = isNumberSortFullCollectRequired(totalCount, retainMax, sliceSort);
+  return paginateGiteaOpenPullList(ctx, opts, sliceSort, {
+    trustedTotalCount: totalCount,
+    numberSortFullCollect,
+  });
 }
 
 export async function listOpenPulls(ctx, opts = {}) {

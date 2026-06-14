@@ -982,6 +982,51 @@ describe('provider-gitea-api fixtures', () => {
     const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3 });
     expect(global.fetch.mock.calls.length).toBeGreaterThan(1);
     expect(meta.numbers).toEqual([1]);
+    expect(meta.entry_count).toBe(5);
+  });
+
+  it('listOpenPullsWithMeta recent_created fetches tail page when total exceeds retain_max', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(
+        [{ number: 1, state: 'open' }, { number: 2, state: 'open' }, { number: 3, state: 'open' }],
+        { 'X-Total-Count': '250' },
+      ),
+    );
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse([
+        { number: 248, state: 'open' },
+        { number: 249, state: 'open' },
+        { number: 250, state: 'open' },
+      ]),
+    );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'recent_created' });
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(String(global.fetch.mock.calls[1][0])).toContain('page=3');
+    expect(String(global.fetch.mock.calls[1][0])).toContain('sort=oldest');
+    expect(meta.numbers).toEqual([250, 249, 248]);
+    expect(meta.entry_count).toBe(250);
+  });
+
+  it('listOpenPullsWithMeta number_asc full-collects when total exceeds retain_max', async () => {
+    const allMrs = [
+      { number: 30, state: 'open' },
+      { number: 10, state: 'open' },
+      { number: 20, state: 'open' },
+      { number: 5, state: 'open' },
+      { number: 1, state: 'open' },
+      { number: 7, state: 'open' },
+      { number: 8, state: 'open' },
+      { number: 9, state: 'open' },
+      { number: 2, state: 'open' },
+      { number: 3, state: 'open' },
+    ];
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(allMrs.slice(0, 3), { 'X-Total-Count': '10' }),
+    );
+    global.fetch.mockResolvedValueOnce(jsonPageResponse(allMrs));
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'number_asc' });
+    expect(meta.entry_count).toBe(10);
+    expect(meta.numbers).toEqual([1, 2, 3]);
   });
 
   it('listOpenPullsWithMeta skips fast path for number_asc when total exceeds retain_max', async () => {
@@ -1021,6 +1066,14 @@ describe('provider-gitea-api fixtures', () => {
       supported_slice_sorts: ['number_asc', 'number_desc', 'recent_update', 'recent_created'],
       total_count_source: 'response_header',
       total_count_header: 'X-Total-Count',
+      slice_sort_notes: {
+        recent_created:
+          'sort=oldest; fetches tail page when total exceeds limit; page reversed for newest-first',
+        number_asc:
+          'full-list collect within compliant_max when total exceeds limit, then client sort',
+        number_desc:
+          'full-list collect within compliant_max when total exceeds limit, then client sort',
+      },
     });
     const crOpen = body.commands.find((c) => c.name === 'cr_open');
     expect(crOpen).toMatchObject({ implemented: true, auth_class: 'token_required' });
