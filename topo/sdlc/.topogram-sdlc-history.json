@@ -6145,5 +6145,81 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "task_forge_trust_round12_wave1": [
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T05:15:05.568Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T05:15:05.920Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "task_forge_trust_round12_wave2": [
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T05:15:06.215Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T05:15:06.579Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "task_forge_trust_round12_wave3": [
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T05:15:06.883Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T05:15:07.227Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "task_forge_trust_round12_wave4": [
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T05:15:07.520Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T05:15:07.865Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "goal_branch_forge_trust_round12": [
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-14T05:15:13.077Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "bd546c4"
+      ]
+    }
   ]
 }
