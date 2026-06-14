@@ -5948,6 +5948,16 @@
       "evidence_refs": [
         "f01bff0"
       ]
+    },
+    {
+      "from": "done",
+      "to": "archived",
+      "at": "2026-06-14T04:53:30.740Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "12c6c7e"
+      ]
     }
   ],
   "ac_link_pathname_confinement_round11": [
