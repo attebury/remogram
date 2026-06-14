@@ -41,7 +41,7 @@ export {
 export { assertGitRef, assertGitRemote } from './git-args.js';
 export { gitRevParse, gitCurrentBranch, gitAheadBehind, gitRepoRoot, gitDiffNameOnly } from './git-local.js';
 export { buildRefInventoryBody, refsInventory } from './ref-inventory.js';
-export { buildCrInventoryEntry, buildHeadReconcile, crInventory, DEFAULT_CR_INVENTORY_LIMIT, normalizeCrInventoryLimit } from './cr-inventory.js';
+export { buildCrInventoryEntry, buildHeadReconcile, crInventory, DEFAULT_CR_INVENTORY_LIMIT, DEFAULT_CR_INVENTORY_SAFE_LIMIT, normalizeCrInventoryLimit } from './cr-inventory.js';
 export { mergeBlockersFromFacts, isOpenPrState } from './merge-blockers.js';
 export {
   resolveMergePlanPathScope,

@@ -261,6 +261,56 @@ describe('cr inventory', () => {
     ]);
   });
 
+  it('crInventory uses safe default limit when limit omitted', async () => {
+    let receivedLimit;
+    const provider = {
+      listOpenPullsWithMeta: async (_ctx, opts) => {
+        receivedLimit = opts?.limit;
+        return { numbers: [1, 2, 3, 4, 5], list_truncated: true };
+      },
+      prView: async (_ctx, { number }) => ({
+        pr_number: number,
+        state: 'open',
+        mergeability: 'clean',
+      }),
+      prChecks: async () => ({ check_conclusion: 'success', statuses: [] }),
+    };
+    const body = await crInventory(ctx, provider);
+    expect(receivedLimit).toBe(3);
+    expect(body.entries).toHaveLength(3);
+    expect(body.entry_count).toBe(5);
+    expect(body.truncated).toBe(true);
+    expect(body.list_truncated).toBe(true);
+  });
+
+  it('crInventory at --limit 4 degrades oversized per-PR checks without failing slice', async () => {
+    const provider = {
+      listOpenPullsWithMeta: async (_ctx, opts) => ({
+        numbers: [1, 2, 3, 4].slice(0, opts?.limit ?? 4),
+        list_truncated: false,
+      }),
+      prView: async (_ctx, { number }) => ({
+        pr_number: number,
+        state: 'open',
+        mergeability: 'clean',
+      }),
+      prChecks: async (_ctx, { number }) => {
+        if (number >= 3) {
+          const err = new Error('checks oversized');
+          err.forgeError = { code: 'oversized_raw_output', message: 'too big' };
+          throw err;
+        }
+        return { check_conclusion: 'success', statuses: [] };
+      },
+    };
+    const body = await crInventory(ctx, provider, { limit: 4 });
+    expect(body.entries).toHaveLength(2);
+    expect(body.entries_skipped).toEqual([
+      { pr_number: 3, error_code: 'oversized_raw_output' },
+      { pr_number: 4, error_code: 'oversized_raw_output' },
+    ]);
+  });
+
   it('crInventory propagates list_truncated from listOpenPullsWithMeta', async () => {
     const provider = {
       listOpenPullsWithMeta: async () => ({ numbers: [1], list_truncated: true }),

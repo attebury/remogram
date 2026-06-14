@@ -7484,6 +7484,13 @@
       "evidence_refs": [
         "pr:268"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T18:01:34.326Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ],
   "ac_cr_inventory_default_bounded_slice": [
@@ -7542,6 +7549,22 @@
       "evidence_refs": [
         "pr:269"
       ]
+    }
+  ],
+  "task_cr_inventory_default_bounded": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T18:01:34.206Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T18:01:34.264Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ]
 }
