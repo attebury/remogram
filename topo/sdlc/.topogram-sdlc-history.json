@@ -9007,5 +9007,129 @@
         "pr:333"
       ]
     }
+  ],
+  "pitch_cr_inventory_list_v2_review_followup": [
+    {
+      "from": "draft",
+      "to": "covered",
+      "at": "2026-06-14T22:28:39.976Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "task_cr_inventory_list_v2_review_followup": [
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T22:28:44.753Z",
+      "by": "actor_integration_lane",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T22:28:45.231Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "goal_branch_cr_inventory_list_v2_review_followup": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T22:28:45.598Z",
+      "by": "actor_integration_lane",
+      "note": null
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T22:28:45.925Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:339"
+      ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T22:28:47.373Z",
+      "by": "actor_integration_lane",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-14T22:28:49.427Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:339"
+      ]
+    }
+  ],
+  "req_cr_inventory_gitea_recent_created_sort": [
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-14T22:28:59.635Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "req_cr_inventory_fast_path_sanity": [
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-14T22:28:59.920Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_cr_inventory_list_v2_review_followup#gitea_recent_created": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-14T22:29:09.332Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_cr_inventory_list_v2_review_followup#fast_path_validators": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-14T22:29:09.602Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_cr_inventory_list_v2_review_followup#tests": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-14T22:29:09.878Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_cr_inventory_list_v2_review_followup#verify": [
+    {
+      "from": "pending",
+      "to": "done",
+      "at": "2026-06-14T22:29:10.178Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "plan_cr_inventory_list_v2_review_followup": [
+    {
+      "from": "active",
+      "to": "complete",
+      "at": "2026-06-14T22:29:10.456Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
   ]
 }

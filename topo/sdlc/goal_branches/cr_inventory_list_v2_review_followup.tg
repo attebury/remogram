@@ -4,5 +4,5 @@ goal_branch goal_branch_cr_inventory_list_v2_review_followup {
   branch_ref "goal/cr-inventory-list-v2-review-followup"
   task task_cr_inventory_list_v2_review_followup
   evidence_refs [local:topo/sdlc/pitches/cr_inventory_list_v2_review_followup.tg, local:topo/sdlc/requirements/cr_inventory_gitea_recent_created_sort.tg, local:topo/sdlc/requirements/cr_inventory_fast_path_sanity.tg, local:topo/sdlc/plans/cr_inventory_list_v2_review_followup.tg, local:topo/sdlc/tasks/cr_inventory_list_v2_review_followup.tg, local:topo/sdlc/acceptance_criteria/cr_inventory_list_v2_review_followup.tg, local:topo/verifications/cr-inventory-list-v2-review-followup.tg, forge:issue/337, forge:pr/333]
-  status draft
+  status done
 }
