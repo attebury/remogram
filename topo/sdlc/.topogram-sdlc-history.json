@@ -8283,6 +8283,16 @@
       "evidence_refs": [
         "forge:pr/310"
       ]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T20:50:13.905Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/311"
+      ]
     }
   ],
   "req_gitleaks_local_runner_install": [
@@ -8326,6 +8336,78 @@
       "note": null,
       "evidence_refs": [
         "forge:pr/310"
+      ]
+    }
+  ],
+  "ac_gitleaks_no_sudo_install": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:50:08.453Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/311"
+      ]
+    }
+  ],
+  "ac_gitleaks_reuse_path": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:50:08.852Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/311"
+      ]
+    }
+  ],
+  "ac_gitleaks_runner_temp_path": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:50:09.131Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/311"
+      ]
+    }
+  ],
+  "ac_gitleaks_workflow_guard_tests": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:50:09.496Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/311"
+      ]
+    }
+  ],
+  "ac_gitleaks_scan_steps_unchanged": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:50:09.855Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/311"
+      ]
+    }
+  ],
+  "plan_gitleaks_local_runner_install": [
+    {
+      "from": "draft",
+      "to": "active",
+      "at": "2026-06-14T20:50:10.175Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/311"
       ]
     }
   ]

@@ -12,7 +12,7 @@ task task_gitleaks_local_runner_install {
   affects [cap_forge_remote_ops]
   blocked_by []
   architecture_patterns [fail_closed_gate]
-  disposition backlog
+  disposition active
   priority high
   work_type implementation
   status unclaimed
