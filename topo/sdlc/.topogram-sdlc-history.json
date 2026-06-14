@@ -4519,5 +4519,41 @@
         "verification:verification_forge_trust_round6_wave3"
       ]
     }
+  ],
+  "ac_mcp_pr_checks_schema_round6": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T02:10:50.228Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_export_denylist_test_round6": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T02:10:50.460Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_core_secret_redaction_round6": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T02:10:50.723Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_git_ahead_behind_validated_round6": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T02:10:50.984Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
   ]
 }
