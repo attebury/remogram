@@ -4,5 +4,5 @@ goal_branch goal_branch_forge_dogfood_reliability {
   branch_ref "goal/forge-dogfood-reliability"
   task task_gitleaks_local_runner_install
   evidence_refs [local:topo/sdlc/pitches/forge_dogfood_reliability.tg, local:topo/sdlc/requirements/gitleaks_local_runner_install.tg, local:topo/sdlc/requirements/cr_inventory_list_complete.tg, local:topo/sdlc/plans/gitleaks_local_runner_install.tg, local:topo/sdlc/plans/cr_inventory_list_complete.tg, local:topo/sdlc/tasks/gitleaks_local_runner_install.tg, local:topo/sdlc/tasks/cr_inventory_list_complete.tg, local:topo/sdlc/acceptance_criteria/forge_dogfood_reliability.tg, forge:issue/289, forge:issue/281]
-  status approved
+  status active
 }
