@@ -15,8 +15,8 @@ task task_cr_open_scan_hardening {
   disposition active
   priority high
   work_type implementation
-  claimed_by []
+  claimed_by [actor_coding_agent]
   bug_discovery no_bug_observed
   bug_discovery_rationale "In-depth review follow-up from merged impl PR #301; scan/error contract gaps not a forge bug."
-  status unclaimed
+  status in-progress
 }

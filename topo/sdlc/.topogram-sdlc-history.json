@@ -8161,6 +8161,13 @@
       "evidence_refs": [
         "forge:pr/304"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T20:27:34.839Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ],
   "ac_idempotency_scan_ingest_backoff": [
@@ -8231,6 +8238,22 @@
       "at": "2026-06-14T20:27:16.440Z",
       "by": "actor_plan_lane",
       "note": null
+    }
+  ],
+  "task_cr_open_scan_hardening": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T20:27:34.713Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T20:27:34.776Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ]
 }

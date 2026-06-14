@@ -17,6 +17,10 @@ export {
 } from './contracts/observer-fact-inventory.js';
 export { ERROR_CODES, forgeError } from './contracts/errors.js';
 export {
+  FORGE_ERROR_FIELD_ALLOWLIST,
+  normalizeForgeErrorFields,
+} from './contracts/forge-error-fields.js';
+export {
   capText,
   sanitizeField,
   sanitizeUrl,
@@ -31,6 +35,7 @@ export {
   getEffectiveIngestMaxBytes,
   forgeIngestCapabilityFacts,
   checkPaginationCapabilityFacts,
+  idempotencyScanCapabilityFacts,
 } from './caps.js';
 export {
   paginateCheckStatusPages,

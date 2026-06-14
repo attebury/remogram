@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- **CR open scan hardening:** idempotency scan ingest backoff; allowlisted/validated `forge_error` trusted fields; `idempotency_scan` in provider capabilities; default-cap scan regression tests
 - **CR open polish:** dedicated open-pull idempotency pagination caps; `idempotency_scan` metadata on `idempotency_scan_incomplete`; packet contract for `reused_existing`; CLI/MCP truncated-scan integration tests; Observer retry docs
 - **CR open review follow-up:** paginated fail-closed idempotency scan (`idempotency_scan_incomplete`); `reused_existing` on idempotent packets; write-command enum DRY; MCP/doctor negative tests; consumer CLI/MCP write boundary docs
 - **CR open hardening:** idempotent open for matching head+base; structured `unparseable_provider_output` for invalid provider pull numbers; MCP `destructiveHint` on `cr_open`; expanded provider/CLI/MCP tests
