@@ -11,5 +11,5 @@ plan plan_forge_trust_round10 {
     step wave4_proof_hygiene status pending description "Wave 4 — dual-stream max-pages tests, mock-provider and semantic-diff fixtures."
     step verify status pending description "npm test, topogram check green on remo tip after cluster closeout."
   }
-  status draft
+  status superseded
 }

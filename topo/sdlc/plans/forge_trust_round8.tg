@@ -11,5 +11,5 @@ plan plan_forge_trust_round8 {
     step wave4_edge_hardening status done description "Wave 4 — remo-only secret-scan, pre-push behavioral test, Link-header same-origin validation."
     step verify status done description "npm test, topogram check green on remo tip after cluster closeout."
   }
-  status draft
+  status superseded
 }

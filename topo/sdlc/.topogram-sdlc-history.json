@@ -4078,6 +4078,16 @@
       "evidence_refs": [
         "pr:135"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-14T07:22:55.500Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
     }
   ],
   "task_cr_inventory_provider_list_limit": [
@@ -4242,6 +4252,16 @@
       "note": null,
       "evidence_refs": [
         "pr:141"
+      ]
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-14T07:22:55.726Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
       ]
     }
   ],
@@ -5778,6 +5798,16 @@
       "evidence_refs": [
         "pr:188"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-14T07:22:55.970Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
     }
   ],
   "task_forge_trust_round10_wave1": [
@@ -6039,6 +6069,16 @@
       "note": null,
       "evidence_refs": [
         "pr:200"
+      ]
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-14T07:22:56.201Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
       ]
     }
   ],
@@ -6535,6 +6575,16 @@
       "evidence_refs": [
         "pr:approve-r14"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-14T07:22:56.706Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
     }
   ],
   "plan_forge_trust_round14": [
@@ -6771,6 +6821,16 @@
       "evidence_refs": [
         "pr:245"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-14T07:22:55.271Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
     }
   ],
   "task_gitea_commit_status_normalization_wave1": [
@@ -6794,6 +6854,314 @@
       "at": "2026-06-14T06:35:27.165Z",
       "by": "actor_integration_lane",
       "note": null
+    }
+  ],
+  "bug_gitea_commit_status_field_mismatch": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T07:22:33.818Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:247"
+      ]
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T07:22:50.573Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:247"
+      ]
+    }
+  ],
+  "bug_gitea_commit_status_duplicate_context_stale": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T07:22:52.932Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:247"
+      ]
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T07:22:53.367Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:247"
+      ]
+    }
+  ],
+  "req_forge_trust_round12": [
+    {
+      "from": "approved",
+      "to": "satisfied",
+      "at": "2026-06-14T07:22:56.432Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "pitch_gitea_commit_status_normalization": [
+    {
+      "from": "draft",
+      "to": "rejected",
+      "at": "2026-06-14T07:23:17.791Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "pitch_cr_inventory_provider_list_limit": [
+    {
+      "from": "draft",
+      "to": "rejected",
+      "at": "2026-06-14T07:23:18.042Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "pitch_forge_trust_round6": [
+    {
+      "from": "draft",
+      "to": "rejected",
+      "at": "2026-06-14T07:23:18.305Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "pitch_forge_trust_round7": [
+    {
+      "from": "draft",
+      "to": "rejected",
+      "at": "2026-06-14T07:23:18.539Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "pitch_forge_trust_round8": [
+    {
+      "from": "draft",
+      "to": "rejected",
+      "at": "2026-06-14T07:23:18.765Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "pitch_forge_trust_round9": [
+    {
+      "from": "draft",
+      "to": "rejected",
+      "at": "2026-06-14T07:23:18.994Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "pitch_forge_trust_round10": [
+    {
+      "from": "draft",
+      "to": "rejected",
+      "at": "2026-06-14T07:23:19.244Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "pitch_forge_trust_round11": [
+    {
+      "from": "draft",
+      "to": "rejected",
+      "at": "2026-06-14T07:23:19.467Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "pitch_forge_trust_round12": [
+    {
+      "from": "draft",
+      "to": "rejected",
+      "at": "2026-06-14T07:23:19.703Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "pitch_forge_trust_round13": [
+    {
+      "from": "draft",
+      "to": "rejected",
+      "at": "2026-06-14T07:23:19.958Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "pitch_forge_trust_round14": [
+    {
+      "from": "draft",
+      "to": "rejected",
+      "at": "2026-06-14T07:23:20.224Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "plan_forge_trust_round6": [
+    {
+      "from": "draft",
+      "to": "superseded",
+      "at": "2026-06-14T07:23:22.632Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "plan_forge_trust_round7": [
+    {
+      "from": "draft",
+      "to": "superseded",
+      "at": "2026-06-14T07:23:23.090Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "plan_forge_trust_round8": [
+    {
+      "from": "draft",
+      "to": "superseded",
+      "at": "2026-06-14T07:23:23.537Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "plan_forge_trust_round9": [
+    {
+      "from": "draft",
+      "to": "superseded",
+      "at": "2026-06-14T07:23:23.975Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "plan_cr_inventory_provider_list_limit": [
+    {
+      "from": "draft",
+      "to": "superseded",
+      "at": "2026-06-14T07:23:24.417Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "plan_forge_trust_round10": [
+    {
+      "from": "draft",
+      "to": "superseded",
+      "at": "2026-06-14T07:23:24.865Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "plan_forge_trust_round11": [
+    {
+      "from": "draft",
+      "to": "superseded",
+      "at": "2026-06-14T07:23:25.306Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "plan_forge_trust_round12": [
+    {
+      "from": "draft",
+      "to": "superseded",
+      "at": "2026-06-14T07:23:25.745Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "plan_forge_trust_round13": [
+    {
+      "from": "draft",
+      "to": "superseded",
+      "at": "2026-06-14T07:23:26.177Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
+    }
+  ],
+  "plan_gitea_commit_status_normalization": [
+    {
+      "from": "draft",
+      "to": "superseded",
+      "at": "2026-06-14T07:23:26.617Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "archive:goal/gitea-commit-status-normalization"
+      ]
     }
   ]
 }

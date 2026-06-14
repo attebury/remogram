@@ -8,5 +8,5 @@ pitch pitch_forge_trust_round6 {
   no_go_areas "Hand-editing lifecycle status; rewriting rounds 1–5 archaeology; re-scoping cr-inventory list-limit work already archived on remo."
   affects [cap_forge_remote_ops]
   priority critical
-  status draft
+  status rejected
 }

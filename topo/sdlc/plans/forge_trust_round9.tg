@@ -11,5 +11,5 @@ plan plan_forge_trust_round9 {
     step wave4_internals status done description "Wave 4 — strict mergeBlockers, DRY paginateCheckStatusPages backoff."
     step verify status done description "npm test, topogram check green on remo tip after cluster closeout."
   }
-  status draft
+  status superseded
 }

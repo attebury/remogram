@@ -11,5 +11,5 @@ plan plan_forge_trust_round11 {
     step wave4_proof_docs status pending description "Wave 4 — mock contract test, README/skill one-liner, residual proof gaps."
     step verify status pending description "npm test, topogram check green on remo tip after cluster closeout."
   }
-  status draft
+  status superseded
 }
