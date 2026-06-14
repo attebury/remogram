@@ -17,8 +17,8 @@ task task_cr_inventory_list_v2_wave1 {
   work_type implementation
   claimed_by [actor_coding_agent]
   bug_discovery no_bug_observed
-  bug_discovery_rationale "feature work"
-  status claimed
+  bug_discovery_rationale "impl merged PR 333"
+  status done
 }
 
 task task_cr_inventory_list_v2_wave2 {
@@ -40,8 +40,8 @@ task task_cr_inventory_list_v2_wave2 {
   work_type implementation
   claimed_by [actor_coding_agent]
   bug_discovery no_bug_observed
-  bug_discovery_rationale "feature work"
-  status claimed
+  bug_discovery_rationale "impl merged PR 333"
+  status done
 }
 
 task task_cr_inventory_list_v2_wave3 {
@@ -63,6 +63,6 @@ task task_cr_inventory_list_v2_wave3 {
   work_type implementation
   claimed_by [actor_coding_agent]
   bug_discovery no_bug_observed
-  bug_discovery_rationale "feature work"
-  status claimed
+  bug_discovery_rationale "impl merged PR 333"
+  status done
 }

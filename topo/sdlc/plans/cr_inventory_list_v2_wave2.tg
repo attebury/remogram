@@ -4,8 +4,8 @@ plan plan_cr_inventory_list_v2_wave2 {
   task task_cr_inventory_list_v2_wave2
   architecture_patterns [contract_boundary, fail_closed_gate]
   steps {
-    step gitlab_fast_path status pending description "X-Total fast path and order_by/sort mapping."
-    step verify status pending description "gitlab-api tests and npm test green."
+    step gitlab_fast_path status done description "X-Total fast path and order_by/sort mapping."
+    step verify status done description "gitlab-api tests and npm test green."
   }
-  status draft
+  status complete
 }

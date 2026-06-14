@@ -8914,5 +8914,98 @@
       "by": "actor_integration_lane",
       "note": null
     }
+  ],
+  "pitch_cr_inventory_list_v2": [
+    {
+      "from": "draft",
+      "to": "covered",
+      "at": "2026-06-14T22:00:18.971Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "task_cr_inventory_list_v2_wave1": [
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T22:00:36.067Z",
+      "by": "actor_integration_lane",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T22:00:54.315Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "task_cr_inventory_list_v2_wave2": [
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T22:00:59.147Z",
+      "by": "actor_integration_lane",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T22:00:59.640Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "task_cr_inventory_list_v2_wave3": [
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T22:01:00.066Z",
+      "by": "actor_integration_lane",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T22:01:00.618Z",
+      "by": "actor_integration_lane",
+      "note": null
+    }
+  ],
+  "goal_branch_cr_inventory_list_v2": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T22:01:09.730Z",
+      "by": "actor_integration_lane",
+      "note": null
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T22:01:09.989Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:334"
+      ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T22:01:10.254Z",
+      "by": "actor_integration_lane",
+      "note": null
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-14T22:01:10.517Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:333"
+      ]
+    }
   ]
 }
