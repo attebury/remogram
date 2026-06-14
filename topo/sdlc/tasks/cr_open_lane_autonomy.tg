@@ -17,6 +17,6 @@ task task_cr_open_lane_autonomy {
   work_type implementation
   claimed_by [actor_coding_agent]
   bug_discovery no_bug_observed
-  bug_discovery_rationale "Forge issue #272: product gap for lane autonomy; control-plane shim exists but is not product boundary."
-  status in-progress
+  bug_discovery_rationale "Wave proof passed; no forge bug linked for cr open cluster."
+  status done
 }
