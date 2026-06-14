@@ -4988,5 +4988,27 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "goal_branch_forge_trust_round8": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T03:01:15.933Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "origin/remo@d460820"
+      ]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T03:01:22.557Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "origin/remo@d460820"
+      ]
+    }
   ]
 }
