@@ -17,6 +17,6 @@ task task_cr_open_scan_hardening {
   work_type implementation
   claimed_by [actor_coding_agent]
   bug_discovery no_bug_observed
-  bug_discovery_rationale "In-depth review follow-up from merged impl PR #301; scan/error contract gaps not a forge bug."
-  status in-progress
+  bug_discovery_rationale "Scan hardening cluster; no forge bug."
+  status done
 }
