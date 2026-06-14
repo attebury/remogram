@@ -66,6 +66,21 @@ export async function fetchPageWithIngestBackoff(fetchPage, page, initialLimit) 
 }
 
 /**
+ * When a full page lands on maxPages, probe one item on the next page to distinguish
+ * end-of-list from truncation.
+ * @template T
+ * @param {(opts: { page: number, limit: number }) => Promise<unknown[]>} fetchPage
+ * @param {number} page
+ * @param {number} maxPages
+ * @returns {Promise<boolean>} true when list is truncated (more items exist)
+ */
+async function probeNextPageHasItems(fetchPage, page, maxPages) {
+  if (page > maxPages) return true;
+  const { items: probeItems } = await fetchPageWithIngestBackoff(fetchPage, page + 1, 1);
+  return probeItems.length > 0;
+}
+
+/**
  * Offset/limit check-status pagination with ingest-cap backoff.
  * @param {{ fetchPage: (opts: { page: number, limit: number }) => Promise<unknown[]>, pageSize?: number, maxPages?: number }} opts
  */
@@ -121,13 +136,11 @@ export async function paginateOffsetListPages({
     all.push(...items);
     if (items.length < usedLimit) break;
     if (listLimit != null && all.length >= listLimit) {
-      if (items.length < usedLimit) break;
       if (page >= maxPages) {
         listTruncated = true;
         break;
       }
-      const { items: probeItems } = await fetchPageWithIngestBackoff(fetchPage, page + 1, 1);
-      if (probeItems.length > 0) listTruncated = true;
+      listTruncated = await probeNextPageHasItems(fetchPage, page, maxPages);
       break;
     }
     if (listLimit != null) {
@@ -136,7 +149,7 @@ export async function paginateOffsetListPages({
         break;
       }
     } else if (page === maxPages) {
-      listTruncated = true;
+      listTruncated = await probeNextPageHasItems(fetchPage, page, maxPages);
       break;
     }
   }

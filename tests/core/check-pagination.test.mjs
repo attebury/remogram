@@ -162,13 +162,41 @@ describe('paginateOffsetListPages', () => {
     expect(result.list_truncated).toBe(false);
   });
 
-  it('sets list_truncated at maxPages without listLimit', async () => {
+  it('sets list_truncated at maxPages without listLimit when probe finds more', async () => {
     const result = await paginateOffsetListPages({
       pageSize: 1,
       maxPages: 2,
       fetchPage: async () => [{ number: 1 }],
     });
     expect(result.items).toHaveLength(2);
+    expect(result.list_truncated).toBe(true);
+  });
+
+  it('listLimit null at maxPages with empty probe is complete', async () => {
+    const result = await paginateOffsetListPages({
+      pageSize: 2,
+      maxPages: 2,
+      fetchPage: async ({ page }) => {
+        if (page === 1) return [{ number: 1 }, { number: 2 }];
+        if (page === 2) return [{ number: 3 }, { number: 4 }];
+        return [];
+      },
+    });
+    expect(result.items).toHaveLength(4);
+    expect(result.list_truncated).toBe(false);
+  });
+
+  it('listLimit null at maxPages with non-empty probe is truncated', async () => {
+    const result = await paginateOffsetListPages({
+      pageSize: 2,
+      maxPages: 2,
+      fetchPage: async ({ page }) => {
+        if (page === 1) return [{ number: 1 }, { number: 2 }];
+        if (page === 2) return [{ number: 3 }, { number: 4 }];
+        return [{ number: 5 }];
+      },
+    });
+    expect(result.items).toHaveLength(4);
     expect(result.list_truncated).toBe(true);
   });
 
