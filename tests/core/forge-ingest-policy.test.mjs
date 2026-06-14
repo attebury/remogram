@@ -3,8 +3,11 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   DEFAULT_MAX_BYTES,
+  DEFAULT_CHECK_STATUS_PAGE_SIZE,
+  MAX_CHECK_STATUS_PAGES,
   FORGE_INGEST_MAX_BYTES_ENV,
   forgeIngestCapabilityFacts,
+  checkPaginationCapabilityFacts,
   getEffectiveIngestMaxBytes,
 } from '@remogram/core';
 
@@ -33,6 +36,22 @@ describe('forge ingest cap policy', () => {
       bytes: 8192,
       envOverride: false,
       invalidEnv: true,
+    });
+  });
+
+  it('exports shared check pagination constants', () => {
+    expect(DEFAULT_CHECK_STATUS_PAGE_SIZE).toBe(25);
+    expect(MAX_CHECK_STATUS_PAGES).toBe(50);
+  });
+
+  it('checkPaginationCapabilityFacts describes offset_limit strategy', () => {
+    expect(checkPaginationCapabilityFacts({ strategy: 'offset_limit', pageSizeParam: 'limit' })).toEqual({
+      check_pagination: {
+        strategy: 'offset_limit',
+        page_size: 25,
+        max_pages: 50,
+        page_size_param: 'limit',
+      },
     });
   });
 });

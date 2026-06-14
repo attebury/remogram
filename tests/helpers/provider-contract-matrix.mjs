@@ -37,6 +37,7 @@ const BODY_KEYS = {
   [PACKET_TYPES.SYNC_PLAN]: ['blockers', 'diverged', 'local_sha', 'remote', 'remote_sha'],
   [PACKET_TYPES.PROVIDER_CAPABILITIES]: [
     'auth_envs',
+    'check_pagination',
     'check_sources',
     'commands',
     'forge_ingest_cap_bytes',

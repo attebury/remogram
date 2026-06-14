@@ -347,6 +347,12 @@ describe('provider-github-api fixtures', () => {
     const caps = provider.providerCapabilities();
     expect(caps.pagination).toBe('supported');
     expect(caps.forge_ingest_cap_bytes).toBe(8192);
+    expect(caps.check_pagination).toEqual({
+      strategy: 'link_header',
+      page_size: 25,
+      max_pages: 50,
+      page_size_param: 'per_page',
+    });
   });
 
   it('syncPlan preserves shared packet body keys', async () => {

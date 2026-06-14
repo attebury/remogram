@@ -121,6 +121,12 @@ describe('provider-gitlab-api fixtures', () => {
     expect(body.write_support).toBe(false);
     expect(body.forge_ingest_cap_bytes).toBe(8192);
     expect(body.pagination).toBe('supported');
+    expect(body.check_pagination).toEqual({
+      strategy: 'offset_limit',
+      page_size: 25,
+      max_pages: 50,
+      page_size_param: 'per_page',
+    });
   });
 
   it('repoStatus returns gated capabilities without token', async () => {
