@@ -7923,5 +7923,59 @@
       "by": "actor_plan_agent",
       "note": null
     }
+  ],
+  "ac_idempotency_paginated_fail_closed": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T19:58:55.747Z",
+      "by": "actor_plan_agent",
+      "note": null
+    }
+  ],
+  "ac_idempotent_packet_fidelity": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T19:58:56.323Z",
+      "by": "actor_plan_agent",
+      "note": null
+    }
+  ],
+  "ac_write_command_enum_dry": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T19:58:56.621Z",
+      "by": "actor_plan_agent",
+      "note": null
+    }
+  ],
+  "ac_consumer_write_boundary_docs": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T19:58:56.878Z",
+      "by": "actor_plan_agent",
+      "note": null
+    }
+  ],
+  "ac_negative_tests_doctor_mcp": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T19:58:57.141Z",
+      "by": "actor_plan_agent",
+      "note": null
+    }
+  ],
+  "ac_idempotency_regression_tests": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T19:58:57.446Z",
+      "by": "actor_plan_agent",
+      "note": null
+    }
   ]
 }
