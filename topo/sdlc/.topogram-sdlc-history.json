@@ -5342,6 +5342,16 @@
       "evidence_refs": [
         "pr:177"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T03:37:25.875Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:178"
+      ]
     }
   ],
   "ac_github_list_link_same_origin_round9": [
