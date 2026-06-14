@@ -1,0 +1,10 @@
+requirement req_cr_inventory_default_bounded {
+  name "CR inventory default path stays within forge ingest bounds"
+  description "Remogram cr inventory must succeed for the default command path (no --limit) on consumer repos by bounding aggregate forge ingest: use a safe default inventory limit lower than 50 when --limit is omitted, preserve list_truncated and truncated semantics, and degrade oversized per-PR view or check fetches into entries_skipped instead of failing the entire command with oversized_raw_output. Regression tests must prove default and limit>=4 paths return ok cr_inventory_slice packets under mocked oversized payloads without provider package changes."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  pitch pitch_cr_inventory_default_bounded
+  priority high
+  status draft
+}

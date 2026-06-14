@@ -1,0 +1,12 @@
+bug bug_cr_inventory_default_oversized_raw_output {
+  name "Default cr inventory fails with oversized_raw_output"
+  description "After provider-list-limit fix, remogram cr inventory --limit 1..3 --json succeeds on attebury/topogram but default cr inventory (--json, no --limit) and --limit 4+ fail with forge_error oversized_raw_output. Blocks Topogram Observer preflight which requires unbounded default inventory."
+  severity high
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Consumer Observer and agents cannot run required remogram cr inventory --json on Topogram repos with multiple large open PR payloads."
+  linked_task task_cr_inventory_default_bounded
+  reproduction "In Topogram observer workspace against attebury/topogram on local Gitea: remogram cr inventory --limit 1..3 --json ok; remogram cr inventory --limit 4 --json and remogram cr inventory --json return error_code oversized_raw_output."
+  boundary_test_added false
+  status open
+}
