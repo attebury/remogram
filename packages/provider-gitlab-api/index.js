@@ -270,7 +270,7 @@ export async function prChecks(ctx, opts) {
     });
   }
 
-  const [statusRecords, pipelineRecords] = await Promise.all([
+  const [statusResult, pipelineResult] = await Promise.all([
     gitlabFetchPaginated(
       ctx.config,
       ctx.parsed,
@@ -282,6 +282,8 @@ export async function prChecks(ctx, opts) {
       `${projectApiPath(ctx.config, 'pipelines')}?sha=${encodeURIComponent(sha)}`,
     ),
   ]);
+  const statusRecords = statusResult.items;
+  const pipelineRecords = pipelineResult.items;
   const mappedStatuses = statusRecords.map((status) => ({
     context: sanitizeField(status.name || status.context),
     state: normalizeStatusState(status.status),

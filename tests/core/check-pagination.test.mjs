@@ -4,7 +4,7 @@ import { ERROR_CODES, paginateCheckStatusPages, fetchWithIngestPageBackoff } fro
 describe('check pagination ingest backoff', () => {
   it('paginateCheckStatusPages halves limit on oversized ingest', async () => {
     const limits = [];
-    const items = await paginateCheckStatusPages({
+    const result = await paginateCheckStatusPages({
       pageSize: 8,
       fetchPage: async ({ limit }) => {
         limits.push(limit);
@@ -17,7 +17,28 @@ describe('check pagination ingest backoff', () => {
       },
     });
     expect(limits).toEqual([8, 4]);
-    expect(items).toHaveLength(1);
+    expect(result.items).toHaveLength(1);
+    expect(result.truncated).toBe(false);
+  });
+
+  it('paginateCheckStatusPages sets truncated at maxPages with full last page', async () => {
+    const result = await paginateCheckStatusPages({
+      pageSize: 2,
+      maxPages: 2,
+      fetchPage: async () => [{ context: 'ci/a' }, { context: 'ci/b' }],
+    });
+    expect(result.items).toHaveLength(4);
+    expect(result.truncated).toBe(true);
+  });
+
+  it('paginateCheckStatusPages does not truncate when last page is partial', async () => {
+    const result = await paginateCheckStatusPages({
+      pageSize: 3,
+      maxPages: 5,
+      fetchPage: async ({ page }) => (page === 1 ? [{ context: 'ci/one' }] : []),
+    });
+    expect(result.items).toHaveLength(1);
+    expect(result.truncated).toBe(false);
   });
 
   it('fetchWithIngestPageBackoff retries with smaller per_page', async () => {

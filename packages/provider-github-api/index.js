@@ -169,6 +169,7 @@ export async function githubFetchPaginated(config, parsed, path, slice) {
   const base = apiBase(config, parsed);
   const { token } = requireToken();
   const all = [];
+  let truncated = false;
   const pageQuery = `${path.includes('?') ? '&' : '?'}per_page=${DEFAULT_CHECK_STATUS_PAGE_SIZE}`;
   let url = `${base}${path}${pageQuery}`;
   for (let page = 0; page < MAX_CHECK_PAGES && url; page += 1) {
@@ -182,9 +183,15 @@ export async function githubFetchPaginated(config, parsed, path, slice) {
     );
     all.push(...slice(body));
     const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
-    url = parseLinkHeader(linkHeader).next ?? null;
+    const nextUrl = parseLinkHeader(linkHeader).next ?? null;
+    if (nextUrl && page === MAX_CHECK_PAGES - 1) {
+      truncated = true;
+      url = null;
+    } else {
+      url = nextUrl;
+    }
   }
-  return all;
+  return { items: all, truncated };
 }
 
 export function graphqlEndpoint(config, parsed = {}) {
@@ -400,12 +407,14 @@ export async function prChecks(ctx, opts) {
 
   const statusPath = repoApiPath(ctx.config, 'commits', sha, 'statuses');
   const checkRunsPath = repoApiPath(ctx.config, 'commits', sha, 'check-runs');
-  const [statusRecords, checkRunRecords] = await Promise.all([
+  const [statusResult, checkRunResult] = await Promise.all([
     githubFetchPaginated(ctx.config, ctx.parsed, statusPath, (body) =>
       Array.isArray(body) ? body : [],
     ),
     githubFetchPaginated(ctx.config, ctx.parsed, checkRunsPath, (body) => body?.check_runs ?? []),
   ]);
+  const statusRecords = statusResult.items;
+  const checkRunRecords = checkRunResult.items;
   const mappedStatuses = statusRecords.map((s) => ({
     context: sanitizeField(s.context),
     state: normalizeCommitStatusState(s.state),

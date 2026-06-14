@@ -53,6 +53,7 @@ export async function paginateCheckStatusPages({
   maxPages = MAX_CHECK_STATUS_PAGES,
 }) {
   const all = [];
+  let truncated = false;
   for (let page = 1; page <= maxPages; page += 1) {
     let limit = pageSize;
     let pageItems;
@@ -70,7 +71,13 @@ export async function paginateCheckStatusPages({
       }
     }
     all.push(...pageItems);
-    if (pageItems.length < limit) break;
+    if (pageItems.length < limit) {
+      break;
+    }
+    if (page === maxPages) {
+      truncated = true;
+      break;
+    }
   }
-  return all;
+  return { items: all, truncated };
 }
