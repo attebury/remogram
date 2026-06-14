@@ -7611,6 +7611,16 @@
       "at": "2026-06-14T18:59:57.380Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-14T19:05:08.104Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "dc022b1"
+      ]
     }
   ],
   "ac_cr_open_cli_packet": [
@@ -7697,6 +7707,13 @@
       "at": "2026-06-14T18:59:57.332Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T19:05:05.592Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ]
 }
