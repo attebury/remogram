@@ -105,6 +105,7 @@ describe('secret-scan workflow', () => {
     expect(workflow).toMatch(/RUNNER_TEMP/);
     expect(workflow).toMatch(/GITHUB_PATH/);
     expect(workflow).toMatch(/command -v gitleaks/);
+    expect(workflow).toMatch(/Linux:arm64\) asset="linux_arm64"/);
     expect(workflow).not.toMatch(/sudo install/);
     expect(workflow).not.toMatch(/\/usr\/local\/bin\/gitleaks/);
   });
@@ -112,11 +113,15 @@ describe('secret-scan workflow', () => {
   it('keeps direct security:secrets scan steps for PR push and dispatch', () => {
     const workflow = readFileSync(join(repoRoot, '.github/workflows/secret-scan.yml'), 'utf8');
     expect(workflow).toMatch(/GITLEAKS_VERSION:\s+v8\.30\.1/);
+    expect(workflow).toMatch(/curl -sSfL/);
     expect(workflow).toMatch(/gitleaks version/);
     expect(workflow).toContain(
       'run: npm run security:secrets -- --base "origin/${{ github.base_ref }}" --head HEAD',
     );
+    expect(workflow).toContain('github.event.before');
     expect(workflow).toContain('npm run security:secrets -- --full-history');
     expect(workflow).not.toMatch(/gitleaks\/gitleaks-action/);
+    expect(workflow).not.toMatch(/GITHUB_TOKEN/);
+    expect(workflow).not.toMatch(/GITLEAKS_ENABLE_UPLOAD_ARTIFACT/);
   });
 });
