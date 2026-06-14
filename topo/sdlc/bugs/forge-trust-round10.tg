@@ -1,0 +1,77 @@
+bug bug_offset_backoff_page_skip {
+  name "Ingest backoff resets limit between offset pages"
+  description "paginateCheckStatusPages halves limit on oversize page 1 but page 2 requests original pageSize, skipping items 12-24 on Gitea/GitLab offset APIs."
+  status open
+  severity high
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Silent check loss after oversize ingest backoff on multi-page enumeration."
+  linked_task task_forge_trust_round10_wave1
+  reproduction "Halve page 1 to limit 12 with full page; observe page 2 uses limit 25."
+  boundary_test_added false
+}
+
+bug bug_link_relative_next_rejected {
+  name "Relative Link rel=next rejected without base resolution"
+  description "isTrustedPaginationUrl calls new URL(url) on raw Link header; relative same-origin paths throw and are treated as untrusted, causing false checks_truncated/list_truncated."
+  status open
+  severity medium
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "Legitimate relative pagination links stop enumeration early."
+  linked_task task_forge_trust_round10_wave2
+  reproduction "Pass relative /repos/o/r/pulls?page=2 to isTrustedPaginationUrl without resolveBase."
+  boundary_test_added false
+}
+
+bug bug_github_list_no_ingest_backoff {
+  name "GitHub listOpenPullsWithMeta lacks ingest backoff"
+  description "Link-pagination open PR list uses fetchJsonWithMeta without fetchWithIngestPageBackoff; oversized list page fails entire cr inventory list phase."
+  status open
+  severity medium
+  priority high
+  affects [cap_forge_remote_ops]
+  failure_mode "cr inventory list fails hard on large open PR list JSON."
+  linked_task task_forge_trust_round10_wave3
+  reproduction "Mock open PR list response exceeding DEFAULT_MAX_BYTES on listOpenPullsWithMeta."
+  boundary_test_added false
+}
+
+bug bug_check_source_count_drift {
+  name "check_source_count hardcoded separately from check_sources"
+  description "GitHub and GitLab pass sourceCount: 2 manually while check_sources is a separate array; drift risk if one changes without the other."
+  status open
+  severity low
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Capabilities lie about multi-source bounds after provider edit."
+  linked_task task_forge_trust_round10_wave3
+  reproduction "Compare check_sources.length vs check_pagination.check_source_count in providerCapabilities source."
+  boundary_test_added false
+}
+
+bug bug_dual_stream_truncation_untested {
+  name "Dual-stream max-pages tests cover primary stream only"
+  description "GitHub/GitLab max-pages tests mock full statuses stream with empty check-runs/pipelines; secondary stream truncation untested."
+  status open
+  severity medium
+  priority medium
+  affects [cap_forge_remote_ops]
+  failure_mode "Regression in check-runs or pipelines truncation signaling goes undetected."
+  linked_task task_forge_trust_round10_wave4
+  reproduction "grep max_pages tests; check-runs/pipelines stream always empty in mocks."
+  boundary_test_added false
+}
+
+bug bug_pagination_trust_untested {
+  name "isTrustedPaginationUrl lacks focused unit tests"
+  description "Link trust validated only via GitHub provider off-origin tests; no core unit coverage for relative URLs, scheme mismatch, or positive absolute cases."
+  status open
+  severity low
+  priority low
+  affects [cap_forge_remote_ops]
+  failure_mode "Regression in URL trust logic goes undetected outside provider mocks."
+  linked_task task_forge_trust_round10_wave2
+  reproduction "grep isTrustedPaginationUrl in tests/core; no dedicated test file."
+  boundary_test_added false
+}

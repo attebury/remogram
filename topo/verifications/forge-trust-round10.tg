@@ -1,0 +1,51 @@
+verification verification_forge_trust_round10_wave1 {
+  name "Forge trust round 10 wave 1"
+  description "Offset pagination activeLimit carry-forward after ingest backoff."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round10_wave1]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_offset_backoff_page_skip]
+  status draft
+}
+
+verification verification_forge_trust_round10_wave2 {
+  name "Forge trust round 10 wave 2"
+  description "Relative Link URL resolution with resolveBase."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round10_wave2]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_link_relative_next_rejected, bug_pagination_trust_untested]
+  status draft
+}
+
+verification verification_forge_trust_round10_wave3 {
+  name "Forge trust round 10 wave 3"
+  description "GitHub list ingest backoff and check_source_count honesty."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round10_wave3]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_github_list_no_ingest_backoff, bug_check_source_count_drift]
+  status draft
+}
+
+verification verification_forge_trust_round10_wave4 {
+  name "Forge trust round 10 wave 4"
+  description "Dual-stream max-pages proof and fixture hygiene."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round10_wave4]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_dual_stream_truncation_untested]
+  status draft
+}

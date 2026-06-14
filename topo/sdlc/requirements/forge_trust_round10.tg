@@ -1,0 +1,9 @@
+requirement req_forge_trust_round10 {
+  name "Remogram forge trust round 10 — pagination correctness and trust closure"
+  description "Remogram must carry forward reduced page limits after ingest backoff on offset pagination; resolve relative Link rel=next against trusted base; apply ingest backoff to GitHub open-PR list pagination; derive check_source_count from check_sources; prove dual-stream truncation at max_pages."
+  affects [cap_forge_remote_ops]
+  introduces_rules []
+  respects_rules [rule_maintainable_security_focused_code, rule_tests_prove_consumer_value]
+  priority high
+  status draft
+}
