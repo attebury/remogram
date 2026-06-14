@@ -6,6 +6,11 @@ export const FORGE_INGEST_MAX_BYTES_ENV = 'REMOGRAM_FORGE_INGEST_MAX_BYTES';
 export const DEFAULT_CHECK_STATUS_PAGE_SIZE = 25;
 export const MAX_CHECK_STATUS_PAGES = 50;
 
+/** Gitea open-pull list page size for idempotency scan and inventory list bounds. */
+export const DEFAULT_OPEN_PULL_LIST_PAGE_SIZE = 100;
+/** Max pages scanned before cr open idempotency fails closed (decoupled from check-status pagination). */
+export const MAX_OPEN_PULL_IDEMPOTENCY_PAGES = 50;
+
 export function getEffectiveIngestMaxBytes() {
   const raw = process.env[FORGE_INGEST_MAX_BYTES_ENV];
   if (raw == null || raw === '') {

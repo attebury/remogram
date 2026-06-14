@@ -17,6 +17,8 @@ import {
   checkPaginationCapabilityFacts,
   DEFAULT_CHECK_STATUS_PAGE_SIZE,
   MAX_CHECK_STATUS_PAGES,
+  DEFAULT_OPEN_PULL_LIST_PAGE_SIZE,
+  MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
   paginateCheckStatusPages,
   paginateOffsetListPages,
   fetchWithIngestPageBackoff,
@@ -135,7 +137,22 @@ export async function giteaFetch(config, parsed, path, options = {}) {
 }
 
 const MAX_CHECK_PAGES = MAX_CHECK_STATUS_PAGES;
-const GITEA_PAGE_SIZE = 100;
+const GITEA_PAGE_SIZE = DEFAULT_OPEN_PULL_LIST_PAGE_SIZE;
+
+function idempotencyScanIncompleteError(pagesScanned) {
+  return forgeError(
+    ERROR_CODES.IDEMPOTENCY_SCAN_INCOMPLETE,
+    'Cannot prove no open pull exists for head+base within scan limit; use cr inventory or open manually',
+    null,
+    {
+      idempotency_scan: {
+        pages: pagesScanned,
+        max_pages: MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
+        page_size: DEFAULT_OPEN_PULL_LIST_PAGE_SIZE,
+      },
+    },
+  );
+}
 
 export async function giteaFetchPaginated(config, parsed, path) {
   return paginateCheckStatusPages({
@@ -270,7 +287,7 @@ export async function findOpenPullByHeadBase(ctx, head, base) {
   const path = `${repoApiPath(ctx.config, 'pulls')}?state=open`;
   const pageSep = path.includes('?') ? '&' : '?';
 
-  for (let page = 1; page <= MAX_CHECK_STATUS_PAGES; page += 1) {
+  for (let page = 1; page <= MAX_OPEN_PULL_IDEMPOTENCY_PAGES; page += 1) {
     const items = await giteaFetch(
       ctx.config,
       ctx.parsed,
@@ -293,12 +310,9 @@ export async function findOpenPullByHeadBase(ctx, head, base) {
       ) ?? null;
     if (match) return match;
     if (items.length < GITEA_PAGE_SIZE) return null;
-    if (page === MAX_CHECK_STATUS_PAGES) {
+    if (page === MAX_OPEN_PULL_IDEMPOTENCY_PAGES) {
       throw Object.assign(new Error('Open pull idempotency scan incomplete'), {
-        forgeError: forgeError(
-          ERROR_CODES.IDEMPOTENCY_SCAN_INCOMPLETE,
-          'Cannot prove no open pull exists for head+base within scan limit; use cr inventory or open manually',
-        ),
+        forgeError: idempotencyScanIncompleteError(page),
       });
     }
   }

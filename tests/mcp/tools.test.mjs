@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { createServer } from 'node:http';
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { PACKET_TYPES, SCHEMA_VERSION } from '@remogram/core';
+import { PACKET_TYPES, SCHEMA_VERSION, MAX_OPEN_PULL_IDEMPOTENCY_PAGES, DEFAULT_OPEN_PULL_LIST_PAGE_SIZE } from '@remogram/core';
 import { setupTempForge } from '../helpers/temp-forge.mjs';
 import { withMcpClient, parseMcpPacket } from '../helpers/mcp-client.mjs';
 
@@ -40,6 +40,57 @@ function startMockGiteaApi() {
       resolve({
         server,
         baseUrl: `http://127.0.0.1:${address.port}`,
+        close() {
+          return new Promise((done, err) => server.close((e) => (e ? err(e) : done())));
+        },
+      });
+    });
+  });
+}
+
+function startMockGiteaTruncatedScanApi() {
+  let listCalls = 0;
+  let postCalls = 0;
+  return new Promise((resolve, reject) => {
+    const server = createServer((req, res) => {
+      const url = req.url ?? '';
+      if (req.method === 'GET' && url.includes('/pulls') && !/\/pulls\/\d+/.test(url)) {
+        listCalls += 1;
+        const items = Array.from({ length: DEFAULT_OPEN_PULL_LIST_PAGE_SIZE }, (_, i) => ({
+          number: listCalls * 1000 + i,
+          state: 'open',
+          head: { ref: 'o' },
+          base: { ref: 'r' },
+        }));
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(items));
+        return;
+      }
+      if (req.method === 'POST' && url.includes('/pulls')) {
+        postCalls += 1;
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'unexpected POST' }));
+        return;
+      }
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end('{}');
+    });
+    server.on('error', reject);
+    server.listen(0, '127.0.0.1', () => {
+      const address = server.address();
+      if (!address || typeof address === 'string') {
+        reject(new Error('mock Gitea server failed to bind'));
+        return;
+      }
+      resolve({
+        server,
+        baseUrl: `http://127.0.0.1:${address.port}`,
+        get listCalls() {
+          return listCalls;
+        },
+        get postCalls() {
+          return postCalls;
+        },
         close() {
           return new Promise((done, err) => server.close((e) => (e ? err(e) : done())));
         },
@@ -171,6 +222,46 @@ describe('remogram-mcp callTool', () => {
       expect(packet.error_code).toBe('write_not_configured');
     });
   }, 15_000);
+
+  it('cr_open returns idempotency_scan_incomplete via MCP when scan is truncated', async () => {
+    const mockApi = await startMockGiteaTruncatedScanApi();
+    const setup = setupTempForge({
+      config: {
+        version: '1',
+        provider: 'gitea-api',
+        owner: 'owner',
+        repo: 'repo',
+        remote: 'origin',
+        baseUrl: mockApi.baseUrl,
+        write_commands: ['cr_open'],
+      },
+      remoteUrl: `${mockApi.baseUrl}/owner/repo.git`,
+    });
+    cleanups.push(setup);
+    cleanups.push({ cleanup: () => mockApi.server.close() });
+    process.env.GITEA_TOKEN = 'test-token';
+    await withMcpClient(
+      setup.dir,
+      async (client) => {
+        const result = await client.callTool({
+          name: 'cr_open',
+          arguments: { head: 'feat/x', base: 'remo', title: 'MCP CR' },
+        });
+        const packet = parseMcpPacket(result);
+        expect(result.isError).toBe(true);
+        expect(packet.type).toBe('forge_error');
+        expect(packet.error_code).toBe('idempotency_scan_incomplete');
+        expect(packet.idempotency_scan).toEqual({
+          pages: MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
+          max_pages: MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
+          page_size: DEFAULT_OPEN_PULL_LIST_PAGE_SIZE,
+        });
+        expect(mockApi.listCalls).toBe(MAX_OPEN_PULL_IDEMPOTENCY_PAGES);
+        expect(mockApi.postCalls).toBe(0);
+      },
+      { REMOGRAM_FORGE_INGEST_MAX_BYTES: '65536' },
+    );
+  }, 30_000);
 
   it('doctor returns provider_doctor packet via MCP', async () => {
     const setup = setupGithubForge();

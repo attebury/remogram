@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { forgePacket, PACKET_TYPES, SCHEMA_VERSION } from '@remogram/core';
+import { forgePacket, forgeErrorPacket, PACKET_TYPES, SCHEMA_VERSION } from '@remogram/core';
 
 const ctx = {
   providerId: 'gitea-api',
@@ -140,6 +140,19 @@ describe('packet contracts', () => {
     expect(bodyKeys(p)).toEqual(['base', 'head', 'pr_number', 'title', 'url']);
   });
 
+  it('change_request_opened with reused_existing', () => {
+    const p = forgePacket(PACKET_TYPES.CHANGE_REQUEST_OPENED, ctx, {
+      pr_number: 42,
+      url: 'http://localhost:3000/o/r/pulls/42',
+      head: 'impl/x',
+      base: 'remo',
+      title: 'Forge title',
+      reused_existing: true,
+    });
+    expect(bodyKeys(p)).toEqual(['base', 'head', 'pr_number', 'reused_existing', 'title', 'url']);
+    expect(p.reused_existing).toBe(true);
+  });
+
   it('forge_error', () => {
     const p = forgePacket(
       'forge_error',
@@ -150,5 +163,21 @@ describe('packet contracts', () => {
     expect(p.type).toBe('forge_error');
     expect(p.ok).toBe(false);
     expect(bodyKeys(p)).toEqual(['error_code', 'error_message']);
+  });
+
+  it('forge_error with idempotency_scan metadata', () => {
+    const p = forgeErrorPacket(ctx, {
+      code: 'idempotency_scan_incomplete',
+      message: 'scan cap hit',
+      fields: {
+        idempotency_scan: { pages: 50, max_pages: 50, page_size: 100 },
+      },
+    });
+    expect(bodyKeys(p)).toEqual([
+      'error_code',
+      'error_message',
+      'idempotency_scan',
+    ]);
+    expect(p.idempotency_scan).toEqual({ pages: 50, max_pages: 50, page_size: 100 });
   });
 });

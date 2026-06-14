@@ -37,7 +37,7 @@ Remogram emits **provider-attributed JSON facts** with SHA fields where applicab
 
 **Every** successful packet includes: `type`, `schema_version`, `provider_id`, `remote_name`, `repo_id`, `observed_at`, `ok`.
 
-**v1 scope:** Through **0.1.0-beta.3**, read/plan only by default. Write commands require **`write_commands`** in `.remogram.json` plus provider support; **use CLI/MCP only** (direct provider imports bypass consumer gate). **`cr open`** paginates for idempotency and fails closed with `idempotency_scan_incomplete` when absence cannot be proven. Use **`remogram provider capabilities --json`** for authoritative `write_support` / `write_commands`. Merge execute remains out of scope.
+**v1 scope:** Through **0.1.0-beta.3**, read/plan only by default. Write commands require **`write_commands`** in `.remogram.json` plus provider support; **use CLI/MCP only** (direct provider imports bypass consumer gate). **`cr open`** paginates for idempotency and fails closed with `idempotency_scan_incomplete` plus `idempotency_scan` metadata when absence cannot be proven; on that error or suspected duplicate, run **`cr inventory`** before retry. Use **`remogram provider capabilities --json`** for authoritative `write_support` / `write_commands`. Merge execute remains out of scope.
 
 Keep Remogram packages free of imports from external planning or workflow tooling.
 

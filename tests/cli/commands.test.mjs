@@ -442,6 +442,64 @@ describe('remogram cli commands', () => {
     }
   });
 
+  it('cr open fails closed with idempotency_scan metadata when scan is truncated', async () => {
+    const config = defaultTestConfig();
+    config.write_commands = ['cr_open'];
+    const setup = setupTempForge({
+      config,
+      remoteUrl: 'http://localhost:3000/owner/repo.git',
+    });
+    cleanups.push(setup);
+    process.env.GITEA_TOKEN = 'test-token';
+
+    const { MAX_OPEN_PULL_IDEMPOTENCY_PAGES, DEFAULT_OPEN_PULL_LIST_PAGE_SIZE } =
+      await import('@remogram/core');
+
+    function mismatchPage(count) {
+      return Array.from({ length: count }, (_, i) => ({
+        number: i + 1,
+        state: 'open',
+        head: { ref: 'other-head' },
+        base: { ref: 'remo' },
+      }));
+    }
+
+    vi.stubGlobal('fetch', vi.fn());
+    try {
+      for (let page = 0; page < MAX_OPEN_PULL_IDEMPOTENCY_PAGES; page += 1) {
+        global.fetch.mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(
+                JSON.stringify(mismatchPage(DEFAULT_OPEN_PULL_LIST_PAGE_SIZE)),
+              );
+            },
+          },
+        });
+      }
+      const { logs } = await captureCliOutput(() =>
+        runCli(['cr', 'open', '--head', 'feat/x', '--base', 'remo', '--title', 'T', '--json'], {
+          cwd: setup.dir,
+          providers: { 'gitea-api': giteaProvider },
+        }),
+      );
+      const packet = JSON.parse(logs[0]);
+      expect(packet.ok).toBe(false);
+      expect(packet.type).toBe('forge_error');
+      expect(packet.error_code).toBe('idempotency_scan_incomplete');
+      expect(packet.idempotency_scan).toEqual({
+        pages: MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
+        max_pages: MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
+        page_size: DEFAULT_OPEN_PULL_LIST_PAGE_SIZE,
+      });
+      expect(global.fetch.mock.calls.some((call) => call[1]?.method === 'POST')).toBe(false);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it('cr open without provider support returns provider_unsupported', async () => {
     const config = defaultTestConfig({
       provider: 'github-api',
