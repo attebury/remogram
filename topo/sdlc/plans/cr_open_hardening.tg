@@ -1,0 +1,14 @@
+plan plan_cr_open_hardening {
+  name "CR open hardening — implementation plan"
+  description "Single-wave hardening for cr open after code review of #278."
+  task task_cr_open_hardening
+  architecture_patterns [contract_boundary, fail_closed_gate, command_owned_mutation]
+  steps {
+    step config_gate status pending description "write_commands in .remogram.json; WRITE_NOT_CONFIGURED; doctor warn."
+    step idempotency status pending description "findOpenPullByHeadBase before POST in gitea crOpen."
+    step docs status pending description "Beta read/plan default; opt-out bridge table; AGENTS README skills prompts."
+    step tests status pending description "Config gate, open-inventory, MCP callTool, POST body and error paths."
+    step mcp_capabilities status pending description "write_commands in capabilities; MCP destructiveHint for cr_open."
+  }
+  status draft
+}

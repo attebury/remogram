@@ -1,0 +1,22 @@
+task task_cr_open_hardening {
+  name "Harden remogram cr open"
+  description "Add write_commands config gate, idempotent crOpen, forgeError fixes, docs beta reframe, expanded tests, MCP destructiveHint."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Merge execute" "GitHub/GitLab cr open" "github-gh/gitlab-glab wrappers" "unified open-change-request.mjs" "fork owner:branch heads"]
+  entrypoints ["packages/**" "tests/**" "README.md" "CHANGELOG.md" "AGENTS.md" ".remogram.json.example" "tools/remogram-agent-support/skills/**" ".cursor/skills/**" "topo/sdlc/**" "topo/surfaces/**" "topo/verifications/**"]
+  satisfies [req_cr_open_hardening]
+  acceptance_refs [ac_docs_beta_readonly, ac_write_config_gate, ac_forge_error_invalid_pull, ac_capabilities_write_commands, ac_cr_open_idempotent, ac_cr_open_test_depth, ac_mcp_write_hints]
+  verification_refs [verification_cr_open_hardening]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type implementation
+  claimed_by []
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Code review follow-up from merged impl PR #278; hardening not a forge bug."
+  status unclaimed
+}
