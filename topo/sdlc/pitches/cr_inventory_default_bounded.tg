@@ -1,0 +1,12 @@
+pitch pitch_cr_inventory_default_bounded {
+  name "CR inventory default bounded output"
+  description "Follow-on to archived cr-inventory-provider-list-limit: bound the default cr inventory path so remogram cr inventory --json returns a cr_inventory_slice without top-level oversized_raw_output on consumer repos with large open-PR payloads."
+  appetite "small"
+  problem "After provider-list-limit landed, bounded remogram cr inventory --limit 1..3 --json succeeds on attebury/topogram (Gitea forge) but default cr inventory (--json, no --limit) and --limit 4+ still fail with forge_error oversized_raw_output. DEFAULT_CR_INVENTORY_LIMIT is 50 in cr-inventory.js; cumulative list plus per-PR view/check ingest exceeds the default 8192-byte cap when four or more open PRs carry large payloads. Topogram Observer preflight requires remogram cr inventory --json without a tiny non-default --limit. Evidence: Gitea issue #267."
+  solution_sketch "Single wave in remogram-core + tests: apply a safe default inventory bound when --limit is omitted; ensure cr inventory degrades oversized per-PR fetches into entries_skipped and emits truncated list metadata instead of failing the whole command; add regression tests reproducing limit>=4 and default-path success with mocked oversized provider payloads."
+  rabbit_holes "Raising DEFAULT_MAX_BYTES or REMOGRAM_FORGE_INGEST_MAX_BYTES; provider package refactors beyond what core needs to test; live-network Topogram observer runs; reopening archived cr-inventory-hardening, test-coverage, or provider-list-limit clusters."
+  no_go_areas "Hand-editing lifecycle status; widening envelope fields; provider-only fixes without core default-path behavior; implementation in draft planning PR."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}

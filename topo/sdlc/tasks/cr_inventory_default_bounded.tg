@@ -1,0 +1,23 @@
+task task_cr_inventory_default_bounded {
+  name "Implement CR inventory default bounded output"
+  description "Bound default cr inventory limit and degrade oversized per-PR forge responses in remogram-core; add regression tests for default and limit>=4 paths without provider package edits."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Raising DEFAULT_MAX_BYTES or REMOGRAM_FORGE_INGEST_MAX_BYTES default" "Provider package changes (Gitea/GitHub/GitLab)" "Reopening archived cr-inventory-hardening, test-coverage, or provider-list-limit clusters" "Live-network Topogram observer proof" "SDLC or workflow metadata in Remogram output"]
+  entrypoints ["packages/remogram-core/cr-inventory.js" "packages/remogram-core/**" "tests/core/cr-inventory.test.mjs" "tests/cli/cr-inventory.integration.test.mjs" "tests/**"]
+  satisfies [req_cr_inventory_default_bounded]
+  acceptance_refs [ac_cr_inventory_default_bounded_slice, ac_cr_inventory_default_safe_limit, ac_cr_inventory_default_regression_tests]
+  verification_refs [verification_cr_inventory_default_bounded]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  claimed_by []
+  bug_discovery bug_linked
+  bug_discovery_rationale "Gitea issue #267: default cr inventory --json and --limit 4+ return oversized_raw_output on attebury/topogram after provider-list-limit landed; limits 1-3 succeed."
+  linked_bugs [bug_cr_inventory_default_oversized_raw_output]
+  status unclaimed
+}

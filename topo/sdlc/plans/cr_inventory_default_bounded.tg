@@ -1,0 +1,12 @@
+plan plan_cr_inventory_default_bounded {
+  name "CR inventory default bounded — implementation plan"
+  description "Single-wave plan to bound default cr inventory output and degrade oversized per-PR facts in remogram-core."
+  task task_cr_inventory_default_bounded
+  architecture_patterns [contract_boundary, fail_closed_gate, command_owned_mutation]
+  steps {
+    step default_safe_limit status pending description "Bound DEFAULT_CR_INVENTORY_LIMIT or equivalent safe default when --limit omitted; preserve list_truncated/truncated semantics."
+    step per_pr_degrade status pending description "Ensure oversized per-PR view/check responses degrade to entries_skipped without top-level forge_error."
+    step regression_tests status pending description "Add core and CLI regression tests for default path and limit>=4 with mocked oversized payloads."
+  }
+  status draft
+}
