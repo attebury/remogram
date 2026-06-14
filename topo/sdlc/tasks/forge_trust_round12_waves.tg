@@ -18,7 +18,7 @@ task task_forge_trust_round12_wave1 {
   claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_list_backoff_no_active_limit_carry]
-  status unclaimed
+  status claimed
 }
 
 task task_forge_trust_round12_wave2 {
@@ -41,7 +41,7 @@ task task_forge_trust_round12_wave2 {
   claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_pagination_trust_no_resolve_base]
-  status unclaimed
+  status claimed
 }
 
 task task_forge_trust_round12_wave3 {
@@ -64,7 +64,7 @@ task task_forge_trust_round12_wave3 {
   claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_pathname_trailing_slash_mismatch]
-  status unclaimed
+  status claimed
 }
 
 task task_forge_trust_round12_wave4 {
@@ -87,5 +87,5 @@ task task_forge_trust_round12_wave4 {
   claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_parse_link_header_adversarial_untested]
-  status unclaimed
+  status claimed
 }
