@@ -71,7 +71,16 @@ export function isTrustedPaginationUrl(trustedOrigin, url, resolveBase) {
   try {
     const resolved =
       resolveBase != null && resolveBase !== '' ? new URL(url, resolveBase) : new URL(url);
-    return resolved.origin === trustedOrigin;
+    if (resolved.origin !== trustedOrigin) {
+      return false;
+    }
+    if (resolveBase != null && resolveBase !== '') {
+      const basePath = new URL(resolveBase).pathname;
+      if (resolved.pathname !== basePath) {
+        return false;
+      }
+    }
+    return true;
   } catch {
     return false;
   }

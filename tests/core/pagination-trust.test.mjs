@@ -35,4 +35,32 @@ describe('isTrustedPaginationUrl', () => {
   it('rejects invalid URLs without resolveBase', () => {
     expect(isTrustedPaginationUrl(TRUSTED, '/repos/o/r/pulls?page=2')).toBe(false);
   });
+
+  it('accepts same-origin URLs with matching pathname', () => {
+    const base = 'https://api.github.com/repos/o/r/pulls?state=open&per_page=100';
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/repos/o/r/pulls?page=2', base),
+    ).toBe(true);
+  });
+
+  it('rejects same-origin URLs with different pathname', () => {
+    const base = 'https://api.github.com/repos/o/r/pulls?state=open';
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/user/emails', base),
+    ).toBe(false);
+  });
+
+  it('accepts protocol-relative URLs when pathname matches resolveBase', () => {
+    const base = 'https://api.github.com/repos/o/r/pulls?state=open';
+    expect(isTrustedPaginationUrl(TRUSTED, '//api.github.com/repos/o/r/pulls?page=2', base)).toBe(
+      true,
+    );
+  });
+
+  it('rejects protocol-relative URLs when origin differs', () => {
+    const base = 'https://api.github.com/repos/o/r/pulls?state=open';
+    expect(isTrustedPaginationUrl(TRUSTED, '//evil.example/repos/o/r/pulls?page=2', base)).toBe(
+      false,
+    );
+  });
 });

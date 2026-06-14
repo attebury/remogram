@@ -293,6 +293,41 @@ describe('provider-github-api fixtures', () => {
     expect(global.fetch.mock.calls.every(([u]) => !String(u).includes('evil.example'))).toBe(true);
   });
 
+  it('githubFetchPaginated rejects same-origin off-path Link rel=next without fetching', async () => {
+    const offPathNext = 'https://api.github.com/user/emails';
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('/user/emails')) {
+        throw new Error('must not fetch untrusted pagination URL');
+      }
+      return Promise.resolve(
+        jsonResponse(
+          {
+            check_runs: [
+              {
+                name: 'ci/page1',
+                status: 'completed',
+                conclusion: 'success',
+                output: { title: 'page1 ok' },
+              },
+            ],
+          },
+          200,
+          { link: `<${offPathNext}>; rel="next"` },
+        ),
+      );
+    });
+    const result = await githubFetchPaginated(
+      ctx.config,
+      ctx.parsed,
+      repoApiPath(ctx.config, 'commits', 'a'.repeat(40), 'check-runs'),
+      (body) => body?.check_runs ?? [],
+    );
+    expect(result.truncated).toBe(true);
+    expect(result.items).toHaveLength(1);
+    expect(global.fetch.mock.calls.every(([u]) => !String(u).includes('/user/emails'))).toBe(true);
+  });
+
   it('githubFetchPaginated follows relative same-origin Link rel=next', async () => {
     const page1Url =
       'https://api.github.com/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/check-runs?per_page=25';
@@ -357,6 +392,23 @@ describe('provider-github-api fixtures', () => {
     expect(meta.list_truncated).toBe(true);
     expect(meta.numbers).toEqual([1]);
     expect(global.fetch.mock.calls.every(([u]) => !String(u).includes('evil.example'))).toBe(true);
+  });
+
+  it('listOpenPullsWithMeta rejects same-origin off-path Link rel=next without fetching', async () => {
+    const offPathNext = 'https://api.github.com/user/emails';
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('/user/emails')) {
+        throw new Error('must not fetch untrusted pagination URL');
+      }
+      return Promise.resolve(
+        jsonResponse([{ number: 1 }], 200, { link: `<${offPathNext}>; rel="next"` }),
+      );
+    });
+    const meta = await listOpenPullsWithMeta(ctx, {});
+    expect(meta.list_truncated).toBe(true);
+    expect(meta.numbers).toEqual([1]);
+    expect(global.fetch.mock.calls.every(([u]) => !String(u).includes('/user/emails'))).toBe(true);
   });
 
   it('listOpenPullsWithMeta follows relative same-origin Link rel=next', async () => {
