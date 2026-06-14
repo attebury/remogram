@@ -12,6 +12,7 @@ import {
   graphqlEndpoint,
   graphqlPullToRestShape,
   githubFetchPaginated,
+  listOpenPullsWithMeta,
 } from '@remogram/provider-github-api';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -289,6 +290,52 @@ describe('provider-github-api fixtures', () => {
     );
     expect(result.truncated).toBe(true);
     expect(result.items).toHaveLength(1);
+    expect(global.fetch.mock.calls.every(([u]) => !String(u).includes('evil.example'))).toBe(true);
+  });
+
+  it('listOpenPullsWithMeta rejects off-origin Link rel=next without fetching', async () => {
+    const evilNext = 'https://evil.example/api/pulls?page=2';
+    global.fetch.mockImplementation((url) => {
+      if (String(url).includes('evil.example')) {
+        throw new Error('must not fetch untrusted pagination URL');
+      }
+      return Promise.resolve(
+        jsonResponse([{ number: 1 }], 200, { link: `<${evilNext}>; rel="next"` }),
+      );
+    });
+    const meta = await listOpenPullsWithMeta(ctx, {});
+    expect(meta.list_truncated).toBe(true);
+    expect(meta.numbers).toEqual([1]);
+    expect(global.fetch.mock.calls.every(([u]) => !String(u).includes('evil.example'))).toBe(true);
+  });
+
+  it('mergePlan adds checks_incomplete when statuses stream hits off-origin Link next', async () => {
+    const evilNext = 'https://evil.example/api/statuses?page=2';
+    global.fetch
+      .mockResolvedValueOnce(graphqlResponse('pull-graphql-clean.json'))
+      .mockResolvedValueOnce(graphqlResponse('pull-graphql-clean.json'))
+      .mockImplementation((url) => {
+        const href = String(url);
+        if (href.includes('evil.example')) {
+          throw new Error('must not fetch untrusted pagination URL');
+        }
+        if (href.includes('/check-runs')) {
+          return Promise.resolve(jsonResponse({ check_runs: [] }));
+        }
+        if (href.includes('/statuses')) {
+          return Promise.resolve(
+            jsonResponse(
+              [{ context: 'ci/page1', state: 'success', description: 'ok' }],
+              200,
+              { link: `<${evilNext}>; rel="next"` },
+            ),
+          );
+        }
+        return Promise.reject(new Error(`unexpected fetch: ${href}`));
+      });
+    const body = await provider.mergePlan(ctx, { number: 42 });
+    expect(body.checks_conclusion).toBe('success');
+    expect(body.blockers).toContain('checks_incomplete');
     expect(global.fetch.mock.calls.every(([u]) => !String(u).includes('evil.example'))).toBe(true);
   });
 
