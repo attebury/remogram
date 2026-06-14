@@ -1,0 +1,9 @@
+goal_branch goal_branch_cr_inventory_list_v2_cr_followup {
+  name "CR inventory list v2 cr follow-up Intent Packet"
+  description "Code-review follow-up: trusted entry_count on fallback, Gitea recent_created tail-page, number-sort full collect."
+  branch_ref "goal/cr-inventory-list-v2-cr-followup"
+  task task_cr_inventory_list_v2_cr_followup
+  evidence_refs [local:topo/sdlc/pitches/cr_inventory_list_v2_cr_followup.tg, local:topo/sdlc/requirements/cr_inventory_fallback_trusted_total.tg, local:topo/sdlc/requirements/cr_inventory_sort_slice_accuracy.tg, local:topo/sdlc/plans/cr_inventory_list_v2_cr_followup.tg, local:topo/sdlc/tasks/cr_inventory_list_v2_cr_followup.tg, local:topo/sdlc/acceptance_criteria/cr_inventory_list_v2_cr_followup.tg, local:topo/verifications/cr-inventory-list-v2-cr-followup.tg]
+  witness_refs [forge:issue/342]
+  status draft
+}
