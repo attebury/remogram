@@ -2,7 +2,7 @@ acceptance_criterion ac_paginate_offset_list_pages_round13 {
   name "Shared offset list pagination carries reduced limit"
   description "Given oversized mocked list page 1, when paginateOffsetListPages fetches page 2, then page 2 uses the reduced limit from page 1 backoff."
   requirement req_forge_trust_round13
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_reject_userinfo_pagination_url_round13 {
