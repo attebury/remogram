@@ -5,5 +5,5 @@ goal_branch goal_branch_cr_open_review_followup {
   task task_cr_open_review_followup
   evidence_refs [local:topo/sdlc/pitches/cr_open_review_followup.tg, local:topo/sdlc/requirements/cr_open_review_followup.tg, local:topo/sdlc/plans/cr_open_review_followup.tg, local:topo/sdlc/tasks/cr_open_review_followup.tg, local:topo/sdlc/acceptance_criteria/cr_open_review_followup.tg, local:topo/verifications/cr-open-review-followup.tg, forge:pr/285]
   witness_refs [forge:pr/285]
-  status active
+  status done
 }
