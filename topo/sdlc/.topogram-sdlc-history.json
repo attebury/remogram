@@ -6259,6 +6259,16 @@
       "at": "2026-06-14T05:27:37.214Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "archived",
+      "at": "2026-06-14T05:29:53.756Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "local:archive-forge-trust-round13"
+      ]
     }
   ],
   "ac_paginate_offset_list_pages_round13": [
