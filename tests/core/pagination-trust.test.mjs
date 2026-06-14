@@ -61,6 +61,13 @@ describe('isTrustedPaginationUrl', () => {
     expect(isTrustedPaginationUrl(TRUSTED, '/repos/o/r/pulls?page=2', badBase)).toBe(false);
   });
 
+  it('rejects password-only userinfo in resolveBase', () => {
+    const badBase = 'https://:pass@api.github.com/repos/o/r/pulls?state=open';
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/repos/o/r/pulls?page=2', badBase),
+    ).toBe(false);
+  });
+
   it('accepts same-origin URLs with matching pathname', () => {
     const base = 'https://api.github.com/repos/o/r/pulls?state=open&per_page=100';
     expect(
