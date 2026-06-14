@@ -80,6 +80,9 @@ export function isTrustedPaginationUrl(trustedOrigin, url, resolveBase) {
       return false;
     }
     const resolved = new URL(url, resolveBase);
+    if (resolved.username !== '' || resolved.password !== '') {
+      return false;
+    }
     if (resolved.origin !== trustedOrigin) {
       return false;
     }
