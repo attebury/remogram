@@ -15,9 +15,10 @@ task task_forge_trust_round7_wave1 {
   disposition active
   priority high
   work_type bugfix
+  claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_check_pagination_capability_missing bug_pagination_constants_triplicated]
-  status unclaimed
+  status done
 }
 
 task task_forge_trust_round7_wave2 {
@@ -37,9 +38,10 @@ task task_forge_trust_round7_wave2 {
   disposition active
   priority high
   work_type bugfix
+  claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_forge_ingest_single_page_unbounded]
-  status unclaimed
+  status done
 }
 
 task task_forge_trust_round7_wave3 {
@@ -59,9 +61,10 @@ task task_forge_trust_round7_wave3 {
   disposition active
   priority high
   work_type bugfix
+  claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_pagination_tests_coupled_to_page_size bug_pr_checks_page2_untested]
-  status unclaimed
+  status done
 }
 
 task task_forge_trust_round7_wave4 {
@@ -81,7 +84,8 @@ task task_forge_trust_round7_wave4 {
   disposition active
   priority medium
   work_type bugfix
+  claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_secret_scan_test_static_only bug_pre_push_hook_untested]
-  status unclaimed
+  status done
 }
