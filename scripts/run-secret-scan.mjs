@@ -116,7 +116,6 @@ function resolveAutomaticBaseRef() {
     process.env.TOPOGRAM_SECRET_SCAN_BASE_REF,
     process.env.GITHUB_BASE_REF ? `origin/${process.env.GITHUB_BASE_REF}` : null,
     'origin/main',
-    'origin/remo',
   ]) {
     if (candidate && resolveCommit(candidate, { required: false })) {
       return candidate;
