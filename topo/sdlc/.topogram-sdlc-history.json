@@ -8293,6 +8293,13 @@
       "evidence_refs": [
         "forge:pr/311"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T20:51:39.530Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ],
   "req_gitleaks_local_runner_install": [
@@ -8409,6 +8416,22 @@
       "evidence_refs": [
         "forge:pr/311"
       ]
+    }
+  ],
+  "task_gitleaks_local_runner_install": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T20:51:39.322Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T20:51:39.437Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ]
 }

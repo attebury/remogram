@@ -15,5 +15,6 @@ task task_gitleaks_local_runner_install {
   disposition active
   priority high
   work_type implementation
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  status in-progress
 }
