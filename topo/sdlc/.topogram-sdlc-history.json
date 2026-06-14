@@ -8084,5 +8084,21 @@
       "by": "actor_plan_lane",
       "note": null
     }
+  ],
+  "req_cr_open_polish": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T20:12:23.618Z",
+      "by": "actor_plan_lane",
+      "note": null
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T20:12:24.036Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
   ]
 }
