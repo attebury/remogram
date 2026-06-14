@@ -4,5 +4,5 @@ requirement req_cr_inventory_sort_slice_accuracy {
   affects [cap_forge_remote_ops]
   pitch pitch_cr_inventory_list_v2_cr_followup
   priority high
-  status draft
+  status satisfied
 }

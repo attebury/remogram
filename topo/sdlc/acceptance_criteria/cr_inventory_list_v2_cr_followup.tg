@@ -2,33 +2,33 @@ acceptance_criterion ac_fallback_preserves_trusted_entry_count {
   name "Fallback preserves trusted entry_count"
   description "Given trusted total from page-one probe but fast path rejected (body length mismatch or number-sort skip), when pagination fallback runs, then entry_count equals forge header or search total."
   requirement req_cr_inventory_fallback_trusted_total
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_gitea_recent_created_tail_page_when_total_gt_limit {
   name "Gitea recent_created tail page when total exceeds limit"
   description "Given --sort recent_created on Gitea and total open count greater than retain_max, when listOpenPullsWithMeta runs, then forge fetches sort=oldest tail page and returns globally newest-created slice."
   requirement req_cr_inventory_sort_slice_accuracy
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_number_sort_full_collect_gitea_gitlab {
   name "Number sort full collect on Gitea and GitLab"
   description "Given number_asc or number_desc and total greater than retain_max, when Gitea or GitLab listOpenPullsWithMeta falls back, then all open PRs within compliant max are collected before client sort and slice."
   requirement req_cr_inventory_sort_slice_accuracy
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_github_fallback_search_total {
   name "GitHub fallback preserves search total_count"
   description "Given GitHub fast path rejected after search total obtained, when pagination fallback runs, then entry_count equals search total_count."
   requirement req_cr_inventory_fallback_trusted_total
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_caps_document_gitea_recent_created {
   name "Caps document Gitea recent_created semantics"
   description "Given provider capabilities open_pull_list, when Gitea provider reports caps, then recent_created tail-page and oldest-plus-reverse behavior is documented."
   requirement req_cr_inventory_sort_slice_accuracy
-  status draft
+  status approved
 }
