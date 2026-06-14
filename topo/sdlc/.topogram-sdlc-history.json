@@ -5770,6 +5770,26 @@
       "evidence_refs": [
         "pr:189"
       ]
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T04:03:13.983Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:194"
+      ]
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T04:03:14.206Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:194"
+      ]
     }
   ],
   "task_forge_trust_round10_wave2": [

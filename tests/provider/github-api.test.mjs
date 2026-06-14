@@ -293,6 +293,56 @@ describe('provider-github-api fixtures', () => {
     expect(global.fetch.mock.calls.every(([u]) => !String(u).includes('evil.example'))).toBe(true);
   });
 
+  it('githubFetchPaginated follows relative same-origin Link rel=next', async () => {
+    const page1Url =
+      'https://api.github.com/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/check-runs?per_page=25';
+    const relativeNext = '/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/check-runs?page=2';
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.startsWith(page1Url)) {
+        return Promise.resolve(
+          jsonResponse(
+            {
+              check_runs: [
+                {
+                  name: 'ci/page1',
+                  status: 'completed',
+                  conclusion: 'success',
+                  output: { title: 'page1 ok' },
+                },
+              ],
+            },
+            200,
+            { link: `<${relativeNext}>; rel="next"` },
+          ),
+        );
+      }
+      if (href.includes('page=2')) {
+        return Promise.resolve(
+          jsonResponse({
+            check_runs: [
+              {
+                name: 'ci/page2',
+                status: 'completed',
+                conclusion: 'success',
+                output: { title: 'page2 ok' },
+              },
+            ],
+          }),
+        );
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+    const result = await githubFetchPaginated(
+      ctx.config,
+      ctx.parsed,
+      repoApiPath(ctx.config, 'commits', 'a'.repeat(40), 'check-runs'),
+      (body) => body?.check_runs ?? [],
+    );
+    expect(result.truncated).toBe(false);
+    expect(result.items.map((r) => r.name)).toEqual(['ci/page1', 'ci/page2']);
+  });
+
   it('listOpenPullsWithMeta rejects off-origin Link rel=next without fetching', async () => {
     const evilNext = 'https://evil.example/api/pulls?page=2';
     global.fetch.mockImplementation((url) => {
@@ -307,6 +357,26 @@ describe('provider-github-api fixtures', () => {
     expect(meta.list_truncated).toBe(true);
     expect(meta.numbers).toEqual([1]);
     expect(global.fetch.mock.calls.every(([u]) => !String(u).includes('evil.example'))).toBe(true);
+  });
+
+  it('listOpenPullsWithMeta follows relative same-origin Link rel=next', async () => {
+    const relativeNext = '/repos/owner/repo/pulls?state=open&page=2';
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('page=2')) {
+        return Promise.resolve(jsonResponse([{ number: 2 }]));
+      }
+      if (href.includes('/pulls')) {
+        return Promise.resolve(
+          jsonResponse([{ number: 1 }], 200, { link: `<${relativeNext}>; rel="next"` }),
+        );
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+    const meta = await listOpenPullsWithMeta(ctx, {});
+    expect(meta.list_truncated).toBe(false);
+    expect(meta.numbers).toEqual([1, 2]);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
   });
 
   it('mergePlan adds checks_incomplete when statuses stream hits off-origin Link next', async () => {

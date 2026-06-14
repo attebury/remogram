@@ -18,7 +18,7 @@ task task_forge_trust_round10_wave1 {
   claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_offset_backoff_page_skip]
-  status claimed
+  status done
 }
 
 task task_forge_trust_round10_wave2 {

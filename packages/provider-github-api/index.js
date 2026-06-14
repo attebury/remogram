@@ -186,14 +186,14 @@ export async function githubFetchPaginated(config, parsed, path, slice) {
     all.push(...slice(body));
     const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
     const nextUrl = parseLinkHeader(linkHeader).next ?? null;
-    if (nextUrl && !isTrustedPaginationUrl(trustedOrigin, nextUrl)) {
+    if (nextUrl && !isTrustedPaginationUrl(trustedOrigin, nextUrl, currentUrl)) {
       truncated = true;
       url = null;
     } else if (nextUrl && page === MAX_CHECK_PAGES - 1) {
       truncated = true;
       url = null;
     } else {
-      url = nextUrl;
+      url = nextUrl ? new URL(nextUrl, currentUrl).href : null;
     }
   }
   return { items: all, truncated };
@@ -473,6 +473,7 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
     const trustedOrigin = new URL(base).origin;
     let url = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open`;
     for (let page = 0; page < MAX_CHECK_PAGES && url; page += 1) {
+      const currentUrl = url;
       const { body, headers } = await fetchJsonWithMeta(url, {
         headers: authHeaders(token),
       });
@@ -480,14 +481,14 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
       all.push(...items);
       const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
       const nextUrl = parseLinkHeader(linkHeader).next ?? null;
-      if (nextUrl && !isTrustedPaginationUrl(trustedOrigin, nextUrl)) {
+      if (nextUrl && !isTrustedPaginationUrl(trustedOrigin, nextUrl, currentUrl)) {
         listTruncated = true;
         url = null;
       } else if (nextUrl && page === MAX_CHECK_PAGES - 1) {
         listTruncated = true;
         url = null;
       } else {
-        url = nextUrl;
+        url = nextUrl ? new URL(nextUrl, currentUrl).href : null;
       }
     }
   } else {
