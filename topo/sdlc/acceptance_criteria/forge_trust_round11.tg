@@ -2,33 +2,33 @@ acceptance_criterion ac_link_pathname_confinement_round11 {
   name "Same-origin Link rel=next requires matching pathname"
   description "Given isTrustedPaginationUrl with resolveBase, when rel=next resolves to same origin but different pathname, then URL is untrusted and pagination stops without off-path fetch."
   requirement req_forge_trust_round11
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_github_link_helper_dry_round11 {
   name "GitHub Link pagination centralized in one helper"
   description "Given githubFetchPaginated and listOpenPullsWithMeta Link branches, when refactored, then both delegate trust/truncation/follow to resolveGitHubLinkNextPage with identical behavior."
   requirement req_forge_trust_round11
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_list_backoff_all_providers_round11 {
   name "Open PR list ingest backoff on all provider paths"
   description "Given oversized mocked list responses, when listOpenPullsWithMeta runs on GitHub limit branch, Gitea, and GitLab, then ingest backoff succeeds without OVERSIZED_RAW_OUTPUT under default cap."
   requirement req_forge_trust_round11
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_pagination_security_tests_round11 {
   name "Security tests cover off-path and protocol-relative Link cases"
   description "Given pagination-trust and GitHub provider tests, when off-path same-origin and protocol-relative URLs are exercised, then trust decisions match strict pathname and origin rules."
   requirement req_forge_trust_round11
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_agent_visible_pathname_docs_round11 {
   name "Agent docs mention strict pathname Link rule"
   description "Given README and remogram-core skill, when Link pagination trust is documented, then strict pathname equality with resolveBase is stated for agents."
   requirement req_forge_trust_round11
-  status draft
+  status approved
 }
