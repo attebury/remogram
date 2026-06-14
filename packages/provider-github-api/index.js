@@ -165,6 +165,14 @@ export async function githubFetch(config, parsed, path, options = {}) {
 
 const MAX_CHECK_PAGES = MAX_CHECK_STATUS_PAGES;
 
+function isTrustedPaginationUrl(config, parsed, url) {
+  try {
+    return new URL(url).origin === new URL(apiBase(config, parsed)).origin;
+  } catch {
+    return false;
+  }
+}
+
 export async function githubFetchPaginated(config, parsed, path, slice) {
   const base = apiBase(config, parsed);
   const { token } = requireToken();
@@ -184,7 +192,10 @@ export async function githubFetchPaginated(config, parsed, path, slice) {
     all.push(...slice(body));
     const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
     const nextUrl = parseLinkHeader(linkHeader).next ?? null;
-    if (nextUrl && page === MAX_CHECK_PAGES - 1) {
+    if (nextUrl && !isTrustedPaginationUrl(config, parsed, nextUrl)) {
+      truncated = true;
+      url = null;
+    } else if (nextUrl && page === MAX_CHECK_PAGES - 1) {
       truncated = true;
       url = null;
     } else {

@@ -25,6 +25,19 @@ function setupRepoWithOriginMain() {
   return dir;
 }
 
+function setupRepoWithOriginRemoOnly() {
+  const dir = mkdtempSync(join(tmpdir(), 'remogram-secret-scan-'));
+  git(dir, ['init', '--template=']);
+  git(dir, ['config', 'user.email', 'test@remogram.local']);
+  git(dir, ['config', 'user.name', 'remogram-test']);
+  writeFileSync(join(dir, 'README.md'), 'init\n');
+  git(dir, ['add', 'README.md']);
+  git(dir, ['commit', '-m', 'init']);
+  git(dir, ['branch', '-M', 'remo']);
+  git(dir, ['update-ref', 'refs/remotes/origin/remo', gitRevParse(dir, 'remo')]);
+  return dir;
+}
+
 function gitRevParse(dir, ref) {
   return execFileSync('git', ['rev-parse', ref], { cwd: dir, encoding: 'utf8' }).trim();
 }
@@ -76,5 +89,12 @@ describe('security:secrets gate', () => {
     const { resolveAutomaticBaseRef } = createGitHelpers(dir);
     expect(resolveAutomaticBaseRef({})).toBe('origin/main');
     expect(resolveAutomaticBaseRef({})).not.toBe('origin/remo');
+  });
+
+  it('resolveAutomaticBaseRef returns null when only origin/remo exists', () => {
+    const dir = setupRepoWithOriginRemoOnly();
+    cleanups.push(dir);
+    const { resolveAutomaticBaseRef } = createGitHelpers(dir);
+    expect(resolveAutomaticBaseRef({})).toBeNull();
   });
 });
