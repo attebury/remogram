@@ -263,6 +263,48 @@ describe('provider-gitlab-api fixtures', () => {
     expect(statusUrls.some((u) => u.includes('/statuses') && u.includes('page=2'))).toBe(true);
   });
 
+  it('prChecks survives oversized status page via ingest backoff', async () => {
+    const paddedStatuses = Array.from({ length: 25 }, (_, i) => ({
+      name: `ci/pad-${i}`,
+      status: 'success',
+      description: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedStatuses);
+    expect(Buffer.byteLength(oversizedJson, 'utf8')).toBeGreaterThan(8192);
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('merge_requests/42')) {
+        return Promise.resolve(jsonResponse(load('merge-request-clean.json')));
+      }
+      if (href.includes('/pipelines')) {
+        return Promise.resolve(jsonResponse([]));
+      }
+      if (href.includes('/statuses')) {
+        const perPage = Number(new URL(href).searchParams.get('per_page') || '25');
+        if (perPage > 12) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            body: {
+              [Symbol.asyncIterator]: async function* () {
+                yield Buffer.from(oversizedJson);
+              },
+            },
+          });
+        }
+        return Promise.resolve(
+          jsonResponse([{ name: 'ci/ok', status: 'success', description: 'ok' }]),
+        );
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+
+    const body = await provider.prChecks(ctx, { number: 42 });
+    expect(body.check_conclusion).toBe('success');
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('per_page=12'))).toBe(true);
+  });
+
   it('mergePlan includes checks_failed when page 1 returns 100 statuses', async () => {
     const legacyPage1 = Array.from({ length: 100 }, (_, i) => ({
       name: `ci/legacy-${i}`,

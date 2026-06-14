@@ -41,6 +41,22 @@ describe('check pagination ingest backoff', () => {
     expect(result.truncated).toBe(false);
   });
 
+  it('paginateCheckStatusPages throws when single item exceeds cap at minimum limit', async () => {
+    await expect(
+      paginateCheckStatusPages({
+        pageSize: 1,
+        maxPages: 1,
+        fetchPage: async () => {
+          throw Object.assign(new Error('oversized'), {
+            forgeError: { code: ERROR_CODES.OVERSIZED_RAW_OUTPUT },
+          });
+        },
+      }),
+    ).rejects.toMatchObject({
+      forgeError: { code: ERROR_CODES.OVERSIZED_RAW_OUTPUT },
+    });
+  });
+
   it('fetchWithIngestPageBackoff retries with smaller per_page', async () => {
     const limits = [];
     const result = await fetchWithIngestPageBackoff(
