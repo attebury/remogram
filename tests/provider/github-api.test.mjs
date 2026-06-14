@@ -11,6 +11,7 @@ import {
   mergeability,
   graphqlEndpoint,
   graphqlPullToRestShape,
+  githubFetchPaginated,
 } from '@remogram/provider-github-api';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -255,6 +256,40 @@ describe('provider-github-api fixtures', () => {
       'head_sha',
       'statuses',
     ]);
+  });
+
+  it('githubFetchPaginated rejects off-origin Link rel=next without fetching', async () => {
+    const evilNext = 'https://evil.example/api/check-runs?page=2';
+    global.fetch.mockImplementation((url) => {
+      if (String(url).includes('evil.example')) {
+        throw new Error('must not fetch untrusted pagination URL');
+      }
+      return Promise.resolve(
+        jsonResponse(
+          {
+            check_runs: [
+              {
+                name: 'ci/page1',
+                status: 'completed',
+                conclusion: 'success',
+                output: { title: 'page1 ok' },
+              },
+            ],
+          },
+          200,
+          { link: `<${evilNext}>; rel="next"` },
+        ),
+      );
+    });
+    const result = await githubFetchPaginated(
+      ctx.config,
+      ctx.parsed,
+      repoApiPath(ctx.config, 'commits', 'a'.repeat(40), 'check-runs'),
+      (body) => body?.check_runs ?? [],
+    );
+    expect(result.truncated).toBe(true);
+    expect(result.items).toHaveLength(1);
+    expect(global.fetch.mock.calls.every(([u]) => !String(u).includes('evil.example'))).toBe(true);
   });
 
   it('prChecks includes checks_failed when check-runs fail on page 2', async () => {
