@@ -6503,6 +6503,16 @@
       "evidence_refs": [
         "pr:240"
       ]
+    },
+    {
+      "from": "done",
+      "to": "archived",
+      "at": "2026-06-14T05:47:46.894Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "archive:archive/workcycle/forge-trust-round14"
+      ]
     }
   ],
   "req_forge_trust_round14": [
