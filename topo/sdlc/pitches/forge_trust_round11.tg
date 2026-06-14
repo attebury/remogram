@@ -1,0 +1,12 @@
+pitch pitch_forge_trust_round11 {
+  name "Forge Trust Round 11 — Link Confinement and List Backoff Parity"
+  description "Eleventh forge-trust Intent Packet closing Round 10 code-review follow-ups: strict pathname Link confinement, GitHub Link-pagination helper DRY, list ingest backoff on all provider list paths, and security/proof tests."
+  appetite "medium"
+  problem "isTrustedPaginationUrl checks origin only so same-origin off-path rel=next exfiltrates token; GitHub list limit branch and Gitea/GitLab list paths lack ingest backoff; GitHub Link pagination logic duplicated; security tests omit off-path and protocol-relative cases."
+  solution_sketch "Four serialized waves: (1) strict pathname guard in isTrustedPaginationUrl, (2) resolveGitHubLinkNextPage helper, (3) list backoff parity on GitHub limit + Gitea/GitLab, (4) contract tests and docs. All four claim-wave PRs on remo. Autonomous Observer-routed execution."
+  rabbit_holes "Raising DEFAULT_MAX_BYTES globally; .remogram.json ingest cap fields; reopening archived round 8/9/10 clusters; repo-scoped prefix allowlists; npm publish."
+  no_go_areas "Hand-editing lifecycle status; rewriting round 8/9/10 archaeology; changing conservative max_pages semantics."
+  affects [cap_forge_remote_ops]
+  priority high
+  status draft
+}

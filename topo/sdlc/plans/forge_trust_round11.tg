@@ -1,0 +1,15 @@
+plan plan_forge_trust_round11 {
+  name "Forge Trust Round 11 — Wave Plan"
+  description "Close Round 10 review follow-ups. Serialize: pathname confinement before helper DRY; helper before list backoff in GitHub file; proof/docs last."
+  task task_forge_trust_round11_wave1
+  architecture_patterns [contract_boundary, fail_closed_gate, command_owned_mutation]
+  priority high
+  steps {
+    step wave1_pathname_confinement status pending description "Wave 1 — strict pathname guard in isTrustedPaginationUrl + security tests."
+    step wave2_github_link_helper status pending description "Wave 2 — resolveGitHubLinkNextPage helper; refactor Link pagination loops."
+    step wave3_list_backoff_parity status pending description "Wave 3 — ingest backoff on GitHub limit branch + Gitea/GitLab list paths."
+    step wave4_proof_docs status pending description "Wave 4 — mock contract test, README/skill one-liner, residual proof gaps."
+    step verify status pending description "npm test, topogram check green on remo tip after cluster closeout."
+  }
+  status draft
+}

@@ -1,0 +1,91 @@
+task task_forge_trust_round11_wave1 {
+  name "Wave 1 — Strict pathname Link confinement"
+  description "Extend isTrustedPaginationUrl with pathname equality when resolveBase provided; core and GitHub provider security tests."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Repo-scoped prefix allowlists" "Raising DEFAULT_MAX_BYTES"]
+  entrypoints ["packages/remogram-core/http.js" "tests/core/pagination-trust.test.mjs" "tests/provider/github-api.test.mjs"]
+  satisfies [req_forge_trust_round11]
+  acceptance_refs [ac_link_pathname_confinement_round11, ac_pagination_security_tests_round11]
+  verification_refs [verification_forge_trust_round11_wave1]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
+  linked_bugs [bug_link_same_origin_off_path, bug_pagination_security_tests_incomplete]
+  status unclaimed
+}
+
+task task_forge_trust_round11_wave2 {
+  name "Wave 2 — GitHub Link-pagination helper"
+  description "Extract resolveGitHubLinkNextPage; refactor githubFetchPaginated and listOpenPullsWithMeta Link branches."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Product behavior change beyond Wave 1 trust"]
+  entrypoints ["packages/provider-github-api/index.js"]
+  satisfies [req_forge_trust_round11]
+  acceptance_refs [ac_github_link_helper_dry_round11]
+  verification_refs [verification_forge_trust_round11_wave2]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round11_wave1]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  claimed_by [actor_coding_agent]
+  bug_discovery no_bug_observed
+  linked_bugs []
+  status unclaimed
+}
+
+task task_forge_trust_round11_wave3 {
+  name "Wave 3 — List ingest backoff parity"
+  description "fetchWithIngestPageBackoff on GitHub limit branch, Gitea and GitLab listOpenPullsWithMeta."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Raising DEFAULT_MAX_BYTES"]
+  entrypoints ["packages/provider-github-api/index.js" "packages/provider-gitea-api/index.js" "packages/provider-gitlab-api/index.js" "tests/provider/github-api.test.mjs" "tests/provider/gitea-api.test.mjs" "tests/provider/gitlab-api.test.mjs"]
+  satisfies [req_forge_trust_round11]
+  acceptance_refs [ac_list_backoff_all_providers_round11]
+  verification_refs [verification_forge_trust_round11_wave3]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round11_wave2]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type bugfix
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
+  linked_bugs [bug_github_list_limit_no_backoff, bug_gitea_gitlab_list_no_ingest_backoff]
+  status unclaimed
+}
+
+task task_forge_trust_round11_wave4 {
+  name "Wave 4 — Proof and contract hygiene"
+  description "Mock crInventory checks_truncated contract test; README/skill pathname rule; close residual proof gaps."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Product changes unless tests reveal bugs"]
+  entrypoints ["tests/core/cr-inventory.test.mjs" "README.md" "tools/remogram-agent-support/skills/remogram-core/SKILL.md"]
+  satisfies [req_forge_trust_round11]
+  acceptance_refs [ac_agent_visible_pathname_docs_round11]
+  verification_refs [verification_forge_trust_round11_wave4]
+  affects [cap_forge_remote_ops]
+  blocked_by [task_forge_trust_round11_wave3]
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority medium
+  work_type bugfix
+  claimed_by [actor_coding_agent]
+  bug_discovery no_bug_observed
+  linked_bugs []
+  status unclaimed
+}

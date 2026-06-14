@@ -1,0 +1,9 @@
+goal_branch goal_branch_forge_trust_round11 {
+  name "Forge Trust Round 11 Intent Packet"
+  description "Intent Packet for Link pathname confinement, GitHub pagination helper, list ingest backoff parity, and security proof. Four serialized waves."
+  branch_ref "goal/forge-trust-round11"
+  task task_forge_trust_round11_wave1
+  evidence_refs [local:topo/sdlc/pitches/forge_trust_round11.tg, local:topo/sdlc/requirements/forge_trust_round11.tg, local:topo/sdlc/plans/forge_trust_round11.tg, local:topo/sdlc/tasks/forge_trust_round11_waves.tg, local:topo/sdlc/acceptance_criteria/forge_trust_round11.tg, local:topo/sdlc/bugs/forge-trust-round11.tg, local:topo/sdlc/decisions/forge_ingest_cap_policy.tg, local:topo/verifications/forge-trust-round11.tg]
+  witness_refs []
+  status draft
+}
