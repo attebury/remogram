@@ -5633,5 +5633,121 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "goal_branch_forge_trust_round10": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T04:00:50.566Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "origin/remo"
+      ]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T04:00:50.837Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:188"
+      ]
+    }
+  ],
+  "ac_offset_backoff_carry_forward_round10": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T04:00:51.149Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:188"
+      ]
+    }
+  ],
+  "ac_link_relative_next_trusted_round10": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T04:00:51.404Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:188"
+      ]
+    }
+  ],
+  "ac_github_list_ingest_backoff_round10": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T04:00:51.644Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:188"
+      ]
+    }
+  ],
+  "ac_check_source_count_honest_round10": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T04:00:51.880Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:188"
+      ]
+    }
+  ],
+  "ac_dual_stream_truncation_proof_round10": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T04:00:52.183Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:188"
+      ]
+    }
+  ],
+  "ac_fixture_hygiene_round10": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T04:00:52.431Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:188"
+      ]
+    }
+  ],
+  "req_forge_trust_round10": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T04:00:58.752Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:188"
+      ]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T04:00:59.114Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:188"
+      ]
+    }
   ]
 }

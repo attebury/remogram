@@ -2,40 +2,40 @@ acceptance_criterion ac_offset_backoff_carry_forward_round10 {
   name "Offset pagination carries forward reduced limit after backoff"
   description "Given paginateCheckStatusPages with oversize page 1 requiring halved limit, when page 2 is fetched, then fetchPage receives the same reduced limit not the original pageSize."
   requirement req_forge_trust_round10
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_link_relative_next_trusted_round10 {
   name "Relative same-origin Link rel=next is trusted"
   description "Given isTrustedPaginationUrl with resolveBase on configured API origin, when rel=next is a relative path on same origin, then URL is trusted and pagination continues."
   requirement req_forge_trust_round10
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_github_list_ingest_backoff_round10 {
   name "GitHub open PR list survives oversize ingest"
   description "Given mocked oversized open PR list page, when listOpenPullsWithMeta runs, then ingest backoff succeeds without OVERSIZED_RAW_OUTPUT under default cap."
   requirement req_forge_trust_round10
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_check_source_count_honest_round10 {
   name "check_source_count matches check_sources length"
   description "Given provider capabilities --json on each *-api provider, when check_pagination is returned, then check_source_count equals check_sources array length."
   requirement req_forge_trust_round10
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_dual_stream_truncation_proof_round10 {
   name "Dual-stream max-pages truncation proven on secondary stream"
   description "Given GitHub check-runs or GitLab pipelines stream hits max_pages with empty primary stream, when prChecks runs, then checks_truncated is true and mergePlan includes checks_incomplete."
   requirement req_forge_trust_round10
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_fixture_hygiene_round10 {
   name "Mock and semantic-diff fixtures include checks_truncated"
   description "Given mock-provider prChecks and cr_inventory_slice semantic-diff fixture, when inspected, then checks_truncated boolean is present on checks and entries."
   requirement req_forge_trust_round10
-  status draft
+  status approved
 }
