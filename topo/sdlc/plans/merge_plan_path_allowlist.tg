@@ -3,9 +3,9 @@ plan plan_merge_plan_path_allowlist {
   description "One implementation wave wiring path-allowlist into merge plan blockers."
   task task_merge_plan_path_allowlist
   steps {
-    step path_scope_core status pending description "gitDiffNameOnly + mergeBlockersFromFacts path_scope_violation"
-    step provider_cli status pending description "buildMergePlanBody + CLI --allowed-path + MCP optional allowed_paths"
-    step proof status pending description "npm test green"
+    step path_scope_core status done description "gitDiffNameOnly + mergeBlockersFromFacts path_scope_violation"
+    step provider_cli status done description "buildMergePlanBody + CLI --allowed-path + MCP optional allowed_paths"
+    step proof status done description "npm test green"
   }
-  status active
+  status superseded
 }
