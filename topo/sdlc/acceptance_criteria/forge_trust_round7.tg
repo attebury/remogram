@@ -2,14 +2,14 @@ acceptance_criterion ac_capabilities_check_pagination_round7 {
   name "Capabilities report check_pagination facts"
   description "Given provider capabilities --json, when packet is returned, then check_pagination describes strategy page_size max_pages and page_size_param honestly for each *-api provider."
   requirement req_forge_trust_round7
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_shared_pagination_constants_round7 {
   name "Pagination constants centralized in remogram-core"
   description "Given provider *-api packages, when check pagination runs, then DEFAULT_CHECK_STATUS_PAGE_SIZE and MAX_CHECK_STATUS_PAGES are imported from remogram-core not duplicated locally."
   requirement req_forge_trust_round7
-  status draft
+  status approved
 }
 
 acceptance_criterion ac_non_list_ingest_oversize_mock_round7 {
