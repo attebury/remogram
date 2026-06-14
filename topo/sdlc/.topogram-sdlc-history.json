@@ -5938,6 +5938,16 @@
       "evidence_refs": [
         "pr:201"
       ]
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-14T04:52:52.784Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "f01bff0"
+      ]
     }
   ],
   "ac_link_pathname_confinement_round11": [
@@ -6032,6 +6042,20 @@
       "evidence_refs": [
         "pr:201"
       ]
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T04:52:13.488Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T04:52:16.147Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ],
   "task_forge_trust_round11_wave2": [
@@ -6044,6 +6068,20 @@
       "evidence_refs": [
         "pr:201"
       ]
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T04:52:19.142Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T04:52:24.398Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ],
   "task_forge_trust_round11_wave3": [
@@ -6056,6 +6094,20 @@
       "evidence_refs": [
         "pr:201"
       ]
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T04:52:24.711Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T04:52:25.066Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ],
   "task_forge_trust_round11_wave4": [
@@ -6068,6 +6120,20 @@
       "evidence_refs": [
         "pr:201"
       ]
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T04:52:25.365Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T04:52:25.716Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ]
 }

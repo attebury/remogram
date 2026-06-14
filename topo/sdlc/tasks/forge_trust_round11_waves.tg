@@ -17,8 +17,8 @@ task task_forge_trust_round11_wave1 {
   work_type bugfix
   claimed_by [actor_coding_agent]
   bug_discovery bug_linked
-  linked_bugs [bug_link_same_origin_off_path, bug_pagination_security_tests_incomplete]
-  status claimed
+  linked_bugs [bug_link_same_origin_off_path bug_pagination_security_tests_incomplete]
+  status done
 }
 
 task task_forge_trust_round11_wave2 {
@@ -40,8 +40,8 @@ task task_forge_trust_round11_wave2 {
   work_type bugfix
   claimed_by [actor_coding_agent]
   bug_discovery no_bug_observed
-  linked_bugs []
-  status claimed
+  bug_discovery_rationale "Refactor only; Wave 1 pathname trust preserved."
+  status done
 }
 
 task task_forge_trust_round11_wave3 {
@@ -63,8 +63,8 @@ task task_forge_trust_round11_wave3 {
   work_type bugfix
   claimed_by [actor_coding_agent]
   bug_discovery bug_linked
-  linked_bugs [bug_github_list_limit_no_backoff, bug_gitea_gitlab_list_no_ingest_backoff]
-  status claimed
+  linked_bugs [bug_github_list_limit_no_backoff bug_gitea_gitlab_list_no_ingest_backoff]
+  status done
 }
 
 task task_forge_trust_round11_wave4 {
@@ -86,6 +86,6 @@ task task_forge_trust_round11_wave4 {
   work_type bugfix
   claimed_by [actor_coding_agent]
   bug_discovery no_bug_observed
-  linked_bugs []
-  status claimed
+  bug_discovery_rationale "Docs and contract test only; no new defects."
+  status done
 }
