@@ -7191,6 +7191,16 @@
       "at": "2026-06-14T07:31:10.646Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-14T07:32:26.841Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:255"
+      ]
     }
   ],
   "pitch_autonomous_observer_merge_guardrails": [
@@ -7265,6 +7275,13 @@
       "at": "2026-06-14T07:31:10.588Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T07:32:16.493Z",
+      "by": "actor_coding_agent",
+      "note": null
     }
   ]
 }
