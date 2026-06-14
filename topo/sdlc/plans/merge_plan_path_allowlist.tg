@@ -7,5 +7,5 @@ plan plan_merge_plan_path_allowlist {
     step provider_cli status pending description "buildMergePlanBody + CLI --allowed-path + MCP optional allowed_paths"
     step proof status pending description "npm test green"
   }
-  status draft
+  status active
 }

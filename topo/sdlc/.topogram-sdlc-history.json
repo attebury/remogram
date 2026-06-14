@@ -7325,5 +7325,51 @@
         "archive:goal/autonomous-observer-merge-guardrails"
       ]
     }
+  ],
+  "goal_branch_merge_plan_path_allowlist": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T16:22:00.000Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": ["pr:260"]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T16:22:01.000Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": ["pr:260"]
+    }
+  ],
+  "pitch_merge_plan_path_allowlist": [
+    {
+      "from": "draft",
+      "to": "submitted",
+      "at": "2026-06-14T16:22:02.000Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": ["pr:260"]
+    }
+  ],
+  "req_merge_plan_path_allowlist": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T16:22:03.000Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": ["pr:260"]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T16:22:04.000Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": ["pr:260"]
+    }
   ]
 }
