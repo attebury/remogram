@@ -18,6 +18,7 @@ import {
   MAX_CHECK_STATUS_PAGES,
   paginateCheckStatusPages,
   fetchWithIngestPageBackoff,
+  fetchPageWithIngestBackoff,
   withPerPageParam,
   apiProviderCommands,
 } from '@remogram/core';
@@ -241,26 +242,29 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
   let listTruncated = false;
   const path = `${repoApiPath(ctx.config, 'pulls')}?state=open`;
   const pageSep = path.includes('?') ? '&' : '?';
+  let activeLimit = pageSize;
   for (let page = 1; page <= MAX_CHECK_PAGES; page += 1) {
-    const remaining = listLimit != null ? Math.max(listLimit - all.length, 0) : pageSize;
+    const remaining = listLimit != null ? Math.max(listLimit - all.length, 0) : activeLimit;
     if (listLimit != null && remaining === 0) break;
-    const requestLimit = listLimit != null ? Math.min(pageSize, remaining) : pageSize;
-    const body = await fetchWithIngestPageBackoff(
-      (limit) =>
-        giteaFetch(
+    const requestLimit = listLimit != null ? Math.min(activeLimit, remaining) : activeLimit;
+    const { items, usedLimit } = await fetchPageWithIngestBackoff(
+      async ({ page: pageNum, limit }) => {
+        const body = await giteaFetch(
           ctx.config,
           ctx.parsed,
-          `${path}${pageSep}limit=${limit}&page=${page}`,
-        ),
-      (limit) => limit,
+          `${path}${pageSep}limit=${limit}&page=${pageNum}`,
+        );
+        return Array.isArray(body) ? body : [];
+      },
+      page,
       requestLimit,
     );
-    const items = Array.isArray(body) ? body : [];
+    activeLimit = usedLimit;
     all.push(...items);
-    if (items.length < requestLimit) break;
+    if (items.length < usedLimit) break;
     if (listLimit != null) {
       if (all.length >= listLimit) {
-        listTruncated = items.length >= requestLimit;
+        listTruncated = items.length >= usedLimit;
         break;
       }
     } else if (page === MAX_CHECK_PAGES) {

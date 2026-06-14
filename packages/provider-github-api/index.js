@@ -20,6 +20,7 @@ import {
   DEFAULT_CHECK_STATUS_PAGE_SIZE,
   MAX_CHECK_STATUS_PAGES,
   fetchWithIngestPageBackoff,
+  fetchPageWithIngestBackoff,
   withPerPageParam,
   apiProviderCommands,
 } from '@remogram/core';
@@ -513,24 +514,27 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
       url = linkPage.nextUrl;
     }
   } else {
+    let activeLimit = GITHUB_PAGE_SIZE;
     for (let page = 1; page <= MAX_CHECK_PAGES; page += 1) {
       const remaining = listLimit - all.length;
       if (remaining <= 0) break;
-      const requestSize = Math.min(remaining, GITHUB_PAGE_SIZE);
-      const pageUrl = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open&page=${page}`;
-      const { body } = await fetchWithIngestPageBackoff(
-        (attemptUrl) =>
-          fetchJsonWithMeta(attemptUrl, {
+      const requestSize = Math.min(remaining, activeLimit);
+      const { items, usedLimit } = await fetchPageWithIngestBackoff(
+        async ({ page: pageNum, limit }) => {
+          const pageUrl = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open&page=${pageNum}`;
+          const { body } = await fetchJsonWithMeta(withPerPageParam(pageUrl, limit), {
             headers: authHeaders(token),
-          }),
-        (limit) => withPerPageParam(pageUrl, limit),
+          });
+          return Array.isArray(body) ? body : [];
+        },
+        page,
         requestSize,
       );
-      const items = Array.isArray(body) ? body : [];
+      activeLimit = usedLimit;
       all.push(...items);
-      if (items.length < requestSize) break;
+      if (items.length < usedLimit) break;
       if (all.length >= listLimit) {
-        listTruncated = items.length >= requestSize;
+        listTruncated = items.length >= usedLimit;
         break;
       }
       if (page === MAX_CHECK_PAGES) listTruncated = true;

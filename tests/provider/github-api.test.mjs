@@ -489,13 +489,56 @@ describe('provider-github-api fixtures', () => {
           },
         });
       }
-      return Promise.resolve(jsonResponse(paddedPulls.slice(0, 12)));
+      return Promise.resolve(jsonResponse([{ number: 1 }]));
     });
 
     const meta = await listOpenPullsWithMeta(ctx, { limit: 50 });
-    expect(meta.numbers.length).toBeGreaterThan(0);
+    expect(meta.numbers).toEqual([1]);
     expect(meta.list_truncated).toBe(false);
     expect(global.fetch.mock.calls.some(([u]) => String(u).includes('per_page=12'))).toBe(true);
+  });
+
+  it('listOpenPullsWithMeta limit branch carries reduced per_page to page 2 after oversized page 1', async () => {
+    const paddedPulls = Array.from({ length: 25 }, (_, i) => ({
+      number: i + 1,
+      title: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedPulls);
+    const page2Pull = [{ number: 26 }];
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (!href.includes('/pulls')) {
+        return Promise.reject(new Error(`unexpected fetch: ${href}`));
+      }
+      const parsed = new URL(href);
+      const perPage = Number(parsed.searchParams.get('per_page') || '25');
+      const page = Number(parsed.searchParams.get('page') || '1');
+      if (page === 1 && perPage > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          headers: { get: () => null },
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      if (page === 1) {
+        return Promise.resolve(jsonResponse(paddedPulls.slice(0, 12)));
+      }
+      if (page === 2) {
+        expect(perPage).toBe(12);
+        return Promise.resolve(jsonResponse(page2Pull));
+      }
+      return Promise.resolve(jsonResponse([]));
+    });
+
+    const meta = await listOpenPullsWithMeta(ctx, { limit: 50 });
+    expect(meta.numbers).toContain(26);
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('page=2') && String(u).includes('per_page=12'))).toBe(true);
   });
 
   it('mergePlan adds checks_incomplete when statuses stream hits off-origin Link next', async () => {
