@@ -8,5 +8,5 @@ pitch pitch_autonomous_observer_merge_guardrails {
   no_go_areas "SDLC fields in remogram output; hand-editing lifecycle status; widening envelope fields."
   affects [cap_forge_remote_ops]
   priority medium
-  status draft
+  status submitted
 }

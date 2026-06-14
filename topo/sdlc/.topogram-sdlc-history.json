@@ -7163,5 +7163,85 @@
         "archive:goal/gitea-commit-status-normalization"
       ]
     }
+  ],
+  "goal_branch_autonomous_observer_merge_guardrails": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T07:29:52.846Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:253"
+      ]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T07:29:53.456Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:253"
+      ]
+    }
+  ],
+  "pitch_autonomous_observer_merge_guardrails": [
+    {
+      "from": "draft",
+      "to": "submitted",
+      "at": "2026-06-14T07:29:56.795Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:253"
+      ]
+    }
+  ],
+  "req_autonomous_observer_merge_guardrails": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T07:30:03.862Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:253"
+      ]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T07:30:04.117Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:253"
+      ]
+    }
+  ],
+  "ac_merge_path_allowlist_match": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T07:30:04.359Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:253"
+      ]
+    }
+  ],
+  "ac_merge_path_allowlist_tests": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T07:30:11.244Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:253"
+      ]
+    }
   ]
 }
