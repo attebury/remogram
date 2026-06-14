@@ -1,0 +1,13 @@
+plan plan_cr_inventory_list_v2_review_followup {
+  name "CR inventory list v2 review follow-up plan"
+  description "Gitea recent_created fix, fast-path validators, number-sort skip, tests."
+  task task_cr_inventory_list_v2_review_followup
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  steps {
+    step gitea_recent_created status pending description "sort=oldest plus reverse for recent_created on Gitea."
+    step fast_path_validators status pending description "validateFastPathPageLength and isNumberSortFastPathEligible in core and providers."
+    step tests status pending description "Provider, core, CLI tests for sort presets and slice_sort contract."
+    step verify status pending description "npm test green."
+  }
+  status active
+}

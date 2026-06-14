@@ -1,0 +1,8 @@
+requirement req_cr_inventory_fast_path_sanity {
+  name "Open-PR fast path sanity gates"
+  description "Fast path must reject header/body length mismatch and skip number_asc/number_desc when total open count exceeds retain_max, falling back to pagination."
+  affects [cap_forge_remote_ops]
+  pitch pitch_cr_inventory_list_v2_review_followup
+  priority high
+  status approved
+}

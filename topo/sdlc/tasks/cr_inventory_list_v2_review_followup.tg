@@ -1,0 +1,22 @@
+task task_cr_inventory_list_v2_review_followup {
+  name "CR inventory list v2 review follow-up"
+  description "Fix Gitea recent_created, fast-path sanity gates, number-sort skip, missing tests."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Global number sort pagination walk" "Fast-path error surfacing refactor" "Default sort change"]
+  entrypoints ["packages/remogram-core/open-pull-list.js" "packages/provider-gitea-api/**" "packages/provider-gitlab-api/**" "packages/provider-github-api/**" "tests/**" "CHANGELOG.md"]
+  satisfies [req_cr_inventory_gitea_recent_created_sort req_cr_inventory_fast_path_sanity]
+  acceptance_refs [ac_gitea_recent_created_distinct_from_recent_update ac_fast_path_body_length_mismatch_fallback ac_number_sort_skips_fast_path_when_total_gt_limit ac_slice_sort_packet_contract ac_sort_tests_per_provider]
+  verification_refs [verification_cr_inventory_list_v2_review_followup]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition backlog
+  priority high
+  work_type implementation
+  claimed_by [actor_coding_agent]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Code review follow-up from merged impl PR #333."
+  status claimed
+}

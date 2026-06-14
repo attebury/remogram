@@ -1,0 +1,34 @@
+acceptance_criterion ac_gitea_recent_created_distinct_from_recent_update {
+  name "Gitea recent_created differs from recent_update"
+  description "Given --sort recent_created on Gitea, when listOpenPullsWithMeta runs, then forge query uses sort=oldest and returned order differs from recent_update for the same fixture."
+  requirement req_cr_inventory_gitea_recent_created_sort
+  status approved
+}
+
+acceptance_criterion ac_fast_path_body_length_mismatch_fallback {
+  name "Fast path body length mismatch falls back"
+  description "Given trusted total count but response body shorter than min(total, limit), when fast path runs, then providers fall back to pagination without trusting partial header."
+  requirement req_cr_inventory_fast_path_sanity
+  status approved
+}
+
+acceptance_criterion ac_number_sort_skips_fast_path_when_total_gt_limit {
+  name "Number sorts skip fast path when total exceeds limit"
+  description "Given number_asc or number_desc and total open count greater than retain_max, when listOpenPullsWithMeta runs, then fast path is skipped and pagination path is used."
+  requirement req_cr_inventory_fast_path_sanity
+  status approved
+}
+
+acceptance_criterion ac_slice_sort_packet_contract {
+  name "slice_sort emitted on cr inventory success"
+  description "Given cr inventory success, when packet is composed, then slice_sort is present and matches normalized sort preset."
+  requirement req_cr_inventory_fast_path_sanity
+  status approved
+}
+
+acceptance_criterion ac_sort_tests_per_provider {
+  name "Provider sort regression tests"
+  description "Given gitea gitlab github provider tests, when npm test runs, then recent_created body-length and number-sort skip cases are covered."
+  requirement req_cr_inventory_gitea_recent_created_sort
+  status approved
+}
