@@ -54,6 +54,7 @@ export const TRUSTED_NORMALIZED_BODY_FIELDS = Object.freeze({
   state: true,
   truncated: true,
   list_truncated: true,
+  checks_truncated: true,
   entry_count: true,
   mergeability_confidence: true,
   write_support: true,

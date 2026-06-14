@@ -3,10 +3,16 @@ import { mergeBlockersFromFacts } from '@remogram/core';
 
 describe('mergeBlockersFromFacts', () => {
   const openClean = { mergeability: 'clean', state: 'open' };
-  const checksSuccess = { check_conclusion: 'success' };
+  const checksSuccess = { check_conclusion: 'success', checks_truncated: false };
 
   it('returns no blockers on the happy path', () => {
     expect(mergeBlockersFromFacts(openClean, checksSuccess)).toEqual([]);
+  });
+
+  it('blocks when check enumeration was truncated', () => {
+    expect(
+      mergeBlockersFromFacts(openClean, { check_conclusion: 'success', checks_truncated: true }),
+    ).toEqual(['checks_incomplete']);
   });
 
   it('maps mergeability and check conclusions to shared vocabulary', () => {

@@ -426,7 +426,13 @@ export async function prChecks(ctx, opts) {
     description: sanitizeField(checkRunDescription(run)),
   }));
   const mapped = [...mappedStatuses, ...mappedCheckRuns];
-  return { head_sha: sha, check_conclusion: summarizeChecks(mapped), statuses: mapped };
+  const checks_truncated = statusResult.truncated || checkRunResult.truncated;
+  return {
+    head_sha: sha,
+    check_conclusion: summarizeChecks(mapped),
+    checks_truncated,
+    statuses: mapped,
+  };
 }
 
 export async function mergePlan(ctx, opts) {

@@ -251,6 +251,7 @@ describe('provider-github-api fixtures', () => {
     ]);
     expect(bodyKeys(forgePacket(PACKET_TYPES.PR_CHECKS, packetCtx, body))).toEqual([
       'check_conclusion',
+      'checks_truncated',
       'head_sha',
       'statuses',
     ]);
