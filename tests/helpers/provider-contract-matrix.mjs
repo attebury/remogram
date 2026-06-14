@@ -205,6 +205,7 @@ export function runProviderContractMatrix(cases) {
           expect(Array.isArray(body.entries)).toBe(true);
           expect(body.entries[0].pr_number).toBe(testCase.prOpts.number);
           expect(body.entries[0].checks_conclusion).toBeDefined();
+          expect(typeof body.entries[0].checks_truncated).toBe('boolean');
           expect(Array.isArray(body.entries[0].blockers)).toBe(true);
           expect(typeof body.entry_count).toBe('number');
           expect(typeof body.truncated).toBe('boolean');

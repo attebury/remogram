@@ -279,7 +279,9 @@ To change coverage include/exclude lists or add thresholds, update this section,
 
 `remogram provider capabilities --json` returns structured provider facts: which commands are implemented, per-command **`auth_class`** (`none`, `git_only`, or `token_required`), auth env names, check source support, mergeability confidence, host-binding mode, `pagination` (check listing behavior), **`check_pagination`** (structured page size, max pages, ingest backoff, and truncation semantics for check/status endpoints), `forge_ingest_cap_bytes` (effective raw HTTP ingest cap, default **8192**), and `write_support: false` for v1.
 
-**`pr checks`** / MCP **`pr_checks`** include **`checks_truncated`** when check enumeration stops at the provider page cap. **`merge plan`** adds blocker **`checks_incomplete`** when truncation occurred, even if visible checks look successful.
+**`pr checks`** / MCP **`pr_checks`** include **`checks_truncated`** when check enumeration stops at the provider page cap (conservative fail-closed: true when exactly `page_size × max_pages` items were returned, even if no further forge pages exist). **`merge plan`** adds blocker **`checks_incomplete`** when truncation occurred, even if visible checks look successful. **`cr inventory`** entries include **`checks_truncated`** for the same signal per PR.
+
+Multi-source providers (GitHub, GitLab) expose **`check_source_count`**, **`compliant_max_items_total`**, and **`truncation_combination: any_source_truncated`** in **`check_pagination`** — truncation is true when any source hits the page cap.
 
 ### Auth class matrix (API providers)
 

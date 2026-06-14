@@ -129,6 +129,9 @@ describe('provider-gitlab-api fixtures', () => {
       ingest_backoff: 'halve_until_fit',
       on_page_cap: 'set_checks_truncated',
       compliant_max_items_per_source: 1250,
+      check_source_count: 2,
+      truncation_combination: 'any_source_truncated',
+      compliant_max_items_total: 2500,
       truncation_packet_field: 'checks_truncated',
     });
   });

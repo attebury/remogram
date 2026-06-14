@@ -376,6 +376,9 @@ describe('provider-gitea-api fixtures', () => {
       ingest_backoff: 'halve_until_fit',
       on_page_cap: 'set_checks_truncated',
       compliant_max_items_per_source: 1250,
+      check_source_count: 1,
+      truncation_combination: 'single_source',
+      compliant_max_items_total: 1250,
       truncation_packet_field: 'checks_truncated',
     });
   });

@@ -32,11 +32,26 @@ describe('cr inventory', () => {
       head_sha: 'bbb222',
       mergeability: 'clean',
       checks_conclusion: 'success',
+      checks_truncated: false,
       blockers: [],
       head_reconcile: { stale: false },
     });
     expect(entry).not.toHaveProperty('goal_branch');
     expect(entry).not.toHaveProperty('lane');
+  });
+
+  it('buildCrInventoryEntry exposes checks_truncated when enumeration truncated', () => {
+    const entry = buildCrInventoryEntry(
+      ctx,
+      {
+        pr_number: 7,
+        state: 'open',
+        mergeability: 'clean',
+      },
+      { check_conclusion: 'success', checks_truncated: true, statuses: [] },
+    );
+    expect(entry.checks_truncated).toBe(true);
+    expect(entry.blockers).toContain('checks_incomplete');
   });
 
   it('crInventory aggregates open pulls with two provider calls per entry', async () => {

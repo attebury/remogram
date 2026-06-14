@@ -26,9 +26,10 @@ export function forgeIngestCapabilityFacts() {
 
 /**
  * Structured check-list pagination facts for provider capabilities.
- * @param {{ strategy: 'offset_limit' | 'link_header', pageSizeParam: 'limit' | 'per_page' | null }} opts
+ * @param {{ strategy: 'offset_limit' | 'link_header', pageSizeParam: 'limit' | 'per_page' | null, sourceCount?: number }} opts
  */
-export function checkPaginationCapabilityFacts({ strategy, pageSizeParam }) {
+export function checkPaginationCapabilityFacts({ strategy, pageSizeParam, sourceCount = 1 }) {
+  const perSource = DEFAULT_CHECK_STATUS_PAGE_SIZE * MAX_CHECK_STATUS_PAGES;
   return {
     check_pagination: {
       strategy,
@@ -37,8 +38,11 @@ export function checkPaginationCapabilityFacts({ strategy, pageSizeParam }) {
       page_size_param: pageSizeParam,
       ingest_backoff: 'halve_until_fit',
       on_page_cap: 'set_checks_truncated',
-      compliant_max_items_per_source:
-        DEFAULT_CHECK_STATUS_PAGE_SIZE * MAX_CHECK_STATUS_PAGES,
+      compliant_max_items_per_source: perSource,
+      check_source_count: sourceCount,
+      truncation_combination:
+        sourceCount > 1 ? 'any_source_truncated' : 'single_source',
+      compliant_max_items_total: perSource * sourceCount,
       truncation_packet_field: 'checks_truncated',
     },
   };

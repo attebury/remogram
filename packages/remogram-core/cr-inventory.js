@@ -58,6 +58,7 @@ export function buildCrInventoryEntry(ctx, view, checks) {
     head_ref: view.head_ref,
     mergeability: view.mergeability,
     checks_conclusion: checks.check_conclusion,
+    checks_truncated: checks.checks_truncated === true,
     blockers: mergeBlockersFromFacts(view, checks),
     head_reconcile: buildHeadReconcile(ctx, view),
   };

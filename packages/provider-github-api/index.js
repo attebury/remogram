@@ -301,7 +301,11 @@ export function providerCapabilities() {
     pagination: 'supported',
     write_support: false,
     ...forgeIngestCapabilityFacts(),
-    ...checkPaginationCapabilityFacts({ strategy: 'link_header', pageSizeParam: 'per_page' }),
+    ...checkPaginationCapabilityFacts({
+      strategy: 'link_header',
+      pageSizeParam: 'per_page',
+      sourceCount: 2,
+    }),
   };
 }
 

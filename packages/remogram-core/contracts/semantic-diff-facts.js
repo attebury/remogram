@@ -103,7 +103,7 @@ export const FACT_INVENTORY_BODY_SHAPES = Object.freeze({
   },
   [FACT_INVENTORY_PACKET_TYPES.CR_INVENTORY_SLICE]: {
     entries:
-      'array<{ pr_number: number, url?: string, title?: string, state?: string, base_ref?: string, head_ref?: string, base_sha?: string, head_sha?: string, mergeability?: string, checks_conclusion?: string, blockers?: array, head_reconcile?: { stale: boolean, local_head_sha?: string, head_sha?: string } }>',
+      'array<{ pr_number: number, url?: string, title?: string, state?: string, base_ref?: string, head_ref?: string, base_sha?: string, head_sha?: string, mergeability?: string, checks_conclusion?: string, checks_truncated?: boolean, blockers?: array, head_reconcile?: { stale: boolean, local_head_sha?: string, head_sha?: string } }>',
     entry_count: 'number',
     /** true when list cap applied (entry_count > limit), not missing entries */
     truncated: 'boolean',
