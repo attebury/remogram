@@ -8162,5 +8162,75 @@
         "forge:pr/304"
       ]
     }
+  ],
+  "ac_idempotency_scan_ingest_backoff": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:26:59.081Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_forge_error_fields_allowlist": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:26:59.373Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_default_cap_scan_tests": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:26:59.662Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_error_fields_negative_tests": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:26:59.932Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_capabilities_idempotency_facts": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:27:00.301Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "ac_semantic_diff_registry": [
+    {
+      "from": "draft",
+      "to": "approved",
+      "at": "2026-06-14T20:27:00.576Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
+  ],
+  "req_cr_open_scan_hardening": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T20:27:16.163Z",
+      "by": "actor_plan_lane",
+      "note": null
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T20:27:16.440Z",
+      "by": "actor_plan_lane",
+      "note": null
+    }
   ]
 }
