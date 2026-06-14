@@ -194,6 +194,26 @@ describe('remogram cli commands', () => {
     );
   });
 
+  it('doctor fails closed when .remogram.json is missing', async () => {
+    const { mkdtempSync, rmSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    const { join } = await import('node:path');
+    const dir = mkdtempSync(join(tmpdir(), 'remogram-no-config-'));
+    cleanups.push({ cleanup: () => rmSync(dir, { recursive: true, force: true }) });
+    const provider = createMockProvider();
+    const providers = { 'gitea-api': provider };
+    const { logs } = await captureCliOutput(() =>
+      runCli(['doctor', '--json'], { cwd: dir, providers }),
+    );
+    const packet = JSON.parse(logs[0]);
+    expect(packet.type).toBe(PACKET_TYPES.PROVIDER_DOCTOR);
+    expect(packet.summary).toBe('fail');
+    expect(packet.ok).toBe(false);
+    expect(packet.error_code).toBe('config_invalid');
+    expect(process.exitCode).toBe(1);
+    process.exitCode = undefined;
+  });
+
   it('doctor fails closed on config mismatch', async () => {
     const config = { ...defaultTestConfig(), owner: 'wrong-owner' };
     const setup = setupTempForge({
