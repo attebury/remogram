@@ -1,9 +1,9 @@
 bug bug_list_pagination_logic_duplicated {
   name "List pagination logic duplicated across providers"
   description "listOpenPullsWithMeta offset loops are copy-pasted in Gitea, GitLab, and GitHub limit branches instead of using a shared core helper, risking drift from paginateCheckStatusPages fixes."
-  fixed_in []
-  fixed_in_verification []
-  status open
+  fixed_in [task_forge_trust_round13_wave1]
+  fixed_in_verification [verification_forge_trust_round13_wave1]
+  status fixed
   severity medium
   priority high
   affects [cap_forge_remote_ops]
@@ -16,9 +16,9 @@ bug bug_list_pagination_logic_duplicated {
 bug bug_pagination_trust_userinfo_accepted {
   name "isTrustedPaginationUrl accepts userinfo in Link URLs"
   description "URLs like https://evil@api.github.com/repos/o/r/pulls?page=2 pass origin and pathname checks when resolveBase is provided."
-  fixed_in []
-  fixed_in_verification []
-  status open
+  fixed_in [task_forge_trust_round13_wave1 task_forge_trust_round13_wave2]
+  fixed_in_verification [verification_forge_trust_round13_wave2]
+  status fixed
   severity low
   priority medium
   affects [cap_forge_remote_ops]
@@ -31,9 +31,9 @@ bug bug_pagination_trust_userinfo_accepted {
 bug bug_parse_link_header_rel_case_sensitive {
   name "parseLinkHeader rel keys are case-sensitive"
   description "rel=\"Next\" stores key Next not next; resolveGitHubLinkNextPage misses pagination and truncates."
-  fixed_in []
-  fixed_in_verification []
-  status open
+  fixed_in [task_forge_trust_round13_wave1 task_forge_trust_round13_wave3]
+  fixed_in_verification [verification_forge_trust_round13_wave3]
+  status fixed
   severity low
   priority medium
   affects [cap_forge_remote_ops]
@@ -46,9 +46,9 @@ bug bug_parse_link_header_rel_case_sensitive {
 bug bug_github_link_list_per_page_no_carry {
   name "GitHub Link pagination resets per_page each page"
   description "githubFetchPaginated and listOpenPullsWithMeta Link branch use fetchWithIngestPageBackoff per page but next Link URL retains forge per_page without carrying reduced activeLimit."
-  fixed_in []
-  fixed_in_verification []
-  status open
+  fixed_in [task_forge_trust_round13_wave1 task_forge_trust_round13_wave4]
+  fixed_in_verification [verification_forge_trust_round13_wave4]
+  status fixed
   severity low
   priority medium
   affects [cap_forge_remote_ops]
