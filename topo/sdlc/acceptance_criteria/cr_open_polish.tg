@@ -1,0 +1,34 @@
+acceptance_criterion ac_idempotency_pagination_constant {
+  name "Dedicated open-pull idempotency pagination caps"
+  description "Given remogram-core caps.js, when exported, then MAX_OPEN_PULL_IDEMPOTENCY_PAGES and DEFAULT_OPEN_PULL_LIST_PAGE_SIZE exist and gitea-api findOpenPullByHeadBase imports them instead of MAX_CHECK_STATUS_PAGES for scan bounds."
+  requirement req_cr_open_polish
+  status draft
+}
+
+acceptance_criterion ac_idempotency_error_metadata {
+  name "Structured idempotency_scan on truncated scan error"
+  description "Given idempotency_scan_incomplete from gitea crOpen, when emitted via CLI or MCP, then forge_error packet includes trusted idempotency_scan object with pages max_pages and page_size."
+  requirement req_cr_open_polish
+  status draft
+}
+
+acceptance_criterion ac_contract_reused_existing {
+  name "reused_existing in packet contract registry"
+  description "Given change_request_opened with reused_existing true, when packet-contracts and semantic-diff-facts are checked, then reused_existing is registered as trusted normalized boolean and contract test covers optional field."
+  requirement req_cr_open_polish
+  status draft
+}
+
+acceptance_criterion ac_cli_mcp_truncated_scan_tests {
+  name "CLI and MCP truncated idempotency scan integration tests"
+  description "Given mocked Gitea full-page scan exhaustion, when cr open --json or MCP cr_open runs, then error_code is idempotency_scan_incomplete, idempotency_scan is populated, and no POST create pull occurs."
+  requirement req_cr_open_polish
+  status draft
+}
+
+acceptance_criterion ac_observer_retry_docs {
+  name "Observer retry guidance documented"
+  description "Given README AGENTS and remogram skills, when read, then they document retry via cr inventory on idempotency_scan_incomplete or suspected duplicate and note residual TOCTOU under concurrent opens."
+  requirement req_cr_open_polish
+  status draft
+}

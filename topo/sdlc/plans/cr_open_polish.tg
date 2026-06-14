@@ -1,0 +1,14 @@
+plan plan_cr_open_polish {
+  name "CR open polish — implementation plan"
+  description "Single-wave polish after review-followup merge."
+  task task_cr_open_polish
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  steps {
+    step pagination_constant status pending description "MAX_OPEN_PULL_IDEMPOTENCY_PAGES and DEFAULT_OPEN_PULL_LIST_PAGE_SIZE in caps; gitea findOpenPullByHeadBase uses them."
+    step error_metadata status pending description "idempotency_scan trusted fields on idempotency_scan_incomplete forge_error via forgeError/forgePacket extension."
+    step contract_registry status pending description "packet-contracts and semantic-diff register reused_existing; forge_error idempotency_scan optional fields."
+    step integration_tests status pending description "CLI cr open and MCP cr_open truncated-scan subprocess tests with fetch stub."
+    step observer_docs status pending description "README AGENTS skills: scan cap numbers, idempotency_scan meaning, retry via cr inventory."
+  }
+  status active
+}
