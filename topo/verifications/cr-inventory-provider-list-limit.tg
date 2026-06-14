@@ -1,0 +1,11 @@
+verification verification_cr_inventory_provider_list_limit {
+  name "CR inventory provider list limit proof"
+  description "Regression tests for cr inventory --limit honoring provider list request size."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [cr_inventory_provider_list_limit]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status active
+}

@@ -1,0 +1,9 @@
+goal_branch goal_branch_cr_inventory_provider_list_limit {
+  name "CR inventory provider list limit"
+  description "Draft Intent Packet to fix cr inventory oversized_raw_output on --limit 1 by honoring inventory limit on provider open-PR list fetches. Related to decision_forge_ingest_cap_policy pagination-not-cap-increase approach."
+  branch_ref "goal/cr-inventory-provider-list-limit"
+  task task_cr_inventory_provider_list_limit
+  evidence_refs [local:topo/sdlc/pitches/cr_inventory_provider_list_limit.tg, local:topo/sdlc/requirements/cr_inventory_provider_list_limit.tg, local:topo/sdlc/acceptance_criteria/cr_inventory_provider_list_limit.tg, local:topo/sdlc/tasks/cr_inventory_provider_list_limit.tg, local:topo/sdlc/plans/cr_inventory_provider_list_limit.tg, local:topo/verifications/cr-inventory-provider-list-limit.tg]
+  witness_refs []
+  status draft
+}

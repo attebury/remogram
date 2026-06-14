@@ -1,0 +1,27 @@
+acceptance_criterion ac_cr_inventory_core_limit_propagation {
+  name "Core passes inventory limit to provider list resolution"
+  description "Given cr inventory invoked with --limit N, when resolveOpenPullList runs, then provider.listOpenPullsWithMeta receives N (or equivalent list option) before any open-PR HTTP response is ingested."
+  requirement req_cr_inventory_provider_list_limit
+  status draft
+}
+
+acceptance_criterion ac_cr_inventory_gitea_bounded_list {
+  name "Gitea listOpenPullsWithMeta honors bounded page size"
+  description "Given Gitea provider listOpenPullsWithMeta with list limit 1, when open PRs are fetched, then the HTTP request uses limit=1 (not GITEA_PAGE_SIZE) and list_truncated semantics remain correct when more PRs exist."
+  requirement req_cr_inventory_provider_list_limit
+  status draft
+}
+
+acceptance_criterion ac_cr_inventory_provider_parity {
+  name "GitHub and GitLab accept list limit options"
+  description "Given GitHub-api and GitLab-api providers, when listOpenPullsWithMeta is called with a list limit option from cr inventory, then the option is accepted and used to bound the list request consistently with Gitea behavior or documented no-op with test evidence."
+  requirement req_cr_inventory_provider_list_limit
+  status draft
+}
+
+acceptance_criterion ac_cr_inventory_limit_regression_tests {
+  name "Regression tests for --limit 1 before ingest"
+  description "Given mocked provider HTTP with large open-PR payloads, when remogram cr inventory --limit 1 --json runs, then the provider list request is bounded before raw response ingestion and the command returns ok without oversized_raw_output."
+  requirement req_cr_inventory_provider_list_limit
+  status draft
+}
