@@ -39,10 +39,15 @@ export {
   withLimitParam,
 } from './check-pagination.js';
 export { assertGitRef, assertGitRemote } from './git-args.js';
-export { gitRevParse, gitCurrentBranch, gitAheadBehind, gitRepoRoot } from './git-local.js';
+export { gitRevParse, gitCurrentBranch, gitAheadBehind, gitRepoRoot, gitDiffNameOnly } from './git-local.js';
 export { buildRefInventoryBody, refsInventory } from './ref-inventory.js';
 export { buildCrInventoryEntry, buildHeadReconcile, crInventory, DEFAULT_CR_INVENTORY_LIMIT, normalizeCrInventoryLimit } from './cr-inventory.js';
 export { mergeBlockersFromFacts, isOpenPrState } from './merge-blockers.js';
+export {
+  resolveMergePlanPathScope,
+  buildMergePlanBody,
+  buildMergePlanBodyFromFacts,
+} from './merge-plan.js';
 export {
   matchPathAllowlist,
   isPathAllowed,

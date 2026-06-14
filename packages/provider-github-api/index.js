@@ -12,7 +12,7 @@ import {
   gitAheadBehind,
   refsInventory,
   crInventory,
-  mergeBlockersFromFacts,
+  buildMergePlanBodyFromFacts,
   ERROR_CODES,
   forgeError,
   forgeIngestCapabilityFacts,
@@ -488,13 +488,7 @@ export async function prChecks(ctx, opts) {
 export async function mergePlan(ctx, opts) {
   const view = await prView(ctx, opts);
   const checks = await prChecks(ctx, { number: view.pr_number });
-  const blockers = mergeBlockersFromFacts(view, checks);
-  return {
-    pr_number: view.pr_number,
-    mergeability: view.mergeability,
-    checks_conclusion: checks.check_conclusion,
-    blockers,
-  };
+  return buildMergePlanBodyFromFacts(ctx, view, checks, opts);
 }
 
 export async function listOpenPullsWithMeta(ctx, opts = {}) {

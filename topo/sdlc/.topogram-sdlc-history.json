@@ -7333,7 +7333,9 @@
       "at": "2026-06-14T16:22:00.000Z",
       "by": "actor_plan_lane",
       "note": null,
-      "evidence_refs": ["pr:260"]
+      "evidence_refs": [
+        "pr:260"
+      ]
     },
     {
       "from": "ready",
@@ -7341,7 +7343,16 @@
       "at": "2026-06-14T16:22:01.000Z",
       "by": "actor_plan_lane",
       "note": null,
-      "evidence_refs": ["pr:260"]
+      "evidence_refs": [
+        "pr:260"
+      ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T16:21:20.489Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ],
   "pitch_merge_plan_path_allowlist": [
@@ -7351,7 +7362,9 @@
       "at": "2026-06-14T16:22:02.000Z",
       "by": "actor_plan_lane",
       "note": null,
-      "evidence_refs": ["pr:260"]
+      "evidence_refs": [
+        "pr:260"
+      ]
     }
   ],
   "req_merge_plan_path_allowlist": [
@@ -7361,7 +7374,9 @@
       "at": "2026-06-14T16:22:03.000Z",
       "by": "actor_plan_lane",
       "note": null,
-      "evidence_refs": ["pr:260"]
+      "evidence_refs": [
+        "pr:260"
+      ]
     },
     {
       "from": "in-review",
@@ -7369,7 +7384,25 @@
       "at": "2026-06-14T16:22:04.000Z",
       "by": "actor_plan_lane",
       "note": null,
-      "evidence_refs": ["pr:260"]
+      "evidence_refs": [
+        "pr:260"
+      ]
+    }
+  ],
+  "task_merge_plan_path_allowlist": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T16:21:20.373Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T16:21:20.425Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
     }
   ]
 }

@@ -43,3 +43,15 @@ export function gitAheadBehind(cwd, base, head) {
     return { ahead_by: null, behind_by: null };
   }
 }
+
+export function gitDiffNameOnly(cwd, base, head) {
+  assertGitRef(base, 'base');
+  assertGitRef(head, 'head');
+  try {
+    const out = gitExec(cwd, ['diff', '--name-only', base, head]);
+    if (!out) return [];
+    return out.split('\n').filter(Boolean);
+  } catch {
+    return null;
+  }
+}

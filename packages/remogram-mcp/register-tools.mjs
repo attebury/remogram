@@ -82,8 +82,15 @@ export function registerTools(server) {
       description: 'Merge readiness facts: mergeability, checks, blockers.',
       inputSchema: z.object({
         number: z.number().int().positive(),
+        allowed_paths: z.array(z.string()).optional(),
       }),
-      args: (input) => ['merge', 'plan', '--number', String(input.number)],
+      args: (input) => {
+        const a = ['merge', 'plan', '--number', String(input.number)];
+        for (const glob of input.allowed_paths ?? []) {
+          a.push('--allowed-path', glob);
+        }
+        return a;
+      },
     },
     {
       name: 'sync_plan',
