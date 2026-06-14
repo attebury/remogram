@@ -190,15 +190,22 @@ export async function githubFetchPaginated(config, parsed, path, slice) {
   let truncated = false;
   const pageQuery = `${path.includes('?') ? '&' : '?'}per_page=${DEFAULT_CHECK_STATUS_PAGE_SIZE}`;
   let url = `${base}${path}${pageQuery}`;
+  let activeLimit = DEFAULT_CHECK_STATUS_PAGE_SIZE;
   for (let page = 0; page < MAX_CHECK_PAGES && url; page += 1) {
     const currentUrl = url;
+    let usedLimit = activeLimit;
     const { body, headers } = await fetchWithIngestPageBackoff(
       (attemptUrl) =>
         fetchJsonWithMeta(attemptUrl, {
           headers: authHeaders(token),
         }),
-      (limit) => withPerPageParam(currentUrl, limit),
+      (limit) => {
+        usedLimit = limit;
+        return withPerPageParam(currentUrl, limit);
+      },
+      activeLimit,
     );
+    activeLimit = usedLimit;
     all.push(...slice(body));
     const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
     const linkPage = resolveGitHubLinkNextPage({
@@ -211,7 +218,7 @@ export async function githubFetchPaginated(config, parsed, path, slice) {
     if (linkPage.truncated) {
       truncated = true;
     }
-    url = linkPage.nextUrl;
+    url = linkPage.nextUrl ? withPerPageParam(linkPage.nextUrl, activeLimit) : null;
   }
   return { items: all, truncated };
 }
@@ -490,15 +497,22 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
   if (listLimit == null) {
     const trustedOrigin = new URL(base).origin;
     let url = `${base}${repoApiPath(ctx.config, 'pulls')}?state=open`;
+    let activeLimit = DEFAULT_CHECK_STATUS_PAGE_SIZE;
     for (let page = 0; page < MAX_CHECK_PAGES && url; page += 1) {
       const currentUrl = url;
+      let usedLimit = activeLimit;
       const { body, headers } = await fetchWithIngestPageBackoff(
         (attemptUrl) =>
           fetchJsonWithMeta(attemptUrl, {
             headers: authHeaders(token),
           }),
-        (limit) => withPerPageParam(currentUrl, limit),
+        (limit) => {
+          usedLimit = limit;
+          return withPerPageParam(currentUrl, limit);
+        },
+        activeLimit,
       );
+      activeLimit = usedLimit;
       const items = Array.isArray(body) ? body : [];
       all.push(...items);
       const linkHeader = headers?.get?.('link') ?? headers?.get?.('Link') ?? null;
@@ -512,7 +526,7 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
       if (linkPage.truncated) {
         listTruncated = true;
       }
-      url = linkPage.nextUrl;
+      url = linkPage.nextUrl ? withPerPageParam(linkPage.nextUrl, activeLimit) : null;
     }
   } else {
     const { items: limitItems, list_truncated: limitTruncated } = await paginateOffsetListPages({
