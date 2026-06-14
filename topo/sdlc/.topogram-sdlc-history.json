@@ -6664,5 +6664,27 @@
         "verification:verification_forge_trust_round14_wave1"
       ]
     }
+  ],
+  "goal_branch_gitea_commit_status_normalization": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T06:07:36.470Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:244"
+      ]
+    },
+    {
+      "from": "ready",
+      "to": "approved",
+      "at": "2026-06-14T06:07:44.031Z",
+      "by": "actor_plan_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:244"
+      ]
+    }
   ]
 }
