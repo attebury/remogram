@@ -335,6 +335,7 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
   const { items: all, list_truncated: listTruncated } = await paginateOffsetListPages({
     pageSize: GITLAB_PAGE_SIZE,
     listLimit,
+    ...(listLimit != null ? { maxPagesTruncatesWithLimit: true } : {}),
     fetchPage: async ({ page, limit }) => {
       const body = await gitlabFetch(
         ctx.config,

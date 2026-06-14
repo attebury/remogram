@@ -244,6 +244,7 @@ export async function listOpenPullsWithMeta(ctx, opts = {}) {
   const { items: all, list_truncated: listTruncated } = await paginateOffsetListPages({
     pageSize,
     listLimit,
+    ...(listLimit != null && pageSize < listLimit ? { maxPagesTruncatesWithLimit: true } : {}),
     fetchPage: async ({ page, limit }) => {
       const body = await giteaFetch(
         ctx.config,

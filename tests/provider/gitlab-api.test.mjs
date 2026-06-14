@@ -616,4 +616,16 @@ describe('provider-gitlab-api fixtures', () => {
     expect(meta.numbers).toContain(26);
     expect(global.fetch.mock.calls.some(([u]) => String(u).includes('page=2') && String(u).includes('per_page=12'))).toBe(true);
   });
+
+  it('listOpenPullsWithMeta sets list_truncated at maxPages when limit exceeds fetch window', async () => {
+    for (let page = 1; page <= MAX_CHECK_STATUS_PAGES; page += 1) {
+      const start = (page - 1) * 100 + 1;
+      global.fetch.mockResolvedValueOnce(
+        jsonResponse(Array.from({ length: 100 }, (_, i) => ({ iid: start + i }))),
+      );
+    }
+    const meta = await listOpenPullsWithMeta(ctx, { limit: 6000 });
+    expect(meta.list_truncated).toBe(true);
+    expect(meta.numbers).toHaveLength(5000);
+  });
 });
