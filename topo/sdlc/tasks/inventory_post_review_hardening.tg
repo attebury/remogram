@@ -15,7 +15,10 @@ task task_pagination_boundary_probe {
   disposition active
   priority high
   work_type implementation
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "impl merged"
+  status done
 }
 
 task task_cr_inventory_fail_closed {
@@ -35,7 +38,10 @@ task task_cr_inventory_fail_closed {
   disposition active
   priority high
   work_type implementation
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "impl merged"
+  status done
 }
 
 task task_gitleaks_arm64_guards {
@@ -55,5 +61,8 @@ task task_gitleaks_arm64_guards {
   disposition active
   priority medium
   work_type implementation
-  status unclaimed
+  claimed_by [actor_coding_agent]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "impl merged"
+  status done
 }
