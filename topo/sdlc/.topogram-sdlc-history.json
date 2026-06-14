@@ -8272,5 +8272,61 @@
       "by": "actor_coding_agent",
       "note": null
     }
+  ],
+  "goal_branch_forge_dogfood_reliability": [
+    {
+      "from": "draft",
+      "to": "ready",
+      "at": "2026-06-14T20:49:20.572Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/310"
+      ]
+    }
+  ],
+  "req_gitleaks_local_runner_install": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T20:49:31.090Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/310"
+      ]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T20:49:31.372Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/310"
+      ]
+    }
+  ],
+  "req_cr_inventory_list_complete": [
+    {
+      "from": "draft",
+      "to": "in-review",
+      "at": "2026-06-14T20:49:31.646Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/310"
+      ]
+    },
+    {
+      "from": "in-review",
+      "to": "approved",
+      "at": "2026-06-14T20:49:31.945Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "forge:pr/310"
+      ]
+    }
   ]
 }
