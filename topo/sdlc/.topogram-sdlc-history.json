@@ -4143,6 +4143,23 @@
       "evidence_refs": [
         "pr:141"
       ]
+    },
+    {
+      "from": "approved",
+      "to": "active",
+      "at": "2026-06-14T02:05:50.186Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "approved",
+      "at": "2026-06-14T02:06:06.391Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "pr:143"
+      ]
     }
   ],
   "req_forge_trust_round6": [
@@ -4201,6 +4218,124 @@
       "at": "2026-06-14T02:03:40.611Z",
       "by": "actor_plan_lane",
       "note": null
+    }
+  ],
+  "task_forge_trust_round6_wave1": [
+    {
+      "from": "unclaimed",
+      "to": "claimed",
+      "at": "2026-06-14T02:05:50.024Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "claimed",
+      "to": "in-progress",
+      "at": "2026-06-14T02:05:50.087Z",
+      "by": "actor_coding_agent",
+      "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T02:05:52.569Z",
+      "by": "actor_coding_agent",
+      "note": null
+    }
+  ],
+  "bug_packet_trust_contradiction": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:06:05.643Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:06:17.456Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "verification:verification_forge_trust_round6_wave1"
+      ]
+    }
+  ],
+  "bug_doctor_exit_zero": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:06:18.888Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:06:19.482Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "verification:verification_forge_trust_round6_wave1"
+      ]
+    }
+  ],
+  "bug_doctor_ok_on_fail": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:06:21.507Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:06:21.798Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "verification:verification_forge_trust_round6_wave1"
+      ]
+    }
+  ],
+  "bug_sanitize_url_credentials": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:06:22.578Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:06:22.808Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "verification:verification_forge_trust_round6_wave1"
+      ]
+    }
+  ],
+  "bug_public_origin_remo_leak": [
+    {
+      "from": "open",
+      "to": "in-progress",
+      "at": "2026-06-14T02:06:23.511Z",
+      "by": "actor_coding_agent",
+      "note": null
+    },
+    {
+      "from": "in-progress",
+      "to": "fixed",
+      "at": "2026-06-14T02:06:23.737Z",
+      "by": "actor_coding_agent",
+      "note": null,
+      "evidence_refs": [
+        "verification:verification_forge_trust_round6_wave1"
+      ]
     }
   ]
 }
