@@ -276,6 +276,15 @@ describe('cr inventory', () => {
     expect(body.entry_count).toBe(1);
   });
 
+  it('createMockProvider crInventory entries require checks_truncated boolean', async () => {
+    const provider = createMockProvider();
+    const body = await provider.crInventory(ctx);
+    expect(body.entries.length).toBeGreaterThan(0);
+    for (const entry of body.entries) {
+      expect(typeof entry.checks_truncated).toBe('boolean');
+    }
+  });
+
   it('cli cr inventory emits cr_inventory_slice packet', async () => {
     const config = defaultTestConfig();
     const setup = setupTempForge({
