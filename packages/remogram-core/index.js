@@ -32,6 +32,7 @@ export {
 } from './caps.js';
 export {
   paginateCheckStatusPages,
+  paginateOffsetListPages,
   fetchWithIngestPageBackoff,
   fetchPageWithIngestBackoff,
   withPerPageParam,

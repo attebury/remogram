@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { ERROR_CODES, paginateCheckStatusPages, fetchWithIngestPageBackoff } from '@remogram/core';
+import {
+  ERROR_CODES,
+  paginateCheckStatusPages,
+  paginateOffsetListPages,
+  fetchWithIngestPageBackoff,
+} from '@remogram/core';
 
 describe('check pagination ingest backoff', () => {
   it('paginateCheckStatusPages halves limit on oversized ingest', async () => {
@@ -104,5 +109,68 @@ describe('check pagination ingest backoff', () => {
     );
     expect(result.ok).toBe(true);
     expect(limits).toEqual([10, 5]);
+  });
+});
+
+describe('paginateOffsetListPages', () => {
+  it('carries reduced limit to page 2 after backoff', async () => {
+    const requests = [];
+    const result = await paginateOffsetListPages({
+      pageSize: 25,
+      fetchPage: async ({ page, limit }) => {
+        requests.push({ page, limit });
+        if (page === 1 && limit > 12) {
+          throw Object.assign(new Error('oversized'), {
+            forgeError: { code: ERROR_CODES.OVERSIZED_RAW_OUTPUT },
+          });
+        }
+        if (page === 1) {
+          return Array.from({ length: 12 }, (_, i) => ({ number: i + 1 }));
+        }
+        if (page === 2) {
+          return [{ number: 13 }];
+        }
+        return [];
+      },
+    });
+    expect(requests).toEqual([
+      { page: 1, limit: 25 },
+      { page: 1, limit: 12 },
+      { page: 2, limit: 12 },
+    ]);
+    expect(result.items).toHaveLength(13);
+    expect(result.list_truncated).toBe(false);
+  });
+
+  it('honors listLimit and sets list_truncated when more pages exist', async () => {
+    const result = await paginateOffsetListPages({
+      pageSize: 10,
+      listLimit: 1,
+      fetchPage: async () => [{ number: 1 }, { number: 2 }],
+    });
+    expect(result.items).toHaveLength(2);
+    expect(result.list_truncated).toBe(true);
+  });
+
+  it('sets list_truncated at maxPages without listLimit', async () => {
+    const result = await paginateOffsetListPages({
+      pageSize: 1,
+      maxPages: 2,
+      fetchPage: async () => [{ number: 1 }],
+    });
+    expect(result.items).toHaveLength(2);
+    expect(result.list_truncated).toBe(true);
+  });
+
+  it('truncates at maxPages when listLimit set and maxPagesTruncatesWithLimit', async () => {
+    const result = await paginateOffsetListPages({
+      pageSize: 1,
+      listLimit: 100,
+      maxPages: 2,
+      maxPagesTruncatesWithLimit: true,
+      fetchPage: async () => [{ number: 1 }],
+    });
+    expect(result.items).toHaveLength(2);
+    expect(result.list_truncated).toBe(true);
   });
 });
