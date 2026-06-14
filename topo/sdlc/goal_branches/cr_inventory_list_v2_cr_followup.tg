@@ -5,5 +5,5 @@ goal_branch goal_branch_cr_inventory_list_v2_cr_followup {
   task task_cr_inventory_list_v2_cr_followup
   evidence_refs [local:topo/sdlc/pitches/cr_inventory_list_v2_cr_followup.tg, local:topo/sdlc/requirements/cr_inventory_fallback_trusted_total.tg, local:topo/sdlc/requirements/cr_inventory_sort_slice_accuracy.tg, local:topo/sdlc/plans/cr_inventory_list_v2_cr_followup.tg, local:topo/sdlc/tasks/cr_inventory_list_v2_cr_followup.tg, local:topo/sdlc/acceptance_criteria/cr_inventory_list_v2_cr_followup.tg, local:topo/verifications/cr-inventory-list-v2-cr-followup.tg]
   witness_refs [forge:issue/342]
-  status draft
+  status done
 }

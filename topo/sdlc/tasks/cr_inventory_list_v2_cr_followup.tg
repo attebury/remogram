@@ -16,7 +16,7 @@ task task_cr_inventory_list_v2_cr_followup {
   priority high
   work_type implementation
   claimed_by [actor_coding_agent]
-  bug_discovery bug_observed
-  bug_discovery_rationale "Code review after cr-inventory-list-v2-review-followup merge"
-  status unclaimed
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Follow-up fixes from code review; impl merged PR 344"
+  status done
 }

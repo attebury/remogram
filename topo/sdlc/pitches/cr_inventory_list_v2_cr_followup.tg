@@ -8,5 +8,5 @@ pitch pitch_cr_inventory_list_v2_cr_followup {
   no_go_areas "Hand-editing lifecycle status; implementation in draft planning PR."
   affects [cap_forge_remote_ops]
   priority high
-  status draft
+  status covered
 }
