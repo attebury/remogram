@@ -18,5 +18,5 @@ task task_gitea_commit_status_normalization_wave1 {
   claimed_by [actor_coding_agent]
   bug_discovery bug_linked
   linked_bugs [bug_gitea_commit_status_field_mismatch, bug_gitea_commit_status_duplicate_context_stale]
-  status unclaimed
+  status in-progress
 }
