@@ -33,6 +33,7 @@ export {
 export {
   paginateCheckStatusPages,
   fetchWithIngestPageBackoff,
+  fetchPageWithIngestBackoff,
   withPerPageParam,
   withLimitParam,
 } from './check-pagination.js';

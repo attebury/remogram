@@ -260,6 +260,52 @@ describe('provider-gitea-api fixtures', () => {
     expect(global.fetch.mock.calls.some(([u]) => String(u).includes('limit=12'))).toBe(true);
   });
 
+  it('prChecks carries reduced limit to page 2 after oversized page 1', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    const paddedStatuses = Array.from({ length: 25 }, (_, i) => ({
+      context: `ci/pad-${i}`,
+      state: 'success',
+      description: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedStatuses);
+    const page2Status = [{ context: 'ci/page2', state: 'success', description: 'ok' }];
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('/pulls/1')) {
+        return Promise.resolve(pullResponse);
+      }
+      const limitMatch = href.match(/[?&]limit=(\d+)/);
+      const pageMatch = href.match(/[?&]page=(\d+)/);
+      const limit = limitMatch ? Number(limitMatch[1]) : 25;
+      const page = pageMatch ? Number(pageMatch[1]) : 1;
+      if (page === 1 && limit > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      if (page === 1) {
+        return Promise.resolve(jsonPageResponse(paddedStatuses.slice(0, 12)));
+      }
+      if (page === 2) {
+        expect(limit).toBe(12);
+        return Promise.resolve(jsonPageResponse(page2Status));
+      }
+      return Promise.resolve(jsonPageResponse([]));
+    });
+
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.check_conclusion).toBe('success');
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('page=2') && String(u).includes('limit=12'))).toBe(true);
+  });
+
   it('prChecks includes checks_failed when commit statuses fail on page 2', async () => {
     const pull = load('pull.json');
     const pullResponse = jsonPageResponse(pull);
