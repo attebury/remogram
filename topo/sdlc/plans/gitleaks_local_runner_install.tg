@@ -1,0 +1,12 @@
+plan plan_gitleaks_local_runner_install {
+  name "Gitleaks local runner install — wave 1"
+  description "Port Topogram secret-scan workflow install pattern and add guard tests."
+  task task_gitleaks_local_runner_install
+  architecture_patterns [fail_closed_gate]
+  steps {
+    step workflow_install status pending description "Update secret-scan.yml: reuse gitleaks on PATH; else RUNNER_TEMP bin + GITHUB_PATH; no sudo /usr/local/bin."
+    step guard_tests status pending description "Workflow guard tests: no sudo install; RUNNER_TEMP and GITHUB_PATH present; scan steps unchanged."
+    step verify status pending description "npm test green; topogram check green."
+  }
+  status draft
+}

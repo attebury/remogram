@@ -1,0 +1,23 @@
+verification verification_gitleaks_local_runner_install {
+  name "Gitleaks local runner install proof"
+  description "npm test proof for secret-scan workflow guard tests and unchanged scan step contract."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [gitleaks_local_runner_install]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status draft
+}
+
+verification verification_cr_inventory_list_complete {
+  name "Cr inventory list complete proof"
+  description "npm test proof for Gitea list completion, list_truncated semantics, and regression fixtures."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [cr_inventory_list_complete]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status draft
+}

@@ -1,0 +1,62 @@
+acceptance_criterion ac_gitleaks_no_sudo_install {
+  name "Workflow installs gitleaks without sudo"
+  description "Given secret-scan.yml Install Gitleaks step, when parsed, then it does not use sudo install or write to /usr/local/bin/gitleaks."
+  requirement req_gitleaks_local_runner_install
+  status draft
+}
+
+acceptance_criterion ac_gitleaks_reuse_path {
+  name "Workflow reuses gitleaks on PATH"
+  description "Given gitleaks is already on PATH, when Install Gitleaks runs, then it skips download and runs gitleaks version successfully."
+  requirement req_gitleaks_local_runner_install
+  status draft
+}
+
+acceptance_criterion ac_gitleaks_runner_temp_path {
+  name "Workflow uses RUNNER_TEMP and GITHUB_PATH"
+  description "Given gitleaks is not on PATH, when Install Gitleaks runs, then it downloads platform asset to RUNNER_TEMP or tmp bin dir, appends to GITHUB_PATH, and runs gitleaks version from temp install."
+  requirement req_gitleaks_local_runner_install
+  status draft
+}
+
+acceptance_criterion ac_gitleaks_workflow_guard_tests {
+  name "Guard tests prevent sudo install regression"
+  description "Given npm test workflow guard suite, when secret-scan.yml is checked, then sudo install and /usr/local/bin/gitleaks patterns fail the test."
+  requirement req_gitleaks_local_runner_install
+  status draft
+}
+
+acceptance_criterion ac_gitleaks_scan_steps_unchanged {
+  name "Existing security:secrets scan steps unchanged"
+  description "Given secret-scan.yml, when compared to prior contract, then PR push and workflow_dispatch still invoke npm run security:secrets with the same base/head/full-history semantics."
+  requirement req_gitleaks_local_runner_install
+  status draft
+}
+
+acceptance_criterion ac_cr_inventory_list_backoff {
+  name "Open-PR list uses ingest backoff pagination"
+  description "Given Gitea open-pull list where first page exceeds ingest cap, when listOpenPullsWithMeta runs, then fetchPageWithIngestBackoff reduces page size and continues pagination until end-of-list or fail-closed."
+  requirement req_cr_inventory_list_complete
+  status draft
+}
+
+acceptance_criterion ac_cr_inventory_list_truncated_false {
+  name "Complete list sets list_truncated false"
+  description "Given a forge open-PR set that fits within pagination bounds, when cr inventory runs, then list_truncated is false and entry_count matches forge open PR count."
+  requirement req_cr_inventory_list_complete
+  status draft
+}
+
+acceptance_criterion ac_cr_inventory_fail_closed_incomplete {
+  name "Unprovable completeness fails closed"
+  description "Given pagination cannot prove open-PR list completion within bounds, when cr inventory runs, then packet is fail-closed or explicitly incomplete and not ok true with misleading list_truncated false."
+  requirement req_cr_inventory_list_complete
+  status draft
+}
+
+acceptance_criterion ac_cr_inventory_gitea_regression_fixture {
+  name "Gitea regression fixture for oversized list page"
+  description "Given mocked Gitea fixture where first list response exceeds default ingest cap, when remogram cr inventory runs, then it recovers via backoff and returns list_truncated false for the complete open set."
+  requirement req_cr_inventory_list_complete
+  status draft
+}
