@@ -1,0 +1,22 @@
+task task_forge_trust_round14_wave1 {
+  name "Wave 1 — Post-R13 review hygiene"
+  description "Add githubFetchPaginated userinfo Link test, document GitHub-only maxPagesTruncatesWithLimit, add password-only resolveBase trust test."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Gitea/GitLab list_truncated parity" "paginateGitHubLinkPages unit test"]
+  entrypoints ["tests/provider/github-api.test.mjs" "packages/provider-github-api/index.js" "tests/core/pagination-trust.test.mjs"]
+  satisfies [req_forge_trust_round14]
+  acceptance_refs [ac_github_fetch_paginated_userinfo_link_round14, ac_max_pages_truncates_with_limit_doc_round14, ac_password_only_resolve_base_round14]
+  verification_refs [verification_forge_trust_round14_wave1]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority low
+  work_type bugfix
+  claimed_by [actor_coding_agent]
+  bug_discovery bug_linked
+  linked_bugs [bug_github_fetch_paginated_userinfo_link_untested, bug_max_pages_truncates_with_limit_undocumented, bug_password_only_resolve_base_untested]
+  status unclaimed
+}

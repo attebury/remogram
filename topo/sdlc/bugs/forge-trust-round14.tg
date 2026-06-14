@@ -1,0 +1,44 @@
+bug bug_github_fetch_paginated_userinfo_link_untested {
+  name "githubFetchPaginated userinfo Link rejection untested"
+  description "listOpenPullsWithMeta has userinfo Link E2E test but githubFetchPaginated check-runs path lacks parity coverage."
+  fixed_in []
+  fixed_in_verification []
+  status open
+  severity low
+  priority low
+  affects [cap_forge_remote_ops]
+  failure_mode "Regression in check-runs Link trust path goes undetected."
+  linked_task task_forge_trust_round14_wave1
+  reproduction "Compare github-api.test.mjs list vs check-runs userinfo Link tests."
+  boundary_test_added false
+}
+
+bug bug_max_pages_truncates_with_limit_undocumented {
+  name "GitHub maxPagesTruncatesWithLimit rationale undocumented"
+  description "Only GitHub listOpenPullsWithMeta passes maxPagesTruncatesWithLimit true; Gitea/GitLab omit without call-site explanation."
+  fixed_in []
+  fixed_in_verification []
+  status open
+  severity low
+  priority low
+  affects [cap_forge_remote_ops]
+  failure_mode "Future maintainers remove flag or add incorrectly to other providers."
+  linked_task task_forge_trust_round14_wave1
+  reproduction "Read listOpenPullsWithMeta limit branch in provider-github-api vs Gitea/GitLab paginateOffsetListPages calls."
+  boundary_test_added false
+}
+
+bug bug_password_only_resolve_base_untested {
+  name "Password-only resolveBase fail-closed behavior untested"
+  description "isTrustedPaginationUrl rejects resolveBase with password-only userinfo but pagination-trust.test.mjs lacks explicit assertion."
+  fixed_in []
+  fixed_in_verification []
+  status open
+  severity low
+  priority low
+  affects [cap_forge_remote_ops]
+  failure_mode "Password-only userinfo edge case regresses silently."
+  linked_task task_forge_trust_round14_wave1
+  reproduction "Call isTrustedPaginationUrl with https://:pass@ resolveBase; no dedicated test exists."
+  boundary_test_added false
+}
