@@ -297,6 +297,85 @@ describe('provider-github-api fixtures', () => {
     expect(urls.some((u) => u.includes(`per_page=${DEFAULT_CHECK_STATUS_PAGE_SIZE}`))).toBe(true);
   });
 
+  it('prChecks survives oversized commit statuses via ingest backoff', async () => {
+    const paddedStatuses = Array.from({ length: 25 }, (_, i) => ({
+      context: `ci/pad-${i}`,
+      state: 'success',
+      description: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedStatuses);
+    expect(Buffer.byteLength(oversizedJson, 'utf8')).toBeGreaterThan(8192);
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('graphql')) {
+        return Promise.resolve(graphqlResponse('pull-graphql-clean.json'));
+      }
+      if (href.includes('/check-runs')) {
+        return Promise.resolve(jsonResponse({ check_runs: [] }));
+      }
+      if (href.includes('/statuses')) {
+        const perPage = Number(new URL(href).searchParams.get('per_page') || '25');
+        if (perPage > 12) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            body: {
+              [Symbol.asyncIterator]: async function* () {
+                yield Buffer.from(oversizedJson);
+              },
+            },
+          });
+        }
+        return Promise.resolve(
+          jsonResponse([{ context: 'ci/ok', state: 'success', description: 'ok' }]),
+        );
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+
+    const body = await provider.prChecks(ctx, { number: 42 });
+    expect(body.check_conclusion).toBe('success');
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('per_page=12'))).toBe(true);
+  });
+
+  it('prChecks includes checks_failed when commit statuses fail on page 2', async () => {
+    const sha = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+    const page2Url = `https://api.github.com/repos/owner/repo/commits/${sha}/statuses?page=2`;
+    const page1Statuses = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
+      context: `ci/page1-${i}`,
+      state: 'success',
+      description: 'ok',
+    }));
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('graphql')) {
+        return Promise.resolve(graphqlResponse('pull-graphql-clean.json'));
+      }
+      if (href.includes('/check-runs')) {
+        return Promise.resolve(jsonResponse({ check_runs: [] }));
+      }
+      if (href.includes('/statuses') && href.includes('page=2')) {
+        return Promise.resolve(
+          jsonResponse([{ context: 'ci/page2-fail', state: 'failure', description: 'fail' }]),
+        );
+      }
+      if (href.includes('/statuses')) {
+        return Promise.resolve(
+          jsonResponse(page1Statuses, 200, { link: `<${page2Url}>; rel="next"` }),
+        );
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+
+    const body = await provider.prChecks(ctx, { number: 42 });
+    expect(body.check_conclusion).toBe('failure');
+    const urls = global.fetch.mock.calls.map(([u]) => String(u));
+    expect(urls.some((u) => u.includes('/statuses') && u.includes('page=2'))).toBe(true);
+    expect(urls.some((u) => u.includes(`per_page=${DEFAULT_CHECK_STATUS_PAGE_SIZE}`))).toBe(true);
+  });
+
   it('prChecks supports a local git ref without fetching the pull request', async () => {
     global.fetch
       .mockResolvedValueOnce(jsonResponse(load('statuses-success.json')))
