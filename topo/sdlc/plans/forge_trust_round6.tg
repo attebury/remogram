@@ -1,0 +1,15 @@
+plan plan_forge_trust_round6 {
+  name "Forge Trust Round 6 — Wave Plan"
+  description "Close twelve residual open bugs from forge-trust-round4. Serialize waves: trust/doctor before merge integrity; merge integrity before ingest residual; ingest before MCP/export hygiene."
+  task task_forge_trust_round6_wave1
+  architecture_patterns [contract_boundary, fail_closed_gate, command_owned_mutation]
+  priority critical
+  steps {
+    step wave1_trust_doctor status pending description "Wave 1 — Trust doctrine and doctor honesty: packet trust split in AGENTS.md/skills/README; doctor exit 1 and ok:false when summary fail; sanitizeUrl strips userinfo; scrub origin/remo from public export scripts."
+    step wave2_merge_integrity status pending description "Wave 2 — Merge integrity: paginate check sources; normalize Gitea check states; regression tests for page-2 failure visibility."
+    step wave3_ingest_residual status pending description "Wave 3 — Residual forge ingest: non-list endpoints paginate or chunk under default 8192; capabilities report ingest facts; exclude cr-inventory list-limit scope already archived."
+    step wave4_mcp_export status pending description "Wave 4 — MCP and platform hygiene: pr_checks zod refine; MCP integration tests; centralize secret redaction; export denylist test; gitAheadBehind assertGitRef."
+    step verify status pending description "npm test, npm run test:coverage, npm run security:secrets --full-history; export-public-main.sh preflight; topogram check green."
+  }
+  status draft
+}

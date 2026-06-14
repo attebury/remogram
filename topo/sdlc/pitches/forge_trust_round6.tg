@@ -1,0 +1,12 @@
+pitch pitch_forge_trust_round6 {
+  name "Forge Trust Round 6 — Residual Open Bugs"
+  description "Sixth forge-trust Intent Packet to close 12 open bugs from forge-trust-round4 whose wave tasks were marked done without bug record closure."
+  appetite "large"
+  problem "Round 4 waves 1–4 and Round 5 deferred work merged with task status done, but twelve bug records in forge-trust-round4.tg remain open: trust doctrine contradiction, doctor exit/ok dishonesty, sanitizeUrl credential leak, public script remo default, check pagination gap, Gitea state passthrough, residual forge ingest oversize beyond cr-inventory list-limit fix, MCP pr_checks empty args, export denylist untested, core/MCP redaction split, and gitAheadBehind unvalidated refs."
+  solution_sketch "Four serialized implementation waves mirroring round 4 themes: (1) trust doctrine and doctor honesty, (2) merge/check integrity, (3) residual forge ingest paths beyond list-limit fix, (4) MCP/export/platform hygiene. Close each linked bug via implement/verify closeout with regression tests."
+  rabbit_holes "Raising DEFAULT_MAX_BYTES globally; .remogram.json ingest cap fields; reopening archived round 4/5 goal clusters; mutation commands; npm publish."
+  no_go_areas "Hand-editing lifecycle status; rewriting rounds 1–5 archaeology; re-scoping cr-inventory list-limit work already archived on remo."
+  affects [cap_forge_remote_ops]
+  priority critical
+  status draft
+}

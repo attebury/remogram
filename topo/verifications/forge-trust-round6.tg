@@ -1,0 +1,51 @@
+verification verification_forge_trust_round6_wave1 {
+  name "Forge trust round 6 wave 1"
+  description "Doctor fail-closed, sanitizeUrl, trust doc updates, public script defaults."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round6_wave1]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_packet_trust_contradiction, bug_doctor_exit_zero, bug_doctor_ok_on_fail, bug_sanitize_url_credentials, bug_public_origin_remo_leak]
+  status draft
+}
+
+verification verification_forge_trust_round6_wave2 {
+  name "Forge trust round 6 wave 2"
+  description "Check pagination and Gitea normalization regression tests."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round6_wave2]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_check_pagination_first_page_only, bug_gitea_check_state_passthrough]
+  status draft
+}
+
+verification verification_forge_trust_round6_wave3 {
+  name "Forge trust round 6 wave 3"
+  description "Non-list ingest bounded; capabilities ingest facts."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round6_wave3]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_forge_ingest_oversize_checks]
+  status draft
+}
+
+verification verification_forge_trust_round6_wave4 {
+  name "Forge trust round 6 wave 4"
+  description "MCP schema, export denylist test, core redaction, gitAheadBehind ref validation."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [forge_trust_round6_wave4]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  fixes_bugs [bug_mcp_pr_checks_empty_args, bug_export_denylist_untested, bug_mcp_core_redaction_split, bug_git_ahead_behind_unvalidated]
+  status draft
+}
