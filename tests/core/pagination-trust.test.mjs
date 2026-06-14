@@ -61,6 +61,24 @@ describe('isTrustedPaginationUrl', () => {
     );
   });
 
+  it('accepts trailing-slash pathname variants with resolveBase', () => {
+    const base = 'https://api.github.com/repos/o/r/pulls?state=open';
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/repos/o/r/pulls/?page=2', base),
+    ).toBe(true);
+    const baseWithSlash = 'https://api.github.com/repos/o/r/pulls/?state=open';
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/repos/o/r/pulls?page=2', baseWithSlash),
+    ).toBe(true);
+  });
+
+  it('still rejects off-path after trailing-slash normalization', () => {
+    const base = 'https://api.github.com/repos/o/r/pulls?state=open';
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/user/emails/', base),
+    ).toBe(false);
+  });
+
   it('rejects protocol-relative URLs when origin differs', () => {
     const base = 'https://api.github.com/repos/o/r/pulls?state=open';
     expect(isTrustedPaginationUrl(TRUSTED, '//evil.example/repos/o/r/pulls?page=2', base)).toBe(

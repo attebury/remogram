@@ -66,6 +66,13 @@ export function parseLinkHeader(linkHeader) {
   return links;
 }
 
+function normalizePathname(pathname) {
+  if (pathname.length > 1 && pathname.endsWith('/')) {
+    return pathname.replace(/\/+$/, '') || '/';
+  }
+  return pathname;
+}
+
 /** Reject Link rel=next URLs that leave the configured API origin (token exfiltration guard). */
 export function isTrustedPaginationUrl(trustedOrigin, url, resolveBase) {
   try {
@@ -76,8 +83,8 @@ export function isTrustedPaginationUrl(trustedOrigin, url, resolveBase) {
     if (resolved.origin !== trustedOrigin) {
       return false;
     }
-    const basePath = new URL(resolveBase).pathname;
-    if (resolved.pathname !== basePath) {
+    const basePath = normalizePathname(new URL(resolveBase).pathname);
+    if (normalizePathname(resolved.pathname) !== basePath) {
       return false;
     }
     return true;
