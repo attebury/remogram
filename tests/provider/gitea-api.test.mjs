@@ -539,6 +539,15 @@ describe('provider-gitea-api fixtures', () => {
     expect(meta.numbers).toHaveLength(5000);
   });
 
+  it('listOpenPullsWithMeta sets list_truncated at maxPages when limit exceeds fetch window', async () => {
+    for (let page = 1; page <= 50; page += 1) {
+      global.fetch.mockResolvedValueOnce(jsonPageResponse(openPullPage((page - 1) * 100 + 1)));
+    }
+    const meta = await listOpenPullsWithMeta(ctx, { limit: 6000 });
+    expect(meta.list_truncated).toBe(true);
+    expect(meta.numbers).toHaveLength(5000);
+  });
+
   it('crInventorySlice bounds open PR list before ingest when limit is 1', async () => {
     const pull = load('pull.json');
     global.fetch.mockResolvedValueOnce(jsonPageResponse([{ number: 1, state: 'open' }]));
