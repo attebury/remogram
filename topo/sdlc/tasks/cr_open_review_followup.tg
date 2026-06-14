@@ -1,0 +1,22 @@
+task task_cr_open_review_followup {
+  name "CR open review follow-up"
+  description "Paginated fail-closed idempotency, reused_existing packet, write-command enum DRY, consumer boundary docs, negative MCP/doctor tests."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Distributed locking" "Provider-level write gate" "merge execute" "GitHub/GitLab cr open" "new write commands beyond cr_open"]
+  entrypoints ["packages/**" "tests/**" "README.md" "CHANGELOG.md" "AGENTS.md" "tools/remogram-agent-support/skills/**" ".cursor/skills/**" "topo/sdlc/**" "topo/surfaces/**" "topo/verifications/**"]
+  satisfies [req_cr_open_review_followup]
+  acceptance_refs [ac_idempotency_paginated_fail_closed, ac_idempotent_packet_fidelity, ac_write_command_enum_dry, ac_consumer_write_boundary_docs, ac_negative_tests_doctor_mcp, ac_idempotency_regression_tests]
+  verification_refs [verification_cr_open_review_followup]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type implementation
+  claimed_by []
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Code review follow-up from merged impl PR #285; hardening gaps not a forge bug."
+  status unclaimed
+}

@@ -1,0 +1,14 @@
+plan plan_cr_open_review_followup {
+  name "CR open review follow-up — implementation plan"
+  description "Single-wave follow-up to hardening cluster code review."
+  task task_cr_open_review_followup
+  architecture_patterns [contract_boundary, fail_closed_gate, command_owned_mutation]
+  steps {
+    step idempotency_scan status pending description "Paginated findOpenPullByHeadBase; fail-closed idempotency_scan_incomplete; non-array list errors."
+    step packet_fidelity status pending description "reused_existing and forge title on idempotent reuse path."
+    step write_enum status pending description "WRITE_COMMAND_IDS drives schema and assertWriteCommandConfigured."
+    step docs status pending description "Idempotency limits, consumer CLI/MCP write boundary in AGENTS README skills."
+    step tests status pending description "Page-2 match, truncated scan, MCP negative, doctor write_config warn."
+  }
+  status draft
+}
