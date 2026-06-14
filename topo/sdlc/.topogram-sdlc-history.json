@@ -6712,6 +6712,16 @@
       "at": "2026-06-14T06:27:23.157Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "active",
+      "to": "done",
+      "at": "2026-06-14T06:35:28.924Z",
+      "by": "actor_integration_lane",
+      "note": null,
+      "evidence_refs": [
+        "pr:247"
+      ]
     }
   ],
   "ac_gitea_status_field_mapping": [
@@ -6777,6 +6787,13 @@
       "at": "2026-06-14T06:27:23.115Z",
       "by": "actor_coding_agent",
       "note": "task started"
+    },
+    {
+      "from": "in-progress",
+      "to": "done",
+      "at": "2026-06-14T06:35:27.165Z",
+      "by": "actor_integration_lane",
+      "note": null
     }
   ]
 }
