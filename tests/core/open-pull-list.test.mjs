@@ -9,6 +9,7 @@ import {
   validateFastPathPageLength,
   isNumberSortFastPathEligible,
   resolvePaginatedEntryCount,
+  resolveListTruncatedWithTrustedTotal,
   isRecentCreatedFastPathEligible,
   giteaRecentCreatedTailPage,
   isNumberSortFullCollectRequired,
@@ -120,6 +121,41 @@ describe('open-pull-list', () => {
   it('resolvePaginatedEntryCount prefers trusted total', () => {
     expect(resolvePaginatedEntryCount(5, 1)).toBe(5);
     expect(resolvePaginatedEntryCount(null, 3)).toBe(3);
+  });
+
+  it('resolveListTruncatedWithTrustedTotal marks partial walks truncated', () => {
+    expect(
+      resolveListTruncatedWithTrustedTotal({
+        listTruncated: false,
+        trustedTotalCount: 5,
+        walkedCount: 1,
+        fullCollect: false,
+      }),
+    ).toBe(true);
+    expect(
+      resolveListTruncatedWithTrustedTotal({
+        listTruncated: false,
+        trustedTotalCount: 5,
+        walkedCount: 5,
+        fullCollect: false,
+      }),
+    ).toBe(false);
+    expect(
+      resolveListTruncatedWithTrustedTotal({
+        listTruncated: true,
+        trustedTotalCount: 10,
+        walkedCount: 10,
+        fullCollect: true,
+      }),
+    ).toBe(true);
+    expect(
+      resolveListTruncatedWithTrustedTotal({
+        listTruncated: false,
+        trustedTotalCount: 10,
+        walkedCount: 10,
+        fullCollect: true,
+      }),
+    ).toBe(false);
   });
 
   it('isRecentCreatedFastPathEligible rejects Gitea recent_created when total exceeds retain_max', () => {

@@ -1,0 +1,12 @@
+plan plan_cr_inventory_probe_fallback_hardening {
+  name "CR inventory probe fallback hardening plan"
+  description "Two-wave fix for probe page reuse, tail failure, list_truncated alignment, and test hardening."
+  task task_cr_inventory_probe_fallback_hardening
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  steps {
+    step wave1_probe_reuse status done description "seededFirstPage in paginateOffsetListPages; Gitea/GitLab/GitHub provider wiring; core tests."
+    step wave2_semantics_tests status done description "Gitea tail-only fallback; resolveListTruncatedWithTrustedTotal; provider exact fetch-count tests; CHANGELOG."
+    step verify status done description "npm test green (486 passing)."
+  }
+  status complete
+}

@@ -1,0 +1,6 @@
+requirement req_cr_inventory_fallback_semantics {
+  name "Fallback semantics for tail failure and list_truncated"
+  description "Gitea recent_created tail fetch failure must not fall back to page-1 oldest slice; list_truncated must reflect partial walks when trusted forge total exceeds items collected."
+  pitch pitch_cr_inventory_probe_fallback_hardening
+  status satisfied
+}

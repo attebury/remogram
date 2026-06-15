@@ -1,0 +1,11 @@
+verification verification_cr_inventory_probe_fallback_hardening {
+  name "CR inventory probe fallback hardening proof"
+  description "npm test proof for probe page reuse, tail failure semantics, list_truncated alignment, and exact fetch-count tests."
+  validates [cap_forge_remote_ops]
+  method runtime
+  scenarios [cr_inventory_probe_fallback_hardening]
+  proof_commands {
+    command npm_test argv ["npm" "test"]
+  }
+  status passed
+}

@@ -1,0 +1,22 @@
+task task_cr_inventory_probe_fallback_hardening {
+  name "CR inventory probe fallback hardening"
+  description "Probe page reuse on fallback, Gitea tail failure fix, list_truncated alignment, tightened provider tests."
+  feature feature_remogram
+  phase implementation
+  scope current_feature
+  non_goals ["Tail limit=retainMax optimization" "Over-cap global sort" "GitLab slice_sort_notes docs" "GitHub probe-null entry_count"]
+  entrypoints ["packages/remogram-core/open-pull-list.js" "packages/remogram-core/check-pagination.js" "packages/provider-gitea-api/**" "packages/provider-gitlab-api/**" "packages/provider-github-api/**" "tests/**" "CHANGELOG.md"]
+  satisfies [req_cr_inventory_probe_page_reuse req_cr_inventory_fallback_semantics]
+  acceptance_refs [ac_probe_page_reused_on_fallback ac_gitea_tail_failure_tail_only ac_list_truncated_matches_trusted_total ac_exact_fetch_count_tests]
+  verification_refs [verification_cr_inventory_probe_fallback_hardening]
+  affects [cap_forge_remote_ops]
+  blocked_by []
+  architecture_patterns [contract_boundary, fail_closed_gate]
+  disposition active
+  priority high
+  work_type implementation
+  claimed_by [actor_coding_agent]
+  bug_discovery no_bug_observed
+  bug_discovery_rationale "Probe fallback hardening; impl merged PR 350"
+  status done
+}

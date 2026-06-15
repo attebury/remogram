@@ -1,0 +1,12 @@
+pitch pitch_cr_inventory_probe_fallback_hardening {
+  name "CR inventory probe fallback hardening"
+  description "Close post-cr-followup code review gaps: reuse probe page-1 on pagination fallback, Gitea tail failure semantics, list_truncated vs trusted entry_count, tightened tests."
+  appetite "small"
+  problem "Probe orchestration re-fetches page 1 on fallback; Gitea tail failure falls back to wrong oldest-page slice; list_truncated can disagree with trusted entry_count; provider tests use weak fetch-count assertions."
+  solution_sketch "Wave 1: seededFirstPage in paginateOffsetListPages and provider wiring including GitHub link seed. Wave 2: Gitea tail-only fallback, resolveListTruncatedWithTrustedTotal, exact fetch-count tests and CHANGELOG."
+  rabbit_holes "Tail limit=retainMax optimization; over-cap global sort; GitLab slice_sort_notes docs."
+  no_go_areas "Hand-editing lifecycle status; implementation in draft planning PR."
+  affects [cap_forge_remote_ops]
+  priority high
+  status covered
+}
