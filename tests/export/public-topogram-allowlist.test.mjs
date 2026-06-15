@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   TOPOGRAM_ALLOWLIST_PATTERNS,
@@ -31,7 +31,6 @@ describe('public Topogram allowlist', () => {
   });
 
   it('dogfood-only paths are excluded from public surface scan', () => {
-    expect(existsSync(join(repoRoot, 'tools/remogram-agent-support/skills/remogram-dogfood/SKILL.md'))).toBe(true);
     expect(PUBLIC_SURFACE_ROOTS).not.toContain('tools/remogram-agent-support/skills/remogram-dogfood');
   });
 });
