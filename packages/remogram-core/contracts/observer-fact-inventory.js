@@ -1,10 +1,7 @@
 /**
- * Remogram fact requirements for Topogram branch-workcycle observer snapshots.
- * Observer proto today captures remogram repo status only; semantic-diff consumers
+ * Remogram fact requirements for observer and semantic-diff consumer snapshots.
+ * Observer proto today captures remogram repo status only; downstream consumers
  * may compose additional read-only fact packets listed here.
- *
- * @see ../topogram/tools/branch-workcycle/observer-snapshot.sh
- * @see topo/sdlc/acceptance_criteria/semantic_diff_fact_inventory.tg ac_semantic_diff_observer_facts
  */
 
 import { FACT_INVENTORY_PACKET_TYPES, V1_READ_PLAN_COMMANDS } from './semantic-diff-facts.js';

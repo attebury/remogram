@@ -75,24 +75,16 @@ remogram refs compare --base <ref> --head <ref> --json
 remogram sync plan --remote origin --json
 ```
 
-## Semantic diff queries (Topogram consumers)
+## Fact inventory (ref and change-request slices)
 
-Topogram queries and branch-workcycle slices **consume** remogram packets; they do not re-derive forge facts from HTML or branch names alone. Remogram returns normalized packets only — **Topogram interprets** queue, lifecycle, and proof semantics; **Remogram does not**.
+Read-only expansion for orchestration or planning tools that **consume** Remogram packets. Downstream tools must not re-derive forge facts from HTML or branch names alone. Remogram returns normalized packets only — **external planning tools interpret** queue, lifecycle, and proof semantics; **Remogram does not**.
 
-**Ref inventory** — list refs and SHAs for semantic-diff database views:
+**Ref inventory** — list refs and SHAs for semantic-diff or branch-comparison views:
 
 ```bash
 remogram refs inventory --json
 # packet.type == "ref_inventory"
 # trusted: refs[].name, refs[].sha, default_ref, ancestry_hints (envelope + enums)
-```
-
-Example Topogram slice intent (pseudo-query, not remogram CLI):
-
-```text
-topogram query slice ./topo --json
-  # consumer reads remogram ref_inventory packet refs[] to diff branch SHAs
-  # Topogram assigns goal_branch / task meaning — never present in remogram JSON
 ```
 
 **CR inventory slice** — open PRs composed from pr view and checks (two forge calls per entry):
@@ -107,13 +99,13 @@ remogram cr inventory --json
 # enums trusted; titles/urls/SHAs untrusted forge-sourced strings
 ```
 
-Example Topogram branch-workcycle use:
+**Downstream composition example** (not remogram CLI):
 
 ```text
 # Observer or planner composes:
 # 1. remogram repo status (forge readiness)
-# 2. remogram cr inventory (open CR facts)
-# 3. topogram query goal-branch-queue (SDLC queue — Topogram authority)
+# 2. remogram refs inventory or cr inventory (forge facts)
+# External planning tools assign goal/task/queue meaning — never present in remogram JSON.
 # Never merge lifecycle fields into remogram output or infer queue from PR titles.
 ```
 

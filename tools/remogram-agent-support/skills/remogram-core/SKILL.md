@@ -45,7 +45,7 @@ Keep Remogram packages free of imports from external planning or workflow toolin
 
 **Remogram owns** forge/git/ref inventory and change-request fact slices (refs, SHAs, PR state, checks, mergeability as normalized packets).
 
-**Topogram owns** SDLC lifecycle, queue selectability, verification/proof semantics, and observer routing — never emitted in remogram JSON.
+**External planning tools own** SDLC lifecycle, queue selectability, verification/proof semantics, and observer routing — never emitted in remogram JSON.
 
 Planned read-only packet types (`ref_inventory`, `cr_inventory_slice`) are registered in `packages/remogram-core/contracts/semantic-diff-facts.js`. They extend — do not replace — the six v1 read/plan commands. Forge-sourced string leaves follow `decision_packet_trust_doctrine`; see `FORGE_SOURCED_STRING_LEAVES` in the contract module.
 

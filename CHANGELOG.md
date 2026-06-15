@@ -21,6 +21,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **Public docs Topogram audit:** neutralize Topogram in public skills, README, and agent-support README; strip maintainer blocks on export; denylist `tools/gitea` and adapter maintainer rule; add public Topogram allowlist regression test
+- **Maintainer docs:** [docs/deferred-follow-ups.md](docs/deferred-follow-ups.md) indexes deferred functional follow-ups (e.g. #353 `cr inventory` probe fallback)
 - **`open_pull_list` capabilities:** document `default_slice_sort`, `supported_slice_sorts`, and provider-specific `total_count_source` / `total_count_header`
 - **`paginateOffsetListPages`:** `listLimit` branch probes page+1 at maxPages (fixes false `list_truncated` at exact compliance boundary)
 - **Write opt-in:** `write_commands` in `.remogram.json` required for `cr open` (fail closed with `write_not_configured`); doctor warns when provider supports writes but config does not opt in

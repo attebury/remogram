@@ -21,6 +21,32 @@ tools/remogram-agent-support/skills/
 
 **Private Gitea `remo`:** internal skills are maintainer-only — stripped by `scripts/export-public-main.sh` (driven by `scripts/dogfood-skills.list`).
 
+## Install
+
+### Option A — `npx skills` (npm / GitHub)
+
+[vercel-labs/skills](https://github.com/vercel-labs/skills) clones from **GitHub** — not `@remogram/*` on npm. Internal skills are **not** on public GitHub.
+
+```bash
+npx skills add attebury/remogram --skill remogram-consumer -g -a cursor,codex -y
+npx skills add attebury/remogram --skill remogram-core -a cursor -y
+```
+
+### Option B — install script (clone)
+
+```bash
+./scripts/install-agent-skills.sh --all
+```
+
+| Flag | Target |
+|------|--------|
+| `--cursor` | `.cursor/skills/` (`remogram-core`) |
+| `--codex` | `~/.codex/skills/` (`remogram-consumer` + `remogram-core`) |
+| `--all` | `--cursor` and `--codex` (default when no flags) |
+
+<!-- maintainer-only:start -->
+| `--dogfood` | Internal skills from `scripts/dogfood-skills.list` → `.cursor/skills/` and `~/.codex/skills/` when `--codex` |
+
 ## Lane-skills experiment
 
 Generic `topogram-*-lane` skills assume `origin/main`. This repo integrates on **`remo`**. Maintainers use **remogram-native** lane skills instead.
@@ -57,37 +83,7 @@ Restore when done: `./scripts/park-topogram-skills.sh unpark`
 Do **not** load `topogram-core` or `topogram-*-lane` in this repo while the experiment runs.
 
 Paste prompts: `skills/remogram-dogfood/references/lane-prompts.md`.
-
-## Install
-
-### Option A — `npx skills` (npm / GitHub)
-
-[vercel-labs/skills](https://github.com/vercel-labs/skills) clones from **GitHub** — not `@remogram/*` on npm. Internal skills are **not** on public GitHub.
-
-```bash
-npx skills add attebury/remogram --skill remogram-consumer -g -a cursor,codex -y
-npx skills add attebury/remogram --skill remogram-core -a cursor -y
-```
-
-### Option B — install script (clone)
-
-```bash
-./scripts/install-agent-skills.sh --all
-```
-
-| Flag | Target |
-|------|--------|
-| `--cursor` | `.cursor/skills/` (`remogram-core`) |
-| `--codex` | `~/.codex/skills/` (`remogram-consumer` + `remogram-core`) |
-| `--dogfood` | Internal skills from `scripts/dogfood-skills.list` → `.cursor/skills/` and `~/.codex/skills/` when `--codex` |
-| `--all` | `--cursor` and `--codex` (default when no flags) |
-
-**Maintainer dogfood startup:**
-
-```bash
-./scripts/park-topogram-skills.sh park
-./scripts/install-agent-skills.sh --cursor --codex --dogfood
-```
+<!-- maintainer-only:end -->
 
 ## Which skill to load
 
@@ -95,7 +91,9 @@ npx skills add attebury/remogram --skill remogram-core -a cursor -y
 |---------|--------|
 | Any consumer repo with `.remogram.json` | `remogram-consumer` |
 | `packages/**` in this repo | `remogram-core` |
+<!-- maintainer-only:start -->
 | `topo/**` or lane work on Gitea `remo` | `remogram-sdlc-core` → lane skill + `remogram-dogfood` |
+<!-- maintainer-only:end -->
 
 ## Adapters
 

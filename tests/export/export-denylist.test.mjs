@@ -11,13 +11,16 @@ const STATIC_DENYLIST = [
   '.gitea',
   '.tmp',
   'dx',
+  'tools/gitea',
   'topogram.project.json',
   'topogram.sdlc-policy.json',
   'scripts/install-topogram-local.sh',
   'scripts/park-topogram-skills.sh',
+  'scripts/run-gitea-gate.sh',
   'scripts/dogfood-skills.list',
   'scripts/remogram-smoke-compare.mjs',
   '.cursor/rules/remogram-maintainer.mdc',
+  'tools/remogram-agent-support/adapters/cursor/.cursor/rules/remogram-maintainer.mdc',
 ];
 
 /** Mirror scripts/dogfood-skills.list when export-public-main.sh strips it before npm test. */

@@ -31,7 +31,7 @@ function assertNoForbiddenKeys(value) {
   }
   for (const [key, nested] of Object.entries(value)) {
     if (FORBIDDEN_PACKET_KEYS.has(key)) {
-      throw new Error(`Forbidden Topogram concept in remogram output: ${key}`);
+      throw new Error(`Forbidden workflow/planning-tool key in remogram output: ${key}`);
     }
     assertNoForbiddenKeys(nested);
   }

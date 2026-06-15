@@ -160,18 +160,18 @@ You do not need smoke compare to see Remogram output. Every command supports **`
 
 ## Semantic diff fact inventory
 
-Read-only expansion for Topogram semantic-diff and branch-workcycle consumers. **Remogram** exposes provider-neutral ref and change-request fact packets; **Topogram interprets** SDLC lifecycle, queue, and proof semantics — **Remogram does not**.
+Read-only expansion for orchestration or planning tools that consume Remogram packets. **Remogram** exposes provider-neutral ref and change-request fact packets; **external planning tools interpret** SDLC lifecycle, queue, and proof semantics — **Remogram does not**.
 
 | Layer | Owner | Examples |
 |-------|-------|----------|
 | Forge/git/ref/CR facts | Remogram | `ref_inventory`, `cr_inventory_slice`, PR state, checks, mergeability |
-| Lifecycle / queue / proof | Topogram | goal branches, task readiness, verification records, observer routing |
+| Lifecycle / queue / proof | External planning tools | goal branches, task readiness, verification records, observer routing |
 
 **Non-goals for Remogram output:** mutation commands; `goal_branch`, `lane`, `sdlc_task`, or other workflow metadata in JSON packets.
 
 **Commands:** `refs inventory` and `cr inventory` emit fact inventory packets via `packages/remogram-core/contracts/semantic-diff-facts.js`. `cr inventory` defaults to **3** open change-request entries per slice (`--limit N` / MCP `limit`) and optional **`--sort`** / MCP **`sort`** presets (`number_asc`, `number_desc`, `recent_update`, `recent_created`). They extend — do not replace — the six v1 read/plan commands (`repo status`, `refs compare`, `pr view`, `pr checks`, `merge plan`, `sync plan`, `provider capabilities`, `doctor`). Forge-sourced string leaves follow `decision_packet_trust_doctrine`.
 
-**Topogram consumer examples:** see `tools/remogram-agent-support/skills/remogram-consumer/SKILL.md` (Semantic diff queries section) and `topo/sdlc/plans/semantic_diff_fact_inventory.tg` wave 5 notes.
+**Examples:** see `tools/remogram-agent-support/skills/remogram-consumer/SKILL.md` (Fact inventory section).
 
 ## Live smoke fixtures (`remogram-smoke`)
 
@@ -268,7 +268,9 @@ To change coverage include/exclude lists or add thresholds, update this section,
 - Coverage (`npm run test:coverage`) reports **`packages/remogram-core`** only.
 - **`ref_compare`** and **`sync_plan`** on API providers use local git only (`auth_class: git_only`); no forge token is required.
 - **CI (GitHub):** GitHub Actions on push/PR to `main` (`.github/workflows/`).
-- **CI (local Gitea):** hybrid Actions via `.gitea/workflows/ci-gate.yml` → `scripts/run-gitea-gate.sh`. Host install: [tools/gitea/README.md](tools/gitea/README.md) (points at Topogram `tools/gitea/HYBRID-CI.md`).
+<!-- maintainer-only:start -->
+- **CI (local Gitea):** hybrid Actions via `.gitea/workflows/ci-gate.yml` → `scripts/run-gitea-gate.sh`. Host install: [tools/gitea/README.md](tools/gitea/README.md).
+<!-- maintainer-only:end -->
 
 ## Packages
 
@@ -367,7 +369,11 @@ From a clone of this repository — syncs `.cursor/skills/`, Codex global skills
 | `--dogfood` | Also install `remogram-dogfood` (private maintainer checkout only; hidden from public GitHub) |
 | `--all` | `--cursor` and `--codex` (default when no flags) |
 
-Private **`remo`** maintainers with Topogram dogfood: `./scripts/install-agent-skills.sh --cursor --dogfood`.
+<!-- maintainer-only:start -->
+Private **`remo`** maintainers: `./scripts/install-agent-skills.sh --cursor --dogfood`.
+
+**Deferred follow-ups:** [docs/deferred-follow-ups.md](docs/deferred-follow-ups.md) (functional product issues deferred after merge).
+<!-- maintainer-only:end -->
 
 ## Contributing
 

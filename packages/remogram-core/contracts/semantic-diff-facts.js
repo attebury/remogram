@@ -95,7 +95,7 @@ export const FORGE_SOURCED_STRING_LEAVES = Object.freeze({
   ],
 });
 
-/** Keys that must never appear in remogram output (Topogram SDLC/workflow concepts). */
+/** Keys that must never appear in remogram output (external planning/SDLC workflow concepts). */
 export { FORBIDDEN_PACKET_KEYS };
 
 /**
@@ -125,7 +125,7 @@ export const FACT_INVENTORY_BODY_SHAPES = Object.freeze({
 
 /**
  * Build a fact-inventory packet body through the standard envelope gate.
- * Throws if body contains forbidden Topogram workflow keys.
+ * Throws if body contains forbidden workflow/planning-tool keys.
  */
 export function forgeFactInventoryPacket(type, context, body = {}, error = null) {
   if (!Object.values(FACT_INVENTORY_PACKET_TYPES).includes(type)) {

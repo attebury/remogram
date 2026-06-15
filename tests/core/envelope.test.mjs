@@ -31,7 +31,7 @@ describe('forgePacket', () => {
 
   it('rejects forbidden keys at any depth', () => {
     expect(() => forgePacket(PACKET_TYPES.PR_STATUS, ctx, { meta: { lane: 'Merge' } })).toThrow(
-      /Forbidden Topogram concept/,
+      /Forbidden workflow\/planning-tool key/,
     );
   });
 
@@ -84,7 +84,7 @@ describe('forgePacket', () => {
           lane: 'Merge',
         },
       }),
-    ).toThrow(/Forbidden Topogram concept/);
+    ).toThrow(/Forbidden workflow\/planning-tool key/);
   });
 
   it('rejects forge error fields that override envelope trust', () => {

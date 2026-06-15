@@ -15,10 +15,11 @@ git -C "${ROOT}" archive HEAD | tar -x -C "${OUT}"
 cd "${OUT}"
 
 # Drop private dogfood / maintainer-only paths
-rm -rf topo .gitea .tmp dx
+rm -rf topo .gitea .tmp dx tools/gitea
 rm -f topogram.project.json topogram.sdlc-policy.json
 rm -f scripts/install-topogram-local.sh
 rm -f scripts/park-topogram-skills.sh
+rm -f scripts/run-gitea-gate.sh
 rm -f scripts/dogfood-skills.list
 rm -f scripts/remogram-smoke-compare.mjs scripts/remogram-smoke-compare-lib.mjs
 rm -f scripts/remogram-smoke-compare-pr-checks.mjs scripts/remogram-smoke-compare-ref-compare.mjs
@@ -34,13 +35,18 @@ if [[ -f "$DOGFOOD_LIST" ]]; then
   done < "$DOGFOOD_LIST"
 fi
 rm -f .cursor/rules/remogram-maintainer.mdc
+rm -f tools/remogram-agent-support/adapters/cursor/.cursor/rules/remogram-maintainer.mdc
 
 node <<'NODE'
 import { readFileSync, writeFileSync } from 'node:fs';
-const path = 'AGENTS.md';
-let text = readFileSync(path, 'utf8');
-text = text.replace(/\n<!-- maintainer-only:start -->[\s\S]*?<!-- maintainer-only:end -->\n?/m, '\n');
-writeFileSync(path, text);
+
+function stripMaintainerBlocks(text) {
+  return text.replace(/\n<!-- maintainer-only:start -->[\s\S]*?<!-- maintainer-only:end -->\n?/gm, '\n');
+}
+
+for (const path of ['AGENTS.md', 'README.md', 'tools/remogram-agent-support/README.md']) {
+  writeFileSync(path, stripMaintainerBlocks(readFileSync(path, 'utf8')));
+}
 NODE
 
 # Keep scripts/lib/smoke-payload-metrics.mjs for fixture tests; strip smoke npm scripts
