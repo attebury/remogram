@@ -4,17 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [0.1.0-beta.4] - 2026-06-14
+
 ### Fixed
 
 - **CR inventory probe fallback:** reuse page-one probe body on pagination fallback (Gitea/GitLab/GitHub) — avoids duplicate page-1 forge fetch ([#348](http://localhost:3000/attebury/remogram/issues/348))
 - **Gitea `recent_created` tail failure:** tail-only pagination fallback instead of page-1 oldest slice
 - **`list_truncated` vs trusted `entry_count`:** partial pagination walks with trusted forge total now set `list_truncated: true`
-- **`cr inventory` fallback:** preserve trusted forge `entry_count` (header/search total) when fast path rejects and pagination fallback runs
+- **CR inventory probe fallback:** preserve trusted forge `entry_count` (header/search total) when fast path rejects and pagination fallback runs
 - **Gitea `recent_created` when total exceeds limit:** fetch `sort=oldest` tail page for globally newest-created slice
 - **Gitea/GitLab number sorts when total exceeds limit:** full-list collect within compliant max before client sort and slice
 - **GitHub fallback:** include search `total_count` as `entry_count` when fast path rejects
 - **`cr inventory --sort recent_created` (Gitea):** map to `sort=oldest` and reverse page order so it differs from `recent_update`
 - **Open-PR fast path:** reject header/body length mismatch; skip fast path for `number_asc` / `number_desc` when total open count exceeds `--limit` (fallback to pagination)
+- **CR open scan hardening:** idempotency scan ingest backoff; allowlisted/validated `forge_error` trusted fields; `idempotency_scan` in provider capabilities; default-cap scan regression tests
+- **CR open polish:** dedicated open-pull idempotency pagination caps; `idempotency_scan` metadata on `idempotency_scan_incomplete`; packet contract for `reused_existing`; CLI/MCP truncated-scan integration tests; Observer retry docs
+- **CR open review follow-up:** paginated fail-closed idempotency scan (`idempotency_scan_incomplete`); `reused_existing` on idempotent packets; write-command enum DRY; MCP/doctor negative tests; consumer CLI/MCP write boundary docs
+- **CR open hardening:** idempotent open for matching head+base; structured `unparseable_provider_output` for invalid provider pull numbers; MCP `destructiveHint` on `cr_open`; expanded provider/CLI/MCP tests
+- **CR inventory default bound:** when `--limit` is omitted, inventory uses `DEFAULT_CR_INVENTORY_SAFE_LIMIT` (3) instead of 50 so default `cr inventory --json` avoids top-level `oversized_raw_output` on large open-PR payloads; explicit `--limit` unchanged up to 50
 
 ### Added
 
@@ -29,16 +36,8 @@ All notable changes to this project will be documented in this file.
 - **`open_pull_list` capabilities:** document `default_slice_sort`, `supported_slice_sorts`, and provider-specific `total_count_source` / `total_count_header`
 - **`paginateOffsetListPages`:** `listLimit` branch probes page+1 at maxPages (fixes false `list_truncated` at exact compliance boundary)
 - **Write opt-in:** `write_commands` in `.remogram.json` required for `cr open` (fail closed with `write_not_configured`); doctor warns when provider supports writes but config does not opt in
-- **Docs:** beta.0–beta.3 read/plan by default; incremental write wiring; opt-out bridge table (Gitea shim, gh/glab manual)
-
-### Fixed
-
-- **CR open scan hardening:** idempotency scan ingest backoff; allowlisted/validated `forge_error` trusted fields; `idempotency_scan` in provider capabilities; default-cap scan regression tests
-- **CR open polish:** dedicated open-pull idempotency pagination caps; `idempotency_scan` metadata on `idempotency_scan_incomplete`; packet contract for `reused_existing`; CLI/MCP truncated-scan integration tests; Observer retry docs
-- **CR open review follow-up:** paginated fail-closed idempotency scan (`idempotency_scan_incomplete`); `reused_existing` on idempotent packets; write-command enum DRY; MCP/doctor negative tests; consumer CLI/MCP write boundary docs
-- **CR open hardening:** idempotent open for matching head+base; structured `unparseable_provider_output` for invalid provider pull numbers; MCP `destructiveHint` on `cr_open`; expanded provider/CLI/MCP tests
-
-- **CR inventory default bound:** when `--limit` is omitted, inventory uses `DEFAULT_CR_INVENTORY_SAFE_LIMIT` (3) instead of 50 so default `cr inventory --json` avoids top-level `oversized_raw_output` on repos with large open-PR payloads; explicit `--limit` unchanged up to 50
+- **Docs:** beta.0–beta.4 read/plan by default; incremental write wiring; opt-out bridge table (Gitea shim, gh/glab manual)
+- Envelope gate error text uses neutral workflow/planning-tool wording (no Topogram naming in npm output)
 
 ## [0.1.0-beta.3] - 2026-06-14
 
@@ -102,6 +101,7 @@ All notable changes to this project will be documented in this file.
 - `github-gh` and `gitea-tea` provider IDs are reserved CLI-wrapper placeholders (not implemented); use `*-api` providers — GitLab's CLI is `glab` but has no wrapper ID yet (see README)
 - Payload-size smoke compare is not packaged in npm beta (monorepo dev tooling only)
 
+[0.1.0-beta.4]: https://github.com/attebury/remogram/releases/tag/v0.1.0-beta.4
 [0.1.0-beta.3]: https://github.com/attebury/remogram/releases/tag/v0.1.0-beta.3
 [0.1.0-beta.2]: https://github.com/attebury/remogram/releases/tag/v0.1.0-beta.2
 [0.1.0-beta.1]: https://github.com/attebury/remogram/releases/tag/v0.1.0-beta.1

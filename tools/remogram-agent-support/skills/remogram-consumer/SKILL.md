@@ -40,7 +40,7 @@ Copy from Remogram's `.remogram.json.example`. Typical shape:
 
 Do **not** use `github-gh` or `gitea-tea` in beta — those IDs are reserved for unimplemented CLI-wrapper backends. GitLab's official CLI is [`glab`](https://docs.gitlab.com/cli/); there is no `gitlab-glab` wrapper yet — use `gitlab-api`. See README [CLI wrapper providers](https://github.com/attebury/remogram#cli-wrapper-providers-not-supported-in-beta).
 
-**v1 scope:** Through **0.1.0-beta.3**, read/plan only by default. Writes require config opt-in (`write_commands`) and provider support. **`provider capabilities --json`** is authoritative for `write_support`, `write_commands`, and per-command `implemented`.
+**v1 scope:** Through **0.1.0-beta.4**, read/plan only by default. Writes require config opt-in (`write_commands`) and provider support. **`provider capabilities --json`** is authoritative for `write_support`, `write_commands`, and per-command `implemented`.
 
 ## First commands by task
 
@@ -133,7 +133,7 @@ Do **not** rewrite forge refs to match your team's integration branch naming unl
 
 **Never expect** workflow metadata in Remogram output (for example `goal_branch`, `lane`, or `sdlc_task`).
 
-**v1 scope:** Through **0.1.0-beta.3**, read/plan by default. Writes need **`write_commands`** in `.remogram.json`. **Use CLI/MCP only** for writes. **`provider capabilities --json`** reports provider `write_support` / `write_commands`.
+**v1 scope:** Through **0.1.0-beta.4**, read/plan by default. Writes need **`write_commands`** in `.remogram.json`. **Use CLI/MCP only** for writes. **`provider capabilities --json`** reports provider `write_support` / `write_commands`.
 
 ## Interpreting checks
 
