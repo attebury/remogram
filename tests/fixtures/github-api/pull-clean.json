@@ -1,0 +1,16 @@
+{
+  "number": 42,
+  "html_url": "https://github.com/owner/repo/pull/42",
+  "title": "Add GitHub provider\nwith newline",
+  "state": "open",
+  "mergeable": true,
+  "mergeable_state": "clean",
+  "base": {
+    "ref": "main",
+    "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "head": {
+    "ref": "feature/github-api",
+    "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  }
+}

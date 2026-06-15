@@ -1,0 +1,18 @@
+{
+  "data": {
+    "repository": {
+      "pullRequest": {
+        "number": 43,
+        "url": "https://github.com/owner/repo/pull/43",
+        "title": "Conflicted PR",
+        "state": "OPEN",
+        "mergeable": "CONFLICTING",
+        "mergeStateStatus": "DIRTY",
+        "baseRefName": "main",
+        "baseRefOid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "headRefName": "feature/conflict",
+        "headRefOid": "cccccccccccccccccccccccccccccccccccccccc"
+      }
+    }
+  }
+}

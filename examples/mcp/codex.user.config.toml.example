@@ -1,0 +1,13 @@
+# OpenAI Codex — user-level MCP config
+# Merge into ~/.codex/config.toml (shared by Codex CLI and Codex VS Code extension).
+#
+# Use this when you want remogram on every trusted project with the same server install.
+# Per-project REMOGRAM_CWD is usually better — prefer codex.project.config.toml.example.
+
+[mcp_servers.remogram]
+command = "remogram-mcp"
+
+[mcp_servers.remogram.env]
+# When unset, remogram uses the process cwd (Codex session working directory).
+# For reliable .remogram.json resolution, set an absolute path per project instead.
+REMOGRAM_CWD = "/absolute/path/to/your/project"
