@@ -1,0 +1,1496 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { provider, repoApiPath, apiBase, normalizeGiteaStatusState, normalizeGiteaPrState, listOpenPullsWithMeta, crInventorySlice, dedupeGiteaStatusRecords, mapGiteaCommitStatuses } from '@remogram/provider-gitea-api';
+import { DEFAULT_CHECK_STATUS_PAGE_SIZE, MAX_CHECK_STATUS_PAGES, MAX_OPEN_PULL_IDEMPOTENCY_PAGES } from '@remogram/core';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const fixtures = join(__dirname, '../fixtures/gitea-api');
+
+function load(name) {
+  return JSON.parse(readFileSync(join(fixtures, name), 'utf8'));
+}
+
+const ctx = {
+  config: {
+    provider: 'gitea-api',
+    owner: 'attebury',
+    repo: 'remogram',
+    baseUrl: 'http://localhost:3000',
+    remote: 'origin',
+    write_commands: ['cr_open', 'status_set'],
+  },
+  cwd: process.cwd(),
+  parsed: { owner: 'attebury', repo: 'remogram', host: 'localhost:3000' },
+};
+
+describe('repoApiPath', () => {
+  it('encodes path segments', () => {
+    expect(repoApiPath({ owner: 'a/b', repo: 'c' })).toContain(encodeURIComponent('a/b'));
+  });
+});
+
+describe('apiBase', () => {
+  it('binds self-hosted Gitea to verified remote host', () => {
+    expect(
+      apiBase(
+        { ...ctx.config, baseUrl: 'http://localhost:3000' },
+        ctx.parsed,
+      ),
+    ).toBe('http://localhost:3000/api/v1');
+  });
+
+  it('binds gitea.com to https://gitea.com/api/v1', () => {
+    expect(
+      apiBase(
+        { ...ctx.config, baseUrl: 'https://gitea.com' },
+        { ...ctx.parsed, host: 'gitea.com' },
+      ),
+    ).toBe('https://gitea.com/api/v1');
+  });
+
+  it('rejects gitea.com remote with mismatched baseUrl host', () => {
+    expect(() =>
+      apiBase(
+        { ...ctx.config, baseUrl: 'https://evil.example' },
+        { ...ctx.parsed, host: 'gitea.com' },
+      ),
+    ).toThrow(/gitea.com remotes/);
+  });
+
+  it('rejects self-hosted API host mismatch before token use', () => {
+    expect(() =>
+      apiBase(
+        { ...ctx.config, baseUrl: 'https://evil.example.test' },
+        { ...ctx.parsed, host: 'git.example.test' },
+      ),
+    ).toThrow(/must match remote host git\.example\.test/);
+  });
+});
+
+describe('provider-gitea-api fixtures', () => {
+  beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn());
+    process.env.GITEA_TOKEN = 'test-token';
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    delete process.env.GITEA_TOKEN;
+  });
+
+  it('repoStatus returns gated capabilities without token', async () => {
+    delete process.env.GITEA_TOKEN;
+    const body = await provider.repoStatus(ctx);
+    expect(body.auth_present).toBe(false);
+    expect(body.capabilities).toEqual(['repo_status']);
+  });
+
+  it('repoStatus returns all capabilities with token', async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify(load('repo.json')));
+        },
+      },
+    });
+    const body = await provider.repoStatus(ctx);
+    expect(body.capabilities).toContain('pr_status');
+    expect(body.capabilities).toContain('whoami');
+    expect(body.capabilities).toContain('branch_protection');
+    expect(body.capabilities).toContain('cr_files');
+    expect(body.capabilities).toContain('cr_comments');
+    expect(body.capabilities).toContain('forge_changes');
+  });
+
+  it('forgeChanges normalizes Gitea pull activity since boundary', async () => {
+    global.fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify(load('pulls-since-window.json')));
+          },
+        },
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify(load('pull.json')));
+          },
+        },
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify(load('statuses-success.json')));
+          },
+        },
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify(load('pull.json')));
+          },
+        },
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify(load('statuses-success.json')));
+          },
+        },
+      });
+    const body = await provider.forgeChanges(ctx, { since: '2024-06-01T12:00:00Z' });
+    expect(body.since).toBe('2024-06-01T12:00:00.000Z');
+    expect(body.since_kind).toBe('observed_at');
+    expect(body.events.map((event) => event.kind)).toEqual([
+      'pr_opened',
+      'pr_merged',
+      'pr_closed',
+      'head_sha_moved',
+      'checks_conclusion_observed',
+      'checks_conclusion_observed',
+    ]);
+    expect(body.events_truncated).toBe(false);
+    expect(body.event_count).toBe(6);
+  });
+
+  it('forgeChanges fails closed without token', async () => {
+    delete process.env.GITEA_TOKEN;
+    await expect(
+      provider.forgeChanges(ctx, { since: '2024-06-01T12:00:00Z' }),
+    ).rejects.toMatchObject({
+      forgeError: { code: 'unauthenticated_provider' },
+    });
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('crComments normalizes Gitea pull review comments', async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify(load('pull-comments.json')));
+        },
+      },
+    });
+    const body = await provider.crComments(ctx, { number: 1 });
+    expect(body.pr_number).toBe(1);
+    expect(body.comments).toHaveLength(2);
+    expect(body.comments[0]).toMatchObject({
+      id: '101',
+      author: 'reviewer-bot',
+      path: 'packages/remogram-core/cr-comments.js',
+      line: 42,
+      resolved: false,
+    });
+    expect(body.comments[1].resolved).toBe(true);
+    expect(body.comments_truncated).toBe(false);
+    expect(body.comment_count).toBe(2);
+  });
+
+  it('crComments fails closed without token', async () => {
+    delete process.env.GITEA_TOKEN;
+    await expect(provider.crComments(ctx, { number: 1 })).rejects.toMatchObject({
+      forgeError: { code: 'unauthenticated_provider' },
+    });
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('crFiles normalizes Gitea pull changed paths', async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify(load('pull-files.json')));
+        },
+      },
+    });
+    const body = await provider.crFiles(ctx, { number: 1 });
+    expect(body.pr_number).toBe(1);
+    expect(body.changed_paths).toEqual([
+      'packages/remogram-core/cr-files.js',
+      'packages/remogram-core/index.js',
+      'tests/core/cr-files.test.mjs',
+    ]);
+    expect(body.paths_truncated).toBe(false);
+    expect(body.path_count).toBe(3);
+  });
+
+  it('crFiles fails closed without token', async () => {
+    delete process.env.GITEA_TOKEN;
+    await expect(provider.crFiles(ctx, { number: 1 })).rejects.toMatchObject({
+      forgeError: { code: 'unauthenticated_provider' },
+    });
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('branchProtection normalizes Gitea branch protection policy', async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify(load('branch-protection-remo.json')));
+        },
+      },
+    });
+    const body = await provider.branchProtection(ctx, { branchRef: 'remo' });
+    expect(body.branch_ref).toBe('remo');
+    expect(body.required_status_contexts).toEqual(['ci/test', 'ci/lint']);
+    expect(body.protected_branch_rules).toEqual([{ name: 'remo' }]);
+    expect(body.approvals_required).toEqual({ implemented: true, count: 1 });
+  });
+
+  it('branchProtection fails closed without token', async () => {
+    delete process.env.GITEA_TOKEN;
+    await expect(provider.branchProtection(ctx, { branchRef: 'remo' })).rejects.toMatchObject({
+      forgeError: { code: 'unauthenticated_provider' },
+    });
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('whoami normalizes Gitea user identity', async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify(load('user.json')));
+        },
+      },
+    });
+    const body = await provider.whoami(ctx);
+    expect(body.login).toBe('agent-user');
+    expect(body.can_write).toBe(true);
+    expect(body.token_scope_signal).toEqual({ implemented: false, scopes: null });
+    expect(body.token_expiry_signal).toEqual({ implemented: false, expires_at: null });
+  });
+
+  it('whoami fails closed without token', async () => {
+    delete process.env.GITEA_TOKEN;
+    await expect(provider.whoami(ctx)).rejects.toMatchObject({
+      forgeError: { code: 'unauthenticated_provider' },
+    });
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('prView maps mergeability by number', async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify(load('pull.json')));
+        },
+      },
+    });
+    const body = await provider.prView(ctx, { number: 1 });
+    expect(body.pr_number).toBe(1);
+    expect(body.mergeability).toBe('clean');
+  });
+
+  it('prChecks requires resolvable ref', async () => {
+    await expect(provider.prChecks(ctx, { ref: 'not-a-real-ref-xyz' })).rejects.toMatchObject({
+      forgeError: { code: 'missing_ref' },
+    });
+  });
+
+  it('prChecks rejects option injection ref', async () => {
+    await expect(provider.prChecks(ctx, { ref: '--show-toplevel' })).rejects.toMatchObject({
+      forgeError: { code: 'invalid_args' },
+    });
+  });
+
+  it('prChecks maps statuses-success fixture to success conclusion', async () => {
+    global.fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify(load('pull.json')));
+          },
+        },
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify(load('statuses-success.json')));
+          },
+        },
+      });
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.check_conclusion).toBe('success');
+    expect(body.statuses).toHaveLength(1);
+    expect(body.statuses[0].context).toBe('ci/gate');
+  });
+
+  it('normalizes mixed-case Gitea status states before summarizeChecks', async () => {
+    global.fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify(load('pull.json')));
+          },
+        },
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(
+              JSON.stringify([
+                {
+                  context: 'ci/gate',
+                  state: 'Success',
+                  description: 'ok',
+                },
+              ]),
+            );
+          },
+        },
+      });
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.check_conclusion).toBe('success');
+    expect(body.statuses[0].state).toBe('success');
+  });
+
+  function mockPullAndStatuses(statusesFixture) {
+    global.fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify(load('pull.json')));
+          },
+        },
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify(load(statusesFixture)));
+          },
+        },
+      });
+  }
+
+  it('prChecks maps Gitea status field when state is absent', async () => {
+    mockPullAndStatuses('statuses-gitea-api-success.json');
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.check_conclusion).toBe('success');
+    expect(body.statuses).toHaveLength(1);
+    expect(body.statuses[0].state).toBe('success');
+  });
+
+  it('prChecks dedupes duplicate contexts to the latest row', async () => {
+    mockPullAndStatuses('statuses-duplicate-context.json');
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.check_conclusion).toBe('success');
+    expect(body.statuses).toHaveLength(1);
+    expect(body.statuses[0].state).toBe('success');
+  });
+
+  it('prChecks keeps unknown status values fail-closed without throwing', async () => {
+    mockPullAndStatuses('statuses-unknown-value.json');
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.check_conclusion).toBe('unknown');
+    expect(body.statuses).toHaveLength(1);
+    expect(body.statuses[0].state).toBe('unknown');
+  });
+
+  it('dedupeGiteaStatusRecords prefers newer updated_at then higher id', () => {
+    const deduped = dedupeGiteaStatusRecords(load('statuses-duplicate-context.json'));
+    expect(deduped).toHaveLength(1);
+    expect(deduped[0].id).toBe(2);
+    expect(mapGiteaCommitStatuses(deduped)[0].state).toBe('success');
+  });
+
+  it('mergePlan treats Closed PR state as not open', async () => {
+    const closedPull = {
+      ...load('pull.json'),
+      state: 'Closed',
+    };
+    const pullResponse = {
+      ok: true,
+      status: 200,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify(closedPull));
+        },
+      },
+    };
+    global.fetch
+      .mockResolvedValueOnce(pullResponse)
+      .mockResolvedValueOnce(pullResponse)
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        body: {
+          [Symbol.asyncIterator]: async function* () {
+            yield Buffer.from(JSON.stringify([]));
+          },
+        },
+      });
+    const body = await provider.mergePlan(ctx, { number: 1 });
+    expect(body.blockers).toContain('pr_not_open');
+  });
+
+  it('normalizeGitea helpers map aliases', () => {
+    expect(normalizeGiteaStatusState('Success')).toBe('success');
+    expect(normalizeGiteaStatusState('ERROR')).toBe('failure');
+    expect(normalizeGiteaPrState('Open')).toBe('open');
+    expect(normalizeGiteaPrState('closed')).toBe('closed');
+  });
+
+  it('prChecks survives oversized status page via ingest backoff', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    const paddedStatuses = Array.from({ length: 25 }, (_, i) => ({
+      context: `ci/pad-${i}`,
+      state: 'success',
+      description: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedStatuses);
+    expect(Buffer.byteLength(oversizedJson, 'utf8')).toBeGreaterThan(8192);
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('/pulls/1')) {
+        return Promise.resolve(pullResponse);
+      }
+      const limitMatch = href.match(/[?&]limit=(\d+)/);
+      const limit = limitMatch ? Number(limitMatch[1]) : 25;
+      if (limit > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      return Promise.resolve(
+        jsonPageResponse([{ context: 'ci/ok', state: 'success', description: 'ok' }]),
+      );
+    });
+
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.check_conclusion).toBe('success');
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('limit=12'))).toBe(true);
+  });
+
+  it('prChecks carries reduced limit to page 2 after oversized page 1', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    const paddedStatuses = Array.from({ length: 25 }, (_, i) => ({
+      context: `ci/pad-${i}`,
+      state: 'success',
+      description: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedStatuses);
+    const page2Status = [{ context: 'ci/page2', state: 'success', description: 'ok' }];
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('/pulls/1')) {
+        return Promise.resolve(pullResponse);
+      }
+      const limitMatch = href.match(/[?&]limit=(\d+)/);
+      const pageMatch = href.match(/[?&]page=(\d+)/);
+      const limit = limitMatch ? Number(limitMatch[1]) : 25;
+      const page = pageMatch ? Number(pageMatch[1]) : 1;
+      if (page === 1 && limit > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      if (page === 1) {
+        return Promise.resolve(jsonPageResponse(paddedStatuses.slice(0, 12)));
+      }
+      if (page === 2) {
+        expect(limit).toBe(12);
+        return Promise.resolve(jsonPageResponse(page2Status));
+      }
+      return Promise.resolve(jsonPageResponse([]));
+    });
+
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.check_conclusion).toBe('success');
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('page=2') && String(u).includes('limit=12'))).toBe(true);
+  });
+
+  it('prChecks includes checks_failed when commit statuses fail on page 2', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    const page1Statuses = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
+      context: `ci/page1-${i}`,
+      state: 'success',
+      description: 'ok',
+    }));
+    const page2Statuses = [{ context: 'ci/page2-fail', state: 'failure', description: 'fail' }];
+    global.fetch
+      .mockResolvedValueOnce(pullResponse)
+      .mockResolvedValueOnce(jsonPageResponse(page1Statuses))
+      .mockResolvedValueOnce(jsonPageResponse(page2Statuses));
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.check_conclusion).toBe('failure');
+    const statusUrls = global.fetch.mock.calls.map(([u]) => String(u));
+    expect(statusUrls.some((u) => u.includes(`limit=${DEFAULT_CHECK_STATUS_PAGE_SIZE}`))).toBe(true);
+    expect(statusUrls.some((u) => u.includes('page=2'))).toBe(true);
+  });
+
+  it('mergePlan includes checks_failed when page 1 returns 100 statuses', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    const legacyPage1 = Array.from({ length: 100 }, (_, i) => ({
+      context: `ci/legacy-${i}`,
+      state: 'success',
+      description: 'ok',
+    }));
+    const page2Statuses = [{ context: 'ci/page2-fail', state: 'failure', description: 'fail' }];
+    global.fetch
+      .mockResolvedValueOnce(pullResponse)
+      .mockResolvedValueOnce(pullResponse)
+      .mockResolvedValueOnce(jsonPageResponse(legacyPage1))
+      .mockResolvedValueOnce(jsonPageResponse(page2Statuses));
+    const body = await provider.mergePlan(ctx, { number: 1 });
+    expect(body.checks_conclusion).toBe('failure');
+    expect(body.blockers).toContain('checks_failed');
+  });
+
+  it('mergePlan includes checks_failed when commit statuses fail on page 2', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    const page1Statuses = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
+      context: `ci/page1-${i}`,
+      state: 'success',
+      description: 'ok',
+    }));
+    const page2Statuses = [{ context: 'ci/page2-fail', state: 'failure', description: 'fail' }];
+    global.fetch
+      .mockResolvedValueOnce(pullResponse)
+      .mockResolvedValueOnce(pullResponse)
+      .mockResolvedValueOnce(jsonPageResponse(page1Statuses))
+      .mockResolvedValueOnce(jsonPageResponse(page2Statuses));
+    const body = await provider.mergePlan(ctx, { number: 1 });
+    expect(body.checks_conclusion).toBe('failure');
+    expect(body.blockers).toContain('checks_failed');
+  });
+
+  it('prChecks sets checks_truncated when status pages hit max_pages', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    let statusPage = 0;
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('/pulls/1')) {
+        return Promise.resolve(pullResponse);
+      }
+      if (href.includes('/statuses')) {
+        statusPage += 1;
+        const fullPage = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
+          context: `ci/cap-${statusPage}-${i}`,
+          state: 'success',
+          description: 'ok',
+        }));
+        return Promise.resolve(jsonPageResponse(fullPage));
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+    const body = await provider.prChecks(ctx, { number: 1 });
+    expect(body.checks_truncated).toBe(true);
+    expect(body.statuses.length).toBe(DEFAULT_CHECK_STATUS_PAGE_SIZE * MAX_CHECK_STATUS_PAGES);
+  });
+
+  it('mergePlan adds checks_incomplete when check enumeration truncates', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    const fullPage = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
+      context: `ci/cap-${i}`,
+      state: 'success',
+      description: 'ok',
+    }));
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('/pulls/1')) {
+        return Promise.resolve(pullResponse);
+      }
+      if (href.includes('/statuses')) {
+        return Promise.resolve(jsonPageResponse(fullPage));
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+    const body = await provider.mergePlan(ctx, { number: 1 });
+    expect(body.checks_conclusion).toBe('success');
+    expect(body.blockers).toContain('checks_incomplete');
+  });
+
+  it('mergePlan blocks on paths_truncated with allowed_paths', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    const statuses = load('statuses-gitea-api-success.json');
+    let filesPage = 0;
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('/pulls/1') && !href.includes('/files')) {
+        return Promise.resolve(pullResponse);
+      }
+      if (href.includes('/statuses')) {
+        return Promise.resolve(jsonPageResponse(statuses));
+      }
+      if (href.includes('/files')) {
+        filesPage += 1;
+        const fullPage = Array.from({ length: DEFAULT_CHECK_STATUS_PAGE_SIZE }, (_, i) => ({
+          filename: `packages/page-${filesPage}-file-${i}.js`,
+        }));
+        return Promise.resolve(jsonPageResponse(fullPage));
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+    const body = await provider.mergePlan(ctx, {
+      number: 1,
+      allowed_paths: ['packages/**'],
+    });
+    expect(body.blockers).toContain('changed_paths_unavailable');
+  });
+
+  it('mergePlan fails closed when crFiles API fails with allowed_paths', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    const statuses = load('statuses-gitea-api-success.json');
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('/pulls/1') && !href.includes('/files')) {
+        return Promise.resolve(pullResponse);
+      }
+      if (href.includes('/statuses')) {
+        return Promise.resolve(jsonPageResponse(statuses));
+      }
+      if (href.includes('/files')) {
+        return Promise.resolve({
+          ok: false,
+          status: 500,
+          headers: new Map(),
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(JSON.stringify({ message: 'files unavailable' }));
+            },
+          },
+        });
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+    const body = await provider.mergePlan(ctx, {
+      number: 1,
+      allowed_paths: ['packages/**'],
+    });
+    expect(body.blockers).toContain('changed_paths_unavailable');
+  });
+
+  it('mergePlan passes in-scope allowlist with complete forge paths', async () => {
+    const pull = load('pull.json');
+    const pullResponse = jsonPageResponse(pull);
+    const statuses = load('statuses-gitea-api-success.json');
+    const files = [{ filename: 'packages/remogram-core/foo.js' }];
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (href.includes('/pulls/1') && !href.includes('/files')) {
+        return Promise.resolve(pullResponse);
+      }
+      if (href.includes('/statuses')) {
+        return Promise.resolve(jsonPageResponse(statuses));
+      }
+      if (href.includes('/files')) {
+        return Promise.resolve(jsonPageResponse(files));
+      }
+      return Promise.reject(new Error(`unexpected fetch: ${href}`));
+    });
+    const body = await provider.mergePlan(ctx, {
+      number: 1,
+      allowed_paths: ['packages/**'],
+    });
+    expect(body.blockers).not.toContain('changed_paths_unavailable');
+    expect(body.blockers).not.toContain('path_scope_violation');
+  });
+
+  it('mergePlan rethrows unauthenticated when allowlist set without token', async () => {
+    delete process.env.GITEA_TOKEN;
+    await expect(
+      provider.mergePlan(ctx, { number: 1, allowed_paths: ['packages/**'] }),
+    ).rejects.toMatchObject({
+      forgeError: { code: 'unauthenticated_provider' },
+    });
+  });
+
+  it('providerCapabilities reports supported pagination', () => {
+    const caps = provider.providerCapabilities();
+    expect(caps.pagination).toBe('supported');
+    expect(caps.forge_ingest_cap_bytes).toBe(8192);
+    expect(caps.check_pagination.check_source_count).toBe(caps.check_sources.length);
+    expect(caps.check_pagination).toEqual({
+      strategy: 'offset_limit',
+      page_size: 25,
+      max_pages: 50,
+      page_size_param: 'limit',
+      ingest_backoff: 'halve_until_fit',
+      on_page_cap: 'set_checks_truncated',
+      compliant_max_items_per_source: 1250,
+      check_source_count: 1,
+      truncation_combination: 'single_source',
+      compliant_max_items_total: 1250,
+      truncation_packet_field: 'checks_truncated',
+    });
+  });
+
+  function jsonPageResponse(body, headers = {}) {
+    return {
+      ok: true,
+      status: 200,
+      headers: new Map(Object.entries(headers)),
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify(body));
+        },
+      },
+    };
+  }
+
+  function openPullPage(start) {
+    return Array.from({ length: 100 }, (_, i) => ({ number: start + i, state: 'open' }));
+  }
+
+  it('listOpenPullsWithMeta survives oversized open PR list via ingest backoff', async () => {
+    const paddedPulls = Array.from({ length: 25 }, (_, i) => ({
+      number: i + 1,
+      title: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedPulls);
+    expect(Buffer.byteLength(oversizedJson, 'utf8')).toBeGreaterThan(8192);
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      const limitMatch = href.match(/[?&]limit=(\d+)/);
+      const limit = limitMatch ? Number(limitMatch[1]) : 25;
+      if (limit > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      return Promise.resolve(jsonPageResponse([{ number: 1 }]));
+    });
+
+    const meta = await listOpenPullsWithMeta(ctx, {});
+    expect(meta.numbers).toEqual([1]);
+    expect(meta.list_truncated).toBe(false);
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('limit=12'))).toBe(true);
+  });
+
+  it('listOpenPullsWithMeta carries reduced limit to page 2 after oversized page 1', async () => {
+    const paddedPulls = Array.from({ length: 25 }, (_, i) => ({
+      number: i + 1,
+      title: 'z'.repeat(400),
+    }));
+    const oversizedJson = JSON.stringify(paddedPulls);
+    const page2Pull = [{ number: 26, state: 'open' }];
+
+    global.fetch.mockImplementation((url) => {
+      const href = String(url);
+      if (!href.includes('/pulls') || href.includes('/pulls/')) {
+        return Promise.reject(new Error(`unexpected fetch: ${href}`));
+      }
+      const limitMatch = href.match(/[?&]limit=(\d+)/);
+      const pageMatch = href.match(/[?&]page=(\d+)/);
+      const limit = limitMatch ? Number(limitMatch[1]) : 25;
+      const page = pageMatch ? Number(pageMatch[1]) : 1;
+      if (page === 1 && limit > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      if (page === 1) {
+        return Promise.resolve(jsonPageResponse(paddedPulls.slice(0, 12)));
+      }
+      if (page === 2) {
+        expect(limit).toBe(12);
+        return Promise.resolve(jsonPageResponse(page2Pull));
+      }
+      return Promise.resolve(jsonPageResponse([]));
+    });
+
+    const meta = await listOpenPullsWithMeta(ctx, {});
+    expect(meta.numbers).toContain(26);
+    expect(global.fetch.mock.calls.some(([u]) => String(u).includes('page=2') && String(u).includes('limit=12'))).toBe(true);
+  });
+
+  it('listOpenPullsWithMeta honors list limit in HTTP query', async () => {
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([{ number: 1, state: 'open' }]));
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([]));
+    const meta = await listOpenPullsWithMeta(ctx, { limit: 1 });
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(global.fetch.mock.calls[0][0]).toContain('limit=1');
+    expect(meta.numbers).toEqual([1]);
+    expect(meta.list_truncated).toBe(false);
+  });
+
+  it('listOpenPullsWithMeta sets list_truncated false when open count equals list limit', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse([
+        { number: 33, state: 'open' },
+        { number: 41, state: 'open' },
+        { number: 43, state: 'open' },
+      ]),
+    );
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([]));
+    const meta = await listOpenPullsWithMeta(ctx, { limit: 3 });
+    expect(meta.numbers).toEqual([33, 41, 43]);
+    expect(meta.list_truncated).toBe(false);
+  });
+
+  it('listOpenPullsWithMeta sets list_truncated false when open count equals maxPages window', async () => {
+    for (let page = 1; page <= 50; page += 1) {
+      global.fetch.mockResolvedValueOnce(jsonPageResponse(openPullPage((page - 1) * 100 + 1)));
+    }
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([]));
+    const meta = await listOpenPullsWithMeta(ctx);
+    expect(meta.list_truncated).toBe(false);
+    expect(meta.numbers).toHaveLength(5000);
+  });
+
+  it('listOpenPullsWithMeta sets list_truncated after max list pages when more exist', async () => {
+    for (let page = 1; page <= 50; page += 1) {
+      global.fetch.mockResolvedValueOnce(jsonPageResponse(openPullPage((page - 1) * 100 + 1)));
+    }
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([{ number: 5001, state: 'open' }]));
+    const meta = await listOpenPullsWithMeta(ctx);
+    expect(meta.list_truncated).toBe(true);
+    expect(meta.numbers).toHaveLength(5000);
+  });
+
+  it('listOpenPullsWithMeta sets list_truncated at maxPages when limit exceeds fetch window', async () => {
+    for (let page = 1; page <= 50; page += 1) {
+      global.fetch.mockResolvedValueOnce(jsonPageResponse(openPullPage((page - 1) * 100 + 1)));
+    }
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([{ number: 5001, state: 'open' }]));
+    const meta = await listOpenPullsWithMeta(ctx, { limit: 6000 });
+    expect(meta.list_truncated).toBe(true);
+    expect(meta.numbers).toHaveLength(5000);
+  });
+
+  it('crInventorySlice bounds entries when limit is 1 and list is complete', async () => {
+    const pull = load('pull.json');
+    const statuses = load('statuses-success.json');
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse([{ number: 1, state: 'open' }], { 'X-Total-Count': '1' }),
+    );
+    global.fetch.mockResolvedValueOnce(jsonPageResponse(pull));
+    global.fetch.mockResolvedValueOnce(jsonPageResponse(pull));
+    global.fetch.mockResolvedValueOnce(jsonPageResponse(statuses));
+    const body = await crInventorySlice(ctx, { limit: 1 });
+    expect(body.list_truncated).toBe(false);
+    expect(body.entries).toHaveLength(1);
+    expect(body.entry_count).toBe(1);
+  });
+
+  it('crOpen POSTs pull create and maps response', async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify([]));
+        },
+      },
+    });
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 201,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(
+            JSON.stringify({
+              number: 278,
+              html_url: 'http://localhost:3000/attebury/remogram/pulls/278',
+              title: 'impl: cr open',
+            }),
+          );
+        },
+      },
+    });
+    const body = await provider.crOpen(ctx, {
+      head: 'impl/cr-open-lane-autonomy',
+      base: 'remo',
+      title: 'impl: cr open',
+    });
+    expect(body.pr_number).toBe(278);
+    expect(global.fetch.mock.calls[1][1]?.method).toBe('POST');
+    const postBody = JSON.parse(global.fetch.mock.calls[1][1]?.body);
+    expect(postBody).toMatchObject({
+      title: 'impl: cr open',
+      head: 'impl/cr-open-lane-autonomy',
+      base: 'remo',
+    });
+  });
+
+  it('crOpen returns existing open PR without POST when head and base match', async () => {
+    const existing = {
+      number: 42,
+      state: 'open',
+      html_url: 'http://localhost:3000/attebury/remogram/pulls/42',
+      title: 'Existing',
+      head: { ref: 'feat/x' },
+      base: { ref: 'remo' },
+    };
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify([existing]));
+        },
+      },
+    });
+    const body = await provider.crOpen(ctx, {
+      head: 'feat/x',
+      base: 'remo',
+      title: 'New title',
+    });
+    expect(body.pr_number).toBe(42);
+    expect(body.title).toBe('Existing');
+    expect(body.reused_existing).toBe(true);
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch.mock.calls[0][1]?.method).toBeUndefined();
+  });
+
+  function jsonPage(items) {
+    return {
+      ok: true,
+      status: 200,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify(items));
+        },
+      },
+    };
+  }
+
+  function openPullMismatchPage(count) {
+    return Array.from({ length: count }, (_, i) => ({
+      number: i + 1,
+      state: 'open',
+      head: { ref: 'other' },
+      base: { ref: 'remo' },
+    }));
+  }
+
+  it('crOpen finds match on page 2 without POST', async () => {
+    global.fetch.mockResolvedValueOnce(jsonPage(openPullMismatchPage(100)));
+    global.fetch.mockResolvedValueOnce(
+      jsonPage([
+        {
+          number: 99,
+          state: 'open',
+          html_url: 'http://localhost:3000/attebury/remogram/pulls/99',
+          title: 'Page two',
+          head: { ref: 'feat/x' },
+          base: { ref: 'remo' },
+        },
+      ]),
+    );
+    const body = await provider.crOpen(ctx, {
+      head: 'feat/x',
+      base: 'remo',
+      title: 'Ignored',
+    });
+    expect(body.pr_number).toBe(99);
+    expect(body.reused_existing).toBe(true);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it('crOpen idempotency scan uses ingest backoff at default ingest cap', async () => {
+    delete process.env.REMOGRAM_FORGE_INGEST_MAX_BYTES;
+    const paddedPulls = Array.from({ length: 25 }, (_, i) => ({
+      number: i + 1,
+      state: 'open',
+      title: 'z'.repeat(400),
+      head: { ref: 'other-head' },
+      base: { ref: 'remo' },
+    }));
+    const oversizedJson = JSON.stringify(paddedPulls);
+    expect(Buffer.byteLength(oversizedJson, 'utf8')).toBeGreaterThan(8192);
+
+    global.fetch.mockImplementation((url, opts) => {
+      const href = String(url);
+      if (opts?.method === 'POST') {
+        return Promise.resolve({
+          ok: true,
+          status: 201,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(
+                JSON.stringify({
+                  number: 400,
+                  html_url: 'http://localhost:3000/attebury/remogram/pulls/400',
+                  title: 'T',
+                }),
+              );
+            },
+          },
+        });
+      }
+      if (!href.includes('/pulls') || href.includes('/pulls/')) {
+        return Promise.reject(new Error(`unexpected fetch: ${href}`));
+      }
+      const limitMatch = href.match(/[?&]limit=(\d+)/);
+      const limit = limitMatch ? Number(limitMatch[1]) : 100;
+      if (limit > 12) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          body: {
+            [Symbol.asyncIterator]: async function* () {
+              yield Buffer.from(oversizedJson);
+            },
+          },
+        });
+      }
+      return Promise.resolve(jsonPageResponse([]));
+    });
+
+    const body = await provider.crOpen(ctx, { head: 'feat/x', base: 'remo', title: 'T' });
+    expect(body.pr_number).toBe(400);
+    expect(global.fetch.mock.calls.some(([, o]) => o?.method === 'POST')).toBe(true);
+  });
+
+  it('crOpen fails closed when idempotency scan is truncated', async () => {
+    for (let page = 0; page < MAX_OPEN_PULL_IDEMPOTENCY_PAGES; page += 1) {
+      global.fetch.mockResolvedValueOnce(jsonPage(openPullMismatchPage(100)));
+    }
+    await expect(
+      provider.crOpen(ctx, { head: 'feat/x', base: 'remo', title: 'T' }),
+    ).rejects.toMatchObject({
+      forgeError: expect.objectContaining({
+        code: 'idempotency_scan_incomplete',
+        fields: {
+          idempotency_scan: {
+            pages: MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
+            max_pages: MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
+            page_size: 100,
+          },
+        },
+      }),
+    });
+    expect(global.fetch).toHaveBeenCalledTimes(MAX_OPEN_PULL_IDEMPOTENCY_PAGES);
+  });
+
+  it('crOpen rejects non-array open pull list', async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from('{}');
+        },
+      },
+    });
+    await expect(
+      provider.crOpen(ctx, { head: 'feat/x', base: 'remo', title: 'T' }),
+    ).rejects.toMatchObject({
+      forgeError: expect.objectContaining({ code: 'unparseable_provider_output' }),
+    });
+  });
+
+  it('crOpen maps API failure to forge error', async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify([]));
+        },
+      },
+    });
+    global.fetch.mockResolvedValueOnce({
+      ok: false,
+      status: 422,
+      statusText: 'Unprocessable Entity',
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify({ message: 'branch does not exist' }));
+        },
+      },
+    });
+    await expect(
+      provider.crOpen(ctx, { head: 'missing', base: 'remo', title: 'T' }),
+    ).rejects.toMatchObject({
+      forgeError: expect.objectContaining({ code: 'api_error', status: 422 }),
+    });
+  });
+
+  it('listOpenPullsWithMeta fast path uses X-Total-Count with retain_max', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(
+        [
+          { number: 30, state: 'open' },
+          { number: 10, state: 'open' },
+          { number: 20, state: 'open' },
+        ],
+        { 'X-Total-Count': '3' },
+      ),
+    );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'recent_update' });
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(String(global.fetch.mock.calls[0][0])).toContain('sort=recentupdate');
+    expect(meta.entry_count).toBe(3);
+    expect(meta.list_truncated).toBe(false);
+    expect(meta.numbers).toEqual([30, 10, 20]);
+    expect(meta.slice_sort).toBe('recent_update');
+  });
+
+  it('listOpenPullsWithMeta fast path fails closed when total exceeds compliant max', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse([{ number: 1, state: 'open' }], { 'X-Total-Count': '5001' }),
+    );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3 });
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(meta.list_truncated).toBe(true);
+    expect(meta.entry_count).toBe(5001);
+  });
+
+  it('listOpenPullsWithMeta falls back when X-Total-Count header is invalid', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse([{ number: 1, state: 'open' }], { 'X-Total-Count': 'not-a-number' }),
+    );
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([]));
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3 });
+    expect(global.fetch.mock.calls.length).toBe(2);
+    expect(meta.list_truncated).toBe(false);
+  });
+
+  it('listOpenPullsWithMeta default sort keeps lowest numbers', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(
+        [
+          { number: 30, state: 'open' },
+          { number: 10, state: 'open' },
+          { number: 20, state: 'open' },
+        ],
+        { 'X-Total-Count': '3' },
+      ),
+    );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3 });
+    expect(meta.numbers).toEqual([10, 20, 30]);
+    expect(meta.slice_sort).toBe('number_asc');
+  });
+
+  it('listOpenPullsWithMeta recent_created uses sort=oldest and reverses page order', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(
+        [
+          { number: 10, state: 'open' },
+          { number: 20, state: 'open' },
+          { number: 30, state: 'open' },
+        ],
+        { 'X-Total-Count': '3' },
+      ),
+    );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'recent_created' });
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(String(global.fetch.mock.calls[0][0])).toContain('sort=oldest');
+    expect(meta.numbers).toEqual([30, 20, 10]);
+    expect(meta.slice_sort).toBe('recent_created');
+  });
+
+  it('listOpenPullsWithMeta recent_created order differs from recent_update', async () => {
+    const oldestFirst = [
+      { number: 10, state: 'open' },
+      { number: 20, state: 'open' },
+      { number: 30, state: 'open' },
+    ];
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(oldestFirst, { 'X-Total-Count': '3' }),
+    );
+    const created = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'recent_created' });
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(oldestFirst, { 'X-Total-Count': '3' }),
+    );
+    const updated = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'recent_update' });
+    expect(created.numbers).toEqual([30, 20, 10]);
+    expect(updated.numbers).toEqual([10, 20, 30]);
+  });
+
+  it('listOpenPullsWithMeta falls back when body shorter than min(total, limit)', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse([{ number: 1, state: 'open' }], { 'X-Total-Count': '5' }),
+    );
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([]));
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3 });
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(String(global.fetch.mock.calls[1][0])).toContain('page=2');
+    expect(meta.numbers).toEqual([1]);
+    expect(meta.entry_count).toBe(5);
+    expect(meta.list_truncated).toBe(true);
+  });
+
+  it('listOpenPullsWithMeta recent_created fetches tail page when total exceeds retain_max', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(
+        [{ number: 1, state: 'open' }, { number: 2, state: 'open' }, { number: 3, state: 'open' }],
+        { 'X-Total-Count': '250' },
+      ),
+    );
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse([
+        { number: 248, state: 'open' },
+        { number: 249, state: 'open' },
+        { number: 250, state: 'open' },
+      ]),
+    );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'recent_created' });
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(String(global.fetch.mock.calls[1][0])).toContain('page=3');
+    expect(String(global.fetch.mock.calls[1][0])).toContain('sort=oldest');
+    expect(meta.numbers).toEqual([250, 249, 248]);
+    expect(meta.entry_count).toBe(250);
+  });
+
+  it('listOpenPullsWithMeta number_asc full-collects when total exceeds retain_max', async () => {
+    const allMrs = [
+      { number: 30, state: 'open' },
+      { number: 10, state: 'open' },
+      { number: 20, state: 'open' },
+      { number: 5, state: 'open' },
+      { number: 1, state: 'open' },
+      { number: 7, state: 'open' },
+      { number: 8, state: 'open' },
+      { number: 9, state: 'open' },
+      { number: 2, state: 'open' },
+      { number: 3, state: 'open' },
+    ];
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(allMrs.slice(0, 3), { 'X-Total-Count': '10' }),
+    );
+    global.fetch.mockResolvedValueOnce(jsonPageResponse(allMrs.slice(3, 6)));
+    global.fetch.mockResolvedValueOnce(jsonPageResponse(allMrs.slice(6, 9)));
+    global.fetch.mockResolvedValueOnce(jsonPageResponse(allMrs.slice(9)));
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'number_asc' });
+    expect(global.fetch).toHaveBeenCalledTimes(4);
+    expect(meta.entry_count).toBe(10);
+    expect(meta.numbers).toEqual([1, 2, 3]);
+  });
+
+  it('listOpenPullsWithMeta skips fast path for number_asc when total exceeds retain_max', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(
+        [
+          { number: 30, state: 'open' },
+          { number: 10, state: 'open' },
+          { number: 20, state: 'open' },
+        ],
+        { 'X-Total-Count': '10' },
+      ),
+    );
+    global.fetch.mockResolvedValueOnce(jsonPageResponse([]));
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'number_asc' });
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(meta.slice_sort).toBe('number_asc');
+  });
+
+  it('listOpenPullsWithMeta recent_created tail page when total not multiple of page size', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(
+        [{ number: 1, state: 'open' }, { number: 2, state: 'open' }, { number: 3, state: 'open' }],
+        { 'X-Total-Count': '105' },
+      ),
+    );
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse([
+        { number: 101, state: 'open' },
+        { number: 102, state: 'open' },
+        { number: 103, state: 'open' },
+        { number: 104, state: 'open' },
+        { number: 105, state: 'open' },
+      ]),
+    );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'recent_created' });
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(String(global.fetch.mock.calls[1][0])).toContain('page=2');
+    expect(meta.numbers).toEqual([105, 104, 103]);
+    expect(meta.entry_count).toBe(105);
+  });
+
+  it('listOpenPullsWithMeta recent_created tail failure uses tail page not page 1', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse(
+        [{ number: 1, state: 'open' }, { number: 2, state: 'open' }, { number: 3, state: 'open' }],
+        { 'X-Total-Count': '250' },
+      ),
+    );
+    global.fetch.mockRejectedValueOnce(new Error('tail fetch failed'));
+    global.fetch.mockRejectedValueOnce(new Error('tail retry failed'));
+    global.fetch.mockResolvedValueOnce(
+      jsonPageResponse([
+        { number: 248, state: 'open' },
+        { number: 249, state: 'open' },
+        { number: 250, state: 'open' },
+      ]),
+    );
+    const meta = await listOpenPullsWithMeta(ctx, { retain_max: 3, sort: 'recent_created' });
+    expect(global.fetch).toHaveBeenCalledTimes(4);
+    const pageOneCalls = global.fetch.mock.calls.filter(([url]) => /[?&]page=1(?:&|$)/.test(String(url)));
+    expect(pageOneCalls).toHaveLength(1);
+    expect(String(global.fetch.mock.calls[3][0])).toContain('page=3');
+    expect(meta.numbers).toEqual([250, 249, 248]);
+    expect(meta.entry_count).toBe(250);
+  });
+
+  it('providerCapabilities reports write_support for cr_open and status_set', async () => {
+    const body = await provider.providerCapabilities();
+    expect(body.write_support).toBe(true);
+    expect(body.write_commands).toEqual(['cr_open', 'status_set']);
+    expect(body.idempotency_scan).toEqual({
+      max_pages: MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
+      page_size: 100,
+      ingest_backoff: 'halve_until_fit',
+    });
+    expect(body.open_pull_list).toEqual({
+      max_pages: 50,
+      page_size: 100,
+      ingest_backoff: 'halve_until_fit',
+      compliant_max_items: 5000,
+      truncation_packet_field: 'list_truncated',
+      incomplete_error_code: 'inventory_list_incomplete',
+      default_slice_sort: 'number_asc',
+      supported_slice_sorts: ['number_asc', 'number_desc', 'recent_update', 'recent_created'],
+      total_count_source: 'response_header',
+      total_count_header: 'X-Total-Count',
+      slice_sort_notes: {
+        recent_created:
+          'sort=oldest; fetches tail page when total exceeds limit; page reversed for newest-first',
+        number_asc:
+          'full-list collect within compliant_max when total exceeds limit, then client sort',
+        number_desc:
+          'full-list collect within compliant_max when total exceeds limit, then client sort',
+      },
+    });
+    const crOpen = body.commands.find((c) => c.name === 'cr_open');
+    expect(crOpen).toMatchObject({ implemented: true, auth_class: 'token_required' });
+    const statusSet = body.commands.find((c) => c.name === 'status_set');
+    expect(statusSet).toMatchObject({ implemented: true, auth_class: 'token_required' });
+  });
+
+  const STATUS_SHA = 'cccccccccccccccccccccccccccccccccccccccc';
+
+  it('statusSet POSTs commit status and maps response', async () => {
+    const fixture = load('status-set-post.json');
+    global.fetch.mockResolvedValueOnce(jsonPage([]));
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 201,
+      body: {
+        [Symbol.asyncIterator]: async function* () {
+          yield Buffer.from(JSON.stringify(fixture));
+        },
+      },
+    });
+    const body = await provider.statusSet(ctx, {
+      sha: STATUS_SHA,
+      context: 'verify/wave1',
+      state: 'success',
+      description: 'Verification passed',
+      target_url: 'http://localhost:3000/attebury/remogram/actions/1',
+    });
+    expect(body.sha).toBe(STATUS_SHA);
+    expect(body.context).toBe('verify/wave1');
+    expect(body.state).toBe('success');
+    expect(body.description).toBe('Verification passed');
+    expect(global.fetch.mock.calls[1][1]?.method).toBe('POST');
+    const postBody = JSON.parse(global.fetch.mock.calls[1][1]?.body);
+    expect(postBody).toMatchObject({
+      state: 'success',
+      context: 'verify/wave1',
+      description: 'Verification passed',
+      target_url: 'http://localhost:3000/attebury/remogram/actions/1',
+    });
+  });
+
+  it('statusSet returns reused_existing without POST when context and state match', async () => {
+    global.fetch.mockResolvedValueOnce(
+      jsonPage([
+        {
+          id: 7,
+          context: 'verify/wave1',
+          status: 'success',
+          description: 'Already set',
+          updated_at: '2026-06-15T00:00:00Z',
+        },
+      ]),
+    );
+    const body = await provider.statusSet(ctx, {
+      sha: STATUS_SHA,
+      context: 'verify/wave1',
+      state: 'success',
+    });
+    expect(body.reused_existing).toBe(true);
+    expect(body.state).toBe('success');
+    expect(body.description).toBe('Already set');
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch.mock.calls[0][1]?.method).toBeUndefined();
+  });
+
+  it('statusSet fails closed with idempotency_scan metadata when scan is truncated', async () => {
+    for (let page = 0; page < MAX_OPEN_PULL_IDEMPOTENCY_PAGES; page += 1) {
+      global.fetch.mockResolvedValueOnce(jsonPage(openPullMismatchPage(100)));
+    }
+    await expect(
+      provider.statusSet(ctx, {
+        sha: STATUS_SHA,
+        context: 'verify/wave1',
+        state: 'success',
+      }),
+    ).rejects.toMatchObject({
+      forgeError: expect.objectContaining({
+        code: 'idempotency_scan_incomplete',
+        fields: {
+          idempotency_scan: expect.objectContaining({
+            pages: MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
+            max_pages: MAX_OPEN_PULL_IDEMPOTENCY_PAGES,
+          }),
+        },
+      }),
+    });
+    expect(global.fetch).toHaveBeenCalledTimes(MAX_OPEN_PULL_IDEMPOTENCY_PAGES);
+  });
+});

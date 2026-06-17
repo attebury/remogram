@@ -1,0 +1,13 @@
+---
+description: Load Remogram skills for forge-fact and product work in this repository.
+alwaysApply: true
+---
+
+Use the Remogram skill set when available:
+
+- **`remogram-core`** — Remogram product code under `packages/**` and `tests/**`
+- **`remogram-consumer`** — forge facts via `.remogram.json` in this repo or any consumer checkout
+
+Canonical skills live in `tools/remogram-agent-support/skills/`. Install with `./scripts/install-agent-skills.sh --cursor`.
+
+When skills are unavailable, run `remogram doctor --json` and follow current CLI/MCP JSON packets.

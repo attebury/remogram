@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "context": "ci/gate",
+    "status": "pending",
+    "description": "running",
+    "updated_at": "2026-06-14T05:00:00Z"
+  },
+  {
+    "id": 2,
+    "context": "ci/gate",
+    "status": "success",
+    "description": "ok",
+    "updated_at": "2026-06-14T06:00:00Z"
+  }
+]

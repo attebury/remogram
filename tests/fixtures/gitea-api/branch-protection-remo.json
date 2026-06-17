@@ -1,0 +1,10 @@
+{
+  "branch_name": "remo",
+  "enable_push": false,
+  "enable_merge_whitelist": false,
+  "enable_status_check": true,
+  "status_check_contexts": ["ci/test", "ci/lint"],
+  "required_approvals": 1,
+  "dismiss_stale_approvals": true,
+  "require_signed_commits": false
+}

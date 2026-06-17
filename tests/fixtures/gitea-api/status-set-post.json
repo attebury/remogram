@@ -1,0 +1,9 @@
+{
+  "id": 42,
+  "status": "success",
+  "context": "verify/wave1",
+  "description": "Verification passed",
+  "target_url": "http://localhost:3000/attebury/remogram/actions/1",
+  "url": "http://localhost:3000/attebury/remogram/statuses/abc123",
+  "created_at": "2026-06-15T00:00:00Z"
+}

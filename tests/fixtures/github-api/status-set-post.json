@@ -1,0 +1,10 @@
+{
+  "id": 42,
+  "state": "success",
+  "context": "verify/wave1",
+  "description": "Verification passed",
+  "target_url": "https://github.com/owner/repo/actions/runs/1",
+  "url": "https://api.github.com/repos/owner/repo/statuses/abc123",
+  "created_at": "2026-06-15T00:00:00Z",
+  "updated_at": "2026-06-15T00:00:00Z"
+}

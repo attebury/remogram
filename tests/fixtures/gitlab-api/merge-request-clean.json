@@ -1,0 +1,17 @@
+{
+  "id": 1001,
+  "iid": 42,
+  "web_url": "https://gitlab.com/owner/repo/-/merge_requests/42",
+  "title": "Add GitLab provider\nwith newline",
+  "state": "opened",
+  "target_branch": "main",
+  "source_branch": "feature/gitlab",
+  "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "detailed_merge_status": "mergeable",
+  "merge_status": "can_be_merged",
+  "has_conflicts": false,
+  "diff_refs": {
+    "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  }
+}

@@ -1,0 +1,17 @@
+# OpenAI Codex — project MCP config
+# Copy to .codex/config.toml in your consumer repo.
+# Codex loads project .codex/ layers only for trusted projects (see Codex config docs).
+#
+# Prerequisite: remogram-mcp on PATH (./scripts/npm-link.sh from remogram repo).
+# Replace /absolute/path/to/your/project with the consumer repo root.
+
+[mcp_servers.remogram]
+command = "remogram-mcp"
+
+[mcp_servers.remogram.env]
+REMOGRAM_CWD = "/absolute/path/to/your/project"
+# Pass through tokens your shell already exports, or set literals (never commit secrets):
+# GITEA_TOKEN = "..."
+# GITHUB_TOKEN = "..."
+# GH_TOKEN = "..."
+# GITLAB_TOKEN = "..."
