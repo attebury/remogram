@@ -1,0 +1,27 @@
+{
+  "name": "@remogram/provider-gitea-tea",
+  "version": "0.1.0-beta.9",
+  "description": "Gitea tea wrapper provider stub for remogram",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/attebury/remogram.git",
+    "directory": "packages/provider-gitea-tea"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "*.js"
+  ],
+  "exports": {
+    ".": "./index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@remogram/core": "0.1.0-beta.9"
+  }
+}

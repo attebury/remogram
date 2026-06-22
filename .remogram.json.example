@@ -1,0 +1,13 @@
+{
+  "version": "1",
+  "provider": "gitea-api",
+  "remote": "origin",
+  "owner": "your-org",
+  "repo": "your-repo",
+  "baseUrl": "http://localhost:3000",
+  "write_commands": ["cr_open", "status_set"],
+  "merge_policy": {
+    "allow_missing_checks": true,
+    "allow_pending_checks": true
+  }
+}

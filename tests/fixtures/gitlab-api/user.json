@@ -1,0 +1,7 @@
+{
+  "id": 42,
+  "username": "gitlab-agent",
+  "name": "GitLab Agent",
+  "state": "active",
+  "can_create_project": true
+}
