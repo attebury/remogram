@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "name": "Default",
+    "rule_type": "all_members",
+    "approvals_required": 2,
+    "protected_branches": [
+      {
+        "id": 1,
+        "name": "main"
+      }
+    ]
+  }
+]

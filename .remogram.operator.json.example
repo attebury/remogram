@@ -1,0 +1,14 @@
+{
+  "version": "1",
+  "bind": {
+    "provider": "gitea-api",
+    "remote": "origin",
+    "owner": "your-org",
+    "repo": "your-repo",
+    "baseUrl": "http://localhost:3000"
+  },
+  "write_commands": ["merge", "cr_open", "status_set", "issue_open"],
+  "forge_write_policy": {
+    "field_max_bytes": null
+  }
+}

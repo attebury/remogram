@@ -1,0 +1,32 @@
+# Remogram
+
+Generic SCM/forge boundary CLI and MCP server. Emits provider-attributed JSON facts; git-resolved SHAs (local git) vs forge-reported PR SHAs (forge APIs).
+
+Developed by and for Topogram: https://topogram.dev (not required to use Remogram).
+
+## Install (beta)
+
+npm install -g @remogram/cli@beta @remogram/mcp@beta
+
+## Key docs
+
+- README: https://github.com/attebury/remogram/blob/main/README.md
+- AGENTS.md: https://github.com/attebury/remogram/blob/main/AGENTS.md
+- CHANGELOG: https://github.com/attebury/remogram/blob/main/CHANGELOG.md
+- MCP examples: https://github.com/attebury/remogram/tree/main/examples/mcp
+- Live smoke fixtures: https://gitlab.com/attebury/remogram-smoke (mirrors: https://github.com/attebury/remogram-smoke, https://gitea.com/attebury/remogram-smoke)
+- Consumer agent skill: tools/remogram-agent-support/skills/remogram-consumer/SKILL.md
+- Contributor agent skill: tools/remogram-agent-support/skills/remogram-core/SKILL.md
+- Install skills (GitHub source, not npm): npx skills add attebury/remogram --skill remogram-consumer -g -y (or ./scripts/install-agent-skills.sh --all from a clone)
+
+## First commands
+
+remogram provider capabilities --json
+remogram doctor --json
+remogram repo status --json
+remogram pr view --number 1 --json
+remogram merge plan --number 1 --json
+
+## v1 scope (0.1.0-beta.4)
+
+Read/plan by default (15 read/plan commands). Opt-in forge writes via write_commands in .remogram.json: cr_open (Gitea only), issue_open (Gitea only), status_set (Gitea, GitHub, GitLab), and merge (Gitea merge execute only). cr_open and merge are independent opt-ins — enabling cr_open alone does not enable merge execute. merge plan is read-only and does not execute merges. Unlisted writes return write_not_configured — use forge/CI on your system. Full write policy: README.md Consumer config section.

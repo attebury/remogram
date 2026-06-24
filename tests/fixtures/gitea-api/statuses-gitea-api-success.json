@@ -1,0 +1,9 @@
+[
+  {
+    "id": 42,
+    "context": "ci/gate",
+    "status": "success",
+    "description": "ok",
+    "updated_at": "2026-06-14T06:00:00Z"
+  }
+]

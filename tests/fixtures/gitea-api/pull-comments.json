@@ -1,0 +1,18 @@
+[
+  {
+    "id": 101,
+    "body": "Please fix the null check on line 42.",
+    "user": { "login": "reviewer-bot" },
+    "path": "packages/remogram-core/cr-comments.js",
+    "line": 42,
+    "resolved": false
+  },
+  {
+    "id": 102,
+    "body": "LGTM after the fix.",
+    "user": { "login": "maintainer" },
+    "path": "packages/remogram-core/cr-comments.js",
+    "line": 42,
+    "resolved": true
+  }
+]

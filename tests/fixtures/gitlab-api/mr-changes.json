@@ -1,0 +1,16 @@
+{
+  "id": 1,
+  "iid": 42,
+  "changes": [
+    {
+      "old_path": "README.md",
+      "new_path": "README.md",
+      "diff": "..."
+    },
+    {
+      "old_path": null,
+      "new_path": "packages/remogram-core/bar.js",
+      "diff": "..."
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "version": 3,
+  "diff_policy": {
+    "churn_threshold": 40,
+    "min_removed_without_manifest": 20
+  },
+  "protected_files": {
+    "tests/core/path-allowlist.test.mjs": {
+      "required_describes": [
+        "normalizeRepoRelativePath",
+        "path allowlist",
+        "normalizeChangedPathList"
+      ],
+      "min_it_by_describe": {
+        "normalizeRepoRelativePath": 2,
+        "path allowlist": 5,
+        "normalizeChangedPathList": 5
+      },
+      "min_expect_by_describe": {
+        "normalizeRepoRelativePath": 5,
+        "path allowlist": 11,
+        "normalizeChangedPathList": 12
+      },
+      "min_lines": 75
+    }
+  }
+}

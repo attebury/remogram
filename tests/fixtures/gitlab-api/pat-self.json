@@ -1,0 +1,8 @@
+{
+  "id": 7,
+  "name": "remogram-dogfood",
+  "revoked": false,
+  "expires_at": "2027-01-15T12:00:00.000Z",
+  "scopes": ["api", "read_user"],
+  "active": true
+}

@@ -1,0 +1,27 @@
+{
+  "name": "@remogram/provider-github-gh",
+  "version": "0.1.0-beta.10",
+  "description": "GitHub gh wrapper provider stub for remogram",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/attebury/remogram.git",
+    "directory": "packages/provider-github-gh"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "*.js"
+  ],
+  "exports": {
+    ".": "./index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@remogram/core": "0.1.0-beta.10"
+  }
+}
