@@ -1,0 +1,5 @@
+[
+  { "filename": "packages/remogram-core/cr-files.js" },
+  { "filename": "packages/remogram-core/index.js" },
+  { "filename": "tests/core/cr-files.test.mjs" }
+]

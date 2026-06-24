@@ -1,0 +1,46 @@
+[
+  {
+    "number": 1,
+    "title": "New feature PR",
+    "html_url": "https://github.com/owner/repo/pull/1",
+    "state": "open",
+    "created_at": "2024-06-02T10:00:00Z",
+    "updated_at": "2024-06-02T10:00:00Z",
+    "closed_at": null,
+    "merged_at": null,
+    "head": { "sha": "abc1111111111111111111111111111111111111111" }
+  },
+  {
+    "number": 2,
+    "title": "Merged PR",
+    "html_url": "https://github.com/owner/repo/pull/2",
+    "state": "closed",
+    "created_at": "2024-05-01T10:00:00Z",
+    "updated_at": "2024-06-03T10:00:00Z",
+    "closed_at": "2024-06-03T10:00:00Z",
+    "merged_at": "2024-06-03T10:00:00Z",
+    "head": { "sha": "def2222222222222222222222222222222222222222" }
+  },
+  {
+    "number": 3,
+    "title": "Closed without merge",
+    "html_url": "https://github.com/owner/repo/pull/3",
+    "state": "closed",
+    "created_at": "2024-05-15T10:00:00Z",
+    "updated_at": "2024-06-04T10:00:00Z",
+    "closed_at": "2024-06-04T10:00:00Z",
+    "merged_at": null,
+    "head": { "sha": "ghi3333333333333333333333333333333333333333" }
+  },
+  {
+    "number": 4,
+    "title": "Updated head on open PR",
+    "html_url": "https://github.com/owner/repo/pull/4",
+    "state": "open",
+    "created_at": "2024-05-20T10:00:00Z",
+    "updated_at": "2024-06-05T10:00:00Z",
+    "closed_at": null,
+    "merged_at": null,
+    "head": { "sha": "jkl4444444444444444444444444444444444444444" }
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "number": 1,
+  "title": "feat: example",
+  "state": "open",
+  "mergeable": true,
+  "html_url": "http://localhost:3000/attebury/remogram/pulls/1",
+  "base": { "ref": "main", "sha": "aaa111" },
+  "head": { "ref": "feature/x", "sha": "bbb222" }
+}

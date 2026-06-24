@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "type": "topogram_signed_activation_evidence",
+  "format": "topogram_signed_activation_v1",
+  "payload": {
+    "version": 1,
+    "mode": "dev",
+    "state": "active",
+    "packages": [
+      "pro"
+    ],
+    "tier": "pro",
+    "evidence_source": "local_license_file",
+    "subject_scope": "workspace",
+    "subject_id_hash": "sha256:1058072b43ec1ad9de422260537da700e60f1b1f0d7a31836986d15fef3dc605",
+    "license_id_hash": "sha256:remogram-dogfood-dev-license",
+    "issuer": "topogram-dogfood",
+    "key_id": "remogram-dogfood-dev-key",
+    "issued_at": "2026-06-23T00:30:29.152Z",
+    "checked_at": "2026-06-23T00:31:29.152Z",
+    "expires_at": "2027-06-23T00:31:29.152Z",
+    "offline_expires_at": "2026-07-23T00:31:29.152Z",
+    "evidence_ref": "licenses/topogram-pro-dev.json"
+  },
+  "signature": {
+    "alg": "ed25519",
+    "key_id": "remogram-dogfood-dev-key",
+    "value": "SdxX9FcuPvMjiO12hVod4om-YulLvTI1h-N8HSpo9OlwrcAMqX3fVAE0hBhbDgzwRBft0zTNU3o1mM7EflDdAQ"
+  }
+}

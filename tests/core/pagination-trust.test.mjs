@@ -1,0 +1,128 @@
+import { describe, it, expect } from 'vitest';
+import { isTrustedPaginationUrl } from '@remogram/core';
+
+const TRUSTED = 'https://api.github.com';
+
+describe('isTrustedPaginationUrl', () => {
+  it('rejects absolute same-origin URLs without resolveBase', () => {
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/repos/o/r/pulls?page=2'),
+    ).toBe(false);
+  });
+
+  it('rejects off-path absolute URLs without resolveBase', () => {
+    expect(isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/user/emails')).toBe(false);
+  });
+
+  it('rejects absolute off-origin URLs', () => {
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://evil.example/repos/o/r/pulls?page=2'),
+    ).toBe(false);
+  });
+
+  it('accepts relative same-origin paths with resolveBase', () => {
+    const base = 'https://api.github.com/repos/o/r/pulls?state=open&per_page=100';
+    expect(isTrustedPaginationUrl(TRUSTED, '/repos/o/r/pulls?page=2', base)).toBe(true);
+  });
+
+  it('rejects relative paths resolved against an off-origin base', () => {
+    const evilBase = 'https://evil.example/api/start';
+    expect(isTrustedPaginationUrl(TRUSTED, '/repos/o/r/pulls?page=2', evilBase)).toBe(false);
+  });
+
+  it('rejects http vs https mismatch on the same host', () => {
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'http://api.github.com/repos/o/r/pulls?page=2'),
+    ).toBe(false);
+  });
+
+  it('rejects invalid URLs without resolveBase', () => {
+    expect(isTrustedPaginationUrl(TRUSTED, '/repos/o/r/pulls?page=2')).toBe(false);
+  });
+
+  it('rejects empty-string resolveBase', () => {
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/repos/o/r/pulls?page=2', ''),
+    ).toBe(false);
+  });
+
+  it('rejects userinfo in same-origin pagination URLs', () => {
+    const base = 'https://api.github.com/repos/o/r/pulls?state=open';
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://evil@api.github.com/repos/o/r/pulls?page=2', base),
+    ).toBe(false);
+  });
+
+  it('rejects userinfo in resolveBase', () => {
+    const badBase = 'https://evil@api.github.com/repos/o/r/pulls?state=open';
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/repos/o/r/pulls?page=2', badBase),
+    ).toBe(false);
+    expect(isTrustedPaginationUrl(TRUSTED, '/repos/o/r/pulls?page=2', badBase)).toBe(false);
+  });
+
+  it('rejects password-only userinfo in resolveBase', () => {
+    const badBase = 'https://:pass@api.github.com/repos/o/r/pulls?state=open';
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/repos/o/r/pulls?page=2', badBase),
+    ).toBe(false);
+    expect(isTrustedPaginationUrl(TRUSTED, '/repos/o/r/pulls?page=2', badBase)).toBe(false);
+  });
+
+  it('rejects password-only userinfo in next URL', () => {
+    const base = 'https://api.github.com/repos/o/r/pulls?state=open';
+    expect(
+      isTrustedPaginationUrl(
+        TRUSTED,
+        'https://:pass@api.github.com/repos/o/r/pulls?page=2',
+        base,
+      ),
+    ).toBe(false);
+  });
+
+  it('accepts same-origin URLs with matching pathname', () => {
+    const base = 'https://api.github.com/repos/o/r/pulls?state=open&per_page=100';
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/repos/o/r/pulls?page=2', base),
+    ).toBe(true);
+  });
+
+  it('rejects same-origin URLs with different pathname', () => {
+    const base = 'https://api.github.com/repos/o/r/pulls?state=open';
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/user/emails', base),
+    ).toBe(false);
+  });
+
+  it('accepts protocol-relative URLs when pathname matches resolveBase', () => {
+    const base = 'https://api.github.com/repos/o/r/pulls?state=open';
+    expect(isTrustedPaginationUrl(TRUSTED, '//api.github.com/repos/o/r/pulls?page=2', base)).toBe(
+      true,
+    );
+  });
+
+  it('accepts trailing-slash pathname variants with resolveBase', () => {
+    const base = 'https://api.github.com/repos/o/r/pulls?state=open';
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/repos/o/r/pulls/?page=2', base),
+    ).toBe(true);
+    const baseWithSlash = 'https://api.github.com/repos/o/r/pulls/?state=open';
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/repos/o/r/pulls?page=2', baseWithSlash),
+    ).toBe(true);
+  });
+
+  it('still rejects off-path after trailing-slash normalization', () => {
+    const base = 'https://api.github.com/repos/o/r/pulls?state=open';
+    expect(
+      isTrustedPaginationUrl(TRUSTED, 'https://api.github.com/user/emails/', base),
+    ).toBe(false);
+  });
+
+  it('rejects protocol-relative URLs when origin differs', () => {
+    const base = 'https://api.github.com/repos/o/r/pulls?state=open';
+    expect(isTrustedPaginationUrl(TRUSTED, '//evil.example/repos/o/r/pulls?page=2', base)).toBe(
+      false,
+    );
+  });
+});
