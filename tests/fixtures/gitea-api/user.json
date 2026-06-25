@@ -1,0 +1,8 @@
+{
+  "id": 1,
+  "login": "agent-user",
+  "full_name": "Agent User",
+  "email": "agent@example.com",
+  "is_admin": false,
+  "restricted": false
+}

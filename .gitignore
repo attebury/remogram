@@ -1,0 +1,12 @@
+node_modules/
+.DS_Store
+*.log
+coverage/
+.cursor/mcp.json
+.remogram.json
+.tmp/
+dx/
+.agents/skills/
+pr_checks.json
+size_report.json
+size_report/

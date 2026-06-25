@@ -1,0 +1,21 @@
+{
+  "_comment": "Claude Desktop — user-level MCP config. Merge the mcpServers.remogram block into your OS config file, then fully quit and restart Claude Desktop.",
+  "_config_paths": {
+    "macOS": "~/Library/Application Support/Claude/claude_desktop_config.json",
+    "Windows": "%APPDATA%\\Claude\\claude_desktop_config.json",
+    "Linux": "~/.config/Claude/claude_desktop_config.json"
+  },
+  "_note": "Replace /absolute/path/to/your/project with the consumer repo root. Claude Desktop may start with an undefined cwd; REMOGRAM_CWD must be absolute.",
+  "mcpServers": {
+    "remogram": {
+      "command": "remogram-mcp",
+      "args": [],
+      "env": {
+        "REMOGRAM_CWD": "/absolute/path/to/your/project",
+        "GITEA_TOKEN": "your-token-or-use-shell-env",
+        "GITHUB_TOKEN": "your-token-or-use-shell-env",
+        "GITLAB_TOKEN": "your-token-or-use-shell-env"
+      }
+    }
+  }
+}

@@ -1,0 +1,3 @@
+# Advisory until branch protection required reviewers are enabled.
+topo/** @attebury
+packages/** @attebury

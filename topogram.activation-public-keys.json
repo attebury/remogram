@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "keys": [
+    {
+      "key_id": "remogram-dogfood-dev-key",
+      "alg": "ed25519",
+      "modes": [
+        "dev",
+        "private_pilot"
+      ],
+      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA+j2TFpVXrLIZ0+utQ2rUYIb0QwidH90NOfMX4/QMuaw=\n-----END PUBLIC KEY-----\n"
+    }
+  ]
+}

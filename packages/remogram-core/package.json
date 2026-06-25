@@ -1,0 +1,29 @@
+{
+  "name": "@remogram/core",
+  "version": "0.1.0-beta.12",
+  "description": "Remogram forge envelope, config, caps, and HTTP utilities",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/attebury/remogram.git",
+    "directory": "packages/remogram-core"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "*.js",
+    "contracts/"
+  ],
+  "exports": {
+    ".": "./index.js",
+    "./stub-provider.js": "./stub-provider.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "zod": "^3.25.76"
+  }
+}
